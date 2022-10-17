@@ -10,4 +10,3 @@
 | 김은혜 | 팀원, Frontend  |
 | 정세미 | 팀원, Backend   |
 | 조유진 | 팀원, Frontend  |
-
