@@ -1,9 +1,12 @@
-const ApiTable = ({ index, apis, setApis }) => {
+import { forwardRef } from "react";
+
+const ApiTable = ({ index, apis, sharedApi, sharedArray }) => {
   const handleOnChange = (e, key) => {
     console.log(e.target.name);
     let copy = [...apis];
     copy[index].details[key][e.target.name] = e.target.value;
-    setApis(copy);
+    sharedArray.current.delete(0, sharedApi.length);
+    sharedArray.current.insert(0, [...copy]);
   };
   const handleApiAdd = () => {
     let copy = [...apis];
@@ -15,7 +18,8 @@ const ApiTable = ({ index, apis, setApis }) => {
       requestBody: "",
       responseBody: "",
     });
-    setApis(copy);
+    sharedArray.current.delete(0, sharedApi.length);
+    sharedArray.current.insert(0, [...copy]);
   };
   return (
     <div>
@@ -107,4 +111,4 @@ const ApiTable = ({ index, apis, setApis }) => {
   );
 };
 
-export default ApiTable;
+export default forwardRef(ApiTable);

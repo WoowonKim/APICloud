@@ -1,23 +1,36 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ApiTable from "./ApiTable";
+import * as Y from "yjs";
 import "./App.css";
+import { WebrtcProvider } from "y-webrtc";
 
 function App() {
-  const [apis, setApis] = useState([
-    {
-      url: "/user",
-      details: [
-        {
-          detailUrl: "",
-          summary: "",
-          method: "",
-          param: "",
-          requestBody: "",
-          responseBody: "",
-        },
-      ],
-    },
-  ]);
+  const doc = useRef(new Y.Doc());
+  const sharedArray = useRef(doc.current.getArray());
+  const [sharedApi, setSharedApi] = useState(
+    sharedArray.current.toArray() ?? []
+  );
+  const [apis, setApis] = useState(sharedArray.current.toArray() ?? []);
+  const observeDeepHandler = () => {
+    setSharedApi(sharedArray.current.toArray());
+  };
+  useEffect(() => {
+    new WebrtcProvider("YjsTest", doc.current);
+    sharedArray.current.observeDeep(observeDeepHandler);
+    return () => {
+      sharedArray.current.unobserveDeep(observeDeepHandler);
+    };
+  }, []);
+
+  useEffect(() => {
+    setApis(sharedApi);
+  }, [sharedApi]);
+
+  useEffect(() => {
+    sharedArray.current.delete(0, sharedApi.length);
+    sharedArray.current.insert(0, [...apis]);
+  }, []);
+
   const [newApiURL, setNewApiURL] = useState("");
   const handleApiAdd = () => {
     let copy = [...apis];
@@ -34,8 +47,10 @@ function App() {
         },
       ],
     });
-    setApis(copy);
+    sharedArray.current.delete(0, sharedApi.length);
+    sharedArray.current.insert(0, [...copy]);
   };
+
   return (
     <div className="App">
       <label htmlFor="inputName">API URL :</label>
@@ -51,9 +66,10 @@ function App() {
         return (
           <ApiTable
             key={index}
+            sharedApi={sharedApi}
+            sharedArray={sharedArray}
             index={index}
             apis={apis}
-            setApis={setApis}
           ></ApiTable>
         );
       })}
