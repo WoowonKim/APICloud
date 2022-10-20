@@ -1,0 +1,98 @@
+@font-face {
+	font-family: 'CarterOne';
+	src: url('../../fonts/CarterOne-Regular.woff') format('woff');
+}
+
+@font-face {
+	font-family: 'twayair';
+	src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_tway@1.0/twayair.woff') format('woff');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@mixin titleStyle {
+	font-family: 'CarterOne';
+	background: linear-gradient(to right, #8495F1 40%, #48BCEE, #3AF6EB);
+	color: transparent;
+  -webkit-background-clip: text;
+	font-weight: bold;
+}
+
+body {
+	margin: 0;
+}
+
+.section1 {
+	height: 120vh;
+	width: 100vw;
+	background-image: url('../../public/day_cloudy_sky.jpg');
+	background-repeat : no-repeat;
+  background-size : cover;
+	.title {
+		@include titleStyle();
+		display: flex;
+		justify-content: center;
+		margin-top: 0;
+		margin-bottom: 30px;
+		padding-top: 150px;
+		font-size: 100px;
+		opacity: 0.7;
+	}
+	.subTitleWrapper {
+		text-align: center;
+		font-family: 'CarterOne';
+		font-size: 30px;
+		opacity: 0.7;
+	}
+	.startButtonWrapper {
+		margin-top: 100px;
+		text-align: center;
+	}
+	.startButton {
+		@include titleStyle();
+		display: inline-block;
+		padding: 10px;
+		width: 200px;
+		border-radius: 30px;
+		background-color: rgba(255, 255, 255, 0.3);
+		box-shadow: 1px 1px 5px gray;
+		font-weight: bold;
+	}
+}
+
+
+.bridge {
+	height: 40vh;
+	width: 100vw;
+}
+
+.section2 {
+	height: 120vh;
+	width: 100vw;
+	background-image: url('../../public/sunset_cloudy_sky.jpg');
+	background-repeat : no-repeat;
+  background-size : cover;
+	.introduction {
+		margin-left: 200px;
+		padding-top: 40vh;
+	}
+	.title {
+		margin-bottom: 50px;
+		font-family: 'twayair';
+		color: white;
+		font-size: 30px;
+	}
+	.subTitle {
+		font-family: 'twayair';
+		font-size: 20px;
+		opacity: 0.7;
+	}
+}
+
+.section3 {
+	height: 120vh;
+	width: 100vw;
+	background-image: url('../../public/night_cloudy_sky.jpg');
+	background-repeat : no-repeat;
+  background-size : cover;
+}
