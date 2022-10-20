@@ -5,27 +5,6 @@ import "./App.css";
 function App() {
   const [apis, setApis] = useState([
     {
-      url: "/login",
-      details: [
-        {
-          detailUrl: "/user",
-          summary: "유저 로그인",
-          method: "get",
-          param: "",
-          requestBody: "{userId}",
-          responseBody: "{status}",
-        },
-        {
-          detailUrl: "/info",
-          summary: "로그인 유저 정보",
-          method: "get",
-          param: "",
-          requestBody: "{userInfo}",
-          responseBody: "{status}",
-        },
-      ],
-    },
-    {
       url: "/user",
       details: [
         {
@@ -39,8 +18,35 @@ function App() {
       ],
     },
   ]);
+  const [newApiURL, setNewApiURL] = useState("");
+  const handleApiAdd = () => {
+    let copy = [...apis];
+    copy.push({
+      url: newApiURL,
+      details: [
+        {
+          detailUrl: "",
+          summary: "",
+          method: "",
+          param: "",
+          requestBody: "",
+          responseBody: "",
+        },
+      ],
+    });
+    setApis(copy);
+  };
   return (
     <div className="App">
+      <label htmlFor="inputName">API URL :</label>
+      <input
+        type="text"
+        id="inputName"
+        onChange={(e) => {
+          setNewApiURL(e.target.value);
+        }}
+      />
+      <button onClick={handleApiAdd}>추가하기</button>
       {apis.map((api, index) => {
         return (
           <ApiTable

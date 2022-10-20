@@ -5,6 +5,18 @@ const ApiTable = ({ index, apis, setApis }) => {
     copy[index].details[key][e.target.name] = e.target.value;
     setApis(copy);
   };
+  const handleApiAdd = () => {
+    let copy = [...apis];
+    copy[index].details.push({
+      detailUrl: "",
+      summary: "",
+      method: "",
+      param: "",
+      requestBody: "",
+      responseBody: "",
+    });
+    setApis(copy);
+  };
   return (
     <div>
       <h2>{apis[index].url}</h2>
@@ -19,7 +31,7 @@ const ApiTable = ({ index, apis, setApis }) => {
         </tr>
         {apis[index].details.map((detailApi, key) => {
           return (
-            <tr>
+            <tr key={key}>
               <td>
                 <input
                   key={key}
@@ -90,6 +102,7 @@ const ApiTable = ({ index, apis, setApis }) => {
           );
         })}
       </table>
+      <button onClick={handleApiAdd}>API 추가</button>
     </div>
   );
 };
