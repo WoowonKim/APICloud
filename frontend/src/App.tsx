@@ -1,7 +1,7 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import ApiDocs from "./pages/ApiDocs";
-import CreateApi from "./pages/CreateApi";
+import CreateApi from "./pages/CreateApi/CreateApi";
 import Main from "./pages/Main";
 import TestApi from "./pages/TestApi";
 import Welcome from "./pages/Welcome";
