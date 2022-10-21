@@ -11,11 +11,16 @@ function App() {
     sharedArray.current.toArray() ?? []
   );
   const [apis, setApis] = useState(sharedArray.current.toArray() ?? []);
-  const observeDeepHandler = () => {
-    setSharedApi(sharedArray.current.toArray());
-  };
   useEffect(() => {
-    new WebrtcProvider("YjsTest", doc.current);
+    const observeDeepHandler = () => {
+      setSharedApi(sharedArray.current.toArray());
+    };
+    console.log(window.location.href.split("/").at(-1));
+    const provider = new WebrtcProvider(
+      window.location.href.split("/").at(-1),
+      doc.current
+    );
+    const awareness = provider.awareness;
     sharedArray.current.observeDeep(observeDeepHandler);
     return () => {
       sharedArray.current.unobserveDeep(observeDeepHandler);
@@ -25,11 +30,6 @@ function App() {
   useEffect(() => {
     setApis(sharedApi);
   }, [sharedApi]);
-
-  useEffect(() => {
-    sharedArray.current.delete(0, sharedApi.length);
-    sharedArray.current.insert(0, [...apis]);
-  }, []);
 
   const [newApiURL, setNewApiURL] = useState("");
   const handleApiAdd = () => {
