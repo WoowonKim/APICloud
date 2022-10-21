@@ -1,0 +1,34 @@
+.dotBlack {
+	width: 10;
+	height: 10;
+	border: 1px solid black;
+	border-radius: 999;
+	background-color: black;
+	transition-duration: 1000;
+	transition: background-color 0.5s;
+}
+
+.dotTransparent {
+	width: 10;
+	height: 10;
+	border: 1px solid black;
+	border-radius: 999;
+	background-color: transparent;
+	transition-duration: 1000;
+	transition: background-color 0.5s;
+}
+
+.dotsContainer {
+	position: fixed;
+	top: 50vh;
+	right: 100
+}
+
+.dotsWrapper {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+	width: 20;
+	height: 100;
+}
