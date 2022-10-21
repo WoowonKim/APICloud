@@ -1,12 +1,11 @@
 package com.web.trackingtest;
 
-import lombok.Builder;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
-@Setter
-@ToString
 @Builder
+@Data
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Message {
-    String text;
+    Long text;
 }
