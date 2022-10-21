@@ -1,6 +1,6 @@
 @font-face {
 	font-family: 'CarterOne';
-	src: url('../../fonts/CarterOne-Regular.woff') format('woff');
+	src: url('../../../fonts/CarterOne-Regular.woff') format('woff');
 }
 
 @font-face {
@@ -18,16 +18,49 @@
 	font-weight: bold;
 }
 
+@mixin section {
+	height: 100vh;
+	width: 100vw;
+	background-repeat : no-repeat;
+  background-size : cover;
+}
+
+@mixin sectionDetail {
+	.introduction {
+		margin-left: 200px;
+		padding-top: 40vh;
+	}
+	.title {
+		margin-bottom: 50px;
+		font-family: 'twayair';
+		color: white;
+		font-size: 30px;
+	}
+	.subTitle {
+		font-family: 'twayair';
+		font-size: 20px;
+		opacity: 0.7;
+	}
+}
+
 body {
 	margin: 0;
+	overflow-y: hidden;
+}
+
+.outer {
+	height: 100vh;
+	overflow-y: auto;
+}
+
+// 화면에서 스크롤바 안 보이게
+.outer::-webkit-scrollbar {
+	display: none;
 }
 
 .section1 {
-	height: 120vh;
-	width: 100vw;
-	background-image: url('../../public/day_cloudy_sky.jpg');
-	background-repeat : no-repeat;
-  background-size : cover;
+	@include section();
+	background-image: url('../../assest/day_cloudy_sky.jpg');
 	.title {
 		@include titleStyle();
 		display: flex;
@@ -50,9 +83,11 @@ body {
 	}
 	.startButton {
 		@include titleStyle();
+		font-family: 'twayair';
 		display: inline-block;
 		padding: 10px;
 		width: 200px;
+		height: 3vh;
 		border-radius: 30px;
 		background-color: rgba(255, 255, 255, 0.3);
 		box-shadow: 1px 1px 5px gray;
@@ -60,39 +95,23 @@ body {
 	}
 }
 
-
-.bridge {
-	height: 40vh;
-	width: 100vw;
-}
-
 .section2 {
-	height: 120vh;
-	width: 100vw;
-	background-image: url('../../public/sunset_cloudy_sky.jpg');
-	background-repeat : no-repeat;
-  background-size : cover;
-	.introduction {
-		margin-left: 200px;
-		padding-top: 40vh;
-	}
-	.title {
-		margin-bottom: 50px;
-		font-family: 'twayair';
-		color: white;
-		font-size: 30px;
-	}
-	.subTitle {
-		font-family: 'twayair';
-		font-size: 20px;
-		opacity: 0.7;
-	}
+	@include section();
+	@include sectionDetail();
+	background-image: url('../../assest/sunset_cloudy_sky.jpg');
 }
 
 .section3 {
-	height: 120vh;
+	@include section();
+	@include sectionDetail();
+	background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('../../assest/night_cloudy_sky.jpg');
+	.subTitle {
+		color: white;
+	}
+}
+
+.divider {
 	width: 100vw;
-	background-image: url('../../public/night_cloudy_sky.jpg');
-	background-repeat : no-repeat;
-  background-size : cover;
+	height: 5px;
+	background-color: gray;
 }

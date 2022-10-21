@@ -1,4 +1,4 @@
-@import '../../pages/Welcome.scss';
+@import './Welcome.scss';
 
 @mixin buttonStyle {
 	margin-left: 15px;
@@ -21,6 +21,7 @@
 .container {
 	display: flex;
 	justify-content: space-between;
+	width: 100vw;
 	margin-left: 50px;
 	margin-right: 50px;
 	
@@ -29,6 +30,7 @@
 .logo {
 	@include titleStyle();
 	padding-top: 30px;
+	width: 8vw;
 }
 
 .buttonWrapper {
@@ -40,9 +42,12 @@
 .signIn {
 	@include buttonStyle();
 	@include titleStyle();
+	font-family: 'twayair';
+	
 }
 
 .signUp {
 	@include buttonStyle();
 	@include titleStyle();
+	font-family: 'twayair';
 }
