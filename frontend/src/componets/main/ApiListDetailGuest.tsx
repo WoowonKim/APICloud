@@ -1,28 +1,24 @@
 import React from "react";
-import { ManagerDummy } from "./ApiList";
+import { GuestDummy } from "./ApiList";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
-
 interface Props {
-  ManagerDummy: ManagerDummy[];
+  GuestDummy: GuestDummy[];
 }
-
-const ApiListDetail = ({ ManagerDummy }: Props) => {
+const ApiListDetailGuest = ({ GuestDummy }: Props) => {
   return (
     <div className="ApiListDetail">
-      {ManagerDummy.map((it, idx) => (
+      {GuestDummy.map((it, idx) => (
         <div className="listContent" key={idx}>
           <p>{it.apiTitle}</p>
           <p>{it.apiContent}</p>
           <div className="userSetting">
-            <div className="userSettingSub">
+            <div className="userSettingSubTwo">
               <div className="member">
                 <FontAwesomeIcon icon={faUser} />
                 {it.member}
               </div>
-              <FontAwesomeIcon className="DeatilIcon" icon={faTrash} />
               <FontAwesomeIcon className="DeatilIcon" icon={faRightToBracket} />
             </div>
           </div>
@@ -32,4 +28,4 @@ const ApiListDetail = ({ ManagerDummy }: Props) => {
   );
 };
 
-export default ApiListDetail;
+export default ApiListDetailGuest;
