@@ -1,7 +1,7 @@
 import React from "react";
-import ApiList from "../componets/main/ApiList";
-import Header from "../componets/main/Header";
-import Start from "../componets/main/Start";
+import ApiList from "../components/main/ApiList";
+import Header from "../components/main/Header";
+import Start from "../components/main/Start";
 
 const Main = () => {
   return (
