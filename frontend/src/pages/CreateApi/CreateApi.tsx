@@ -94,9 +94,7 @@ const CreateApi = () => {
     setDatas(copy);
   };
 
-  useEffect(() => {
-    console.log(datas);
-  }, [datas]);
+  useEffect(() => {}, [datas]);
 
   return (
     <div className="apiDocscontainer">

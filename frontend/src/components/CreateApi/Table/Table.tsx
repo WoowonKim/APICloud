@@ -119,8 +119,6 @@ const Table = ({ data, setData, url, datas, index }: Props) => {
                 ...old[index].details[rowIndex]!,
                 [columnId]: value,
               };
-              console.log(newData);
-
               old[index].details = [newData];
             }
           });
