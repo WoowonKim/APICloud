@@ -57,7 +57,7 @@ interface Props {
   url: string;
 }
 
-const Table = ({ data, setData, url }: Props) => {
+const Table = ({ data, setData, url, datas, index }: Props) => {
   // column 설정
   const columns = useMemo<ColumnDef<ApiType>[]>(
     () => [
@@ -112,17 +112,18 @@ const Table = ({ data, setData, url }: Props) => {
     getCoreRowModel: getCoreRowModel(),
     meta: {
       updateData: (rowIndex, columnId, value) => {
-        setData((old) =>
-          old.map((row, index) => {
-            if (index === rowIndex) {
-              return {
-                ...old[rowIndex]!,
+        setData((old) => {
+          old[index].details.map((row, idx) => {
+            if (idx === rowIndex) {
+              const newData = {
+                ...old[index].details[rowIndex]!,
                 [columnId]: value,
               };
+              old[index].details = [newData];
             }
-            return row;
-          })
-        );
+          });
+          return old;
+        });
       },
     },
     debugTable: true,
@@ -130,7 +131,16 @@ const Table = ({ data, setData, url }: Props) => {
 
   return (
     <>
-      <p className="commonUri">{url}</p>
+      <input
+        type="text"
+        className="commonUri"
+        value={url}
+        onChange={(e) => {
+          let copy = [...datas];
+          copy[index] = { url: e.target.value, details: [...data] };
+          setData(copy);
+        }}
+      />
       <div>
         <table
           {...{

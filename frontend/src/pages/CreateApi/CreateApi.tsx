@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/CreateApi/Sidebar/Sidebar";
 import Table from "../../components/CreateApi/Table/Table";
 import "./CreateApi.scss";
@@ -34,22 +36,7 @@ const CreateApi = () => {
   // api를 저장하기 위한 state (임시 기본값 설정)
   const [datas, setDatas] = useState<ApiListType[]>([
     {
-      url: "/user",
-      details: [
-        {
-          detailUri: "",
-          summary: "",
-          method: null,
-          param: "",
-          requestBody: "",
-          header: "",
-          successResponseBody: "",
-          failResponseBody: "",
-        },
-      ],
-    },
-    {
-      url: "/post",
+      url: "",
       details: [
         {
           detailUri: "",
@@ -65,8 +52,29 @@ const CreateApi = () => {
     },
   ]);
 
+  // table 추가 함수
+  const addTable = () => {
+    let copy = [...datas];
+    copy.push({
+      url: "",
+      details: [
+        {
+          detailUri: "",
+          summary: "",
+          method: null,
+          param: "",
+          requestBody: "",
+          header: "",
+          successResponseBody: "",
+          failResponseBody: "",
+        },
+      ],
+    });
+    setDatas(copy);
+  };
+
   // table에 row 추가 함수
-  const addTableRow = (index: number, data: ApiListType) => {
+  const addTableRow = (index: number) => {
     const addData = {
       detailUri: "",
       summary: "",
@@ -79,12 +87,17 @@ const CreateApi = () => {
     };
 
     let copy = [...datas];
-    copy[index].details = [...data.details, addData];
+    copy[index] = {
+      url: copy[index].url,
+      details: [...copy[index].details, addData],
+    };
     setDatas(copy);
   };
 
+  useEffect(() => {}, [datas]);
+
   return (
-    <div className="container">
+    <div className="apiDocscontainer">
       <Sidebar />
       <div className="mainContainer">
         <div className="titleContainer">
@@ -107,28 +120,35 @@ const CreateApi = () => {
         </div>
         <div className="tableContainer">
           {datas.map((data, index) => (
-            <>
-              <div className="apiTable">
+            <div className="apiTable">
+              <div className="plusButtonGroup">
+                {index === datas.length - 1 ? (
+                  <button className="tablePlusButton" onClick={addTable}>
+                    <FontAwesomeIcon className="plusIcon" icon={faPlus} />
+                  </button>
+                ) : (
+                  <div></div>
+                )}
                 <button
                   className="apiPlusButton"
                   onClick={() => {
-                    addTableRow(index, data);
+                    addTableRow(index);
                   }}
                 >
-                  Plus
+                  <FontAwesomeIcon className="plusIcon" icon={faPlus} />
                 </button>
-                <div>
-                  <Table
-                    datas={datas}
-                    key={index}
-                    index={index}
-                    data={data.details}
-                    setData={setDatas}
-                    url={data.url}
-                  />
-                </div>
               </div>
-            </>
+              <div>
+                <Table
+                  datas={datas}
+                  key={index}
+                  index={index}
+                  data={data.details}
+                  setData={setDatas}
+                  url={data.url}
+                />
+              </div>
+            </div>
           ))}
         </div>
       </div>
