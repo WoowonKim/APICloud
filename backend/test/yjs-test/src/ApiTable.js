@@ -3,14 +3,23 @@ import { forwardRef } from "react";
 const ApiTable = ({ index, apis, sharedApi, sharedArray }) => {
   const handleOnChange = (e, key) => {
     console.log(e.target.name);
-    let copy = [...apis];
-    copy[index].details[key][e.target.name] = e.target.value;
-    sharedArray.current.delete(0, sharedApi.length);
-    sharedArray.current.insert(0, [...copy]);
+    // let copy = [...apis];
+    // copy[index].details[key][e.target.name] = e.target.value;
+    apis[index].details[key][e.target.name] = e.tartget.value;
+    // sharedArray.current.delete(0, sharedApi.length);
+    // sharedArray.current.insert(0, [...copy]);
   };
   const handleApiAdd = () => {
-    let copy = [...apis];
-    copy[index].details.push({
+    // let copy = [...apis];
+    // copy[index].details.push({
+    //   detailUrl: "",
+    //   summary: "",
+    //   method: "",
+    //   param: "",
+    //   requestBody: "",
+    //   responseBody: "",
+    // });
+    apis[index].details.push({
       detailUrl: "",
       summary: "",
       method: "",
@@ -18,8 +27,8 @@ const ApiTable = ({ index, apis, sharedApi, sharedArray }) => {
       requestBody: "",
       responseBody: "",
     });
-    sharedArray.current.delete(0, sharedApi.length);
-    sharedArray.current.insert(0, [...copy]);
+    // sharedArray.current.delete(0, sharedApi.length);
+    // sharedArray.current.insert(0, [...copy]);
   };
   return (
     <div>
