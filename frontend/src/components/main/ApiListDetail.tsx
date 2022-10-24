@@ -1,5 +1,5 @@
 import React from "react";
-import { ManagerDummy } from "./ApiList";
+import { GuestDummy, ManagerDummy } from "./ApiList";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
@@ -8,16 +8,19 @@ import { useNavigate } from "react-router-dom";
 
 interface Props {
   ManagerDummy: ManagerDummy[];
+  GuestDummy: GuestDummy[];
+  ApiList: number;
 }
 
-const ApiListDetail = ({ ManagerDummy }: Props) => {
+const ApiListDetail = ({ ManagerDummy, GuestDummy, ApiList }: Props) => {
   const navigate = useNavigate();
   const moveApidocs = () => {
     navigate("/welcome");
   };
+  const list = ApiList === 0 ? ManagerDummy : GuestDummy;
   return (
     <div className="ApiListDetail">
-      {ManagerDummy.map((it, idx) => (
+      {list?.map((it, idx) => (
         <div className="listContent" key={idx}>
           <p>{it.apiTitle}</p>
           <div className="content" onClick={moveApidocs}>
@@ -29,8 +32,8 @@ const ApiListDetail = ({ ManagerDummy }: Props) => {
                 <FontAwesomeIcon icon={faUser} />
                 {it.member}
               </div>
-              <FontAwesomeIcon className="DeatilIcon" icon={faTrash} />
               <FontAwesomeIcon className="DeatilIcon" icon={faRightToBracket} onClick={moveApidocs} />
+              {ApiList == 0 ? <FontAwesomeIcon className="DeatilIcon" icon={faTrash} /> : <div></div>}
             </div>
           </div>
         </div>
