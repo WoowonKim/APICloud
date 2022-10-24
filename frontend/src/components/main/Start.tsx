@@ -10,10 +10,7 @@ const Start = () => {
           <button>생성하기</button>
         </div>
         <div>
-          <img
-            className="startImg"
-            src={require("../../assets/ApiCloud.png")}
-          />
+          <img className="startImg" src={require("../../assets/ApiCloud.png")} />
         </div>
       </div>
     </div>

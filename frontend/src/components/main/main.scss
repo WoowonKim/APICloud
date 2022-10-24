@@ -1,22 +1,23 @@
 // Header
 .header {
-  padding: 10px;
+  background-color: white;
+  padding: 15px;
+  padding-bottom: 0px;
   display: flex;
   justify-content: space-between;
 }
 .side {
+  margin-left: 15px;
   width: 4%;
 }
 .barsIcon {
   width: 27px;
   height: 27px;
 }
-.logo {
-  width: 8%;
-}
+
 .logoImg {
-  width: 110px;
-  height: 40px;
+  width: 120px;
+  height: 50px;
 }
 .search {
   width: 78%;
@@ -56,20 +57,23 @@
   margin-top: 2px;
   width: 37px;
   height: 37px;
+  cursor: pointer;
 }
 
 // Start
+
 .startMain {
   background-color: #e4effa;
   display: flex;
   justify-content: space-around;
 }
 .startImg {
-  width: 300px;
-  height: 300px;
+  margin-top: 50px;
+  width: 350px;
+  height: 350px;
 }
 .startText {
-  margin-top: 6%;
+  margin-top: 190px;
 }
 .startText > span {
   font-weight: bold;
