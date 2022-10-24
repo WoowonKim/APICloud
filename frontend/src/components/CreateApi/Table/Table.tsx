@@ -16,6 +16,7 @@ import {
 } from "@tanstack/react-table";
 import { ApiListType, ApiType } from "../../../pages/CreateApi/CreateApi";
 import "./Table.scss";
+import SelectMethods from "../SelectMethods/SelectMethods";
 
 declare module "@tanstack/react-table" {
   interface TableMeta<TData extends RowData> {
@@ -38,15 +39,7 @@ const defaultColumn: Partial<ColumnDef<ApiType>> = {
     }, [initialValue]);
 
     return id === "method" ? (
-      <ul>
-        <li>GET</li>
-        <li>POST</li>
-        <li>PUT</li>
-        <li>DELETE</li>
-        <li>PATCH</li>
-        <li>OPTIONS</li>
-        <li>HEAD</li>
-      </ul>
+      <SelectMethods />
     ) : (
       <input
         value={value as string}
