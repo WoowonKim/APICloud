@@ -14,12 +14,16 @@ const Header = () => {
 
       {/* 로고 */}
       <div className="logo">
-        <img className="logoImg" src={require("../../assest/cloud.png")} />
+        <img className="logoImg" src={require("../../assets/cloud.png")} />
       </div>
 
       {/* 검색창  */}
       <div className="search">
-        <input className="searchbar" type="text" placeholder="검색어를 입력하세요" />
+        <input
+          className="searchbar"
+          type="text"
+          placeholder="검색어를 입력하세요"
+        />
         <button>
           <FontAwesomeIcon icon={faMagnifyingGlass} />
         </button>
