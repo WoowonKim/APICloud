@@ -36,7 +36,6 @@ const ApiList = () => {
           참여자로 진행중인 API
         </span>
       </div>
-      {/* <div className="ApiListContent">{ApiList == 0 ? <ApiListDetail ManagerDummy={ManagerDummy} /> : <ApiListDetailGuest GuestDummy={GuestDummy} />}</div> */}
       <div className="ApiListContent">
         <ApiListDetail ManagerDummy={ManagerDummy} GuestDummy={GuestDummy} ApiList={ApiList} />
       </div>
