@@ -5,8 +5,7 @@
 
 @font-face {
   font-family: "twayair";
-  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_tway@1.0/twayair.woff")
-    format("woff");
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_tway@1.0/twayair.woff") format("woff");
   font-weight: normal;
   font-style: normal;
 }
@@ -178,8 +177,7 @@ body {
 .section3 {
   @include section();
   @include sectionDetail();
-  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
-    url("../../assets/night_cloudy_sky.jpg");
+  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("../../assets/night_cloudy_sky.jpg");
   .subTitle {
     color: white;
   }
