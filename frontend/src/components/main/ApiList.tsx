@@ -21,6 +21,7 @@ const ApiList = () => {
     <div className="ApiList">
       <div className="ApiListTitle">
         <span
+          className={ApiList == 0 ? "ClickList" : "noClicklist"}
           onClick={() => {
             setApiList(0);
           }}
@@ -28,6 +29,7 @@ const ApiList = () => {
           관리자로 진행중인 API
         </span>
         <span
+          className={ApiList == 1 ? "ClickList" : "noClicklist"}
           onClick={() => {
             setApiList(1);
           }}

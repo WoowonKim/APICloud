@@ -4,18 +4,25 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   ManagerDummy: ManagerDummy[];
 }
 
 const ApiListDetail = ({ ManagerDummy }: Props) => {
+  const navigate = useNavigate();
+  const moveApidocs = () => {
+    navigate("/welcome");
+  };
   return (
     <div className="ApiListDetail">
       {ManagerDummy.map((it, idx) => (
         <div className="listContent" key={idx}>
           <p>{it.apiTitle}</p>
-          <p>{it.apiContent}</p>
+          <div className="content" onClick={moveApidocs}>
+            <p>{it.apiContent}</p>
+          </div>
           <div className="userSetting">
             <div className="userSettingSub">
               <div className="member">
@@ -23,7 +30,7 @@ const ApiListDetail = ({ ManagerDummy }: Props) => {
                 {it.member}
               </div>
               <FontAwesomeIcon className="DeatilIcon" icon={faTrash} />
-              <FontAwesomeIcon className="DeatilIcon" icon={faRightToBracket} />
+              <FontAwesomeIcon className="DeatilIcon" icon={faRightToBracket} onClick={moveApidocs} />
             </div>
           </div>
         </div>
