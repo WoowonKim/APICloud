@@ -1,0 +1,23 @@
+.openSidebar {
+  z-index: 5;
+  width: 250px;
+  height: 100%;
+  position: absolute;
+  left: 0px;
+  transition: 0.5s ease;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.closeSidebar {
+  z-index: 5;
+  width: 250px;
+  height: 100%;
+  position: absolute;
+  left: -200px;
+  transition: 0.5s ease;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.closeButtonWrapper {
+  padding: 10px;
+}
