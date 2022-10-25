@@ -4,7 +4,7 @@ import * as Y from "yjs";
 import "./App.css";
 import { WebrtcProvider } from "y-webrtc";
 import { useSyncedStore } from "@syncedstore/react";
-import { store } from "./store";
+import { store } from "./store.ts";
 
 function App() {
   // const doc = useRef(new Y.Doc());

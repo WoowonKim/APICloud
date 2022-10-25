@@ -5,7 +5,8 @@ const ApiTable = ({ index, apis, sharedApi, sharedArray }) => {
     console.log(e.target.name);
     // let copy = [...apis];
     // copy[index].details[key][e.target.name] = e.target.value;
-    apis[index].details[key][e.target.name] = e.tartget.value;
+    apis[index].details[key][e.target.name] = e.target.value;
+    // console.log(apis[index].details[key][e.target.name]);
     // sharedArray.current.delete(0, sharedApi.length);
     // sharedArray.current.insert(0, [...copy]);
   };
