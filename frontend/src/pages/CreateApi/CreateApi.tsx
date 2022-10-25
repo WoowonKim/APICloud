@@ -95,6 +95,7 @@ const CreateApi = () => {
       return copy;
     });
   };
+  console.log(datas);
 
   return (
     <div className="apiDocscontainer">
