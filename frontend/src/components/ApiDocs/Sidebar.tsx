@@ -26,7 +26,7 @@ const Sidebar = ({isOpen, setIsOpen}: {isOpen: boolean; setIsOpen: any}) => {
 			<div className='closeButtonWrapper'>
 				<div onClick={toggleSide} onKeyDown={toggleSide} className='closeButton'>X</div>
 			</div>
-			<ul>
+			<ul className='ul'>
 				<li>메뉴1</li>
 			</ul>
 		</div>
