@@ -96,8 +96,6 @@ const CreateApi = () => {
     });
   };
 
-  console.log("datas", datas);
-
   return (
     <div className="apiDocscontainer">
       <Sidebar />
