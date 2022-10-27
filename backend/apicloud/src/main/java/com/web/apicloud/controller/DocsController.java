@@ -19,10 +19,9 @@ public class DocsController {
     // FIXME: controller 안의 로직 밖에서 수행하거나 해당 controller api 막기
     private final ProjectGenerationController<ProjectRequest> projectGenerationController;
 
-    @GetMapping("/{docId}/project")
-    public ResponseEntity<byte[]> exportProject(@PathVariable Long docId) throws IOException {
-        docsService.findByDocId(docId);
-        ProjectRequest pr = new ProjectRequest();
-        return projectGenerationController.springZip(pr);
+    @GetMapping("/{docsId}/project")
+    public ResponseEntity<byte[]> exportProject(@PathVariable Long docsId) throws IOException {
+        return projectGenerationController.springZip(docsService.getProjectRequestByDocsId(docsId));
     }
+
 }

@@ -27,14 +27,14 @@ public class AutoConfiguration {
 //        return new TestProjectGenerationController(metadataProvider, projectGenerationInvoker);
 //    }
 
-    @Bean
-    @ConditionalOnMissingBean
-    ProjectGenerationInvoker<ProjectRequest> projectGenerationInvoker(
-            ObjectProvider<ProjectRequestPlatformVersionTransformer> platformVersionTransformer,
-            ApplicationContext applicationContext) {
-        ProjectGenerationContext pgc = new ProjectGenerationContext();
-        return new ProjectGenerationInvoker<>(
-                applicationContext, new DefaultProjectRequestToDescriptionConverter(platformVersionTransformer
-                .getIfAvailable(DefaultProjectRequestPlatformVersionTransformer::new)));
-    }
+	@Bean
+	@ConditionalOnMissingBean
+	ProjectGenerationInvoker<ProjectRequest> projectGenerationInvoker(
+			ObjectProvider<ProjectRequestPlatformVersionTransformer> platformVersionTransformer,
+			ApplicationContext applicationContext) {
+		ProjectGenerationContext pgc = new ProjectGenerationContext();
+		return new ProjectGenerationInvoker<>(
+				applicationContext, new DefaultProjectRequestToDescriptionConverter(platformVersionTransformer
+				.getIfAvailable(DefaultProjectRequestPlatformVersionTransformer::new)));
+	}
 }
