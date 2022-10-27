@@ -1,2 +1,6 @@
-package com.web.apicloud.model;public class AuthProvider {
+package com.web.apicloud.model;
+
+public enum AuthProvider {
+    google,
+    github
 }
