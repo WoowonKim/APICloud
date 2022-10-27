@@ -1,5 +1,6 @@
 FROM node:16.15.0 as build-stage
 WORKDIR /app
+# WORKDIR /var/jenkins_home/workspace/ApiCloud/frontend
 # COPY package*.json ./
 # RUN npm install
 # COPY . .
@@ -16,12 +17,11 @@ WORKDIR /app
 # ENTRYPOINT ["nginx", "-g", "daemon off;"]
 
 
-# WORKDIR /var/jenkins_home/workspace/ApiCloud/frontend
 COPY package*.json ./
 RUN npm install
 COPY . .
 RUN npm run build
-FROM nginx:stable-alpine as production-stage
+# FROM nginx:stable-alpine as production-stage
 
 FROM nginx:stable-alpine
 RUN rm -rf /etc/nginx/conf.d/defalut.conf
