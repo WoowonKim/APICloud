@@ -1,112 +1,84 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
-import Select, {
-  ActionMeta,
-  components,
-  InputActionMeta,
-  MultiValue,
-  NonceProvider,
-  SingleValue,
-} from "react-select";
+import styled from "styled-components";
 import "./SelectMethods.scss";
 
-interface MethodType {
-  value: string;
-  label: string;
-}
+const Item = styled.div`
+  border: none;
+  border-radius: 10px;
+  padding: 5px 10px;
+  margin-top: 5px;
+  font-weight: bold;
+  background-color: ${(props) => props.color};
+`;
+
+const SelectedItem = styled.button`
+  border: none;
+  border-radius: 10px;
+  padding: 5px 10px;
+  margin-top: 5px;
+  font-weight: bold;
+  background-color: ${(props) => props.color};
+`;
 
 const SelectMethods = () => {
-  const [selected, setSelected] = useState<MultiValue<MethodType>>([
-    {
-      value: "GET",
-      label: "GET",
-    },
-  ]);
-  const methods = [
-    {
-      value: "GET",
-      label: "GET",
-    },
-    {
-      value: "POST",
-      label: "POST",
-    },
-    {
-      value: "PUT",
-      label: "PUT",
-    },
-    {
-      value: "DELETE",
-      label: "DELETE",
-    },
-    {
-      value: "PATCH",
-      label: "PATCH",
-    },
-    {
-      value: "OPTIONS",
-      label: "OPTIONS",
-    },
-    {
-      value: "HEAD",
-      label: "HEAD",
-    },
-  ];
-  const multiValue = "test";
-  const handleOnChange = (
-    newValue: MultiValue<MethodType>,
-    actionMeta: ActionMeta<MethodType>
-  ) => {
-    setSelected(newValue);
-  };
+  const [visible, setVisible] = useState(false);
+  const [selectedMethod, setSelectedMethod] = useState("GET");
 
-  const customStyles = {
-    control: (base: any, state: any) => ({
-      ...base,
-      border: "none",
-    }),
-  };
-
-  const DropdownIndicator = (props: any) => {
-    return (
-      components.DropdownIndicator && (
-        <components.DropdownIndicator {...props}>
-          <></>
-        </components.DropdownIndicator>
-      )
-    );
-  };
-
-  const ClearIndicator = (props: any) => {
-    return (
-      components.ClearIndicator && (
-        <components.ClearIndicator {...props}>
-          <></>
-        </components.ClearIndicator>
-      )
-    );
-  };
-
-  const IndicatorsContainer = (props: any) => {
-    return (
-      components.IndicatorsContainer && (
-        <components.IndicatorsContainer {...props}>
-          <></>
-        </components.IndicatorsContainer>
-      )
-    );
+  const handleSelect = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+    const eventTarget = e.target as HTMLElement;
+    setSelectedMethod(eventTarget.innerText);
+    setVisible(!visible);
   };
 
   return (
-    <Select
-      isMulti
-      value={selected}
-      onChange={handleOnChange}
-      options={methods}
-      styles={customStyles}
-      placeholder={""}
-      components={{ DropdownIndicator, ClearIndicator, IndicatorsContainer }}
-    />
+    <div className="selectBox" onClick={() => setVisible(!visible)}>
+      <SelectedItem
+        color={
+          selectedMethod === "GET"
+            ? "#FDECC8"
+            : selectedMethod === "POST"
+            ? "#F5E0E9"
+            : selectedMethod === "PUT"
+            ? "#F1F0EF"
+            : selectedMethod === "DELETE"
+            ? "#D3E5EF"
+            : selectedMethod === "PATCH"
+            ? "#E8DEEE"
+            : selectedMethod === "OPTIONS"
+            ? "#FFE2DD"
+            : "#EEE0DA"
+        }
+      >
+        {selectedMethod}
+      </SelectedItem>
+      {visible && (
+        <div className="selectBoxContainer">
+          <ul className="itemList">
+            <li className="item" onClick={(e) => handleSelect(e)}>
+              <Item color="#fdecc8">GET</Item>
+            </li>
+            <li className="item" onClick={(e) => handleSelect(e)}>
+              <Item color="#F5E0E9">POST</Item>
+            </li>
+            <li className="item" onClick={(e) => handleSelect(e)}>
+              <Item color="#F1F0EF">PUT</Item>
+            </li>
+            <li className="item" onClick={(e) => handleSelect(e)}>
+              <Item color="#D3E5EF">DELETE</Item>
+            </li>
+            <li className="item" onClick={(e) => handleSelect(e)}>
+              <Item color="#E8DEEE">PATCH</Item>
+            </li>
+            <li className="item" onClick={(e) => handleSelect(e)}>
+              <Item color="#FFE2DD">OPTIONS</Item>
+            </li>
+            <li className="item" onClick={(e) => handleSelect(e)}>
+              <Item color="#EEE0DA">HEAD</Item>
+            </li>
+          </ul>
+        </div>
+      )}
+    </div>
   );
 };
 
