@@ -32,5 +32,5 @@ RUN rm -rf /usr/share/nginx/html/*
 # COPY --from=build-stage /var/jenkins_home/workspace/ApiCloud/frontend/build /usr/share/nginx/html
 COPY --from=build-stage /app/build /usr/share/nginx/html
 
-EXPOSE 80
+EXPOSE 3000
 CMD ["nginx", "-g","daemon off;"]
