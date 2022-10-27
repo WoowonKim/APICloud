@@ -121,7 +121,7 @@ const Table = ({ data, setData, url, datas, dataIndex }: Props) => {
     columnResizeMode,
     getCoreRowModel: getCoreRowModel(),
     meta: {
-      updateData: (rowIndex, columnId, value) => {
+      updateData: (rowIndex: number, columnId: any, value: any) => {
         setData((old) => {
           let copy = [...old];
           if (!!value) {
