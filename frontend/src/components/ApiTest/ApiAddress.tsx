@@ -1,17 +1,14 @@
 import React from "react";
+import { SiteAddressType } from "../../pages/TestApi";
 
-const ApiAddress = () => {
+interface Props {
+  siteAddress: SiteAddressType;
+}
+const ApiAddress = ({ siteAddress }: Props) => {
   return (
     <div className="ApiSide">
-      <div className="sideAddress">
-        <p className="sideText">사이트 주소</p>
-        <p> https://localhost:8080</p>
-      </div>
-
-      <div className="sideUri">
-        <p className="sideText">공통 URI</p>
-        <p> /ApiCloud</p>
-      </div>
+      <p className="sideText">사이트 주소 : {siteAddress.Address}</p>
+      <p className="sideText">공통 URI : {siteAddress.commonUri}</p>
     </div>
   );
 };

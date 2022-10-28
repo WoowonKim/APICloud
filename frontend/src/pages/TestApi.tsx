@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Header from "../components/main/Header";
 import ApiAddress from "../components/ApiTest/ApiAddress";
 import ApiBody from "../components/ApiTest/ApiBody";
@@ -7,17 +7,32 @@ import ApiInputUri from "../components/ApiTest/ApiInputUri";
 import ApiResponse from "../components/ApiTest/ApiResponse";
 import ApiSide from "../components/ApiTest/ApiSide";
 import "../components/ApiTest/ApiTest.scss";
+
+export type SiteAddressType = {
+  Address: string;
+  commonUri: string;
+};
+export type subMethod = {
+  method: string;
+  uri: string;
+};
+const siteAddress: SiteAddressType = {
+  Address: "https://localhost:8080",
+  commonUri: "/ApiCloud",
+};
 const TestApi = () => {
+  const [submitMethod, setSubmitMethod] = useState<subMethod | null>(null);
+
   return (
     <div>
-      {/* <Header /> 구현 완료 후 추가 할 부분입니다.*/}
+      <Header />
       <div className="testContainer">
         <div className="testSide">
           <ApiSide />
         </div>
         <div className="testMain">
-          <ApiAddress />
-          <ApiInputUri />
+          <ApiAddress siteAddress={siteAddress} />
+          <ApiInputUri siteAddress={siteAddress} setSubmitMethod={setSubmitMethod} />
           <div className="testInfo">
             <div className="testSetting">
               <ApiHeader />
