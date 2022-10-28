@@ -10,6 +10,7 @@ import org.json.simple.JSONObject;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
@@ -23,6 +24,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -37,12 +39,20 @@ public class LoggingInterceptor extends HandlerInterceptorAdapter {
         if (request.getClass().getName().contains("SecurityContextHolderAwareRequestWrapper")) return;
         final ContentCachingRequestWrapper cachingRequest = (ContentCachingRequestWrapper) request;
         final ContentCachingResponseWrapper cachingResponse = (ContentCachingResponseWrapper) response;
+//        Map<?, ?> pathVariables = (Map<?, ?>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+//        Iterator<String> key = (Iterator<String>) pathVariables.keySet().iterator();
+//        while (key.hasNext()){
+//            String k = key.next();
+//            System.out.println(pathVariables.get(k));
+//            System.out.println(pathVariables.get(k).getClass());
+//            //여기서 string만 인식
+//        }
         if (cachingRequest != null //&& cachingRequest.getContentType().contains("application/json")
         ) {
 
             StringBuffer json = new StringBuffer();
             String line = null;
-//            StringBuilder json = new StringBuilder();
+//            StringBuil  der json = new StringBuilder();
             InputStream reader = request.getInputStream();
 
 //            try {
