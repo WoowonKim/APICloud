@@ -28,10 +28,12 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation group: 'io.spring.initializr', name: 'initializr-bom', version: '0.12.0', ext: 'pom'
-	implementation group: 'io.spring.initializr', name: 'initializr-generator', version: '0.12.0'
-	implementation group: 'io.spring.initializr', name: 'initializr-web', version: '0.12.0'
-	implementation group: 'io.spring.initializr', name: 'initializr-generator-spring', version: '0.12.0'
+
+	implementation group: 'io.spring.initializr', name: 'initializr-bom', version: '0.13.0', ext: 'pom'
+	implementation group: 'io.spring.initializr', name: 'initializr-generator', version: '0.13.0'
+	implementation group: 'io.spring.initializr', name: 'initializr-web', version: '0.13.0'
+	implementation group: 'io.spring.initializr', name: 'initializr-generator-spring', version: '0.13.0'
+
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'mysql:mysql-connector-java'

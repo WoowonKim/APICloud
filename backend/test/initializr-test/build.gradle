@@ -23,6 +23,9 @@ dependencies {
     implementation group: 'io.spring.initializr', name: 'initializr-generator-spring', version: '0.12.0'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+    // https://mvnrepository.com/artifact/io.swagger.parser.v3/swagger-parser
+    implementation group: 'io.swagger.parser.v3', name: 'swagger-parser', version: '2.1.5'
+
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

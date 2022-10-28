@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import styled from "styled-components";
-import "./SelectMethods.scss";
+import "../CreateApi/SelectMethods/SelectMethods.scss";
 
 const Item = styled.div`
   border: none;
@@ -18,18 +18,24 @@ const SelectedItem = styled.button`
   margin-top: 5px;
   font-weight: bold;
   background-color: ${(props) => props.color};
+  width: 100%;
 `;
 
-const SelectMethods = () => {
+interface Props {
+  setGetMethod: Dispatch<SetStateAction<string>>;
+}
+
+const MethodTest = ({ setGetMethod }: Props) => {
   const [visible, setVisible] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState("GET");
 
   const handleSelect = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
     const eventTarget = e.target as HTMLElement;
     setSelectedMethod(eventTarget.innerText);
+    setGetMethod(eventTarget.innerText);
     setVisible(!visible);
   };
-
+  const mainColor = "F4F4F4";
   return (
     <div className="selectBox" onClick={() => setVisible(!visible)}>
       <SelectedItem
@@ -82,4 +88,4 @@ const SelectMethods = () => {
   );
 };
 
-export default SelectMethods;
+export default MethodTest;

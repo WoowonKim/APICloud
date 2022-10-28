@@ -1,4 +1,4 @@
-package com.example.test.controller;/*
+/*
  * Copyright 2012-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,6 +13,7 @@ package com.example.test.controller;/*
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.example.test.controller;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,6 +36,7 @@ import io.spring.initializr.generator.project.ProjectDescription;
 import io.spring.initializr.metadata.InitializrMetadata;
 import io.spring.initializr.metadata.InitializrMetadataProvider;
 import io.spring.initializr.web.project.*;
+import io.spring.initializr.web.autoconfigure.InitializrAutoConfiguration;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
@@ -59,23 +61,23 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/api")
 @Controller
 public class TestProjectGenerationController {
-    private static final Log logger = LogFactory.getLog(io.spring.initializr.web.controller.ProjectGenerationController.class);
+	private static final Log logger = LogFactory.getLog(io.spring.initializr.web.controller.ProjectGenerationController.class);
 	private final InitializrMetadataProvider metadataProvider;
 
 	private final ProjectGenerationInvoker<ProjectRequest> projectGenerationInvoker;
 
 	public TestProjectGenerationController(InitializrMetadataProvider metadataProvider,
-                                           ProjectGenerationInvoker<ProjectRequest> projectGenerationInvoker) {
+										   ProjectGenerationInvoker<ProjectRequest> projectGenerationInvoker) {
 		this.metadataProvider = metadataProvider;
 		this.projectGenerationInvoker = projectGenerationInvoker;
 	}
 
 	@ModelAttribute
-    ProjectRequest projectRequest(@RequestHeader Map<String, String> headers,
-			@RequestParam(name = "style", required = false) String style) {
-        System.out.println("projectRequest(String style)::");
-        System.out.println("headers:::"+headers);
-        System.out.println("style:::"+style);
+	ProjectRequest projectRequest(@RequestHeader Map<String, String> headers,
+								  @RequestParam(name = "style", required = false) String style) {
+		System.out.println("projectRequest(String style)::");
+		System.out.println("headers:::"+headers);
+		System.out.println("style:::"+style);
 		if (style != null) {
 			throw new InvalidProjectRequestException("Dependencies must be specified using 'dependencies'");
 		}
@@ -89,12 +91,12 @@ public class TestProjectGenerationController {
 	 * @return a new {@link ProjectRequest} instance
 	 */
 	public ProjectRequest projectRequest(@RequestHeader Map<String, String> headers){
-        System.out.println("projectRequest()::");
-        WebProjectRequest request = new WebProjectRequest();
-        request.getParameters().putAll(headers);
-        request.initialize(getMetadata());
-        return request;
-    }
+		System.out.println("projectRequest()::");
+		WebProjectRequest request = new WebProjectRequest();
+		request.getParameters().putAll(headers);
+		request.initialize(getMetadata());
+		return request;
+	}
 
 	protected InitializrMetadata getMetadata() {
 		return this.metadataProvider.get();
@@ -108,9 +110,9 @@ public class TestProjectGenerationController {
 
 	@RequestMapping("/starter.zip")
 	public ResponseEntity<byte[]> springZip(ProjectRequest request) throws IOException {
-        System.out.println("springZip()::");
+		System.out.println("springZip()::");
 		ProjectGenerationResult result = this.projectGenerationInvoker.invokeProjectStructureGeneration(request);
-        System.out.println("groupID:::"+result.getProjectDescription());
+		System.out.println("groupID:::"+result.getProjectDescription());
 
 		Path archive = createArchive(result, "zip", ZipArchiveOutputStream::new, ZipArchiveEntry::new,
 				ZipArchiveEntry::setUnixMode);
@@ -138,8 +140,8 @@ public class TestProjectGenerationController {
 	}
 
 	private <T extends ArchiveEntry> Path createArchive(ProjectGenerationResult result, String fileExtension,
-			Function<OutputStream, ? extends ArchiveOutputStream> archiveOutputStream,
-			BiFunction<File, String, T> archiveEntry, BiConsumer<T, Integer> setMode) throws IOException {
+														Function<OutputStream, ? extends ArchiveOutputStream> archiveOutputStream,
+														BiFunction<File, String, T> archiveEntry, BiConsumer<T, Integer> setMode) throws IOException {
 		System.out.println("createArchive()::");
 		Path archive = this.projectGenerationInvoker.createDistributionFile(result.getRootDirectory(),
 				"." + fileExtension);

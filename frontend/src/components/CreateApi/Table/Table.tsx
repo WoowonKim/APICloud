@@ -4,6 +4,7 @@ import React, {
   useEffect,
   useMemo,
   useReducer,
+  useRef,
   useState,
 } from "react";
 import {
@@ -17,6 +18,7 @@ import {
 import { ApiListType, ApiType } from "../../../pages/CreateApi/CreateApi";
 import "./Table.scss";
 import SelectMethods from "../SelectMethods/SelectMethods";
+import UseAutosizeTextArea from "./UseAutoSizeTextArea";
 
 declare module "@tanstack/react-table" {
   interface TableMeta<TData extends RowData> {
@@ -27,8 +29,8 @@ declare module "@tanstack/react-table" {
 // defaultColumn 설정
 const defaultColumn: Partial<ColumnDef<ApiType>> = {
   cell: function Cell({ getValue, row: { index }, column: { id }, table }) {
-    const initialValue = getValue();
-    const [value, setValue] = useState(initialValue);
+    const initialValue = getValue<string>();
+    const [value, setValue] = useState<string>(initialValue);
 
     const onBlur = () => {
       table.options.meta?.updateData(index, id, value);
@@ -38,14 +40,19 @@ const defaultColumn: Partial<ColumnDef<ApiType>> = {
       setValue(initialValue);
     }, [initialValue]);
 
+    const textAreaRef = useRef<HTMLTextAreaElement>(null);
+    UseAutosizeTextArea(textAreaRef.current, value);
+
     return id === "method" ? (
       <SelectMethods />
     ) : (
-      <input
+      <textarea
         value={value as string}
         onChange={(e) => setValue(e.target.value)}
         onBlur={onBlur}
         className="tableInput"
+        ref={textAreaRef}
+        rows={1}
       />
     );
   },
@@ -114,7 +121,7 @@ const Table = ({ data, setData, url, datas, dataIndex }: Props) => {
     columnResizeMode,
     getCoreRowModel: getCoreRowModel(),
     meta: {
-      updateData: (rowIndex, columnId, value) => {
+      updateData: (rowIndex: number, columnId: any, value: any) => {
         setData((old) => {
           let copy = [...old];
           if (!!value) {
