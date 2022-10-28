@@ -1,10 +1,14 @@
 package com.web.apicloud.model;
 
 import com.web.apicloud.domain.dto.CreateDocDto;
+import com.web.apicloud.domain.dto.DocListResponse;
 import com.web.apicloud.domain.entity.Docs;
 import com.web.apicloud.domain.entity.Group;
+import com.web.apicloud.domain.entity.GroupUser;
+import com.web.apicloud.domain.entity.User;
 import com.web.apicloud.domain.repository.DocsRepository;
 import com.web.apicloud.domain.repository.GroupRepository;
+import com.web.apicloud.domain.repository.GroupUserRepository;
 import com.web.apicloud.domain.repository.UserRepository;
 import com.web.apicloud.util.SHA256;
 import io.spring.initializr.web.project.ProjectRequest;
@@ -13,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -24,11 +30,18 @@ public class DocsServiceImpl implements DocsService{
 
     private final GroupRepository groupRepository;
 
+    private final GroupUserRepository groupUserRepository;
+
     private final SHA256 sha256;
 
     @Override
     public Docs findByDocsId(Long docsId) {
         return docsRepository.findById(docsId).orElse(null);
+    }
+
+    @Override
+    public User findByUserId(Long userId) {
+        return userRepository.findById(userId).orElse(null);
     }
 
     @Override
@@ -86,12 +99,25 @@ public class DocsServiceImpl implements DocsService{
         return pr;
     }
     @Override
-    public Long saveDocs(CreateDocDto createDocDto) {
-        Group group = Group.builder().authority(1).user(userRepository.getById(createDocDto.getUserId())).build();
-        groupRepository.save(group);
-        createDocDto.setGroup(group);
-        Long docId = docsRepository.save(createDocDto.toEntity()).getId();
-        return docId;
+    public Long saveDocGetDocId(CreateDocDto createDocDto) {
+        Long latestGroupId = groupRepository.getLatestValue();
+        if (latestGroupId == null) {
+            Group group = Group.builder().id(1L).build();
+            groupRepository.save(group);
+            GroupUser groupUser = GroupUser.builder().authority(1).user(findByUserId(createDocDto.getUserId())).group(group).build();
+            groupUserRepository.save(groupUser);
+            createDocDto.setGroup(group);
+            Long docId = docsRepository.save(createDocDto.toEntity()).getId();
+            return docId;
+        } else {
+            Group group = Group.builder().id(latestGroupId+1).build();
+            groupRepository.save(group);
+            GroupUser groupUser = GroupUser.builder().authority(1).user(findByUserId(createDocDto.getUserId())).group(group).build();
+            groupUserRepository.save(groupUser);
+            createDocDto.setGroup(group);
+            Long docId = docsRepository.save(createDocDto.toEntity()).getId();
+            return docId;
+        }
     }
 
     // 암호화된 Url DB에 저장
@@ -102,10 +128,26 @@ public class DocsServiceImpl implements DocsService{
         docsRepository.save(encryptedDoc);
     }
 
+    @Override
     public String encryptUrl(Long docId) throws NoSuchAlgorithmException {
         String encryptedDocId = sha256.encrypt(docId.toString());
         String encryptedUrl = "http://localhost:3000/" + encryptedDocId;
         updateDocs(docId, encryptedUrl);
         return encryptedUrl;
+    }
+
+    @Override
+    public List<DocListResponse> getDocs(Long userId) {
+        ArrayList<DocListResponse> docListResponses = new ArrayList<>();
+        User user = findByUserId(userId);
+        List<GroupUser> groupUsers =  groupUserRepository.findByUser(user);
+        for (GroupUser groupUser : groupUsers) {
+            List<Docs> docs = docsRepository.findByGroup(groupUser.getGroup());
+            for (Docs doc : docs) {
+                DocListResponse docListResponse = doc.toDto(doc.getId(), doc.getDocsName(), doc.getGroup().getId(), groupUser.getUser(), groupUser.getAuthority());
+                docListResponses.add(docListResponse);
+            }
+        }
+        return docListResponses;
     }
 }
