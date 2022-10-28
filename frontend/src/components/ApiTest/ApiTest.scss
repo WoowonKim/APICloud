@@ -1,0 +1,107 @@
+// Main
+.testContainer {
+  display: flex;
+  justify-content: space-between;
+}
+.testSide {
+  width: 20%;
+  height: 100vh;
+  background-color: #e7f7fe;
+}
+
+.testMain {
+  width: 80%;
+}
+.testInfo {
+  display: flex;
+}
+.testSetting {
+  width: 40%;
+}
+
+// ApiSide
+.ApiSide {
+  display: flex;
+}
+.sideAddress {
+  width: 20%;
+}
+.sideText {
+  font-weight: bold;
+  font-size: 15px;
+  height: 5px;
+}
+
+// ApiInput
+.ApiInputContainer {
+  display: flex;
+  justify-self: start;
+}
+.ApiInputContainer > input:focus {
+  outline: none;
+}
+.ApiInput {
+  width: 50%;
+  background-color: #f4f4f4;
+  border: none;
+  border-top-right-radius: 30px;
+  border-bottom-right-radius: 30px;
+  padding: 5px;
+  outline: none;
+}
+.ApiChoice {
+  border: none;
+  width: 8%;
+  font-size: 13px;
+  font-weight: bold;
+  padding-right: 10px;
+  padding-left: 10px;
+  padding-top: 5px;
+  padding-bottom: 7px;
+  border-top-left-radius: 30px;
+  border-bottom-left-radius: 30px;
+  background-color: #f4f4f4;
+}
+.ApiTestBtn {
+  width: 145px;
+  height: 45px;
+  margin-left: 7px;
+  border-radius: 15px;
+  border: none;
+  background-color: #3a00e5;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+}
+// ApiHeader
+.ApiHeaderContainer > p {
+  height: 7px;
+}
+.HeaderList {
+  display: flex;
+  background-color: #f4f4f4;
+}
+.HeaderListTitle {
+  width: 30%;
+  text-align: center;
+}
+
+.HeaderListContent {
+  margin-left: 3px;
+  text-align: center;
+}
+
+//ApiBody
+.ApiBodyContainer > textarea:focus {
+  outline: none;
+}
+.ApiBodyContainer > p {
+  height: 9px;
+}
+.bodyArea {
+  width: 100%;
+  height: 270px;
+  border: 1px solid #000000;
+  border-radius: 10px;
+  resize: none;
+}
