@@ -57,3 +57,26 @@ export const GuestDummy = [
     member: 9,
   },
 ];
+
+export const userDummy = [
+  {
+    id: "zerojei0423@gmail.com",
+    name: "신빵제",
+    authority: "만든이",
+  },
+  {
+    id: "woowon1031@gmail.com",
+    name: "기무원",
+    authority: "사용자",
+  },
+  {
+    id: "KEH@gmail.com",
+    name: "기므녜",
+    authority: "사용자",
+  },
+  {
+    id: "JYJ@gmail.com",
+    name: "조류진",
+    authority: "사용자",
+  },
+];

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import "./SelectMethods.scss";
+import "../CreateApi/SelectMethods/SelectMethods.scss";
 
 const Item = styled.div`
   border: none;
@@ -18,9 +18,10 @@ const SelectedItem = styled.button`
   margin-top: 5px;
   font-weight: bold;
   background-color: ${(props) => props.color};
+  width: 100%;
 `;
 
-const SelectMethods = () => {
+const MethodTest = () => {
   const [visible, setVisible] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState("GET");
 
@@ -29,24 +30,24 @@ const SelectMethods = () => {
     setSelectedMethod(eventTarget.innerText);
     setVisible(!visible);
   };
-
+  const mainColor = "F4F4F4";
   return (
     <div className="selectBox" onClick={() => setVisible(!visible)}>
       <SelectedItem
         color={
           selectedMethod === "GET"
-            ? "#FDECC8"
+            ? mainColor
             : selectedMethod === "POST"
-            ? "#F5E0E9"
+            ? mainColor
             : selectedMethod === "PUT"
-            ? "#F1F0EF"
+            ? mainColor
             : selectedMethod === "DELETE"
-            ? "#D3E5EF"
+            ? mainColor
             : selectedMethod === "PATCH"
-            ? "#E8DEEE"
+            ? mainColor
             : selectedMethod === "OPTIONS"
-            ? "#FFE2DD"
-            : "#EEE0DA"
+            ? mainColor
+            : mainColor
         }
       >
         {selectedMethod}
@@ -82,4 +83,4 @@ const SelectMethods = () => {
   );
 };
 
-export default SelectMethods;
+export default MethodTest;

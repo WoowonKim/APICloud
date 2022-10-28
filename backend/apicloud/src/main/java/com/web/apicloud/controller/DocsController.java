@@ -35,10 +35,9 @@ public class DocsController {
         }
     }
 
-    @GetMapping("/{docId}/project")
-    public ResponseEntity<byte[]> exportProject(@PathVariable Long docId) throws IOException {
-        docsService.findByDocId(docId);
-        ProjectRequest pr = new ProjectRequest();
-        return projectGenerationController.springZip(pr);
+    @GetMapping("/{docsId}/project")
+    public ResponseEntity<byte[]> exportProject(@PathVariable Long docsId) throws IOException {
+        return projectGenerationController.springZip(docsService.getProjectRequestByDocsId(docsId));
     }
+
 }
