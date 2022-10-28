@@ -8,7 +8,6 @@ const ApiBody = () => {
   };
 
   const handleSetTab = (e: { keyCode?: any; preventDefault?: any; target: any }) => {
-    console.log(e.keyCode);
     if (e.keyCode === 9) {
       e.preventDefault();
       let val = e.target.value;
