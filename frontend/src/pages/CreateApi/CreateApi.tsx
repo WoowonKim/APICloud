@@ -86,15 +86,15 @@ const CreateApi = () => {
       failResponseBody: "",
     };
 
-    let copy = [...datas];
-    copy[index] = {
-      url: copy[index].url,
-      details: [...copy[index].details, addData],
-    };
-    setDatas(copy);
+    setDatas((old) => {
+      let copy = [...old];
+      copy[index] = {
+        url: copy[index].url,
+        details: [...copy[index].details, addData],
+      };
+      return copy;
+    });
   };
-
-  useEffect(() => {}, [datas]);
 
   return (
     <div className="apiDocscontainer">
@@ -123,9 +123,12 @@ const CreateApi = () => {
             <div className="apiTable">
               <div className="plusButtonGroup">
                 {index === datas.length - 1 ? (
-                  <button className="tablePlusButton" onClick={addTable}>
-                    <FontAwesomeIcon className="plusIcon" icon={faPlus} />
-                  </button>
+                  <>
+                    <button className="tablePlusButton" onClick={addTable}>
+                      <FontAwesomeIcon className="plusIcon" icon={faPlus} />
+                      <div className="tablePlusText">컨트롤러 추가</div>
+                    </button>
+                  </>
                 ) : (
                   <div></div>
                 )}
@@ -136,13 +139,14 @@ const CreateApi = () => {
                   }}
                 >
                   <FontAwesomeIcon className="plusIcon" icon={faPlus} />
+                  <div className="apiPlusText">api 추가</div>
                 </button>
               </div>
               <div>
                 <Table
                   datas={datas}
                   key={index}
-                  index={index}
+                  dataIndex={index}
                   data={data.details}
                   setData={setDatas}
                   url={data.url}

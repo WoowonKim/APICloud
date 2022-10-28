@@ -1,0 +1,39 @@
+.apiDocContainer {
+  background-color: #F7F5FF;
+  height: 100vh;
+  padding-bottom: 10svh;
+  .sidebarDocWrapper {
+    justify-content: space-around;
+    background-color: #F7F5FF;
+    .sidebarBox {
+      position: fixed;
+      .sidebarButton {
+        padding: 20px;
+      }
+    }
+    .docBox {
+      margin: auto;
+      background-color: #F7F5FF;
+      width: 60vw;
+      height: 200vh;
+      padding-top: 10vh;
+      .title {
+        margin: auto;
+        font-size: 40px;
+      }
+      .doc {
+        width: 60vw;
+        height: 150vh;
+        background-color: white;
+      }
+    }
+  }
+}
+
+
+
+
+
+
+
+

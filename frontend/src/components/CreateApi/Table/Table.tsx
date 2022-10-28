@@ -16,6 +16,7 @@ import {
 } from "@tanstack/react-table";
 import { ApiListType, ApiType } from "../../../pages/CreateApi/CreateApi";
 import "./Table.scss";
+import SelectMethods from "../SelectMethods/SelectMethods";
 
 declare module "@tanstack/react-table" {
   interface TableMeta<TData extends RowData> {
@@ -37,7 +38,9 @@ const defaultColumn: Partial<ColumnDef<ApiType>> = {
       setValue(initialValue);
     }, [initialValue]);
 
-    return (
+    return id === "method" ? (
+      <SelectMethods />
+    ) : (
       <input
         value={value as string}
         onChange={(e) => setValue(e.target.value)}
@@ -53,11 +56,11 @@ interface Props {
   datas: ApiListType[];
   data: ApiType[];
   setData: Dispatch<SetStateAction<ApiListType[]>>;
-  index: number;
+  dataIndex: number;
   url: string;
 }
 
-const Table = ({ data, setData, url, datas, index }: Props) => {
+const Table = ({ data, setData, url, datas, dataIndex }: Props) => {
   // column 설정
   const columns = useMemo<ColumnDef<ApiType>[]>(
     () => [
@@ -113,16 +116,19 @@ const Table = ({ data, setData, url, datas, index }: Props) => {
     meta: {
       updateData: (rowIndex, columnId, value) => {
         setData((old) => {
-          old[index].details.map((row, idx) => {
-            if (idx === rowIndex) {
-              const newData = {
-                ...old[index].details[rowIndex]!,
-                [columnId]: value,
-              };
-              old[index].details = [newData];
-            }
-          });
-          return old;
+          let copy = [...old];
+          if (!!value) {
+            copy[dataIndex].details.map((row, idx) => {
+              if (idx === rowIndex) {
+                const newData = {
+                  ...copy[dataIndex].details[rowIndex]!,
+                  [columnId]: value,
+                };
+                copy[dataIndex].details[rowIndex] = newData;
+              }
+            });
+          }
+          return copy;
         });
       },
     },
@@ -137,7 +143,7 @@ const Table = ({ data, setData, url, datas, index }: Props) => {
         value={url}
         onChange={(e) => {
           let copy = [...datas];
-          copy[index] = { url: e.target.value, details: [...data] };
+          copy[dataIndex] = { url: e.target.value, details: [...data] };
           setData(copy);
         }}
       />
