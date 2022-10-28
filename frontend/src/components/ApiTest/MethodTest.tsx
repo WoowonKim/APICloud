@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import styled from "styled-components";
 import "../CreateApi/SelectMethods/SelectMethods.scss";
 
@@ -21,13 +21,18 @@ const SelectedItem = styled.button`
   width: 100%;
 `;
 
-const MethodTest = () => {
+interface Props {
+  setGetMethod: Dispatch<SetStateAction<string>>;
+}
+
+const MethodTest = ({ setGetMethod }: Props) => {
   const [visible, setVisible] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState("GET");
 
   const handleSelect = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
     const eventTarget = e.target as HTMLElement;
     setSelectedMethod(eventTarget.innerText);
+    setGetMethod(eventTarget.innerText);
     setVisible(!visible);
   };
   const mainColor = "F4F4F4";
@@ -36,18 +41,18 @@ const MethodTest = () => {
       <SelectedItem
         color={
           selectedMethod === "GET"
-            ? mainColor
+            ? "#FDECC8"
             : selectedMethod === "POST"
-            ? mainColor
+            ? "#F5E0E9"
             : selectedMethod === "PUT"
-            ? mainColor
+            ? "#F1F0EF"
             : selectedMethod === "DELETE"
-            ? mainColor
+            ? "#D3E5EF"
             : selectedMethod === "PATCH"
-            ? mainColor
+            ? "#E8DEEE"
             : selectedMethod === "OPTIONS"
-            ? mainColor
-            : mainColor
+            ? "#FFE2DD"
+            : "#EEE0DA"
         }
       >
         {selectedMethod}

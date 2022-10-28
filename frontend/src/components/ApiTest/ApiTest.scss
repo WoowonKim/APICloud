@@ -11,6 +11,7 @@
 
 .testMain {
   width: 80%;
+  margin-left: 9px;
 }
 .testInfo {
   display: flex;
@@ -21,14 +22,14 @@
 
 // ApiSide
 .ApiSide {
+  margin-top: 70px;
   display: flex;
-}
-.sideAddress {
-  width: 20%;
+  padding: 5px;
 }
 .sideText {
+  width: 25%;
   font-weight: bold;
-  font-size: 15px;
+  font-size: 13px;
   height: 5px;
 }
 
@@ -42,12 +43,16 @@
 }
 .ApiInput {
   width: 50%;
-  background-color: #f4f4f4;
   border: none;
+  border-bottom: 1px solid #000000;
+  border-right: 1px solid #000000;
+  border-top: 1px solid #000000;
   border-top-right-radius: 30px;
   border-bottom-right-radius: 30px;
   padding: 5px;
   outline: none;
+  font-weight: 500;
+  font-size: 16px;
 }
 .ApiChoice {
   border: none;
@@ -56,11 +61,11 @@
   font-weight: bold;
   padding-right: 10px;
   padding-left: 10px;
-  padding-top: 5px;
-  padding-bottom: 7px;
+  padding-top: 4px;
+  padding-bottom: 5px;
   border-top-left-radius: 30px;
   border-bottom-left-radius: 30px;
-  background-color: #f4f4f4;
+  border: 1px solid #000000;
 }
 .ApiTestBtn {
   width: 145px;
@@ -100,7 +105,7 @@
 }
 .bodyArea {
   width: 100%;
-  height: 270px;
+  height: 200px;
   border: 1px solid #000000;
   border-radius: 10px;
   resize: none;
