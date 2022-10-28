@@ -16,7 +16,6 @@ import {
   ColumnResizeMode,
 } from "@tanstack/react-table";
 import "../components/CreateApi/Table/Table.scss";
-import { ApiType, DataType } from "./Test";
 import SelectMethods from "../components/CreateApi/SelectMethods/SelectMethods";
 import UseAutosizeTextArea from "../components/CreateApi/Table/UseAutoSizeTextArea";
 
@@ -83,53 +82,61 @@ const TestTable = ({ activeTab }: Props) => {
               footer: (props) => props.column.id,
             },
             {
-              accessorKey: "type",
-              footer: (props) => props.column.id,
-            },
-            {
               accessorKey: "value",
               footer: (props) => props.column.id,
             },
-            {
-              accessorKey: "required",
-              footer: (props) => props.column.id,
-            },
           ]
-        : activeTab === 2
+        : activeTab === 2 || activeTab === 3 || activeTab === 4
         ? [
             {
               accessorKey: "name",
               footer: (props) => props.column.id,
             },
             {
-              accessorKey: "in",
+              accessorKey: "type",
               footer: (props) => props.column.id,
             },
             {
               accessorKey: "required",
               footer: (props) => props.column.id,
             },
-            {
-              accessorKey: "type",
-              footer: (props) => props.column.id,
-            },
           ]
         : [
             {
-              accessorKey: "status",
+              header: "success",
               footer: (props) => props.column.id,
+              columns: [
+                {
+                  accessorKey: "name",
+                  footer: (props) => props.column.id,
+                },
+                {
+                  accessorKey: "type",
+                  footer: (props) => props.column.id,
+                },
+                {
+                  accessorKey: "required",
+                  footer: (props) => props.column.id,
+                },
+              ],
             },
             {
-              accessorKey: "description",
+              header: "fail",
               footer: (props) => props.column.id,
-            },
-            {
-              accessorKey: "type",
-              footer: (props) => props.column.id,
-            },
-            {
-              accessorKey: "name",
-              footer: (props) => props.column.id,
+              columns: [
+                {
+                  accessorKey: "name1",
+                  footer: (props) => props.column.id,
+                },
+                {
+                  accessorKey: "type1",
+                  footer: (props) => props.column.id,
+                },
+                {
+                  accessorKey: "required1s",
+                  footer: (props) => props.column.id,
+                },
+              ],
             },
           ],
     [activeTab]
@@ -171,10 +178,42 @@ const TestTable = ({ activeTab }: Props) => {
     },
     debugTable: true,
   });
-  console.log(data);
 
   return (
     <div>
+      {activeTab === 3 || activeTab === 4 ? (
+        <div>
+          <label htmlFor="name">name</label>
+          <input type="text" id="name" />
+          <label htmlFor="type">type</label>
+          <input type="text" id="type" />
+          <label htmlFor="required">required</label>
+          <input type="checkbox" id="required" />
+        </div>
+      ) : activeTab === 5 ? (
+        <div>
+          <div>
+            <p>Success</p>
+            <label htmlFor="successName">name</label>
+            <input type="text" id="successName" />
+            <label htmlFor="successType">type</label>
+            <input type="text" id="successType" />
+            <label htmlFor="successRequired">required</label>
+            <input type="checkbox" id="successRequired" />
+          </div>
+          <div>
+            <p>Fail</p>
+            <label htmlFor="failName">name</label>
+            <input type="text" id="failName" />
+            <label htmlFor="failType">type</label>
+            <input type="text" id="failType" />
+            <label htmlFor="failRequired">required</label>
+            <input type="checkbox" id="failRequired" />
+          </div>
+        </div>
+      ) : (
+        <></>
+      )}
       <table>
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
