@@ -8,8 +8,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
 @Getter
-@Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Table(name = "tb_user")
 @Entity
 public class User {
@@ -32,4 +31,17 @@ public class User {
     private AuthProvider provider;
 
     private String providerId;
+
+    @Builder
+    public User(Long id, String email, String name, AuthProvider provider, String providerId) {
+        this.id = id;
+        this.email = email;
+        this.name = name;
+        this.provider = provider;
+        this.providerId = providerId;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }
