@@ -9,7 +9,6 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -41,13 +40,19 @@ public class Docs {
 
     private Integer packaging;
 
+    private String encryptedUrl;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Group group;
 
+    public void setEncryptedUrl(String encryptedUrl) {
+        this.encryptedUrl = encryptedUrl;
+    }
+
     @Builder
-    public Docs(Long id, String docsName, String serverUrl, String contextUri, Integer javaVersion, String springVersion, Integer buildManagement, String groupPackage, String packageName, Integer packaging, Group group) {
+    public Docs(Long id, String docsName, String serverUrl, String contextUri, Integer javaVersion, String springVersion, Integer buildManagement, String groupPackage, String packageName, Integer packaging, String encryptedUrl, Group group) {
         this.id = id;
         this.docsName = docsName;
         this.serverUrl = serverUrl;
@@ -58,6 +63,7 @@ public class Docs {
         this.groupPackage = groupPackage;
         this.packageName = packageName;
         this.packaging = packaging;
+        this.encryptedUrl = encryptedUrl;
         this.group = group;
     }
 }
