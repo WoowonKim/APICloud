@@ -6,5 +6,4 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface DocsRepository extends JpaRepository<Docs, Long> {
-    Docs getById(Long id);
 }

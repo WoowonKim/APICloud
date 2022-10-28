@@ -41,9 +41,9 @@ public class DocsServiceImpl implements DocsService{
 
     // 암호화된 Url DB에 저장
     private void updateDocs(Long docId, String encryptedUrl) {
-        Docs doc = docsRepository.getById(docId);
+        Docs doc = findByDocId(docId);
         doc.setEncryptedUrl(encryptedUrl);
-        Docs encryptedDoc = docsRepository.getById(docId);
+        Docs encryptedDoc = findByDocId(docId);
         docsRepository.save(encryptedDoc);
     }
 
