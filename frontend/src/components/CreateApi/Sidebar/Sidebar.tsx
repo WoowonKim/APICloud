@@ -126,10 +126,6 @@ const Sidebar = ({
                     setData((old: DataType) => {
                       let copy = JSON.parse(JSON.stringify(old));
                       let length = old.controller[index].apis.length;
-                      console.log(
-                        old.controller[index].apis[length - 1],
-                        length
-                      );
                       copy.controller[index].apis[length - 1].name = apiName;
                       copy.controller[index].apis[length - 1].uri = apiUri;
                       copy.controller[index].apis[length - 1].method =
