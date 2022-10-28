@@ -7,8 +7,11 @@ import lombok.Data;
 @Data
 public class CreateDocDto {
     private Long userId;
+
     private String docsName;
+
     private String serverUrl;
+
     private String contextUri;
 
     private Integer javaVersion;
@@ -24,7 +27,6 @@ public class CreateDocDto {
     private Integer packaging;
 
     private Group group;
-
 
     public Docs toEntity() {
         return Docs.builder()
