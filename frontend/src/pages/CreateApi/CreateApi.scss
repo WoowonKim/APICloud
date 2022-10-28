@@ -1,6 +1,20 @@
+@mixin buttonStyle {
+  border: none;
+  outline: none;
+  background-color: #f7f5ff;
+  color: #3a00e5;
+  text-align: center;
+  font-weight: bold;
+  margin-right: 10px;
+  border-radius: 100%;
+  &:hover {
+    opacity: 0.7;
+    transition: all 300ms ease-in;
+  }
+}
 .apiDocscontainer {
   display: grid;
-  grid-template-columns: 1fr 9fr;
+  grid-template-columns: 2fr 8fr;
   height: 100vh;
 }
 
@@ -55,36 +69,81 @@
   .apiTable {
     display: flex;
     margin-bottom: 50px;
-    button {
-      border: none;
-      outline: none;
-      background-color: #f7f5ff;
-      color: #3a00e5;
-      text-align: center;
-      font-weight: bold;
-      margin-right: 10px;
-      border-radius: 100%;
-      &:hover {
-        opacity: 0.7;
-        transition: all 300ms ease-in;
-      }
-    }
+
     .plusButtonGroup {
       display: flex;
       flex-direction: column;
       justify-content: space-between;
     }
     .apiPlusButton {
+      @include buttonStyle();
       width: 40px;
       height: 40px;
+      position: relative;
+      .apiPlusText {
+        display: none;
+      }
+      &:hover {
+        .apiPlusText {
+          width: 100px;
+          height: 50px;
+          background-color: #f7f5ff;
+          border-radius: 10px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          position: absolute;
+          top: -50px;
+          right: 20px;
+        }
+      }
     }
     .tablePlusButton {
+      @include buttonStyle();
       width: 40px;
       height: 40px;
+      position: relative;
+      .tablePlusText {
+        display: none;
+      }
+      &:hover {
+        .tablePlusText {
+          width: 100px;
+          height: 50px;
+          background-color: #f7f5ff;
+          border-radius: 10px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          position: absolute;
+          top: -50px;
+          right: 20px;
+        }
+      }
       .plusIcon {
         width: 20px;
         height: 20px;
       }
     }
+  }
+}
+
+.tabContainer {
+  display: flex;
+  align-items: center;
+  margin: 0 0 20px 40px;
+  .tabItem {
+    border: none;
+    background-color: white;
+    font-size: medium;
+    margin: 0 20px;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+  .active {
+    border-bottom: 3px solid #3a00e5;
+    font-size: large;
+    font-weight: bold;
   }
 }

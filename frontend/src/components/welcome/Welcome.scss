@@ -133,7 +133,7 @@ body {
 
 .section1 {
   @include section();
-  background-image: url("../../assest/day_cloudy_sky.jpg");
+  background-image: url("../../assets/day_cloudy_sky.jpg");
   .title {
     @include titleStyle();
     display: flex;
@@ -171,13 +171,13 @@ body {
 .section2 {
   @include section();
   @include sectionDetail();
-  background-image: url("../../assest/sunset_cloudy_sky.jpg");
+  background-image: url("../../assets/sunset_cloudy_sky.jpg");
 }
 
 .section3 {
   @include section();
   @include sectionDetail();
-  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("../../assest/night_cloudy_sky.jpg");
+  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("../../assets/night_cloudy_sky.jpg");
   .subTitle {
     color: white;
   }

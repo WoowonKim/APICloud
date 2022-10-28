@@ -56,34 +56,27 @@ export const GuestDummy = [
     apiContent: "여기는 참여자 로 진행중인 API 테스트 입니다",
     member: 9,
   },
+];
+
+export const userDummy = [
   {
-    id: "test3",
-    apiTitle: "README",
-    apiContent: "캐치마인드 해서 NFT만들기",
-    member: 2,
+    id: "zerojei0423@gmail.com",
+    name: "신빵제",
+    authority: "만든이",
   },
   {
-    id: "test4",
-    apiTitle: "TEST31",
-    apiContent: "여기는 참여자 로 진행중인 API 테스트 입니다",
-    member: 3,
+    id: "woowon1031@gmail.com",
+    name: "기무원",
+    authority: "사용자",
   },
   {
-    id: "test5",
-    apiTitle: "TEST14",
-    apiContent: "여기는 참여자 로 진행중인 API 테스트 입니다",
-    member: 5,
+    id: "KEH@gmail.com",
+    name: "기므녜",
+    authority: "사용자",
   },
   {
-    id: "test6",
-    apiTitle: "Eco52",
-    apiContent: "환경보호를 실천함에 있어 동기와 성취감을 주는 웹서비스",
-    member: 3,
-  },
-  {
-    id: "test7",
-    apiTitle: "MountainDo",
-    apiContent: "등산인들을 위한 등산 코스 추천 및 기록용 웹서비스",
-    member: 2,
+    id: "JYJ@gmail.com",
+    name: "조류진",
+    authority: "사용자",
   },
 ];

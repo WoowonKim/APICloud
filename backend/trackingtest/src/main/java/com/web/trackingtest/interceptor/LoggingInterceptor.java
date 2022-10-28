@@ -7,10 +7,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.tomcat.util.json.JSONParser;
 import org.json.simple.JSONObject;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -19,24 +24,35 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Log4j2
 @RequiredArgsConstructor
 @Component
 public class LoggingInterceptor extends HandlerInterceptorAdapter {
     private static final ObjectMapper objectMapper = new ObjectMapper();
+    public final WebClient webClient;
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         if (request.getClass().getName().contains("SecurityContextHolderAwareRequestWrapper")) return;
         final ContentCachingRequestWrapper cachingRequest = (ContentCachingRequestWrapper) request;
         final ContentCachingResponseWrapper cachingResponse = (ContentCachingResponseWrapper) response;
+//        Map<?, ?> pathVariables = (Map<?, ?>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+//        Iterator<String> key = (Iterator<String>) pathVariables.keySet().iterator();
+//        while (key.hasNext()){
+//            String k = key.next();
+//            System.out.println(pathVariables.get(k));
+//            System.out.println(pathVariables.get(k).getClass());
+//            //여기서 string만 인식
+//        }
         if (cachingRequest != null //&& cachingRequest.getContentType().contains("application/json")
         ) {
 
             StringBuffer json = new StringBuffer();
             String line = null;
-//            StringBuilder json = new StringBuilder();
+//            StringBuil  der json = new StringBuilder();
             InputStream reader = request.getInputStream();
 
 //            try {
@@ -79,12 +95,26 @@ public class LoggingInterceptor extends HandlerInterceptorAdapter {
                     System.out.println(temp.asText().getClass());
                 }
 
+//                String result = webClient.get()
+//                        .uri("/users")
+////                        .accept(MediaType.APPLICATION_JSON)
+//                        .retrieve()
+//                        .bodyToFlux(String.class)
+//                        .block();
+//                System.out.println("==>"+result);
 
-
+                System.out.println("요청");
+//                return webClient.get()
+//                        .uri("db/program/" + programId + "/")
+//                        .accept(MediaType.APPLICATION_JSON)
+//                        .retrieve()
+//                        .bodyToFlux(Long.class)
+//                        .toStream()
+//                        .collect(Collectors.toList());
 
 
                 Message student = objectMapper.treeToValue(jsonNode, Message.class);         // Student 객체 출력
-                System.out.println("Obj==>"+student);
+                System.out.println("Obj==>" + student);
 //                Map<String, Object> companyMap = objectMapper.readValue(cachingRequest, new TypeReference<Map<String, Object>>() {});
 
                 System.out.println(cachingRequest.getReader());

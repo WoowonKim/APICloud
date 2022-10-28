@@ -1,22 +1,23 @@
 // Header
 .header {
-  padding: 10px;
+  background-color: white;
+  padding: 15px;
+  padding-bottom: 0px;
   display: flex;
   justify-content: space-between;
 }
 .side {
+  margin-left: 15px;
   width: 4%;
 }
 .barsIcon {
   width: 27px;
   height: 27px;
 }
-.logo {
-  width: 8%;
-}
+
 .logoImg {
-  width: 110px;
-  height: 40px;
+  width: 120px;
+  height: 50px;
 }
 .search {
   width: 78%;
@@ -56,20 +57,23 @@
   margin-top: 2px;
   width: 37px;
   height: 37px;
+  cursor: pointer;
 }
 
 // Start
+
 .startMain {
   background-color: #e4effa;
   display: flex;
   justify-content: space-around;
 }
 .startImg {
-  width: 300px;
-  height: 300px;
+  margin-top: 50px;
+  width: 350px;
+  height: 350px;
 }
 .startText {
-  margin-top: 6%;
+  margin-top: 190px;
 }
 .startText > span {
   font-weight: bold;
@@ -100,7 +104,15 @@
   font-weight: bold;
   cursor: pointer;
 }
-
+.ClickList {
+  font-size: 18px;
+  color: #000000;
+  border-bottom: 2px solid #000000;
+}
+.noClicklist {
+  font-size: 15px;
+  color: #727070;
+}
 .ApiListContent {
   margin-top: 10px;
   padding: 10px;
@@ -111,7 +123,7 @@
 // ApiListDetail
 .ApiListDetail {
   width: 100%;
-  height: 250px;
+  height: 300px;
   overflow-y: scroll;
 }
 
@@ -140,6 +152,10 @@
 .listContent > p {
   font-weight: bold;
 }
+.content {
+  font-weight: bold;
+  cursor: pointer;
+}
 .userSetting {
   display: grid;
   align-items: center;
@@ -159,5 +175,121 @@
 }
 .DeatilIcon {
   margin-top: 4px;
+  cursor: pointer;
+}
+
+//Modal
+.modalContainer {
+  width: 100%;
+  padding: 15px;
+}
+
+.modalMain > p:nth-child(-n + 5) {
+  padding: 10px;
+  padding-left: 3px;
+  padding-bottom: 2px;
+  font-weight: bold;
+  font-size: 17px;
+  border-bottom: 2px solid #000000;
+  width: 80px;
+}
+
+.modalMain > p:nth-child(6) {
+  font-size: 13px;
+  font-weight: bold;
+  margin-left: 10px;
+}
+
+.apititle {
+  border: none;
+  width: 60%;
+  border-bottom: 1px solid #000000;
+  margin-left: 10px;
+}
+.modalMain > input:focus {
+  outline: none;
+}
+
+.groupMember {
+  border: none;
+  width: 90%;
+  margin-left: 10px;
+  background-color: #e7f7fe;
+  border-radius: 50px;
+  padding: 10px;
+}
+
+.apiUser {
+  background-color: #f8f8f8;
+  border-radius: 30px;
+  margin: 7px;
+  width: 100%;
+  height: 150px;
+  overflow-y: scroll;
+}
+
+.apiUser::-webkit-scrollbar {
+  width: 5px; /* 스크롤바의 너비 */
+}
+
+.apiUser::-webkit-scrollbar-track {
+  background: #ffffff; /*스크롤바 뒷 배경 색상*/
+}
+
+.apiUserList {
+  display: flex;
+  justify-content: space-between;
+}
+.apiUserIcon {
+  padding: 3%;
+  width: 25px;
+  height: 25px;
+}
+.apiUserTitle {
+  width: 80%;
+  font-size: 13px;
+  font-weight: bold;
+}
+.apiUserTitle > p {
+  height: 0.5px;
+}
+.apiAuthority {
+  width: 15%;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.modalBtn {
+  padding: 23px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.copyBtn {
+  width: 167px;
+  height: 51px;
+  left: 642px;
+  top: 820px;
+  border: none;
+  color: #3a00e5;
+  font-weight: bold;
+  background: #f7f5ff;
+  border-radius: 15px;
+  cursor: pointer;
+}
+.copyBtn > span {
+  margin-left: 5px;
+}
+
+.makeBtn {
+  border-radius: 15px;
+  border: none;
+  background-color: #3a00e5;
+  font-weight: bold;
+  color: white;
+  width: 167px;
+  height: 51px;
+  left: 642px;
+  top: 820px;
   cursor: pointer;
 }
