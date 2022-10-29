@@ -1,14 +1,15 @@
 package com.web.apicloud.domain.entity;
 
+import com.web.apicloud.domain.dto.DocListResponse;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -65,5 +66,15 @@ public class Docs {
         this.packaging = packaging;
         this.encryptedUrl = encryptedUrl;
         this.group = group;
+    }
+
+    public DocListResponse toDto(Long docId, String docName, Long groupId, User groupUser, Integer authority) {
+        return DocListResponse.builder()
+                .docId(docId)
+                .docName(docName)
+                .groupId(groupId)
+                .groupUser(groupUser)
+                .authority(authority)
+                .build();
     }
 }
