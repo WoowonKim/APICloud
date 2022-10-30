@@ -1,104 +1,71 @@
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { ApisType, ControllerType, DataType, ServerInfoType } from "./ApisType";
+import "./CreateApi.scss";
 import Sidebar from "../../components/CreateApi/Sidebar/Sidebar";
 import Table from "../../components/CreateApi/Table/Table";
-import "./CreateApi.scss";
-
-// table의 row type 설정
-export type ApiType = {
-  detailUri: String;
-  summary: String;
-  method:
-    | "GET"
-    | "POST"
-    | "PUT"
-    | "DELETE"
-    | "PATCH"
-    | "OPTIONS"
-    | "HEAD"
-    | null;
-  param: String;
-  requestBody: String;
-  header: String;
-  successResponseBody: String;
-  failResponseBody: String;
-  subRows?: ApiType[];
-};
-
-// 전체 api들의 type 설정
-export type ApiListType = {
-  url: string;
-  details: ApiType[];
-};
 
 const CreateApi = () => {
-  // api를 저장하기 위한 state (임시 기본값 설정)
-  const [datas, setDatas] = useState<ApiListType[]>([
-    {
-      url: "",
-      details: [
-        {
-          detailUri: "",
-          summary: "",
-          method: null,
-          param: "",
-          requestBody: "",
-          header: "",
-          successResponseBody: "",
-          failResponseBody: "",
-        },
-      ],
-    },
-  ]);
+  // 서버 정보를 저장할 state (임시 데이터)
+  const [serverInfo, setServerInfo] = useState<ServerInfoType>({
+    serverUrl: "http://localhost:8080",
+    rootUri: "/apis",
+    javaVersion: 8,
+    buildManagement: "Gradle",
+    groupPackage: "com.example",
+    packageName: "com.example.demo",
+    jarWar: "jar",
+    springVersion: "2.7.5",
+  });
+  // api 정보를 저장할 state
+  const [apiData, setApiData] = useState<ApisType>({
+    name: "",
+    uri: "",
+    method: "GET",
+    requestBody: {},
+    parameters: [],
+    query: {},
+    header: [],
+    responses: {},
+  });
+  // controller 정보를 저장할 state
+  const [controllerData, setControllerData] = useState<ControllerType>({
+    name: "",
+    commonUri: "",
+    apis: [],
+  });
+  // 전체 데이터를 관리하는 state
+  const [data, setData] = useState<DataType>({
+    server: serverInfo,
+    controller: [],
+  });
+  // 테이블의 탭 전환을 위한 state
+  const [activeTab, setActiveTab] = useState(1);
 
-  // table 추가 함수
-  const addTable = () => {
-    let copy = [...datas];
-    copy.push({
-      url: "",
-      details: [
-        {
-          detailUri: "",
-          summary: "",
-          method: null,
-          param: "",
-          requestBody: "",
-          header: "",
-          successResponseBody: "",
-          failResponseBody: "",
-        },
-      ],
-    });
-    setDatas(copy);
-  };
-
-  // table에 row 추가 함수
-  const addTableRow = (index: number) => {
-    const addData = {
-      detailUri: "",
-      summary: "",
-      method: null,
-      param: "",
-      requestBody: "",
-      header: "",
-      successResponseBody: "",
-      failResponseBody: "",
-    };
-
-    setDatas((old) => {
-      let copy = [...old];
-      copy[index] = {
-        url: copy[index].url,
-        details: [...copy[index].details, addData],
-      };
+  // controller 추가 함수 -> 기존 데이터에 새 데이터 추가
+  const addController = () => {
+    setData((old) => {
+      let copy = JSON.parse(JSON.stringify(old));
+      copy.controller = [...old.controller, controllerData];
       return copy;
     });
   };
 
+  // api 추가 함수 -> 기존 데이터에 새 데이터 추가
+  const addApi = (index: number) => {
+    setData((old) => {
+      let copy = JSON.parse(JSON.stringify(old));
+      copy.controller[index].apis = [...copy.controller[index].apis, apiData];
+      return copy;
+    });
+  };
   return (
     <div className="apiDocscontainer">
-      <Sidebar />
+      <Sidebar
+        addController={addController}
+        addApi={addApi}
+        data={data}
+        setData={setData}
+      />
       <div className="mainContainer">
         <div className="titleContainer">
           <p>APICloud API 명세서</p>
@@ -118,42 +85,40 @@ const CreateApi = () => {
             <p className="infoValue">/api</p>
           </div>
         </div>
+        <div className="tabContainer">
+          <div
+            className={activeTab === 1 ? "tabItem active" : "tabItem"}
+            onClick={() => setActiveTab(1)}
+          >
+            headers
+          </div>
+          <div
+            className={activeTab === 2 ? "tabItem active" : "tabItem"}
+            onClick={() => setActiveTab(2)}
+          >
+            parameters
+          </div>
+          <div
+            className={activeTab === 3 ? "tabItem active" : "tabItem"}
+            onClick={() => setActiveTab(3)}
+          >
+            query
+          </div>
+          <div
+            className={activeTab === 4 ? "tabItem active" : "tabItem"}
+            onClick={() => setActiveTab(4)}
+          >
+            requestBody
+          </div>
+          <div
+            className={activeTab === 5 ? "tabItem active" : "tabItem"}
+            onClick={() => setActiveTab(5)}
+          >
+            responses
+          </div>
+        </div>
         <div className="tableContainer">
-          {datas.map((data, index) => (
-            <div className="apiTable">
-              <div className="plusButtonGroup">
-                {index === datas.length - 1 ? (
-                  <>
-                    <button className="tablePlusButton" onClick={addTable}>
-                      <FontAwesomeIcon className="plusIcon" icon={faPlus} />
-                      <div className="tablePlusText">컨트롤러 추가</div>
-                    </button>
-                  </>
-                ) : (
-                  <div></div>
-                )}
-                <button
-                  className="apiPlusButton"
-                  onClick={() => {
-                    addTableRow(index);
-                  }}
-                >
-                  <FontAwesomeIcon className="plusIcon" icon={faPlus} />
-                  <div className="apiPlusText">api 추가</div>
-                </button>
-              </div>
-              <div>
-                <Table
-                  datas={datas}
-                  key={index}
-                  dataIndex={index}
-                  data={data.details}
-                  setData={setDatas}
-                  url={data.url}
-                />
-              </div>
-            </div>
-          ))}
+          <Table activeTab={activeTab} />
         </div>
       </div>
     </div>
