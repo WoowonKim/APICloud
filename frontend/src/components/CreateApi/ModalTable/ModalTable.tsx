@@ -7,6 +7,7 @@ import {
 import React, { useEffect, useMemo, useState } from "react";
 import { ApisType, DataType } from "../../../pages/CreateApi/ApisType";
 import SelectMethods from "../SelectMethods/SelectMethods";
+import "../ControllerAddModal/ControllerAddModal.scss";
 
 // ControllerAddModal에서 받아오는 props의 type 설정
 interface Props {
@@ -35,7 +36,7 @@ const ModalTable = ({ data, setData }: Props) => {
           value={value as string}
           onChange={(e) => setValue(e.target.value)}
           onBlur={() => onBlur()}
-          className="tableInput"
+          className="modalTableInput"
           placeholder={id === "uri" ? "/api" : "getApi"}
         />
       );
@@ -90,63 +91,59 @@ const ModalTable = ({ data, setData }: Props) => {
   });
 
   return (
-    <div>
-      <table>
-        <thead>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                return (
-                  <th
+    <table>
+      <thead>
+        {table.getHeaderGroups().map((headerGroup) => (
+          <tr key={headerGroup.id}>
+            {headerGroup.headers.map((header) => {
+              return (
+                <th
+                  {...{
+                    key: header.id,
+                    colSpan: header.colSpan,
+                    style: {
+                      width: header.getSize(),
+                    },
+                  }}
+                  className="tableHeadText"
+                >
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                  <div
                     {...{
-                      key: header.id,
-                      colSpan: header.colSpan,
-                      style: {
-                        width: header.getSize(),
-                      },
+                      onMouseDown: header.getResizeHandler(),
+                      onTouchStart: header.getResizeHandler(),
+                      className: `resizer ${
+                        header.column.getIsResizing() ? "isResizing" : ""
+                      }`,
                     }}
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                    <div
-                      {...{
-                        onMouseDown: header.getResizeHandler(),
-                        onTouchStart: header.getResizeHandler(),
-                        className: `resizer ${
-                          header.column.getIsResizing() ? "isResizing" : ""
-                        }`,
-                      }}
-                    />
-                  </th>
+                  />
+                </th>
+              );
+            })}
+          </tr>
+        ))}
+      </thead>
+      <tbody>
+        {table.getRowModel().rows.map((row) => {
+          return (
+            <tr key={row.id}>
+              {row.getVisibleCells().map((cell) => {
+                return (
+                  <td key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
                 );
               })}
             </tr>
-          ))}
-        </thead>
-        <tbody>
-          {table.getRowModel().rows.map((row) => {
-            return (
-              <tr key={row.id}>
-                {row.getVisibleCells().map((cell) => {
-                  return (
-                    <td key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </td>
-                  );
-                })}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
+          );
+        })}
+      </tbody>
+    </table>
   );
 };
 

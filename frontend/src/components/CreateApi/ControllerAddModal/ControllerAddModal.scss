@@ -20,8 +20,8 @@
 }
 
 .modalInnerContainer {
-  width: 30rem;
-  min-height: 33rem;
+  width: 50rem;
+  min-height: 53rem;
   height: auto;
   background-color: white;
   position: absolute;
@@ -29,36 +29,37 @@
   left: 50%;
   transform: translate(-50%, -50%);
   border-radius: 1rem;
-  padding: 1rem 2rem;
+  padding: 2rem 3rem;
 }
 
 .modalTitleGroup {
-  margin-bottom: 6rem;
+  margin-bottom: 8rem;
 }
 
 .modalTitleText {
-  font-size: 2em;
+  font-size: 3em;
   font-weight: bold;
-  margin: 0.5rem 0 0 0;
+  margin: 2rem 0;
   position: absolute;
   z-index: 1;
 }
 
 .highlightText {
   background-color: rgba(207, 244, 255, 0.69);
-  height: 1.5em;
-  width: 14em;
+  height: 2em;
+  width: 20em;
   position: absolute;
-  top: 2.5em;
-  left: 2.5em;
+  top: 5.3em;
+  left: 4.3em;
 }
 
 .controllerInfoItem {
-  margin: 1rem 0;
+  margin: 2rem 0;
 }
 
 .controllerLabel {
   font-weight: bold;
+  font-size: 1.3em;
   margin-right: 0.5rem;
 }
 
@@ -70,7 +71,7 @@
   width: 100%;
   margin-top: 1rem;
   font-family: "twayair";
-  font-size: 1em;
+  font-size: 1.5em;
 }
 
 .apiInfoGroup {
@@ -84,7 +85,7 @@
 }
 
 .apiTitleText {
-  font-size: 1.3em;
+  font-size: 1.5em;
   font-weight: bold;
   margin: 0 1rem 0 0;
 }
@@ -93,8 +94,9 @@
   @include button();
   background-color: rgb(207, 244, 255);
   border-radius: 100%;
-  width: 25px;
-  height: 25px;
+  font-size: 1em;
+  width: 28px;
+  height: 28px;
   padding: 0;
 }
 
@@ -104,7 +106,7 @@
 
 .controllerInfoText {
   color: tomato;
-  font-size: 0.8em;
+  font-size: 1em;
   padding-left: 0.5rem;
 }
 
@@ -117,8 +119,8 @@
   @include button();
   background-color: rgb(207, 244, 255);
   border-radius: 5rem;
-  padding: 0.5rem 0;
-  font-size: 1em;
+  padding: 1rem 0;
+  font-size: 1.5em;
   font-family: "twayair";
   width: 100%;
 }
@@ -127,9 +129,28 @@
   @include button();
   background-color: rgb(207, 244, 255);
   border-radius: 5rem;
-  padding: 0.5rem 0;
-  font-size: 1em;
+  padding: 1rem 0;
+  font-size: 1.5em;
   font-family: "twayair";
   width: 100%;
   margin: 1.5rem 0;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+.modalTableContainer {
+  table {
+    width: 100%;
+    .tableHeadText {
+      font-size: 1.3em;
+    }
+  }
+}
+
+.modalTableInput {
+  font-size: 1.3em;
+  outline: none;
+  border: none;
+  padding: 2px;
 }

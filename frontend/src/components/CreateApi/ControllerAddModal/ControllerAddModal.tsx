@@ -1,7 +1,7 @@
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
-import { ApisType, DataType } from "../../../pages/CreateApi/ApisType";
+import { DataType } from "../../../pages/CreateApi/ApisType";
 import ModalTable from "../ModalTable/ModalTable";
 import "./ControllerAddModal.scss";
 
@@ -10,12 +10,14 @@ interface Props {
   addApi: (index: number) => void;
   setData: React.Dispatch<React.SetStateAction<DataType>>;
   data: DataType;
+  editControllerIndex: number;
 }
 const ControllerAddModal = ({
   setIsModalVisible,
   addApi,
   setData,
   data,
+  editControllerIndex,
 }: Props) => {
   // controller의 정보를 입력받아 저장할 state
   const [controllerName, setControllerName] = useState("");
@@ -39,20 +41,6 @@ const ControllerAddModal = ({
         </div>
         <div className="controllerInfoGroup">
           <div className="controllerInfoItem">
-            <label htmlFor="controllerName" className="controllerLabel">
-              Controller Name:
-            </label>
-            <input
-              type="text"
-              id="controllerName"
-              onChange={(e) => {
-                setControllerName(e.target.value);
-              }}
-              className="controllerInput1"
-              placeholder="/test"
-            />
-          </div>
-          <div className="controllerInfoItem">
             <label htmlFor="controllerUri" className="controllerLabel">
               Controller Uri:
             </label>
@@ -63,7 +51,31 @@ const ControllerAddModal = ({
                 setControllerUri(e.target.value);
               }}
               className="controllerInput1"
+              placeholder="/test"
+              defaultValue={
+                editControllerIndex > -1
+                  ? data.controller[editControllerIndex].commonUri
+                  : ""
+              }
+            />
+          </div>
+          <div className="controllerInfoItem">
+            <label htmlFor="controllerUri" className="controllerLabel">
+              Controller Name:
+            </label>
+            <input
+              type="text"
+              id="controllerName"
+              onChange={(e) => {
+                setControllerName(e.target.value);
+              }}
+              className="controllerInput1"
               placeholder="TestController"
+              defaultValue={
+                editControllerIndex > -1
+                  ? data.controller[editControllerIndex].name
+                  : ""
+              }
             />
           </div>
           <button
@@ -71,7 +83,10 @@ const ControllerAddModal = ({
             onClick={() => {
               setData((old: DataType) => {
                 let copy = JSON.parse(JSON.stringify(old));
-                let length = copy.controller.length;
+                let length =
+                  editControllerIndex > -1
+                    ? editControllerIndex
+                    : copy.controller.length;
                 copy.controller[length - 1].name = controllerName;
                 copy.controller[length - 1].commonUri = controllerUri;
                 return copy;
@@ -88,7 +103,11 @@ const ControllerAddModal = ({
             <button
               className="apiPlusButton"
               onClick={() => {
-                addApi(data.controller.length - 1);
+                addApi(
+                  editControllerIndex > -1
+                    ? editControllerIndex
+                    : data.controller.length - 1
+                );
               }}
               disabled={!isControllerAdd}
             >
@@ -98,10 +117,12 @@ const ControllerAddModal = ({
           <p className="controllerInfoText">
             Controller 정보를 모두 입력 후 Api를 추가해주세요
           </p>
-          <ModalTable
-            data={data.controller[data.controller.length - 1].apis}
-            setData={setData}
-          />
+          <div className="modalTableContainer">
+            <ModalTable
+              data={data.controller[data.controller.length - 1].apis}
+              setData={setData}
+            />
+          </div>
         </div>
         <button
           className="controllerModalCloseButton"
@@ -114,6 +135,13 @@ const ControllerAddModal = ({
       <div
         className="modalCloseButton"
         onClick={() => {
+          if (!isControllerAdd && editControllerIndex === -1) {
+            setData((old: DataType) => {
+              let copy = JSON.parse(JSON.stringify(old));
+              copy.controller.pop();
+              return copy;
+            });
+          }
           setIsModalVisible((curr) => !curr);
         }}
       ></div>
