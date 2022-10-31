@@ -1,6 +1,5 @@
 package com.web.apicloud.domain.dto;
 
-import com.web.apicloud.domain.entity.Docs;
 import lombok.Data;
 
 @Data
