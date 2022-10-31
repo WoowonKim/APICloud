@@ -21,11 +21,34 @@ const CreateApi = () => {
     name: "",
     uri: "",
     method: "GET",
-    requestBody: {},
-    parameters: [],
-    query: {},
-    header: [],
-    responses: {},
+    requestBody: {
+      name: "",
+      type: "",
+      properties: [{ name: "", type: "", required: true, properties: [] }],
+      required: true,
+    },
+    parameters: [{ name: "", type: "", required: true, properties: [] }],
+    query: {
+      name: "",
+      type: "",
+      properties: [{ name: "", type: "", required: true, properties: [] }],
+      required: true,
+    },
+    header: [{ key: "", value: "" }],
+    responses: {
+      fail: {
+        status: 0,
+        type: "",
+        required: true,
+        properties: [{ name: "", type: "", required: true, properties: [] }],
+      },
+      success: {
+        status: 0,
+        type: "",
+        required: true,
+        properties: [{ name: "", type: "", required: true, properties: [] }],
+      },
+    },
   });
   // controller 정보를 저장할 state
   const [controllerData, setControllerData] = useState<ControllerType>({
@@ -40,6 +63,9 @@ const CreateApi = () => {
   });
   // 테이블의 탭 전환을 위한 state
   const [activeTab, setActiveTab] = useState(1);
+  // 선택된 api를 저장할 state
+  const [selectedApi, setSelectedApi] = useState(-1);
+  const [selectedController, setSelectedController] = useState(-1);
 
   // controller 추가 함수 -> 기존 데이터에 새 데이터 추가
   const addController = () => {
@@ -58,6 +84,14 @@ const CreateApi = () => {
       return copy;
     });
   };
+
+  // 사이드바의 api 정보 가져오는 함수
+  const handleSidebarApi = (index: number, idx: number) => {
+    setSelectedController(index);
+    setSelectedApi(idx);
+    setActiveTab(1);
+  };
+
   return (
     <div className="apiDocscontainer">
       <Sidebar
@@ -65,10 +99,11 @@ const CreateApi = () => {
         addApi={addApi}
         data={data}
         setData={setData}
+        handleSidebarApi={handleSidebarApi}
       />
-      <div className="mainContainer">
+      <div className="apiDocsMaincontainer">
         <div className="titleContainer">
-          <p>APICloud API 명세서</p>
+          <p className="apiDocsTitleText">APICloud API 명세서</p>
           <div className="buttonContainer">
             <button>공유</button>
             <button>동기화</button>
@@ -118,7 +153,30 @@ const CreateApi = () => {
           </div>
         </div>
         <div className="tableContainer">
-          <Table activeTab={activeTab} />
+          {selectedApi > -1 && selectedController > -1 && (
+            <Table
+              activeTab={activeTab}
+              selectedController={selectedController}
+              selectedApi={selectedApi}
+              data={
+                activeTab === 1
+                  ? data.controller[selectedController].apis[selectedApi].header
+                  : activeTab === 2
+                  ? data.controller[selectedController].apis[selectedApi]
+                      .parameters
+                  : activeTab === 3
+                  ? data.controller[selectedController].apis[selectedApi].query
+                      .properties
+                  : activeTab === 4
+                  ? data.controller[selectedController].apis[selectedApi]
+                      .requestBody.properties
+                  : data.controller[selectedController].apis[selectedApi]
+                      .responses.fail.properties
+              }
+              setData={setData}
+              wholeData={data}
+            />
+          )}
         </div>
       </div>
     </div>

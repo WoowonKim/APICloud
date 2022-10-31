@@ -1,7 +1,8 @@
 package com.web.apicloud.controller;
 
-import com.web.apicloud.domain.dto.CreateDocDto;
+import com.web.apicloud.domain.dto.CreateDocRequest;
 import com.web.apicloud.domain.dto.DocListResponse;
+import com.web.apicloud.domain.dto.UpdateDocDto;
 import com.web.apicloud.model.DocsService;
 import com.web.apicloud.util.ResponseHandler;
 import lombok.RequiredArgsConstructor;
@@ -23,10 +24,10 @@ public class DocsController {
     private final ProjectWithControllerGenerationController projectGenerationController;
 
     @PostMapping()
-    public ResponseEntity<Object> createDoc(@RequestBody CreateDocDto createDocDto) {
+    public ResponseEntity<Object> createDoc(@RequestBody CreateDocRequest createDocRequest) {
         try {
             log.info("DOC 생성 API 호출");
-            Long docId = docsService.saveDocGetDocId(createDocDto);
+            Long docId = docsService.saveDocGetDocId(createDocRequest);
             String encryptedUrl = docsService.encryptUrl(docId);
             return ResponseHandler.generateResponse("요청에 성공했습니다.", HttpStatus.OK, "encryptedUrl", encryptedUrl);
         } catch (Exception e) {
@@ -43,6 +44,18 @@ public class DocsController {
             return ResponseHandler.generateResponse("요청에 성공했습니다.", HttpStatus.OK, "docList", docListResponses);
         } catch (Exception e) {
             log.info("사용자별 DOC 리스트 조회 API 에러", e);
+            return ResponseHandler.generateResponse("요청에 실패했습니다.", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/{docId}")
+    public ResponseEntity<Object> updateDoc(@PathVariable Long docId, @RequestBody UpdateDocDto updateDocDto) {
+        try {
+            log.info("DOC 수정 API 구현");
+            UpdateDocDto updateDocResponse = docsService.updateDoc(docId, updateDocDto);
+            return ResponseHandler.generateResponse("요청에 성공했습니다.", HttpStatus.OK, "updateDocDto", updateDocResponse);
+        } catch (Exception e) {
+            log.info("DOC 수정 API 에러", e);
             return ResponseHandler.generateResponse("요청에 실패했습니다.", HttpStatus.BAD_REQUEST);
         }
     }

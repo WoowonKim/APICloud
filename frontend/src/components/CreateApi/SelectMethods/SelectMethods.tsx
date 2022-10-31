@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import "./SelectMethods.scss";
 
@@ -7,7 +7,7 @@ const Item = styled.div`
   border-radius: 10px;
   padding: 5px 10px;
   margin-top: 5px;
-  font-weight: bold;
+  font-size: 1.2em;
   background-color: ${(props) => props.color};
 `;
 
@@ -16,7 +16,7 @@ export const SelectedItem = styled.button`
   border-radius: 10px;
   padding: 5px 10px;
   margin-top: 5px;
-  font-weight: bold;
+  font-size: 1.2em;
   background-color: ${(props) => props.color};
 `;
 
