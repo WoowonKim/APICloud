@@ -6,7 +6,7 @@ interface Props {
 const Headerheader = ({ headerApi }: Props) => {
   return (
     <>
-      <div className="HeaderListTitle">
+      <div className="headerListTitle">
         <p>Content-Type :</p>
         <p>Content-Length :</p>
         <p>Host :</p>
@@ -14,7 +14,7 @@ const Headerheader = ({ headerApi }: Props) => {
         <p>Accept-Encoding :</p>
         <p>Connection :</p>
       </div>
-      <div className="HeaderListContent">
+      <div className="headerListContent">
         <p>{headerApi.contentType}</p>
         <p>{headerApi.contentLength}</p>
         <p>{headerApi.Host}</p>

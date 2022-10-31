@@ -10,9 +10,9 @@ interface Props {
 const ApiHeader = ({ headerApi }: Props) => {
   const [headerTokenFlag, setHeaderTokenFlaf] = useState<number | null>(0);
   return (
-    <div className="ApiHeaderContainer">
+    <div className="apiHeaderContainer">
       <span
-        className={headerTokenFlag == 0 ? "HeaderClickList" : "HeaderMoClicklist"}
+        className={headerTokenFlag == 0 ? "headerClickList" : "headerMoClicklist"}
         onClick={() => {
           setHeaderTokenFlaf(0);
         }}
@@ -20,14 +20,14 @@ const ApiHeader = ({ headerApi }: Props) => {
         Header
       </span>
       <span
-        className={headerTokenFlag == 1 ? "HeaderClickList" : "HeaderMoClicklist"}
+        className={headerTokenFlag == 1 ? "headerClickList" : "headerMoClicklist"}
         onClick={() => {
           setHeaderTokenFlaf(1);
         }}
       >
         Token
       </span>
-      <div className="HeaderList">{headerTokenFlag == 0 ? <Headerheader headerApi={headerApi} /> : <HeaderToken headerApi={headerApi} />}</div>
+      <div className="headerList">{headerTokenFlag == 0 ? <Headerheader headerApi={headerApi} /> : <HeaderToken headerApi={headerApi} />}</div>
     </div>
   );
 };

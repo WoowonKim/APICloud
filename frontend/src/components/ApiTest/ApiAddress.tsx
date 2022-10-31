@@ -6,7 +6,7 @@ interface Props {
 }
 const ApiAddress = ({ siteAddress }: Props) => {
   return (
-    <div className="ApiSide">
+    <div className="apiSide">
       <p className="sideText">사이트 주소 : {siteAddress.Address}</p>
       <p className="sideText">공통 URI : {siteAddress.commonUri}</p>
     </div>

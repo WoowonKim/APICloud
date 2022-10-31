@@ -23,7 +23,7 @@
 }
 
 // ApiSide
-.ApiSide {
+.apiSide {
   display: flex;
   padding: 5px;
 }
@@ -35,14 +35,14 @@
 }
 
 // ApiInput
-.ApiInputContainer {
+.apiInputContainer {
   display: flex;
   justify-self: start;
 }
-.ApiInputContainer > input:focus {
+.apiInputContainer > input:focus {
   outline: none;
 }
-.ApiInput {
+.apiInput {
   width: 60%;
   border: none;
   border-bottom: 1px solid #000000;
@@ -55,7 +55,7 @@
   font-weight: 500;
   font-size: 16px;
 }
-.ApiChoice {
+.apiChoice {
   border: none;
   width: 8%;
   font-size: 13px;
@@ -68,7 +68,7 @@
   border-bottom-left-radius: 30px;
   border: 1px solid #000000;
 }
-.ApiTestBtn {
+.apiTestBtn {
   width: 145px;
   height: 45px;
   margin-left: 7px;
@@ -80,10 +80,10 @@
   cursor: pointer;
 }
 // ApiHeader
-.ApiHeaderContainer {
+.apiHeaderContainer {
   padding: 5px;
 }
-.HeaderClickList {
+.headerClickList {
   margin-right: 5px;
   font-size: 18px;
   color: #000000;
@@ -91,13 +91,13 @@
   margin-bottom: 10px;
   cursor: pointer;
 }
-.HeaderMoClicklist {
+.headerMoClicklist {
   margin-right: 5px;
   font-size: 15px;
   color: #727070;
   cursor: pointer;
 }
-.HeaderList {
+.headerList {
   margin-top: 10px;
   width: 100%;
   height: 240px;
@@ -105,23 +105,23 @@
   background-color: #f4f4f4;
   border-radius: 20px;
 }
-.HeaderListTitle {
+.headerListTitle {
   width: 33%;
   text-align: left;
   border-radius: 20px;
   background-color: #e7f7fe;
 }
-.HeaderListTitle > p {
+.headerListTitle > p {
   font-weight: bold;
   margin-left: 5px;
   color: #767273;
 }
 
-.HeaderListContent {
+.headerListContent {
   margin-left: 3px;
   text-align: left;
 }
-.HeaderListContent > p {
+.headerListContent > p {
   font-weight: 400;
   margin-left: 5px;
 }
@@ -134,15 +134,15 @@
   font-weight: 500;
   font-size: 14px;
 }
-.HeaderListContent > input:focus {
+.headerListContent > input:focus {
   outline: none;
 }
 
 //ApiBody
-.ApiBodyContainer > textarea:focus {
+.apiBodyContainer > textarea:focus {
   outline: none;
 }
-.ApiBodyContainer > p {
+.apiBodyContainer > p {
   height: 9px;
 }
 .bodyArea {
@@ -155,24 +155,24 @@
 }
 
 // ApiRespose
-.ApiResponseContainer {
+.apiResponseContainer {
   margin-left: 15px;
 }
-.ApiResponseContainer > p {
+.apiResponseContainer > p {
   font-size: 17px;
 }
-.ApiResponseContainer > span {
+.apiResponseContainer > span {
   padding-right: 5px;
 
   cursor: pointer;
 }
-.ApiResponseResult {
+.apiResponseResult {
   margin-top: 5px;
   background-color: #f4f4f4;
   width: 600px;
   height: 480px;
 }
 
-.ApiResponseResult > div {
+.apiResponseResult > div {
   padding: 40px;
 }

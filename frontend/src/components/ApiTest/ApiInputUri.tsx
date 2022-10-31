@@ -16,12 +16,12 @@ const ApiInputUri = ({ siteAddress, setSubmitMethod }: Props) => {
     setSubmitMethod(Link);
   };
   return (
-    <div className="ApiInputContainer">
-      <span className="ApiChoice">
+    <div className="apiInputContainer">
+      <span className="apiChoice">
         <MethodTest setGetMethod={setGetMethod} />
       </span>
       <input
-        className="ApiInput"
+        className="apiInput"
         type="text"
         placeholder="URI를 입력"
         defaultValue={siteAddress.Address + siteAddress.commonUri + "/"}
@@ -29,7 +29,7 @@ const ApiInputUri = ({ siteAddress, setSubmitMethod }: Props) => {
           setUriAddress(e.target.value);
         }}
       />
-      <button className="ApiTestBtn" onClick={subMitWord}>
+      <button className="apiTestBtn" onClick={subMitWord}>
         보내기
       </button>
     </div>

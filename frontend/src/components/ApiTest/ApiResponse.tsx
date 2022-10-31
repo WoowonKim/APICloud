@@ -12,13 +12,13 @@ const ApiResponse = () => {
   };
   const obj = JSON.stringify(dummy).split(",");
   return (
-    <div className="ApiResponseContainer">
+    <div className="apiResponseContainer">
       <p>Response</p>
       <span
         onClick={() => {
           flag(0);
         }}
-        className={responseFlag == 0 ? "HeaderClickList" : "HeaderMoClicklist"}
+        className={responseFlag == 0 ? "headerClickList" : "headerMoClicklist"}
       >
         Header
       </span>
@@ -26,7 +26,7 @@ const ApiResponse = () => {
         onClick={() => {
           flag(1);
         }}
-        className={responseFlag == 1 ? "HeaderClickList" : "HeaderMoClicklist"}
+        className={responseFlag == 1 ? "headerClickList" : "headerMoClicklist"}
       >
         Body
       </span>
@@ -38,7 +38,7 @@ const ApiResponse = () => {
       >
         Cookie
       </span>
-      <div className="ApiResponseResult">
+      <div className="apiResponseResult">
         {responseFlag == 1 ? (
           <div>
             {obj.map((string, idx) => {

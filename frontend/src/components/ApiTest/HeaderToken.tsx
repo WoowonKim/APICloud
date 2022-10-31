@@ -8,10 +8,10 @@ const HeaderToken = ({ headerApi }: Props) => {
 
   return (
     <>
-      <div className="HeaderListTitle">
+      <div className="headerListTitle">
         <p>Token :</p>
       </div>
-      <div className="HeaderListContent">
+      <div className="headerListContent">
         <>
           {headerApi.Token.length == 0 ? (
             <input
