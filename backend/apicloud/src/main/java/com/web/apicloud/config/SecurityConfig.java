@@ -42,7 +42,6 @@ public class SecurityConfig {
 
     @Autowired
     private HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
-
     @Bean
     public TokenAuthenticationFilter tokenAuthenticationFilter() {
         return new TokenAuthenticationFilter();
@@ -120,15 +119,13 @@ public class SecurityConfig {
                 .authenticated()
                 .and()
                 .oauth2Login()
+                .defaultSuccessUrl("http://localhost:3000")
                 /*
                 OAuth 2 로그인 기능에 대한 여러 설정 진입점
                  */
                 .authorizationEndpoint()
                 .baseUri("/oauth2/authorization")
                 .authorizationRequestRepository(cookieAuthorizationRequestRepository())
-                .and()
-                .redirectionEndpoint()
-                .baseUri("/oauth2/code/*")
                 .and()
                 .userInfoEndpoint()
                 .userService(customOAuth2UserService)
