@@ -10,8 +10,10 @@ import com.web.apicloud.domain.repository.DocsRepository;
 import com.web.apicloud.domain.repository.GroupRepository;
 import com.web.apicloud.domain.repository.GroupUserRepository;
 import com.web.apicloud.domain.repository.UserRepository;
+import com.web.apicloud.domain.vo.ApiVO;
+import com.web.apicloud.domain.vo.ControllerVO;
+import com.web.apicloud.domain.vo.DocVO;
 import com.web.apicloud.util.SHA256;
-import io.spring.initializr.web.project.ProjectRequest;
 import io.spring.initializr.web.project.WebProjectRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,12 +47,19 @@ public class DocsServiceImpl implements DocsService{
     }
 
     @Override
-    public ProjectRequest getProjectRequestByDocsId(Long docId) {
+    public DocVO getDocVOByDocsId(Long docId) {
         Docs doc = findByDocsId(docId);
-        return convertDocsToProjectRequest(doc);
+        return convertDocsToDocVO(doc);
     }
 
-    private WebProjectRequest convertDocsToProjectRequest(Docs doc) {
+    private DocVO convertDocsToDocVO(Docs doc) {
+        // TODO: 파서 만들어서 json string > vo
+        DocVO docVO = DocVO.builder()
+                .controllers(List.of(
+                        ControllerVO.builder().apis(List.of(ApiVO.builder().name("api1").build())).name("controller1").build(),
+                        ControllerVO.builder().apis(List.of(ApiVO.builder().name("api2").build())).name("controller2").build()
+                ))
+                .build();
         WebProjectRequest pr = new WebProjectRequest();
         // type
         if(doc.getBuildManagement() == 1) {
@@ -96,7 +105,7 @@ public class DocsServiceImpl implements DocsService{
 
         // javaVersion
         pr.setJavaVersion(doc.getJavaVersion().toString());
-        return pr;
+        return docVO;
     }
     @Override
     public Long saveDocGetDocId(CreateDocDto createDocDto) {

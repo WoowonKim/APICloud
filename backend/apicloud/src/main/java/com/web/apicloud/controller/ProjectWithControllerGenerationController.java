@@ -134,6 +134,15 @@ public class ProjectWithControllerGenerationController {
         return upload(archive, result.getRootDirectory(), generateFileName(request, "zip"), "application/zip");
     }
 
+    public ResponseEntity<byte[]> springZip(DocVO doc, Map<String, String> header) throws IOException {
+        ProjectRequest request = projectRequest(header);
+        // TODO: doc 이용해서 request 갱신
+        ProjectWithControllerGenerationResult result = this.projectGenerationInvoker.invokeProjectStructureGeneration(request, doc);
+        Path archive = createArchive(result, "zip", ZipArchiveOutputStream::new, ZipArchiveEntry::new,
+                ZipArchiveEntry::setUnixMode);
+        return upload(archive, result.getRootDirectory(), generateFileName(request, "zip"), "application/zip");
+    }
+
     @RequestMapping(path = "/starter.tgz", produces = "application/x-compress")
     public ResponseEntity<byte[]> springTgz(ProjectRequest request) throws IOException {
         ProjectWithControllerGenerationResult result = this.projectGenerationInvoker.invokeProjectStructureGeneration(request, new DocVO());

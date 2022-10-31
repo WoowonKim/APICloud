@@ -7,7 +7,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import com.web.apicloud.domain.entity.User;
-import io.spring.initializr.web.project.ProjectRequest;
+import com.web.apicloud.domain.vo.DocVO;
 
 public interface DocsService {
     Docs findByDocsId(Long docsId);
@@ -20,5 +20,5 @@ public interface DocsService {
 
     List<DocListResponse> getDocs(Long userId);
 
-    ProjectRequest getProjectRequestByDocsId(Long docId);
+    DocVO getDocVOByDocsId(Long docId);
 }
