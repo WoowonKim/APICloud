@@ -29,10 +29,10 @@ public class DocsController {
             log.info("DOC 생성 API 호출");
             Long docId = docsService.saveDocGetDocId(createDocRequest);
             String encryptedUrl = docsService.encryptUrl(docId);
-            return ResponseHandler.generateResponse("요청에 성공했습니다.", HttpStatus.OK, "encryptedUrl", encryptedUrl);
+            return ResponseHandler.generateResponse("API DOC 생성에 성공했습니다.", HttpStatus.OK, "encryptedUrl", encryptedUrl);
         } catch (Exception e) {
             log.error("DOC 생성 API 에러", e);
-            return ResponseHandler.generateResponse("요청에 실패했습니다.", HttpStatus.BAD_REQUEST);
+            return ResponseHandler.generateResponse("API DOC 생성에 실패했습니다.", HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -41,10 +41,10 @@ public class DocsController {
         try {
             log.info("사용자별 DOC 리스트 조회 API 호출");
             List<DocListResponse> docListResponses = docsService.getDocs(1L);
-            return ResponseHandler.generateResponse("요청에 성공했습니다.", HttpStatus.OK, "docList", docListResponses);
+            return ResponseHandler.generateResponse("사용자별 API DOC 리스트 조회에 성공했습니다.", HttpStatus.OK, "docList", docListResponses);
         } catch (Exception e) {
             log.info("사용자별 DOC 리스트 조회 API 에러", e);
-            return ResponseHandler.generateResponse("요청에 실패했습니다.", HttpStatus.BAD_REQUEST);
+            return ResponseHandler.generateResponse("사용자별 API DOC 리스트 조회에 실패했습니다.", HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -53,10 +53,22 @@ public class DocsController {
         try {
             log.info("DOC 수정 API 구현");
             UpdateDocDto updateDocResponse = docsService.updateDoc(docId, updateDocDto);
-            return ResponseHandler.generateResponse("요청에 성공했습니다.", HttpStatus.OK, "updateDocDto", updateDocResponse);
+            return ResponseHandler.generateResponse("API DOC 수정에 성공했습니다.", HttpStatus.OK, "updateDocDto", updateDocResponse);
         } catch (Exception e) {
             log.info("DOC 수정 API 에러", e);
-            return ResponseHandler.generateResponse("요청에 실패했습니다.", HttpStatus.BAD_REQUEST);
+            return ResponseHandler.generateResponse("API DOC 수정에 실패했습니다.", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @DeleteMapping("/{docId}")
+    public ResponseEntity<Object> deleteDoc(@PathVariable Long docId) {
+        try {
+            log.info("DOC 삭제 API 구현");
+            docsService.deleteDoc(docId);
+            return ResponseHandler.generateResponse("API DOC 삭제에 성공했습니다.", HttpStatus.OK);
+        } catch (Exception e) {
+            log.info("DOC 삭제 API 에러", e);
+            return ResponseHandler.generateResponse("API DOC 삭제에 실패했습니다.", HttpStatus.BAD_REQUEST);
         }
     }
 

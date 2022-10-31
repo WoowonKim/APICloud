@@ -147,6 +147,21 @@ public class DocsServiceImpl implements DocsService{
     }
 
     @Override
+    public List<DocListResponse> getDocs(Long userId) {
+        ArrayList<DocListResponse> docListResponses = new ArrayList<>();
+        User user = findByUserId(userId);
+        List<GroupUser> groupUsers =  groupUserRepository.findByUser(user);
+        for (GroupUser groupUser : groupUsers) {
+            List<Docs> docs = docsRepository.findByGroup(groupUser.getGroup());
+            for (Docs doc : docs) {
+                DocListResponse docListResponse = doc.toDto(doc.getId(), doc.getDocsName(), doc.getGroup().getId(), groupUser.getUser(), groupUser.getAuthority());
+                docListResponses.add(docListResponse);
+            }
+        }
+        return docListResponses;
+    }
+
+    @Override
     public UpdateDocDto updateDoc(Long docId, UpdateDocDto updateDocDto) {
         Docs doc = findByDocsId(docId);
         doc.setServerUrl(updateDocDto.getServerUrl());
@@ -163,17 +178,8 @@ public class DocsServiceImpl implements DocsService{
     }
 
     @Override
-    public List<DocListResponse> getDocs(Long userId) {
-        ArrayList<DocListResponse> docListResponses = new ArrayList<>();
-        User user = findByUserId(userId);
-        List<GroupUser> groupUsers =  groupUserRepository.findByUser(user);
-        for (GroupUser groupUser : groupUsers) {
-            List<Docs> docs = docsRepository.findByGroup(groupUser.getGroup());
-            for (Docs doc : docs) {
-                DocListResponse docListResponse = doc.toDto(doc.getId(), doc.getDocsName(), doc.getGroup().getId(), groupUser.getUser(), groupUser.getAuthority());
-                docListResponses.add(docListResponse);
-            }
-        }
-        return docListResponses;
+    public void deleteDoc(Long docId) {
+        Docs doc = findByDocsId(docId);
+        docsRepository.delete(doc);
     }
 }

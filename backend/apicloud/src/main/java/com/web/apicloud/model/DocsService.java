@@ -23,4 +23,7 @@ public interface DocsService {
     DocVO getDocVOByDocsId(Long docId);
     
     UpdateDocDto updateDoc(Long docId, UpdateDocDto updateDocDto);
+
+    void deleteDoc(Long docId);
+    ProjectRequest getProjectRequestByDocsId(Long docId);
 }
