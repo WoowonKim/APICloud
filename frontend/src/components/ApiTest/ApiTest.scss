@@ -115,7 +115,10 @@
   font-weight: bold;
   margin-left: 5px;
   color: #767273;
+  padding: 1px;
 }
+// .headerListTitle > input {
+// }
 
 .headerListContent {
   margin-left: 3px;
@@ -125,14 +128,21 @@
   font-weight: 400;
   margin-left: 5px;
 }
+.headerListContent > p > input {
+  border: none;
+  font-size: 17px;
+  background-color: #f4f4f4;
+}
+.headerListContent > p > input:focus {
+  outline: none;
+}
 .tokenInput {
   border: none;
   margin-top: 20px;
   width: 300px;
   background-color: #f4f4f4;
-  border-bottom: 1px solid #3e3636;
-  font-weight: 500;
-  font-size: 14px;
+  font-weight: 400;
+  font-size: 17px;
 }
 .headerListContent > input:focus {
   outline: none;

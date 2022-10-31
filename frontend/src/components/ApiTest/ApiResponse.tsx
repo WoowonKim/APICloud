@@ -1,9 +1,15 @@
 import React, { useState } from "react";
 
 const dummy = {
-  userId: "zerojei0423@naver.com",
-  pw: "1q2w3e4r",
-  token: "1q2w3e4r5t6y7u",
+  status: 200,
+  message: "ok",
+  result: {
+    user: {
+      id: "zero",
+      email: "zero",
+      password: "1q2w3e",
+    },
+  },
 };
 const ApiResponse = () => {
   const [responseFlag, setResponseFlag] = useState<number | null>(1);
@@ -34,7 +40,7 @@ const ApiResponse = () => {
         onClick={() => {
           flag(2);
         }}
-        className={responseFlag == 2 ? "HeaderClickList" : "HeaderMoClicklist"}
+        className={responseFlag == 2 ? "headerClickList" : "headerMoClicklist"}
       >
         Cookie
       </span>
