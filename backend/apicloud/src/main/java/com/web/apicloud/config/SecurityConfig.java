@@ -117,7 +117,8 @@ public class SecurityConfig {
                 anyRequest : 설정한 URL 외 나머지
                 authenticated : 인증된 사용자. 즉, 로그인한 사용자들만 허용
                  */
-                .authenticated()
+//                .authenticated()
+                .permitAll()
                 .and()
                 .oauth2Login()
                 /*

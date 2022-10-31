@@ -43,22 +43,46 @@ public class SynchronizeServiceImpl implements SynchronizeService {
     }
 
     private void apiParsing(List<String> api) {
-        String method = getMethod(api.get(0));
-        if(method == null) return;
-        System.out.println("method" + method.toUpperCase());
+        List<String> getMethod = `getMethod`(api.get(0));
+        if (getMethod != null && getMethod.size() > 0) {
+            //메소드 저장
+        }
+        if (getMethod != null && getMethod.size() > 1) {
+            //uri 저장
+        }
+
+        for (int i = 1; i < api.size(); i++) {
+            int targetIdx1 = api.get(i).indexOf("ResponseEntity");
+            System.out.println(targetIdx1);
+            if (targetIdx1 == -1) continue;
+            String[] split = api.get(i).split(",");
+            for (int j = 0; j < split.length; j++) {
+                System.out.println(split[j]);
+            }
+            System.out.println(api.get(i));
+            break;
+        }
         //public ResponseEntity<Object> selectUser(@RequestHeader("Auth-access") String token) throws IOException {
     }
 
-    private String getMethod(String str) {
+    private List<String> getMethod(String str) {
+        List<String> getMethod = new ArrayList<>();
+
         int targetIdx1 = str.indexOf("@");
         int targetIdx2 = str.indexOf(METHOD);
 
         if (targetIdx1 == -1 || targetIdx2 == -1) return null;
         String method = str.substring(targetIdx1 + 1, targetIdx2);
+        getMethod.add(method.toUpperCase());
 
-        targetIdx1 = str.indexOf("(");
-        targetIdx2 = str.indexOf(")");
-        return method;
+        targetIdx1 = str.indexOf("\"");
+        if (targetIdx1 == -1) return getMethod;
+        String subString = str.substring(targetIdx1 + 1, str.length());
+        targetIdx2 = subString.indexOf("\"");
+        String uri = subString.substring(0, targetIdx2);
+
+        getMethod.add(uri);
+        return getMethod;
     }
 
     static boolean KMP(String parent, String pattern) {
