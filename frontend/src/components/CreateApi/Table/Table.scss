@@ -1,7 +1,7 @@
 table,
 .divTable {
   border: 1px solid lightgray;
-  width: fit-content;
+  width: 90%;
   position: relative;
 }
 
@@ -29,12 +29,12 @@ th,
   position: relative;
   font-weight: bold;
   text-align: center;
-  height: 30px;
+  height: 40px;
 }
 
 td,
 .td {
-  height: auto;
+  height: 50px;
 }
 
 .resizer {
@@ -83,4 +83,23 @@ td,
   outline: none;
   border-bottom: 2px solid #3a00e5;
   margin: 10px 0;
+}
+
+.tableInfoInputGroup {
+  margin: 2rem 0;
+  .tableInfoLabel {
+    font-size: 1.3em;
+    margin: 1rem 1rem 0 0;
+  }
+  .tableInfoInput {
+    outline: none;
+    border: none;
+    border-bottom: 1px solid black;
+    font-size: 1.3em;
+    margin: 1rem 1rem 0 0;
+  }
+}
+
+.responseTypeLabel {
+  font-size: 1.3em;
 }
