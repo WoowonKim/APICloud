@@ -98,7 +98,7 @@ const CreateApi = () => {
 
   return (
     <div className="apiDocscontainer">
-      <Sidebar />
+      {/* <Sidebar /> */}
       <div className="mainContainer">
         <div className="titleContainer">
           <p>APICloud API 명세서</p>
