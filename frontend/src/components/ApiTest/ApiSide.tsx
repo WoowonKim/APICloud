@@ -3,7 +3,7 @@ import "./ApiTest.scss";
 
 const ApiSide = () => {
   return (
-    <div className="ApiSide">
+    <div className="apiSide">
       <p> ApiSide</p>
     </div>
   );
