@@ -1,35 +1,38 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
-import { SiteAddressType, subMethod } from "../../pages/TestApi";
+import React from "react";
+import { useSelector } from "react-redux";
+
+import { useAppDispatch } from "../../Store";
+import { RootState } from "../../Store/rootReducer";
+import testApiSlice from "../../Store/slice/testApi";
 import MethodTest from "./MethodTest";
-interface Props {
-  siteAddress: SiteAddressType;
-  setSubmitMethod: Dispatch<SetStateAction<subMethod | null>>;
-}
-const ApiInputUri = ({ siteAddress, setSubmitMethod }: Props) => {
-  const [getMethod, setGetMethod] = useState<string>("GET");
-  const [uriAddress, setUriAddress] = useState<string>("");
-  const Link = {
-    method: getMethod,
-    uri: uriAddress,
+
+const ApiInputUri = () => {
+  const isInfo = useSelector((state: RootState) => state.testApi);
+  const dispatch = useAppDispatch();
+  const testFunction = () => {
+    // 보내기 클릭 시 전송해야하는 객체이므로 임시로 log처리 추후 변경 예정
+    console.log("isInfo ====> ", isInfo);
   };
-  const subMitWord = () => {
-    setSubmitMethod(Link);
-  };
+
   return (
     <div className="apiInputContainer">
       <span className="apiChoice">
-        <MethodTest setGetMethod={setGetMethod} />
+        <MethodTest />
       </span>
       <input
         className="apiInput"
         type="text"
-        placeholder="URI를 입력"
-        defaultValue={siteAddress.Address + siteAddress.commonUri + "/"}
+        defaultValue={isInfo.infomethod.address + isInfo.infomethod.commonUri + "/"}
         onChange={(e) => {
-          setUriAddress(e.target.value);
+          dispatch(testApiSlice.actions.setAddress({ address: e.target.value }));
         }}
       />
-      <button className="apiTestBtn" onClick={subMitWord}>
+      <button
+        className="apiTestBtn"
+        onClick={() => {
+          testFunction();
+        }}
+      >
         보내기
       </button>
     </div>
