@@ -56,8 +56,8 @@ public class SynchronizeServiceImpl implements SynchronizeService {
         if (targetIdx1 == -1 || targetIdx2 == -1) return null;
         String method = str.substring(targetIdx1 + 1, targetIdx2);
 
-        targetIdx1 = str.indexOf("(");
-        targetIdx2 = str.indexOf(")");
+//        targetIdx1 = str.indexOf("(");
+//        targetIdx2 = str.indexOf(")");
         return method;
     }
 
