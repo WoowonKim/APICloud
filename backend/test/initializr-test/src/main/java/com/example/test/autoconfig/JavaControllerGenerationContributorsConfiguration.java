@@ -16,6 +16,7 @@
 package com.example.test.autoconfig;
 
 import com.example.test.customizer.ControllerTypeCustomizer;
+import com.example.test.vo.ApiVO;
 import io.spring.initializr.generator.language.Annotatable;
 import io.spring.initializr.generator.language.Annotation;
 import io.spring.initializr.generator.language.TypeDeclaration;
@@ -36,7 +37,7 @@ import java.util.List;
 
 @Configuration
 public class JavaControllerGenerationContributorsConfiguration {
-	private List<DummyApi> apis;
+	private List<ApiVO> apis;
 //    @Bean
 //	MainApplicationTypeCustomizer<JavaTypeDeclaration> mainMethodContributor() {
 //		return (typeDeclaration) -> {
@@ -57,11 +58,11 @@ public class JavaControllerGenerationContributorsConfiguration {
 			apis.forEach(api -> {
 				OpenAPI openAPI;
 				// param
-				AnnotatableParameter pathVariable = new AnnotatableParameter(api.getPath(), "org.springframework.web.bind.annotation.PathVariable");
+				AnnotatableParameter pathVariable = new AnnotatableParameter("PathVariable", "org.springframework.web.bind.annotation.PathVariable");
 
 				pathVariable.annotate(Annotation.name("org.springframework.web.bind.annotation.PathVariable"));
 				// query
-				JavaMethodDeclaration jmd = JavaMethodDeclaration.method(api.getApiName())
+				JavaMethodDeclaration jmd = JavaMethodDeclaration.method(api.getName())
 						.modifiers(Modifier.PUBLIC)
 						.parameters()
 						.returning("void")
@@ -71,52 +72,9 @@ public class JavaControllerGenerationContributorsConfiguration {
 		};
 	}
 
-	public void setApis(List<DummyApi> apis) {
+	public void setApis(List<ApiVO> apis) {
 		this.apis = apis;
 	}
-}
-
-@Data
-@Builder
-@AllArgsConstructor
-class DummyApi {
-	private Long id;
-
-	private String summary;
-
-	private String uri;
-
-	private String path;
-
-	private String query;
-
-	private String requestBody;
-
-	private String requestHeader;
-
-	private String responseBody;
-
-	private String responseStatus;
-
-	private String method;
-
-	private String apiName;
-
-	private DummyController controller;
-}
-
-@Builder
-@AllArgsConstructor
-class DummyController {
-	private Long id;
-
-	private String controllerName;
-
-	private String mappingUri;
-
-	private boolean requiredArgsConstructor;
-
-	private String crossOrigin;
 }
 
 class DummyMethodDescription {

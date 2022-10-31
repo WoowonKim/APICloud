@@ -5,8 +5,6 @@ import com.web.apicloud.domain.dto.DocListResponse;
 import com.web.apicloud.domain.dto.UpdateDocDto;
 import com.web.apicloud.model.DocsService;
 import com.web.apicloud.util.ResponseHandler;
-import io.spring.initializr.web.controller.ProjectGenerationController;
-import io.spring.initializr.web.project.ProjectRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -14,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -22,7 +21,7 @@ import java.util.List;
 public class DocsController {
     private final DocsService docsService;
     // FIXME: controller 안의 로직 밖에서 수행하거나 해당 controller api 막기
-    private final ProjectGenerationController<ProjectRequest> projectGenerationController;
+    private final ProjectWithControllerGenerationController projectGenerationController;
 
     @PostMapping()
     public ResponseEntity<Object> createDoc(@RequestBody CreateDocRequest createDocRequest) {
@@ -74,7 +73,7 @@ public class DocsController {
     }
 
     @GetMapping("/{docsId}/project")
-    public ResponseEntity<byte[]> exportProject(@PathVariable Long docsId) throws IOException {
-        return projectGenerationController.springZip(docsService.getProjectRequestByDocsId(docsId));
+    public ResponseEntity<byte[]> exportProject(@PathVariable Long docsId, @RequestHeader Map<String, String> headers) throws IOException {
+        return projectGenerationController.springZip(docsService.getDocVOByDocsId(docsId), headers);
     }
 }
