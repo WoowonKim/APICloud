@@ -6,7 +6,7 @@ import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import "./main.scss";
 const Header = () => {
   return (
-    <div className="header">
+    <div className="ApiMainHeader">
       {/* 메뉴바*/}
       <div className="side">
         <FontAwesomeIcon className="barsIcon" icon={faBars} />

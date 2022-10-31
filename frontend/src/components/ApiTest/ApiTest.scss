@@ -5,13 +5,15 @@
 }
 .testSide {
   width: 20%;
-  height: 100vh;
+  height: 91vh;
   background-color: #e7f7fe;
 }
-
 .testMain {
   width: 80%;
   margin-left: 9px;
+}
+.testInfomation {
+  margin-left: 10%;
 }
 .testInfo {
   display: flex;
@@ -22,7 +24,6 @@
 
 // ApiSide
 .ApiSide {
-  margin-top: 70px;
   display: flex;
   padding: 5px;
 }
@@ -42,7 +43,7 @@
   outline: none;
 }
 .ApiInput {
-  width: 50%;
+  width: 60%;
   border: none;
   border-bottom: 1px solid #000000;
   border-right: 1px solid #000000;
@@ -79,21 +80,62 @@
   cursor: pointer;
 }
 // ApiHeader
-.ApiHeaderContainer > p {
-  height: 7px;
+.ApiHeaderContainer {
+  padding: 5px;
+}
+.HeaderClickList {
+  margin-right: 5px;
+  font-size: 18px;
+  color: #000000;
+  border-bottom: 2px solid #000000;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+.HeaderMoClicklist {
+  margin-right: 5px;
+  font-size: 15px;
+  color: #727070;
+  cursor: pointer;
 }
 .HeaderList {
+  margin-top: 10px;
+  width: 100%;
+  height: 240px;
   display: flex;
   background-color: #f4f4f4;
+  border-radius: 20px;
 }
 .HeaderListTitle {
-  width: 30%;
-  text-align: center;
+  width: 33%;
+  text-align: left;
+  border-radius: 20px;
+  background-color: #e7f7fe;
+}
+.HeaderListTitle > p {
+  font-weight: bold;
+  margin-left: 5px;
+  color: #767273;
 }
 
 .HeaderListContent {
   margin-left: 3px;
-  text-align: center;
+  text-align: left;
+}
+.HeaderListContent > p {
+  font-weight: 400;
+  margin-left: 5px;
+}
+.tokenInput {
+  border: none;
+  margin-top: 20px;
+  width: 300px;
+  background-color: #f4f4f4;
+  border-bottom: 1px solid #3e3636;
+  font-weight: 500;
+  font-size: 14px;
+}
+.HeaderListContent > input:focus {
+  outline: none;
 }
 
 //ApiBody
@@ -104,9 +146,33 @@
   height: 9px;
 }
 .bodyArea {
-  width: 100%;
+  width: 91%;
   height: 200px;
   border: 1px solid #000000;
   border-radius: 10px;
   resize: none;
+  padding: 20px;
+}
+
+// ApiRespose
+.ApiResponseContainer {
+  margin-left: 15px;
+}
+.ApiResponseContainer > p {
+  font-size: 17px;
+}
+.ApiResponseContainer > span {
+  padding-right: 5px;
+
+  cursor: pointer;
+}
+.ApiResponseResult {
+  margin-top: 5px;
+  background-color: #f4f4f4;
+  width: 600px;
+  height: 480px;
+}
+
+.ApiResponseResult > div {
+  padding: 40px;
 }
