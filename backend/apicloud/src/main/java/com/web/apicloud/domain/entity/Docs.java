@@ -1,10 +1,7 @@
 package com.web.apicloud.domain.entity;
 
 import com.web.apicloud.domain.dto.DocListResponse;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import javax.persistence.*;
@@ -12,6 +9,7 @@ import javax.validation.constraints.NotNull;
 
 
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "tb_docs")
 @Entity

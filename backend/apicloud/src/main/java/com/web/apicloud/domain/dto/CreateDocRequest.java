@@ -5,7 +5,7 @@ import com.web.apicloud.domain.entity.Group;
 import lombok.Data;
 
 @Data
-public class CreateDocDto {
+public class CreateDocRequest {
     private Long userId;
 
     private String docsName;

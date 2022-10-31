@@ -1,7 +1,8 @@
 package com.web.apicloud.model;
 
-import com.web.apicloud.domain.dto.CreateDocDto;
+import com.web.apicloud.domain.dto.CreateDocRequest;
 import com.web.apicloud.domain.dto.DocListResponse;
+import com.web.apicloud.domain.dto.UpdateDocDto;
 import com.web.apicloud.domain.entity.Docs;
 import com.web.apicloud.domain.entity.Group;
 import com.web.apicloud.domain.entity.GroupUser;
@@ -99,29 +100,29 @@ public class DocsServiceImpl implements DocsService{
         return pr;
     }
     @Override
-    public Long saveDocGetDocId(CreateDocDto createDocDto) {
+    public Long saveDocGetDocId(CreateDocRequest createDocRequest) {
         Long latestGroupId = groupRepository.getLatestValue();
         if (latestGroupId == null) {
             Group group = Group.builder().id(1L).build();
             groupRepository.save(group);
-            GroupUser groupUser = GroupUser.builder().authority(1).user(findByUserId(createDocDto.getUserId())).group(group).build();
+            GroupUser groupUser = GroupUser.builder().authority(1).user(findByUserId(createDocRequest.getUserId())).group(group).build();
             groupUserRepository.save(groupUser);
-            createDocDto.setGroup(group);
-            Long docId = docsRepository.save(createDocDto.toEntity()).getId();
+            createDocRequest.setGroup(group);
+            Long docId = docsRepository.save(createDocRequest.toEntity()).getId();
             return docId;
         } else {
             Group group = Group.builder().id(latestGroupId+1).build();
             groupRepository.save(group);
-            GroupUser groupUser = GroupUser.builder().authority(1).user(findByUserId(createDocDto.getUserId())).group(group).build();
+            GroupUser groupUser = GroupUser.builder().authority(1).user(findByUserId(createDocRequest.getUserId())).group(group).build();
             groupUserRepository.save(groupUser);
-            createDocDto.setGroup(group);
-            Long docId = docsRepository.save(createDocDto.toEntity()).getId();
+            createDocRequest.setGroup(group);
+            Long docId = docsRepository.save(createDocRequest.toEntity()).getId();
             return docId;
         }
     }
 
     // 암호화된 Url DB에 저장
-    private void updateDocs(Long docsId, String encryptedUrl) {
+    private void saveEncryptedUrl(Long docsId, String encryptedUrl) {
         Docs doc = findByDocsId(docsId);
         doc.setEncryptedUrl(encryptedUrl);
         Docs encryptedDoc = findByDocsId(docsId);
@@ -132,8 +133,24 @@ public class DocsServiceImpl implements DocsService{
     public String encryptUrl(Long docId) throws NoSuchAlgorithmException {
         String encryptedDocId = sha256.encrypt(docId.toString());
         String encryptedUrl = "http://localhost:3000/" + encryptedDocId;
-        updateDocs(docId, encryptedUrl);
+        saveEncryptedUrl(docId, encryptedUrl);
         return encryptedUrl;
+    }
+
+    @Override
+    public UpdateDocDto updateDoc(Long docId, UpdateDocDto updateDocDto) {
+        Docs doc = findByDocsId(docId);
+        doc.setServerUrl(updateDocDto.getServerUrl());
+        doc.setContextUri(updateDocDto.getContextUrl());
+        doc.setJavaVersion(updateDocDto.getJavaVersion());
+        doc.setSpringVersion(updateDocDto.getSpringVersion());
+        doc.setBuildManagement(updateDocDto.getBuildManagement());
+        doc.setGroupPackage(updateDocDto.getGroupPackage());
+        doc.setPackageName(updateDocDto.getPackageName());
+        doc.setPackaging(updateDocDto.getPackaging());
+        docsRepository.save(doc);
+        updateDocDto.setGroupId(doc.getGroup().getId());
+        return updateDocDto;
     }
 
     @Override
