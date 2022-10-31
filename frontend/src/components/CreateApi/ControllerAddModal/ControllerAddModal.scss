@@ -1,0 +1,135 @@
+@mixin button {
+  border: none;
+  outline: none;
+  text-align: center;
+  font-weight: bold;
+  margin-right: 10px;
+  font-family: "twayair";
+  &:hover {
+    opacity: 0.7;
+    transition: all 300ms ease-in;
+  }
+}
+
+.sidebarModalContainer {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+}
+
+.modalInnerContainer {
+  width: 30rem;
+  min-height: 33rem;
+  height: auto;
+  background-color: white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 1rem;
+  padding: 1rem 2rem;
+}
+
+.modalTitleGroup {
+  margin-bottom: 6rem;
+}
+
+.modalTitleText {
+  font-size: 2em;
+  font-weight: bold;
+  margin: 0.5rem 0 0 0;
+  position: absolute;
+  z-index: 1;
+}
+
+.highlightText {
+  background-color: rgba(207, 244, 255, 0.69);
+  height: 1.5em;
+  width: 14em;
+  position: absolute;
+  top: 2.5em;
+  left: 2.5em;
+}
+
+.controllerInfoItem {
+  margin: 1rem 0;
+}
+
+.controllerLabel {
+  font-weight: bold;
+  margin-right: 0.5rem;
+}
+
+.controllerInput1 {
+  border: none;
+  border-bottom: 2px solid black;
+  outline: none;
+  background-color: white;
+  width: 100%;
+  margin-top: 1rem;
+  font-family: "twayair";
+  font-size: 1em;
+}
+
+.apiInfoGroup {
+  margin-top: 1rem;
+}
+
+.apiTitleGroup {
+  display: flex;
+  align-items: center;
+  margin-top: 2rem;
+}
+
+.apiTitleText {
+  font-size: 1.3em;
+  font-weight: bold;
+  margin: 0 1rem 0 0;
+}
+
+.apiPlusButton {
+  @include button();
+  background-color: rgb(207, 244, 255);
+  border-radius: 100%;
+  width: 25px;
+  height: 25px;
+  padding: 0;
+}
+
+.controllerPlusIcon {
+  font-size: 1.3em;
+}
+
+.controllerInfoText {
+  color: tomato;
+  font-size: 0.8em;
+  padding-left: 0.5rem;
+}
+
+.modalCloseButton {
+  width: 100%;
+  height: 100%;
+}
+
+.modalCotrollerAddButton {
+  @include button();
+  background-color: rgb(207, 244, 255);
+  border-radius: 5rem;
+  padding: 0.5rem 0;
+  font-size: 1em;
+  font-family: "twayair";
+  width: 100%;
+}
+
+.controllerModalCloseButton {
+  @include button();
+  background-color: rgb(207, 244, 255);
+  border-radius: 5rem;
+  padding: 0.5rem 0;
+  font-size: 1em;
+  font-family: "twayair";
+  width: 100%;
+  margin: 1.5rem 0;
+}
