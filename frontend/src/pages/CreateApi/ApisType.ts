@@ -19,11 +19,11 @@ export type ApisType = {
   name: string;
   uri: string;
   method: string;
-  requestBody: DtoType | {};
+  requestBody: DtoType;
   parameters: PropertiesType[] | [];
-  query: DtoType | {};
-  header: HeaderType | [];
-  responses: ResponsesType | {};
+  query: DtoType;
+  header: HeaderType[] | [];
+  responses: ResponsesType;
 };
 
 export type DtoType = {
@@ -49,11 +49,13 @@ export type ResponsesType = {
   fail: {
     status: number;
     type: string;
+    required: boolean;
     properties: PropertiesType[];
   };
   success: {
     status: number;
     type: string;
+    required: boolean;
     properties: PropertiesType[];
   };
 };

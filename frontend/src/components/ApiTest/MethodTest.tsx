@@ -1,5 +1,7 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
+import { useAppDispatch } from "../../Store";
+import testApiSlice from "../../Store/slice/testApi";
 import "../CreateApi/SelectMethods/SelectMethods.scss";
 
 const Item = styled.div`
@@ -21,21 +23,17 @@ const SelectedItem = styled.button`
   width: 100%;
 `;
 
-interface Props {
-  setGetMethod: Dispatch<SetStateAction<string>>;
-}
-
-const MethodTest = ({ setGetMethod }: Props) => {
+const MethodTest = () => {
+  const dispatch = useAppDispatch();
   const [visible, setVisible] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState("GET");
 
   const handleSelect = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
     const eventTarget = e.target as HTMLElement;
     setSelectedMethod(eventTarget.innerText);
-    setGetMethod(eventTarget.innerText);
+    dispatch(testApiSlice.actions.setMethod({ method: eventTarget.innerText }));
     setVisible(!visible);
   };
-  const mainColor = "F4F4F4";
   return (
     <div className="selectBox" onClick={() => setVisible(!visible)}>
       <SelectedItem

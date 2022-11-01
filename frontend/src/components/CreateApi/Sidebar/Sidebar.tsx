@@ -1,4 +1,8 @@
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import {
+  faEllipsis,
+  faEllipsisVertical,
+  faPlus,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
 import { ControllerType, DataType } from "../../../pages/CreateApi/ApisType";
@@ -11,10 +15,18 @@ interface Props {
   addApi: (index: number) => void;
   data: DataType;
   setData: React.Dispatch<React.SetStateAction<DataType>>;
+  handleSidebarApi: (index: number, idx: number) => void;
 }
 
-const Sidebar = ({ addController, addApi, data, setData }: Props) => {
+const Sidebar = ({
+  addController,
+  addApi,
+  data,
+  setData,
+  handleSidebarApi,
+}: Props) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [editControllerIndex, setEditControllerIndex] = useState(-1);
 
   return (
     <>
@@ -24,6 +36,7 @@ const Sidebar = ({ addController, addApi, data, setData }: Props) => {
           addApi={addApi}
           setData={setData}
           data={data}
+          editControllerIndex={editControllerIndex}
         />
       )}
       <div className="sidebar">
@@ -42,10 +55,29 @@ const Sidebar = ({ addController, addApi, data, setData }: Props) => {
         {data.controller.length > 0 &&
           data.controller.map((item: ControllerType, index) => (
             <div key={index} className="sidebarContentContainer">
-              <div className="controllerItem">{item.name}</div>
+              <div className="sidebarControllerGroup">
+                <div className="controllerItem">{item.name}</div>
+                <button
+                  className="sidebarMenuButton"
+                  onClick={() => {
+                    setEditControllerIndex(index);
+                    setIsModalVisible((curr) => !curr);
+                  }}
+                >
+                  <FontAwesomeIcon
+                    icon={faEllipsisVertical}
+                    className="sidebarMenuIcon"
+                  />
+                  <div className="sidebarControllerEdit">수정하기</div>
+                </button>
+              </div>
               {item.apis.length > 0 &&
-                item.apis.map((api, index) => (
-                  <div key={index} className="apiListGroup">
+                item.apis.map((api, idx) => (
+                  <div
+                    key={idx}
+                    className="apiListGroup"
+                    onClick={() => handleSidebarApi(index, idx)}
+                  >
                     <SelectedItem
                       color={
                         api.method === "GET"
