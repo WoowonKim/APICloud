@@ -25,16 +25,26 @@ public class SynchronizeServiceImpl implements SynchronizeService {
     private static final String REQUEST_PARAM = "RequestParam";
     private static final String PATH_VARIABLE = "PathVariable";
     private static final String REQUEST_BODY = "RequestBody";
+    private static final String VALUE = "value";
+    private static final String[] type = {"String", "Long", "long", "Integer", "int", "float", "Float"};
 
     @Override
     public Object getFile(String root, String name) throws IOException {
         List<String> lines = Files.readAllLines(Paths.get("C:/S07P22B309/backend/billow/src/main/java/com/billow/controller/program/ProgramController.java"));
         int i = 0;
         while (i < lines.size()) {
-            if (KMP(lines.get(i++), REQUEST_MAPPING) != -1) {
-                //TODO : uri 추출해서 저장
+            if (KMP(lines.get(i), REQUEST_MAPPING) != -1) {
+                int target = KMP(lines.get(i), VALUE);
+                String value = null;
+                if (target != -1) {
+                    value = getValue(lines.get(i).substring(target + 1, lines.get(i).length()));
+                } else {
+                    value = getValue(lines.get(i));
+                }
+                // TODO: 저장
                 break;
             }
+            i++;
         }
 
         List<String> api = new ArrayList<>();
@@ -49,12 +59,14 @@ public class SynchronizeServiceImpl implements SynchronizeService {
     }
 
     private void apiParsing(List<String> api) {
+        if(api.size() == 0) return;
+        System.out.println("api ==> "+api);
         List<String> getMethod = getMethod(api.get(0));
         if (getMethod != null && getMethod.size() > 0) {
-            //메소드 저장
+            // TODO: 저장
         }
         if (getMethod != null && getMethod.size() > 1) {
-            //uri 저장
+            // TODO: uri 저장
         }
 
         for (int i = 1; i < api.size(); i++) {
@@ -66,27 +78,38 @@ public class SynchronizeServiceImpl implements SynchronizeService {
     }
 
     private void getRequestDetail(String request) {
-        if (request == "") return;
-//        request = request.replaceAll(",$", "");
+        if (request.equals("")) return;
         System.out.println("getRequestDetail ==> " + request);
-        String[] tokens = request.split(" ");
-
-        if (KMP(tokens[0], REQUEST_PARAM) != -1) {
-
-        } else if (KMP(tokens[0], PATH_VARIABLE) != -1) {
-
-        } else if (KMP(tokens[0], REQUEST_BODY) != -1) {
-
+        String type = getType(request);
+        String value = null;
+        int pathVariable = KMP(request, PATH_VARIABLE);
+        if (pathVariable != -1) {
+            String str = request.substring(pathVariable + 1, request.length());
+            value = getValue(str);
+        } else {
+            int requestParam = KMP(request, REQUEST_PARAM);
+            if (requestParam != -1) {
+                int target = KMP(request, VALUE);
+                if (target != -1) {
+                    String str = request.substring(target + 1, request.length());
+                    value = getValue(str);
+                }
+            } else {
+                int requestBody = KMP(request, REQUEST_BODY);
+                if (requestBody != -1) {
+                    String[] tokens = request.split(" ");
+                    System.out.println(tokens[1]);
+                }
+            }
         }
 
-        for (int i = 0; i < tokens.length; i++) {
-            System.out.println(tokens[i]);
-        }
+        // TODO: value, type 저장
     }
 
     private void getResponseDetail(String response) {
-        if (response == "") return;
+        if (response.equals("")) return;
         System.out.println("getResponseDetail ==> " + response);
+        // TODO: response 탐색
     }
 
     private void getApi(int i, List<String> api) {
@@ -130,8 +153,10 @@ public class SynchronizeServiceImpl implements SynchronizeService {
                         if (requestFlag) {
                             request += api.get(i).charAt(j);
                         } else {
-                            responseFlag = false;
-                            getResponseDetail(response);
+                            if(stack.isEmpty()){
+                                responseFlag = false;
+                                getResponseDetail(response);
+                            }
                         }
                         break;
                     case ')':
@@ -185,15 +210,30 @@ public class SynchronizeServiceImpl implements SynchronizeService {
         String method = str.substring(targetIdx1 + 1, targetIdx2 - METHOD.length() + 1);
         getMethod.add(method.toUpperCase());
 
-        targetIdx1 = KMP(str, "\"");
-        if (targetIdx1 == -1) return getMethod;
-        String subString = str.substring(targetIdx1 + 1, str.length());
-        targetIdx2 = KMP(subString, "\"");
-        String uri = subString.substring(0, targetIdx2);
-        getMethod.add(uri);
-
+        String uri = getValue(str);
+        if (uri != null) getMethod.add(uri);
         return getMethod;
     }
+
+    private String getValue(String str) {
+        int targetIdx1 = KMP(str, "\"");
+        if (targetIdx1 == -1) return null;
+        String subString = str.substring(targetIdx1 + 1, str.length());
+        int targetIdx2 = KMP(subString, "\"");
+        System.out.println(subString.substring(0, targetIdx2));
+        return subString.substring(0, targetIdx2);
+    }
+
+    private String getType(String str) {
+        for (String type : type) {
+            if (KMP(str, type) != -1) {
+                System.out.println("type ==> " + type);
+                return type;
+            }
+        }
+        return null;
+    }
+
 
     static int KMP(String parent, String pattern) {
         int parentLength = parent.length();
