@@ -1,5 +1,6 @@
 package com.web.apicloud.model;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.web.apicloud.domain.dto.CreateDocRequest;
 import com.web.apicloud.domain.dto.DocListResponse;
 import com.web.apicloud.domain.dto.UpdateDocDto;
@@ -20,7 +21,7 @@ public interface DocsService {
 
     List<DocListResponse> getDocs(Long userId);
 
-    DocVO getDocVOByDocsId(Long docId);
+    DocVO getDocVOByDocsId(Long docId) throws JsonProcessingException;
     
     UpdateDocDto updateDoc(Long docId, UpdateDocDto updateDocDto);
 

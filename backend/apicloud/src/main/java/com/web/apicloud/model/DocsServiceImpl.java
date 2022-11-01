@@ -1,5 +1,7 @@
 package com.web.apicloud.model;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.web.apicloud.domain.dto.CreateDocRequest;
 import com.web.apicloud.domain.dto.DocListResponse;
 import com.web.apicloud.domain.dto.UpdateDocDto;
@@ -37,6 +39,8 @@ public class DocsServiceImpl implements DocsService{
 
     private final SHA256 sha256;
 
+    private final ObjectMapper objectMapper;
+
     @Override
     public Docs findByDocsId(Long docsId) {
         return docsRepository.findById(docsId).orElse(null);
@@ -48,66 +52,15 @@ public class DocsServiceImpl implements DocsService{
     }
 
     @Override
-    public DocVO getDocVOByDocsId(Long docId) {
+    public DocVO getDocVOByDocsId(Long docId) throws JsonProcessingException {
         Docs doc = findByDocsId(docId);
-        return convertDocsToDocVO(doc);
+        return convertDocsToDocVO(Docs.builder().build());
     }
 
-    private DocVO convertDocsToDocVO(Docs doc) {
-        // TODO: 파서 만들어서 json string > vo
-        DocVO docVO = DocVO.builder()
-                .controllers(List.of(
-                        ControllerVO.builder().apis(List.of(ApiVO.builder().name("api1").build())).name("controller1").build(),
-                        ControllerVO.builder().apis(List.of(ApiVO.builder().name("api2").build())).name("controller2").build()
-                ))
-                .build();
-//        WebProjectRequest pr = new WebProjectRequest();
-//        // type
-//        if(doc.getBuildManagement() == 1) {
-//            pr.setType("maven-project");
-//        } else if(doc.getBuildManagement() == 2) {
-//            pr.setType("gradle-project");
-//        } else {
-//            // TODO: 잘못된 입력 처리
-//        }
-//
-//        // TODO: 다양한 language 처리
-//        pr.setLanguage("java");
-//
-//        // bootVersion
-//        pr.setBootVersion(doc.getSpringVersion());
-//
-//        // baseDir
-//        pr.setBaseDir(doc.getDocsName());
-//
-//        // groupId
-//        pr.setGroupId(doc.getGroupPackage());
-//
-//        //artifactId
-//        pr.setArtifactId(doc.getDocsName());
-//
-//        //name
-//        pr.setName(doc.getDocsName());
-//
-//        // description
-//        pr.setDescription("");
-//
-//        // packageName
-//        pr.setPackageName(doc.getPackageName());
-//
-//        // packaging
-//        if(doc.getPackaging() == 1) {
-//            pr.setPackaging("jar");
-//        } else if(doc.getPackaging() == 2) {
-//            pr.setPackaging("war");
-//        } else {
-//            // TODO: 에러 처리
-//        }
-//
-//        // javaVersion
-//        pr.setJavaVersion(doc.getJavaVersion().toString());
-        return docVO;
+    private DocVO convertDocsToDocVO(Docs doc) throws JsonProcessingException {
+        return objectMapper.readValue(doc.getContent(), DocVO.class);
     }
+
     @Override
     public Long saveDocGetDocId(CreateDocRequest createDocRequest) {
         Long latestGroupId = groupRepository.getLatestValue();
