@@ -24,7 +24,7 @@ import java.util.Map;
 @RequestMapping("/test")
 public class TestController {
 
-    @GetMapping("{id}")
+    @GetMapping(value = "{id}")
 //    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Message> test(HttpServletRequest request, @PathVariable("id") int id, @RequestParam("word") Integer word, @RequestBody Message message) {
 //        System.out.println(webRequest.getParameterNames());
