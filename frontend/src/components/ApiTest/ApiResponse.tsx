@@ -1,30 +1,43 @@
+import { type } from "os";
 import React, { useState } from "react";
 
+interface dummyType {
+  status: number;
+  message: string;
+  result: {
+    id: string;
+    email: string;
+    password: string;
+    token: number;
+  };
+}
 const dummy = {
   status: 200,
   message: "ok",
   result: {
-    user: {
-      id: "zero",
-      email: "zero",
-      password: "1q2w3e",
-    },
+    id: "zero",
+    email: "zero",
+    password: "1q2w3e",
+    token: 1234,
   },
 };
+
 const ApiResponse = () => {
   const [responseFlag, setResponseFlag] = useState<number | null>(1);
   const flag = (e: React.SetStateAction<number | null>) => {
     setResponseFlag(e);
   };
-  const obj = JSON.stringify(dummy).split(",");
+  const testObj = Object.entries(dummy.result);
+  const start = "{";
+  const end = "}";
   return (
     <div className="apiResponseContainer">
-      <p>Response</p>
+      <p className="apiHeaderMainTitle">Response</p>
       <span
         onClick={() => {
           flag(0);
         }}
-        className={responseFlag == 0 ? "headerClickList" : "headerMoClicklist"}
+        className={responseFlag == 0 ? "headerClickList" : "headerNoClicklist"}
       >
         Header
       </span>
@@ -32,7 +45,7 @@ const ApiResponse = () => {
         onClick={() => {
           flag(1);
         }}
-        className={responseFlag == 1 ? "headerClickList" : "headerMoClicklist"}
+        className={responseFlag == 1 ? "headerClickList" : "headerNoClicklist"}
       >
         Body
       </span>
@@ -40,16 +53,25 @@ const ApiResponse = () => {
         onClick={() => {
           flag(2);
         }}
-        className={responseFlag == 2 ? "headerClickList" : "headerMoClicklist"}
+        className={responseFlag == 2 ? "headerClickList" : "headerNoClicklist"}
       >
         Cookie
       </span>
       <div className="apiResponseResult">
         {responseFlag == 1 ? (
           <div>
-            {obj.map((string, idx) => {
-              return <p key={idx}>{string}</p>;
-            })}
+            <p>{start}</p>
+            {testObj.map((it, idx) => (
+              <div className="resultResponseContainer" key={idx}>
+                <span className="resultResponseBody">"{it[0]}" : </span>
+                {typeof it[1] === "number" ? (
+                  <span className="resultResponseBodySubNum"> {it[1]}</span>
+                ) : (
+                  <span className="resultResponseBodySub"> "{it[1]}"</span>
+                )}
+              </div>
+            ))}
+            <p>{end}</p>
           </div>
         ) : (
           <></>
