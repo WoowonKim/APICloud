@@ -24,7 +24,7 @@ const ApiBody = () => {
   };
   return (
     <div className="apiBodyContainer">
-      <p>Body</p>
+      <span>Body</span>
       <textarea
         className="bodyArea"
         placeholder="값을 입력해 주세요"

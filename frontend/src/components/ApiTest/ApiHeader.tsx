@@ -6,8 +6,9 @@ const ApiHeader = () => {
   const [headerTokenFlag, setHeaderTokenFlag] = useState<number | null>(0);
   return (
     <div className="apiHeaderContainer">
+      <p className="apiHeaderMainTitle">Request</p>
       <span
-        className={headerTokenFlag == 0 ? "headerClickList" : "headerMoClicklist"}
+        className={headerTokenFlag == 0 ? "headerClickList" : "headerNoClicklist"}
         onClick={() => {
           setHeaderTokenFlag(0);
         }}
@@ -15,7 +16,7 @@ const ApiHeader = () => {
         Header
       </span>
       <span
-        className={headerTokenFlag == 1 ? "headerClickList" : "headerMoClicklist"}
+        className={headerTokenFlag == 1 ? "headerClickList" : "headerNoClicklist"}
         onClick={() => {
           setHeaderTokenFlag(1);
         }}

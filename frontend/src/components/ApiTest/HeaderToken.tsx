@@ -12,30 +12,51 @@ const HeaderToken = () => {
     <>
       <div className="headerListTitle">
         <p>Token :</p>
+        <p>Cookie :</p>
       </div>
-      <div className="headerListContent">
-        <>
-          {isApi.Token.length == 0 ? (
+      {isApi.Token.length == 0 ? (
+        <div className="headerListContent">
+          <p>
             <input
-              className="tokenInput"
               type="text"
               onChange={(e) => {
                 dispatch(testApiSlice.actions.setToken({ Token: e.target.value }));
               }}
               defaultValue={isApi.Token}
             />
-          ) : (
+          </p>
+          <p>
             <input
-              className="tokenInput"
+              type="text"
+              onChange={(e) => {
+                dispatch(testApiSlice.actions.setCookie({ Cookie: e.target.value }));
+              }}
+              defaultValue={isApi.Cookie}
+            />
+          </p>
+        </div>
+      ) : (
+        <div className="headerListContent">
+          <p>
+            <input
               type="text"
               onChange={(e) => {
                 dispatch(testApiSlice.actions.setToken({ Token: e.target.value }));
               }}
               defaultValue={isApi.Token}
             />
-          )}
-        </>
-      </div>
+          </p>
+          <p>
+            <input
+              type="text"
+              onChange={(e) => {
+                dispatch(testApiSlice.actions.setCookie({ Cookie: e.target.value }));
+              }}
+              defaultValue={isApi.Cookie}
+            />
+          </p>
+        </div>
+      )}
     </>
   );
 };

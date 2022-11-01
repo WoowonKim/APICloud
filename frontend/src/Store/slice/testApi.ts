@@ -9,7 +9,8 @@ const initialState = {
     Accept: "*/*",
     AcceptEncoding: "gzip, deflate, br",
     Connection: "keep-alive",
-    Token: "c",
+    Token: "1q2w3esdfsjgh1i231923y08r7",
+    Cookie: "",
   },
   infomethod: {
     fixAddress: "https://localhost:8080",
@@ -24,6 +25,9 @@ const testApiSlice = createSlice({
   name: "testApi",
   initialState,
   reducers: {
+    setCookie(state, action) {
+      state.header.Cookie = action.payload.cookie;
+    },
     setAddress(state, action) {
       state.infomethod.address = action.payload.address;
     },
