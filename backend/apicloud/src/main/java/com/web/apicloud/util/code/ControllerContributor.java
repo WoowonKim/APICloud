@@ -64,10 +64,12 @@ public class ControllerContributor implements ProjectContributor {
             JavaMethodDeclaration.Builder builder = JavaMethodDeclaration
                     .method(api.getName())
                     .modifiers(Modifier.PUBLIC)
-                    .returning(api.getReturning());
+                    .returning("ResponseEntity<"+ api.getReturning() + ">");
             addApiParameters(builder, api);
 
-            JavaMethodDeclaration jmd = builder.body();
+            JavaMethodDeclaration jmd = builder.body(new JavaReturnStatement(new JavaMethodInvocation("new ResponseEntity<"+ api.getReturning() + ">",
+                    "", "null")));
+
             String methodMappingName = "org.springframework.web.bind.annotation."
                     + Character.toUpperCase(api.getMethod().charAt(0)) + api.getMethod().substring(1) + "Mapping";
             jmd.annotate(Annotation.name(methodMappingName, b ->
