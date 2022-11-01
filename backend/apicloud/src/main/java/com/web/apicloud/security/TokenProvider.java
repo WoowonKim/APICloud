@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import io.jsonwebtoken.*;
 
 import java.security.Key;
-import java.util.Base64;
 import java.util.Date;
 
 @Service
@@ -30,6 +29,7 @@ public class TokenProvider {
         return Jwts.builder()
                 .setSubject(Long.toString(userPrincipal.getId()))
                 .setIssuedAt(new Date())
+                .claim("auth", userPrincipal.getAuthorities())
                 .setExpiration(expiryDate)
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();

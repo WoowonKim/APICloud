@@ -40,8 +40,6 @@ public class SecurityConfig {
     @Autowired
     private OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
 
-    @Autowired
-    private HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
     @Bean
     public TokenAuthenticationFilter tokenAuthenticationFilter() {
         return new TokenAuthenticationFilter();
@@ -90,55 +88,26 @@ public class SecurityConfig {
                 .authenticationEntryPoint(new RestAuthenticationEntryPoint())
                 .and()
                 .authorizeRequests()
-                /*
-                URL별 권한 관리 설정의 시작점
-                먼저 선언이 되어야 antMatchers옵션 사용 가능
-                 */
-                .antMatchers("/",
-                        "/error",
-                        "/favicon.ico",
-                        "/**/*.png",
-                        "/**/*.gif",
-                        "/**/*.svg",
-                        "/**/*.jpg",
-                        "/**/*.html",
-                        "/**/*.css",
-                        "/**/*.js")
-                /*
-                권한 관리 대상 지정,URL, HTTP 메소드별로 관리 가능
-                permitAll() : 전체 열람 권한
-                 */
-                .permitAll()
                 .antMatchers("/auth/**", "/oauth2/**")
                 .permitAll()
                 .anyRequest()
-                /*
-                anyRequest : 설정한 URL 외 나머지
-                authenticated : 인증된 사용자. 즉, 로그인한 사용자들만 허용
-                 */
                 .authenticated()
                 .and()
                 .oauth2Login()
                 .defaultSuccessUrl("http://localhost:3000")
-                /*
-                OAuth 2 로그인 기능에 대한 여러 설정 진입점
-                 */
                 .authorizationEndpoint()
-                .baseUri("/oauth2/authorization")
+                .baseUri("/oauth2/authorize")
                 .authorizationRequestRepository(cookieAuthorizationRequestRepository())
+                .and()
+                .redirectionEndpoint()
+                .baseUri("/oauth2/callback/*")
                 .and()
                 .userInfoEndpoint()
                 .userService(customOAuth2UserService)
-                /*
-                userInfoEndpoint : OAuth2 로그인 성공 이후 사용자 정보를 가져올 때의 설정 담당
-                userService : 소셜 로그인 성공 시 후족 조치를 진행할 UserService 인터페이스의 구현체 등록(customOAuth2UserService)
-                 소셜 서비스에서 사용자 정보를 가져온 상태에서 추가로 진행하고자 하는 기능 명시
-                 */
                 .and()
                 .successHandler(oAuth2AuthenticationSuccessHandler)
                 .failureHandler(oAuth2AuthenticationFailureHandler);
 
-        // Add our custom Token based authentication filter
         http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
