@@ -1,11 +1,11 @@
 import React from 'react'
-import { ApiDocsDummy1, ApiDocsDummy2 } from '../../pages/ApiDocs';
+import { ApiDocsDummy} from '../../pages/ApiDocs';
 import './ApiDocTable.scss';
 
 
 interface Props {
-  ApiDocsDummy1: ApiDocsDummy1[];
-	ApiDocsDummy2: ApiDocsDummy2[];
+  ApiDocsDummy1: ApiDocsDummy[];
+	ApiDocsDummy2: ApiDocsDummy[];
 }
 
 const ApiDocsTable = ({ApiDocsDummy1, ApiDocsDummy2}: Props) => {    

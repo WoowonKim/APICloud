@@ -6,13 +6,7 @@ import '../components/ApiDocs/ApiDocs.scss'
 import ApiDocsTable from "../components/ApiDocs/ApiDocsTable";
 import { ApiDocsDummy1, ApiDocsDummy2 } from "../components/ApiDocs/ApiDocsDummy";
 
-export type ApiDocsDummy1 = {
-  id: number;
-  category: string;
-  content: string;
-};
-
-export type ApiDocsDummy2 = {
+export type ApiDocsDummy = {
   id: number;
   category: string;
   content: string;
