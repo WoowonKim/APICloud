@@ -9,7 +9,7 @@ const initialState = {
     Accept: "*/*",
     AcceptEncoding: "gzip, deflate, br",
     Connection: "keep-alive",
-    Token: "c",
+    Token: "",
   },
   infomethod: {
     fixAddress: "https://localhost:8080",
