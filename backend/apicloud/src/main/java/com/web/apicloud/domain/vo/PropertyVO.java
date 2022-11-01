@@ -5,11 +5,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
+//@NoArgsConstructor
 @Data
 public class PropertyVO {
 
@@ -20,6 +21,10 @@ public class PropertyVO {
     private boolean required;
 
     private List<PropertyVO> properties;
+
+    public PropertyVO() {
+        this.properties = new ArrayList<>();
+    }
 
     public void getDtos(List<PropertyVO> dtos) {
         if("Object".equals(type)) {

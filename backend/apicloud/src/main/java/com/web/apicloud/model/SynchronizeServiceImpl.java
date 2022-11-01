@@ -1,5 +1,6 @@
 package com.web.apicloud.model;
 
+import com.web.apicloud.domain.entity.Api;
 import com.web.apicloud.domain.vo.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,8 +27,8 @@ public class SynchronizeServiceImpl implements SynchronizeService {
 
     @Override
     public Object getFile(String root, String name) throws IOException {
-        List<String> lines = Files.readAllLines(Paths.get("C:/S07P22B309/backend/billow/src/main/java/com/billow/controller/program/ProgramController.java"));
-
+//        List<String> lines = Files.readAllLines(Paths.get("C:/S07P22B309/backend/billow/src/main/java/com/billow/controller/program/ProgramController.java"));
+        List<String> lines = Files.readAllLines(Paths.get("/Users/bbb381/S07P22B309/backend/billow/src/main/java/com/billow/controller/user/UserController.java"));
         String value = null;
         int i = 0;
         while (i < lines.size()) {
@@ -56,6 +57,10 @@ public class SynchronizeServiceImpl implements SynchronizeService {
             }
             api.add(lines.get(i++));
         }
+        ApiVO apiVO = apiParsing(api);
+        if (apiVO != null) {
+            apis.add(apiVO);
+        }
 
         ControllerVO controllerVO = ControllerVO.builder()
                 .commonUri(value)
@@ -78,7 +83,6 @@ public class SynchronizeServiceImpl implements SynchronizeService {
             uri = getMethod.get(1);
         }
         ApiDetailVO apiDetail = null;
-//        Map<String, Object> apiDetail = new HashMap<>();
         for (int i = 1; i < api.size(); i++) {
             if (KMP(api.get(i), RESPONSE_ENTITY) != -1) {
                 apiDetail = getApi(i, api);
@@ -93,7 +97,6 @@ public class SynchronizeServiceImpl implements SynchronizeService {
                     .build();
             return apiVO;
         }
-
         ApiVO apiVO = ApiVO.builder()
                 .uri(uri)
                 .method(method)
@@ -135,8 +138,6 @@ public class SynchronizeServiceImpl implements SynchronizeService {
                 }
             }
         }
-
-        // TODO: value, type 저장
     }
 
     private void getResponseDetail(ApiDetailVO apiDetail, String response) {
@@ -153,15 +154,6 @@ public class SynchronizeServiceImpl implements SynchronizeService {
         String request = "";
 
         ApiDetailVO apiDetail = new ApiDetailVO();
-        apiDetail.setQuery(new PropertyVO());
-
-
-//        Map<String, Object> apiDetail = new HashMap<>();
-//        apiDetail.put("parameters", new ArrayList<PropertyVO>());
-//        apiDetail.put("query", new PropertyVO());
-//        apiDetail.put("requestBody", new PropertyVO());
-//        apiDetail.put("responses", new HashMap<String, ResponseVO>());
-//        apiDetail.put("headers", new ArrayList<HeaderVO>());
 
         while (i < api.size()) {
             for (int j = 0; j < api.get(i).length(); j++) {
@@ -195,7 +187,7 @@ public class SynchronizeServiceImpl implements SynchronizeService {
                         if (stack.isEmpty()) {
                             // TODO : requestBody, parameters, query
                             getRequestDetail(apiDetail, request);
-                            return null;
+                            return apiDetail;
                         }
                         break;
                     case '}':
@@ -240,14 +232,14 @@ public class SynchronizeServiceImpl implements SynchronizeService {
         if (targetIdx1 == -1) return null;
         String subString = str.substring(targetIdx1 + 1, str.length());
         int targetIdx2 = KMP(subString, "\"");
-        System.out.println(subString.substring(0, targetIdx2));
+//        System.out.println(subString.substring(0, targetIdx2));
         return subString.substring(0, targetIdx2);
     }
 
     private String getType(String str) {
         for (String type : type) {
             if (KMP(str, type) != -1) {
-                System.out.println("type ==> " + type);
+//                System.out.println("type ==> " + type);
                 return type;
             }
         }

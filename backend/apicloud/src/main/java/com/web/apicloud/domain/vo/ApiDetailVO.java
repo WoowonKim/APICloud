@@ -1,19 +1,18 @@
 package com.web.apicloud.domain.vo;
 
-import com.web.apicloud.domain.vo.HeaderVO;
-import com.web.apicloud.domain.vo.PropertyVO;
-import com.web.apicloud.domain.vo.ResponseVO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
+//@NoArgsConstructor
 @Data
 public class ApiDetailVO {
 
@@ -26,4 +25,12 @@ public class ApiDetailVO {
     private List<HeaderVO> headers;
 
     private Map<String, ResponseVO> responses;
+
+    public ApiDetailVO() {
+        this.requestBody = new PropertyVO();
+        this.parameters = new ArrayList<>();
+        this.query = new PropertyVO();
+        this.headers = new ArrayList<>();
+        this.responses = new HashMap<>();
+    }
 }
