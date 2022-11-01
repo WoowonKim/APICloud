@@ -27,7 +27,9 @@ const Sidebar = ({isOpen, setIsOpen}: {isOpen: boolean; setIsOpen: any}) => {
 				<div onClick={toggleSide} onKeyDown={toggleSide} className='closeButton'>X</div>
 			</div>
 			<ul className='ul'>
-				<li>메뉴1</li>
+				<li>API DOC 생성하기</li>
+				<li>API DOC 수정하기</li>
+				<li>마이 페이지</li>
 			</ul>
 		</div>
 	)

@@ -1,10 +1,13 @@
 import React, { useState } from "react";
+import { useAppDispatch } from "../../Store";
+import testApiSlice from "../../Store/slice/testApi";
 
 const ApiBody = () => {
   const [textValue, setTextValue] = useState("");
-
+  const dispatch = useAppDispatch();
   const handleSetValue = (e: { target: { value: React.SetStateAction<string> } }) => {
     setTextValue(e.target.value);
+    dispatch(testApiSlice.actions.setBody({ body: e.target.value }));
   };
 
   const handleSetTab = (e: { keyCode?: any; preventDefault?: any; target: any }) => {
@@ -20,13 +23,15 @@ const ApiBody = () => {
     }
   };
   return (
-    <div className="ApiBodyContainer">
-      <p>Body</p>
+    <div className="apiBodyContainer">
+      <span>Body</span>
       <textarea
         className="bodyArea"
         placeholder="값을 입력해 주세요"
         value={textValue}
-        onChange={(e) => handleSetValue(e)}
+        onChange={(e) => {
+          handleSetValue(e);
+        }}
         onKeyDown={(e) => handleSetTab(e)}
       ></textarea>
     </div>

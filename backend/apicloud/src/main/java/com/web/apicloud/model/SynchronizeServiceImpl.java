@@ -11,6 +11,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
+import java.util.StringTokenizer;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -19,21 +21,35 @@ public class SynchronizeServiceImpl implements SynchronizeService {
 
     private static final String REQUEST_MAPPING = "@RequestMapping";
     private static final String METHOD = "Mapping";
+    private static final String RESPONSE_ENTITY = "ResponseEntity";
+    private static final String REQUEST_PARAM = "RequestParam";
+    private static final String PATH_VARIABLE = "PathVariable";
+    private static final String REQUEST_BODY = "RequestBody";
+    private static final String VALUE = "value";
+    private static final String[] type = {"String", "Long", "long", "Integer", "int", "float", "Float"};
 
     @Override
     public Object getFile(String root, String name) throws IOException {
         List<String> lines = Files.readAllLines(Paths.get("C:/S07P22B309/backend/billow/src/main/java/com/billow/controller/program/ProgramController.java"));
         int i = 0;
         while (i < lines.size()) {
-            if (KMP(lines.get(i++), REQUEST_MAPPING)) {
-                //TODO : uri 추출해서 저장
+            if (KMP(lines.get(i), REQUEST_MAPPING) != -1) {
+                int target = KMP(lines.get(i), VALUE);
+                String value = null;
+                if (target != -1) {
+                    value = getValue(lines.get(i).substring(target + 1, lines.get(i).length()));
+                } else {
+                    value = getValue(lines.get(i));
+                }
+                // TODO: 저장
                 break;
             }
+            i++;
         }
 
         List<String> api = new ArrayList<>();
         while (i < lines.size()) {
-            if (KMP(lines.get(i), METHOD)) {
+            if (KMP(lines.get(i), METHOD) != -1) {
                 apiParsing(api);
                 api = new ArrayList<>();
             }
@@ -43,25 +59,183 @@ public class SynchronizeServiceImpl implements SynchronizeService {
     }
 
     private void apiParsing(List<String> api) {
-        String method = getMethod(api.get(0));
-        if(method == null) return;
-        System.out.println("method" + method.toUpperCase());
-        //public ResponseEntity<Object> selectUser(@RequestHeader("Auth-access") String token) throws IOException {
+        if(api.size() == 0) return;
+        System.out.println("api ==> "+api);
+        List<String> getMethod = getMethod(api.get(0));
+        if (getMethod != null && getMethod.size() > 0) {
+            // TODO: 저장
+        }
+        if (getMethod != null && getMethod.size() > 1) {
+            // TODO: uri 저장
+        }
+
+        for (int i = 1; i < api.size(); i++) {
+            if (KMP(api.get(i), RESPONSE_ENTITY) != -1) {
+                getApi(i, api);
+                break;
+            }
+        }
     }
 
-    private String getMethod(String str) {
-        int targetIdx1 = str.indexOf("@");
-        int targetIdx2 = str.indexOf(METHOD);
+    private void getRequestDetail(String request) {
+        if (request.equals("")) return;
+        System.out.println("getRequestDetail ==> " + request);
+        String type = getType(request);
+        String value = null;
+        int pathVariable = KMP(request, PATH_VARIABLE);
+        if (pathVariable != -1) {
+            String str = request.substring(pathVariable + 1, request.length());
+            value = getValue(str);
+        } else {
+            int requestParam = KMP(request, REQUEST_PARAM);
+            if (requestParam != -1) {
+                int target = KMP(request, VALUE);
+                if (target != -1) {
+                    String str = request.substring(target + 1, request.length());
+                    value = getValue(str);
+                }
+            } else {
+                int requestBody = KMP(request, REQUEST_BODY);
+                if (requestBody != -1) {
+                    String[] tokens = request.split(" ");
+                    System.out.println(tokens[1]);
+                }
+            }
+        }
+
+        // TODO: value, type 저장
+    }
+
+    private void getResponseDetail(String response) {
+        if (response.equals("")) return;
+        System.out.println("getResponseDetail ==> " + response);
+        // TODO: response 탐색
+    }
+
+    private void getApi(int i, List<String> api) {
+        Stack<Character> stack = new Stack<>();
+        boolean responseFlag = false;
+        boolean requestFlag = false;
+        String response = "";
+        String request = "";
+
+        while (i < api.size()) {
+            for (int j = 0; j < api.get(i).length(); j++) {
+                switch (api.get(i).charAt(j)) {
+                    case '<':
+                        stack.push('<');
+                        if (requestFlag) {
+                            request += api.get(i).charAt(j);
+                        } else {
+                            responseFlag = true;
+                        }
+                        break;
+                    case '(':
+                        stack.push('(');
+                        if (requestFlag) {
+                            request += api.get(i).charAt(j);
+                        }
+                        break;
+                    case '{':
+                        stack.push('{');
+                        if (requestFlag) {
+                            request += api.get(i).charAt(j);
+                        }
+                        break;
+                    case '[':
+                        stack.push('[');
+                        if (requestFlag) {
+                            request += api.get(i).charAt(j);
+                        }
+                        break;
+                    case '>':
+                        if (stack.peek() == '<') stack.pop();
+                        if (requestFlag) {
+                            request += api.get(i).charAt(j);
+                        } else {
+                            if(stack.isEmpty()){
+                                responseFlag = false;
+                                getResponseDetail(response);
+                            }
+                        }
+                        break;
+                    case ')':
+                        if (stack.peek() == '(') stack.pop();
+                        if (stack.isEmpty()) {
+                            getRequestDetail(request);
+                            return;
+                        }
+                        if (requestFlag) {
+                            request += api.get(i).charAt(j);
+                        }
+                        break;
+                    case '}':
+                        if (stack.peek() == '}') stack.pop();
+                        if (requestFlag) {
+                            request += api.get(i).charAt(j);
+                        }
+                        break;
+                    case ']':
+                        if (stack.peek() == ']') stack.pop();
+                        if (requestFlag) {
+                            request += api.get(i).charAt(j);
+                        }
+                        break;
+                    case '@':
+                        getRequestDetail(request);
+                        request = "";
+                        requestFlag = true;
+                        request += api.get(i).charAt(j);
+                        break;
+                    default:
+                        if (responseFlag) {
+                            response += api.get(i).charAt(j);
+                        }
+                        if (requestFlag) {
+                            request += api.get(i).charAt(j);
+                        }
+                }
+            }
+            i++;
+        }
+    }
+
+    private List<String> getMethod(String str) {
+        List<String> getMethod = new ArrayList<>();
+
+        int targetIdx1 = KMP(str, "@");
+        int targetIdx2 = KMP(str, METHOD);
 
         if (targetIdx1 == -1 || targetIdx2 == -1) return null;
-        String method = str.substring(targetIdx1 + 1, targetIdx2);
+        String method = str.substring(targetIdx1 + 1, targetIdx2 - METHOD.length() + 1);
+        getMethod.add(method.toUpperCase());
 
-//        targetIdx1 = str.indexOf("(");
-//        targetIdx2 = str.indexOf(")");
-        return method;
+        String uri = getValue(str);
+        if (uri != null) getMethod.add(uri);
+        return getMethod;
     }
 
-    static boolean KMP(String parent, String pattern) {
+    private String getValue(String str) {
+        int targetIdx1 = KMP(str, "\"");
+        if (targetIdx1 == -1) return null;
+        String subString = str.substring(targetIdx1 + 1, str.length());
+        int targetIdx2 = KMP(subString, "\"");
+        System.out.println(subString.substring(0, targetIdx2));
+        return subString.substring(0, targetIdx2);
+    }
+
+    private String getType(String str) {
+        for (String type : type) {
+            if (KMP(str, type) != -1) {
+                System.out.println("type ==> " + type);
+                return type;
+            }
+        }
+        return null;
+    }
+
+
+    static int KMP(String parent, String pattern) {
         int parentLength = parent.length();
         int patternLength = pattern.length();
 
@@ -77,14 +251,13 @@ public class SynchronizeServiceImpl implements SynchronizeService {
             // 글자가 대응될 경우
             if (parent.charAt(i) == pattern.charAt(idx)) {
                 if (idx == patternLength - 1) {
-                    System.out.println(parent);
                     idx = table[idx];
-                    return true;
+                    return i;
                 } else {
                     idx += 1;
                 }
             }
         }
-        return false;
+        return -1;
     }
 }

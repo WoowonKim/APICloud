@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Header from "../components/main/Header";
 import ApiAddress from "../components/ApiTest/ApiAddress";
 import ApiBody from "../components/ApiTest/ApiBody";
@@ -15,39 +15,7 @@ import "../components/ApiTest/ApiTest.scss";
  * Side에는 Api 폴더 구조 정리
  */
 
-export type SiteAddressType = {
-  Address: string;
-  commonUri: string;
-};
-export type subMethod = {
-  method: string;
-  uri: string;
-};
-export type HeaderType = {
-  contentType: string;
-  contentLength: string;
-  Host: string;
-  Accept: string;
-  AcceptEncoding: string;
-  Connection: string;
-  Token: string;
-};
-const siteAddress: SiteAddressType = {
-  Address: "https://localhost:8080",
-  commonUri: "/ApiCloud",
-};
-const headerApi = {
-  contentType: "application/json",
-  contentLength: "calculated when request is sent",
-  Host: "calculated when request is sent",
-  Accept: "*/*",
-  AcceptEncoding: "gzip, deflate, br",
-  Connection: "keep-alive",
-  Token: "1q2w3er45t",
-};
 const TestApi = () => {
-  const [submitMethod, setSubmitMethod] = useState<subMethod | null>(null);
-
   return (
     <div>
       <Header />
@@ -57,12 +25,12 @@ const TestApi = () => {
         </div>
         <div className="testMain">
           <div className="testInfomation">
-            <ApiAddress siteAddress={siteAddress} />
-            <ApiInputUri siteAddress={siteAddress} setSubmitMethod={setSubmitMethod} />
+            <ApiAddress />
+            <ApiInputUri />
           </div>
           <div className="testInfo">
             <div className="testSetting">
-              <ApiHeader headerApi={headerApi} />
+              <ApiHeader />
               <ApiBody />
             </div>
             <ApiResponse />

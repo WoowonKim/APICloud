@@ -1,14 +1,13 @@
 import React from "react";
-import { SiteAddressType } from "../../pages/TestApi";
+import { useSelector } from "react-redux";
+import { RootState } from "../../Store/rootReducer";
 
-interface Props {
-  siteAddress: SiteAddressType;
-}
-const ApiAddress = ({ siteAddress }: Props) => {
+const ApiAddress = () => {
+  const isAddress = useSelector((state: RootState) => state.testApi.infomethod);
   return (
-    <div className="apiSide">
-      <p className="sideText">사이트 주소 : {siteAddress.Address}</p>
-      <p className="sideText">공통 URI : {siteAddress.commonUri}</p>
+    <div className="apiSideAddress">
+      <p className="sideText">사이트 주소 : {isAddress.fixAddress}</p>
+      <p className="sideText">공통 URI : {isAddress.commonUri}</p>
     </div>
   );
 };

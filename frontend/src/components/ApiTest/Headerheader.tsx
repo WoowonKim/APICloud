@@ -1,26 +1,77 @@
 import React from "react";
-import { HeaderType } from "../../pages/TestApi";
-interface Props {
-  headerApi: HeaderType;
-}
-const Headerheader = ({ headerApi }: Props) => {
+import { useSelector } from "react-redux";
+import { useAppDispatch } from "../../Store";
+import { RootState } from "../../Store/rootReducer";
+import testApiSlice from "../../Store/slice/testApi";
+
+const Headerheader = () => {
+  const isHeaderApi = useSelector((state: RootState) => state.testApi.header);
+  const dispatch = useAppDispatch();
   return (
     <>
       <div className="headerListTitle">
-        <p>Content-Type :</p>
-        <p>Content-Length :</p>
-        <p>Host :</p>
         <p>Accept :</p>
         <p>Accept-Encoding :</p>
         <p>Connection :</p>
+        <p>Host :</p>
+        <p>Content-Length :</p>
+        <p>Content-Type :</p>
       </div>
       <div className="headerListContent">
-        <p>{headerApi.contentType}</p>
-        <p>{headerApi.contentLength}</p>
-        <p>{headerApi.Host}</p>
-        <p>{headerApi.Accept}</p>
-        <p>{headerApi.AcceptEncoding}</p>
-        <p>{headerApi.Connection}</p>
+        <p>
+          <input
+            type="text"
+            defaultValue={isHeaderApi.Accept}
+            onChange={(e) => {
+              dispatch(testApiSlice.actions.setAccept({ Accept: e.target.value }));
+            }}
+          />
+        </p>
+        <p>
+          <input
+            type="text"
+            defaultValue={isHeaderApi.AcceptEncoding}
+            onChange={(e) => {
+              dispatch(testApiSlice.actions.setAcceptEncodng({ AcceptEncoding: e.target.value }));
+            }}
+          />
+        </p>
+        <p>
+          <input
+            type="text"
+            defaultValue={isHeaderApi.Connection}
+            onChange={(e) => {
+              dispatch(testApiSlice.actions.setConnection({ Connection: e.target.value }));
+            }}
+          />
+        </p>
+        <p>
+          <input
+            type="text"
+            defaultValue={isHeaderApi.Host}
+            onChange={(e) => {
+              dispatch(testApiSlice.actions.setHost({ Host: e.target.value }));
+            }}
+          />
+        </p>
+        <p>
+          <input
+            type="text"
+            defaultValue={isHeaderApi.contentLength}
+            onChange={(e) => {
+              dispatch(testApiSlice.actions.setContentLength({ contentLength: e.target.value }));
+            }}
+          />
+        </p>
+        <p>
+          <input
+            type="text"
+            defaultValue={isHeaderApi.contentType}
+            onChange={(e) => {
+              dispatch(testApiSlice.actions.setContentType({ contentType: e.target.value }));
+            }}
+          />
+        </p>
       </div>
     </>
   );

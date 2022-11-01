@@ -1,39 +1,62 @@
-import React, { useState } from "react";
-import { HeaderType } from "../../pages/TestApi";
-interface Props {
-  headerApi: HeaderType;
-}
-const HeaderToken = ({ headerApi }: Props) => {
-  const [changeToken, setChangeToken] = useState<String | null>("");
+import React from "react";
+import { useSelector } from "react-redux";
 
+import { useAppDispatch } from "../../Store";
+import { RootState } from "../../Store/rootReducer";
+import testApiSlice from "../../Store/slice/testApi";
+
+const HeaderToken = () => {
+  const isApi = useSelector((state: RootState) => state.testApi.header);
+  const dispatch = useAppDispatch();
   return (
     <>
       <div className="headerListTitle">
         <p>Token :</p>
+        <p>Cookie :</p>
       </div>
-      <div className="headerListContent">
-        <>
-          {headerApi.Token.length == 0 ? (
+      {isApi.Token.length == 0 ? (
+        <div className="headerListContent">
+          <p>
             <input
-              className="tokenInput"
               type="text"
               onChange={(e) => {
-                setChangeToken(e.target.value);
+                dispatch(testApiSlice.actions.setToken({ Token: e.target.value }));
               }}
-              placeholder="로그인 하여 Token값을 받으세요."
+              defaultValue={isApi.Token}
             />
-          ) : (
+          </p>
+          <p>
             <input
-              className="tokenInput"
               type="text"
               onChange={(e) => {
-                setChangeToken(e.target.value);
+                dispatch(testApiSlice.actions.setCookie({ Cookie: e.target.value }));
               }}
-              defaultValue={headerApi.Token}
+              defaultValue={isApi.Cookie}
             />
-          )}
-        </>
-      </div>
+          </p>
+        </div>
+      ) : (
+        <div className="headerListContent">
+          <p>
+            <input
+              type="text"
+              onChange={(e) => {
+                dispatch(testApiSlice.actions.setToken({ Token: e.target.value }));
+              }}
+              defaultValue={isApi.Token}
+            />
+          </p>
+          <p>
+            <input
+              type="text"
+              onChange={(e) => {
+                dispatch(testApiSlice.actions.setCookie({ Cookie: e.target.value }));
+              }}
+              defaultValue={isApi.Cookie}
+            />
+          </p>
+        </div>
+      )}
     </>
   );
 };

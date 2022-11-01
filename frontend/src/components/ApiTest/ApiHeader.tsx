@@ -1,33 +1,29 @@
 import React, { useState } from "react";
-import { HeaderType } from "../../pages/TestApi";
 import Headerheader from "./Headerheader";
 import HeaderToken from "./HeaderToken";
 
-interface Props {
-  headerApi: HeaderType;
-}
-
-const ApiHeader = ({ headerApi }: Props) => {
-  const [headerTokenFlag, setHeaderTokenFlaf] = useState<number | null>(0);
+const ApiHeader = () => {
+  const [headerTokenFlag, setHeaderTokenFlag] = useState<number | null>(0);
   return (
     <div className="apiHeaderContainer">
+      <p className="apiHeaderMainTitle">Request</p>
       <span
-        className={headerTokenFlag == 0 ? "headerClickList" : "headerMoClicklist"}
+        className={headerTokenFlag == 0 ? "headerClickList" : "headerNoClicklist"}
         onClick={() => {
-          setHeaderTokenFlaf(0);
+          setHeaderTokenFlag(0);
         }}
       >
         Header
       </span>
       <span
-        className={headerTokenFlag == 1 ? "headerClickList" : "headerMoClicklist"}
+        className={headerTokenFlag == 1 ? "headerClickList" : "headerNoClicklist"}
         onClick={() => {
-          setHeaderTokenFlaf(1);
+          setHeaderTokenFlag(1);
         }}
       >
         Token
       </span>
-      <div className="headerList">{headerTokenFlag == 0 ? <Headerheader headerApi={headerApi} /> : <HeaderToken headerApi={headerApi} />}</div>
+      <div className="headerList">{headerTokenFlag == 0 ? <Headerheader /> : <HeaderToken />}</div>
     </div>
   );
 };
