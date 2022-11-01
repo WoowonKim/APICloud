@@ -19,7 +19,7 @@
     align-items: center;
     margin-top: 1rem;
     .sidebarTitle {
-      font-size: 2em;
+      font-size: 1.3em;
       margin-right: 0.5rem;
     }
     .sidebarTitleButton {
@@ -41,7 +41,7 @@
     align-items: center;
     justify-content: space-between;
     .controllerItem {
-      font-size: 1.3em;
+      font-size: 1em;
     }
     .sidebarMenuButton {
       @include buttonStyle();
@@ -53,7 +53,7 @@
         .sidebarControllerEdit {
           display: block;
           width: 100px;
-          font-size: 1.3em;
+          font-size: 1em;
           background-color: #fafafa;
           height: 30px;
           border-radius: 10px;
@@ -73,7 +73,7 @@
     margin-top: 0.5rem;
     .sidebarApiItem {
       margin-left: 1rem;
-      font-size: 1.2em;
+      font-size: 0.8em;
     }
   }
 }

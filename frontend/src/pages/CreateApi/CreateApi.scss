@@ -18,12 +18,12 @@
   grid-template-columns: 2fr 8fr;
   height: 100vh;
   .apiDocsTitleText {
-    font-size: 3.5em;
+    font-size: 2em;
   }
 }
 
 .apiDocsMaincontainer {
-  margin: 0 0 0 50px;
+  margin: 0 50px 0 50px;
 }
 
 .titleContainer {
@@ -31,10 +31,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  p {
-    font-size: 40px;
-    font-weight: bold;
-  }
 }
 
 .buttonContainer {
@@ -47,7 +43,7 @@
     border-radius: 15px;
     text-align: center;
     margin: 0 5px;
-    font-size: 1em;
+    font-size: 0.8em;
     font-family: "twayair";
     &:hover {
       opacity: 0.7;
@@ -63,10 +59,10 @@
     margin-right: 3rem;
     p {
       margin: 0 0 10px 0;
-      font-size: 1.5em;
+      font-size: 0.8em;
     }
     .infoValue {
-      font-size: 2em;
+      font-size: 1em;
       font-weight: bold;
       padding: 2px 5px;
       border-bottom: 2px solid #3a00e5;
@@ -78,7 +74,6 @@
   .apiTable {
     display: flex;
     margin-bottom: 50px;
-
     .plusButtonGroup {
       display: flex;
       flex-direction: column;
@@ -144,7 +139,7 @@
   .tabItem {
     border: none;
     background-color: white;
-    font-size: 1.5em;
+    font-size: 1em;
     margin: 0 3rem 0 0;
     padding: 0 3px 5px 3px;
     &:hover {
@@ -153,7 +148,7 @@
   }
   .active {
     border-bottom: 5px solid #3a00e5;
-    font-size: 1.6em;
+    font-size: 1.1em;
     font-weight: bold;
   }
 }
