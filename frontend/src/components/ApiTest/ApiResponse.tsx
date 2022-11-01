@@ -4,6 +4,14 @@ import React, { useState } from "react";
 const dummy = {
   status: 200,
   message: "ok",
+  header: {
+    contentType: "application/json",
+    contentLength: "calculated when request is sent",
+    Host: "calculated when request is sent",
+    Accept: "*/*",
+    AcceptEncoding: "gzip, deflate, br",
+    Connection: "keep-alive",
+  },
   result: {
     id: "zero",
     email: "zero",
@@ -18,6 +26,7 @@ const ApiResponse = () => {
     setResponseFlag(e);
   };
   const testObj = Object.entries(dummy.result);
+  const testHeaderObj = Object.entries(dummy.header);
   const start = "{";
   const end = "}";
   return (
@@ -52,7 +61,21 @@ const ApiResponse = () => {
           <p className="apiResponseResultStatus">Status : {dummy.status}</p>
           <p className="apiResponseResultMessage">Message : {dummy.message}</p>
         </div>
-        {responseFlag == 1 ? (
+        {responseFlag === 0 && (
+          <div>
+            {testHeaderObj.map((it, idx) => (
+              <div className="resltResponseHeaderContainer" key={idx}>
+                <div className="resultResponseTitleContainer">
+                  <span className="resultResponseHeaderTitle">{it[0]} : </span>
+                </div>
+                <div>
+                  <span className="resultResponseHeaderContent"> {it[1]}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        {responseFlag == 1 && (
           <div>
             <p>{start}</p>
             {testObj.map((it, idx) => (
@@ -67,8 +90,6 @@ const ApiResponse = () => {
             ))}
             <p>{end}</p>
           </div>
-        ) : (
-          <></>
         )}
       </div>
     </div>

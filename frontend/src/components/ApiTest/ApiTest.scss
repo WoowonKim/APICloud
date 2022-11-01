@@ -13,7 +13,7 @@
   margin-left: 9px;
 }
 .testInfomation {
-  margin-left: 10%;
+  margin-left: 3%;
 }
 .testInfo {
   display: flex;
@@ -27,10 +27,15 @@
   display: flex;
   padding: 5px;
 }
+.apiSideAddress {
+  margin-left: 5px;
+  margin-bottom: 15px;
+  text-align: start;
+}
 .sideText {
   width: 25%;
   font-weight: bold;
-  font-size: 13px;
+  font-size: 12px;
   height: 5px;
 }
 
@@ -50,10 +55,10 @@
   border-top: 1px solid #000000;
   border-top-right-radius: 30px;
   border-bottom-right-radius: 30px;
-  padding: 5px;
+  padding: 1px 50px 1px 10px;
   outline: none;
   font-weight: 500;
-  font-size: 16px;
+  font-size: 14px;
 }
 .apiChoice {
   border: none;
@@ -225,4 +230,12 @@
 }
 .resultResponseContainer {
   padding: 2px;
+}
+.resltResponseHeaderContainer {
+  margin: 10px;
+  display: flex;
+}
+.resultResponseTitleContainer {
+  width: 150px;
+  margin-bottom: 23px;
 }
