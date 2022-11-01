@@ -20,6 +20,7 @@ package com.web.apicloud.controller;
 import com.web.apicloud.domain.vo.ApiVO;
 import com.web.apicloud.domain.vo.ControllerVO;
 import com.web.apicloud.domain.vo.DocVO;
+import com.web.apicloud.domain.vo.ServerVO;
 import com.web.apicloud.util.code.ProjectWithControllerGenerationInvoker;
 import com.web.apicloud.util.code.ProjectWithControllerGenerationResult;
 import io.spring.initializr.generator.buildsystem.BuildSystem;
@@ -136,11 +137,25 @@ public class ProjectWithControllerGenerationController {
 
     public ResponseEntity<byte[]> springZip(DocVO doc, Map<String, String> header) throws IOException {
         ProjectRequest request = projectRequest(header);
-        // TODO: doc 이용해서 request 갱신
+        updateProjectRequestByServerInfo(request, doc.getServer());
         ProjectWithControllerGenerationResult result = this.projectGenerationInvoker.invokeProjectStructureGeneration(request, doc);
         Path archive = createArchive(result, "zip", ZipArchiveOutputStream::new, ZipArchiveEntry::new,
                 ZipArchiveEntry::setUnixMode);
         return upload(archive, result.getRootDirectory(), generateFileName(request, "zip"), "application/zip");
+    }
+
+    private void updateProjectRequestByServerInfo(ProjectRequest request, ServerVO server) {
+        request.setType(server.getType());
+        request.setLanguage(server.getLanguage());
+        request.setBootVersion(server.getBootVersion());
+        request.setBaseDir(server.getBaseDir());
+        request.setGroupId(server.getGroupId());
+        request.setArtifactId(server.getArtifactId());
+        request.setName(server.getName());
+        request.setDescription(server.getName());
+        request.setPackageName(server.getPackageName());
+        request.setPackaging(server.getPackaging());
+        request.setJavaVersion(server.getJavaVersion());
     }
 
     @RequestMapping(path = "/starter.tgz", produces = "application/x-compress")
