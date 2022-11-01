@@ -7,7 +7,7 @@ const Item = styled.div`
   border-radius: 10px;
   padding: 5px 10px;
   margin-top: 5px;
-  font-size: 1.2em;
+  font-size: 1em;
   background-color: ${(props) => props.color};
 `;
 
@@ -16,7 +16,7 @@ export const SelectedItem = styled.button`
   border-radius: 10px;
   padding: 5px 10px;
   margin-top: 5px;
-  font-size: 1.2em;
+  font-size: 1em;
   background-color: ${(props) => props.color};
 `;
 

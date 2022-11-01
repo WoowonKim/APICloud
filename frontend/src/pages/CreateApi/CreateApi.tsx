@@ -1,8 +1,11 @@
 import React, { useState } from "react";
-import { ApisType, ControllerType, DataType, ServerInfoType } from "./ApisType";
+import { ApisType, ControllerType, ServerInfoType } from "./ApisType";
 import "./CreateApi.scss";
 import Sidebar from "../../components/CreateApi/Sidebar/Sidebar";
 import Table from "../../components/CreateApi/Table/Table";
+import { useSyncedStore } from "@syncedstore/react";
+import { store } from "../../components/CreateApi/store";
+import { getYjsValue } from "@syncedstore/core";
 
 const CreateApi = () => {
   // 서버 정보를 저장할 state (임시 데이터)
@@ -56,11 +59,8 @@ const CreateApi = () => {
     commonUri: "",
     apis: [],
   });
-  // 전체 데이터를 관리하는 state
-  const [data, setData] = useState<DataType>({
-    server: serverInfo,
-    controller: [],
-  });
+
+  const state = useSyncedStore(store);
   // 테이블의 탭 전환을 위한 state
   const [activeTab, setActiveTab] = useState(1);
   // 선택된 api를 저장할 state
@@ -69,20 +69,12 @@ const CreateApi = () => {
 
   // controller 추가 함수 -> 기존 데이터에 새 데이터 추가
   const addController = () => {
-    setData((old) => {
-      let copy = JSON.parse(JSON.stringify(old));
-      copy.controller = [...old.controller, controllerData];
-      return copy;
-    });
+    state.data.push(controllerData);
   };
 
   // api 추가 함수 -> 기존 데이터에 새 데이터 추가
   const addApi = (index: number) => {
-    setData((old) => {
-      let copy = JSON.parse(JSON.stringify(old));
-      copy.controller[index].apis = [...copy.controller[index].apis, apiData];
-      return copy;
-    });
+    state.data[index].apis.push(apiData);
   };
 
   // 사이드바의 api 정보 가져오는 함수
@@ -91,14 +83,15 @@ const CreateApi = () => {
     setSelectedApi(idx);
     setActiveTab(1);
   };
+  // 데이터 확인 용 로그
+  console.log(JSON.parse(JSON.stringify(state.data)));
 
   return (
     <div className="apiDocscontainer">
       <Sidebar
         addController={addController}
         addApi={addApi}
-        data={data}
-        setData={setData}
+        state={state}
         handleSidebarApi={handleSidebarApi}
       />
       <div className="apiDocsMaincontainer">
@@ -160,21 +153,19 @@ const CreateApi = () => {
               selectedApi={selectedApi}
               data={
                 activeTab === 1
-                  ? data.controller[selectedController].apis[selectedApi].header
+                  ? state.data[selectedController].apis[selectedApi].header
                   : activeTab === 2
-                  ? data.controller[selectedController].apis[selectedApi]
-                      .parameters
+                  ? state.data[selectedController].apis[selectedApi].parameters
                   : activeTab === 3
-                  ? data.controller[selectedController].apis[selectedApi].query
+                  ? state.data[selectedController].apis[selectedApi].query
                       .properties
                   : activeTab === 4
-                  ? data.controller[selectedController].apis[selectedApi]
-                      .requestBody.properties
-                  : data.controller[selectedController].apis[selectedApi]
-                      .responses.fail.properties
+                  ? state.data[selectedController].apis[selectedApi].requestBody
+                      .properties
+                  : state.data[selectedController].apis[selectedApi].responses
+                      .fail.properties
               }
-              setData={setData}
-              wholeData={data}
+              state={state}
             />
           )}
         </div>

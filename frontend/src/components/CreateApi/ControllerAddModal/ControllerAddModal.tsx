@@ -1,22 +1,23 @@
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { MappedTypeDescription } from "@syncedstore/core/types/doc";
 import React, { useEffect, useState } from "react";
-import { DataType } from "../../../pages/CreateApi/ApisType";
+import { ControllerType } from "../../../pages/CreateApi/ApisType";
 import ModalTable from "../ModalTable/ModalTable";
 import "./ControllerAddModal.scss";
 
 interface Props {
   setIsModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
   addApi: (index: number) => void;
-  setData: React.Dispatch<React.SetStateAction<DataType>>;
-  data: DataType;
+  state: MappedTypeDescription<{
+    data: ControllerType[];
+  }>;
   editControllerIndex: number;
 }
 const ControllerAddModal = ({
   setIsModalVisible,
   addApi,
-  setData,
-  data,
+  state,
   editControllerIndex,
 }: Props) => {
   // controller의 정보를 입력받아 저장할 state
@@ -54,7 +55,7 @@ const ControllerAddModal = ({
               placeholder="/test"
               defaultValue={
                 editControllerIndex > -1
-                  ? data.controller[editControllerIndex].commonUri
+                  ? state.data?.[editControllerIndex].commonUri
                   : ""
               }
             />
@@ -73,7 +74,7 @@ const ControllerAddModal = ({
               placeholder="TestController"
               defaultValue={
                 editControllerIndex > -1
-                  ? data.controller[editControllerIndex].name
+                  ? state.data?.[editControllerIndex].name
                   : ""
               }
             />
@@ -81,16 +82,14 @@ const ControllerAddModal = ({
           <button
             className="modalCotrollerAddButton"
             onClick={() => {
-              setData((old: DataType) => {
-                let copy = JSON.parse(JSON.stringify(old));
+              if (state.data && state.data.length > 0) {
                 let length =
                   editControllerIndex > -1
                     ? editControllerIndex
-                    : copy.controller.length;
-                copy.controller[length - 1].name = controllerName;
-                copy.controller[length - 1].commonUri = controllerUri;
-                return copy;
-              });
+                    : state.data.length - 1;
+                state.data[length].name = controllerName;
+                state.data[length].commonUri = controllerUri;
+              }
               setIsControllerAdd(true);
             }}
           >
@@ -103,11 +102,13 @@ const ControllerAddModal = ({
             <button
               className="apiPlusButton"
               onClick={() => {
-                addApi(
-                  editControllerIndex > -1
-                    ? editControllerIndex
-                    : data.controller.length - 1
-                );
+                if (state.data && state.data.length > 0) {
+                  addApi(
+                    editControllerIndex > -1
+                      ? editControllerIndex
+                      : state.data.length - 1
+                  );
+                }
               }}
               disabled={!isControllerAdd}
             >
@@ -119,8 +120,16 @@ const ControllerAddModal = ({
           </p>
           <div className="modalTableContainer">
             <ModalTable
-              data={data.controller[data.controller.length - 1].apis}
-              setData={setData}
+              data={JSON.parse(
+                JSON.stringify(
+                  state.data[
+                    editControllerIndex > -1
+                      ? editControllerIndex
+                      : state.data.length - 1
+                  ].apis
+                )
+              )}
+              state={state}
             />
           </div>
         </div>
@@ -135,12 +144,12 @@ const ControllerAddModal = ({
       <div
         className="modalCloseButton"
         onClick={() => {
-          if (!isControllerAdd && editControllerIndex === -1) {
-            setData((old: DataType) => {
-              let copy = JSON.parse(JSON.stringify(old));
-              copy.controller.pop();
-              return copy;
-            });
+          if (
+            !isControllerAdd &&
+            editControllerIndex === -1 &&
+            state.data.length > 0
+          ) {
+            state.data.pop();
           }
           setIsModalVisible((curr) => !curr);
         }}

@@ -20,8 +20,8 @@
 }
 
 .modalInnerContainer {
-  width: 50rem;
-  min-height: 53rem;
+  width: 35rem;
+  min-height: 33rem;
   height: auto;
   background-color: white;
   position: absolute;
@@ -29,15 +29,15 @@
   left: 50%;
   transform: translate(-50%, -50%);
   border-radius: 1rem;
-  padding: 2rem 3rem;
+  padding: 1rem 3rem;
 }
 
 .modalTitleGroup {
-  margin-bottom: 8rem;
+  margin-bottom: 6rem;
 }
 
 .modalTitleText {
-  font-size: 3em;
+  font-size: 2em;
   font-weight: bold;
   margin: 2rem 0;
   position: absolute;
@@ -46,11 +46,11 @@
 
 .highlightText {
   background-color: rgba(207, 244, 255, 0.69);
-  height: 2em;
-  width: 20em;
+  height: 1.5em;
+  width: 14em;
   position: absolute;
-  top: 5.3em;
-  left: 4.3em;
+  top: 3.7em;
+  left: 3.3em;
 }
 
 .controllerInfoItem {
@@ -59,7 +59,7 @@
 
 .controllerLabel {
   font-weight: bold;
-  font-size: 1.3em;
+  font-size: 1em;
   margin-right: 0.5rem;
 }
 
@@ -71,7 +71,7 @@
   width: 100%;
   margin-top: 1rem;
   font-family: "twayair";
-  font-size: 1.5em;
+  font-size: 1.1em;
 }
 
 .apiInfoGroup {
@@ -85,7 +85,7 @@
 }
 
 .apiTitleText {
-  font-size: 1.5em;
+  font-size: 1.1em;
   font-weight: bold;
   margin: 0 1rem 0 0;
 }
@@ -101,12 +101,12 @@
 }
 
 .controllerPlusIcon {
-  font-size: 1.3em;
+  font-size: 1em;
 }
 
 .controllerInfoText {
   color: tomato;
-  font-size: 1em;
+  font-size: 0.7em;
   padding-left: 0.5rem;
 }
 
@@ -119,8 +119,8 @@
   @include button();
   background-color: rgb(207, 244, 255);
   border-radius: 5rem;
-  padding: 1rem 0;
-  font-size: 1.5em;
+  padding: 0.5rem 0;
+  font-size: 1em;
   font-family: "twayair";
   width: 100%;
 }
@@ -129,8 +129,8 @@
   @include button();
   background-color: rgb(207, 244, 255);
   border-radius: 5rem;
-  padding: 1rem 0;
-  font-size: 1.5em;
+  padding: 0.5rem 0;
+  font-size: 1em;
   font-family: "twayair";
   width: 100%;
   margin: 1.5rem 0;
@@ -143,13 +143,13 @@
   table {
     width: 100%;
     .tableHeadText {
-      font-size: 1.3em;
+      font-size: 1em;
     }
   }
 }
 
 .modalTableInput {
-  font-size: 1.3em;
+  font-size: 1em;
   outline: none;
   border: none;
   padding: 2px;
