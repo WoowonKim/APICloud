@@ -1,16 +1,6 @@
 import { type } from "os";
 import React, { useState } from "react";
 
-interface dummyType {
-  status: number;
-  message: string;
-  result: {
-    id: string;
-    email: string;
-    password: string;
-    token: number;
-  };
-}
 const dummy = {
   status: 200,
   message: "ok",
@@ -58,6 +48,10 @@ const ApiResponse = () => {
         Cookie
       </span>
       <div className="apiResponseResult">
+        <div className="apiResponseResultCommonState">
+          <p className="apiResponseResultStatus">Status : {dummy.status}</p>
+          <p className="apiResponseResultMessage">Message : {dummy.message}</p>
+        </div>
         {responseFlag == 1 ? (
           <div>
             <p>{start}</p>
