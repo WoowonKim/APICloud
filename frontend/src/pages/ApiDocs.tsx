@@ -3,6 +3,20 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
 import Sidebar from "../components/ApiDocs/Sidebar";
 import '../components/ApiDocs/ApiDocs.scss'
+import ApiDocsTable from "../components/ApiDocs/ApiDocsTable";
+import { ApiDocsDummy1, ApiDocsDummy2 } from "../components/ApiDocs/ApiDocsDummy";
+
+export type ApiDocsDummy1 = {
+  id: number;
+  category: string;
+  content: string;
+};
+
+export type ApiDocsDummy2 = {
+  id: number;
+  category: string;
+  content: string;
+};
 
 const ApiDocs = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -21,7 +35,9 @@ const ApiDocs = () => {
         </div>
         <div className="docBox">
           <div className="title">API DOC 페이지</div>
-          <div className="doc"></div>
+          <div className="doc">
+            <ApiDocsTable ApiDocsDummy1={ApiDocsDummy1} ApiDocsDummy2={ApiDocsDummy2} />
+          </div>
         </div>
       </div>
     </div>
