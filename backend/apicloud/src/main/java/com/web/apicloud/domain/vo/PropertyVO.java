@@ -12,25 +12,47 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 public class PropertyVO {
+    static final String DTO_CRAETE_TYPE = "Object";
+
+    static final String LIST = "List";
+
+    private String dtoName;
 
     private String name;
 
     private String type;
+
+    private String collectionType;
 
     private boolean required;
 
     private List<PropertyVO> properties;
 
     public void getDtos(List<PropertyVO> dtos) {
-        if("Object".equals(type)) {
-            for(PropertyVO property : properties) {
+        if (DTO_CRAETE_TYPE.equals(type)) {
+            for (PropertyVO property : properties) {
                 property.getDtos(dtos);
             }
             dtos.add(this);
         }
     }
 
-    public String getNameToType() {
-        return Character.toUpperCase(name.charAt(0)) + name.substring(1);
+    public String getTypeForCode() {
+        String type;
+        if (isDtoCreationRequired()) {
+            type = dtoName;
+        } else {
+            type = this.type;
+        }
+
+        if (LIST.equals(collectionType)) {
+            return LIST + "<" + type + ">";
+        } else {
+            return type;
+        }
+    }
+
+    public boolean isDtoCreationRequired() {
+        return DTO_CRAETE_TYPE.equals(type);
     }
 }
