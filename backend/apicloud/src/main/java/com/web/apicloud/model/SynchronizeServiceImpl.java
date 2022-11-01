@@ -11,6 +11,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
+import java.util.StringTokenizer;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -19,13 +21,17 @@ public class SynchronizeServiceImpl implements SynchronizeService {
 
     private static final String REQUEST_MAPPING = "@RequestMapping";
     private static final String METHOD = "Mapping";
+    private static final String RESPONSE_ENTITY = "ResponseEntity";
+    private static final String REQUEST_PARAM = "RequestParam";
+    private static final String PATH_VARIABLE = "PathVariable";
+    private static final String REQUEST_BODY = "RequestBody";
 
     @Override
     public Object getFile(String root, String name) throws IOException {
         List<String> lines = Files.readAllLines(Paths.get("C:/S07P22B309/backend/billow/src/main/java/com/billow/controller/program/ProgramController.java"));
         int i = 0;
         while (i < lines.size()) {
-            if (KMP(lines.get(i++), REQUEST_MAPPING)) {
+            if (KMP(lines.get(i++), REQUEST_MAPPING) != -1) {
                 //TODO : uri 추출해서 저장
                 break;
             }
@@ -33,7 +39,7 @@ public class SynchronizeServiceImpl implements SynchronizeService {
 
         List<String> api = new ArrayList<>();
         while (i < lines.size()) {
-            if (KMP(lines.get(i), METHOD)) {
+            if (KMP(lines.get(i), METHOD) != -1) {
                 apiParsing(api);
                 api = new ArrayList<>();
             }
@@ -43,7 +49,7 @@ public class SynchronizeServiceImpl implements SynchronizeService {
     }
 
     private void apiParsing(List<String> api) {
-        List<String> getMethod = `getMethod`(api.get(0));
+        List<String> getMethod = getMethod(api.get(0));
         if (getMethod != null && getMethod.size() > 0) {
             //메소드 저장
         }
@@ -52,40 +58,144 @@ public class SynchronizeServiceImpl implements SynchronizeService {
         }
 
         for (int i = 1; i < api.size(); i++) {
-            int targetIdx1 = api.get(i).indexOf("ResponseEntity");
-            System.out.println(targetIdx1);
-            if (targetIdx1 == -1) continue;
-            String[] split = api.get(i).split(",");
-            for (int j = 0; j < split.length; j++) {
-                System.out.println(split[j]);
+            if (KMP(api.get(i), RESPONSE_ENTITY) != -1) {
+                getApi(i, api);
+                break;
             }
-            System.out.println(api.get(i));
-            break;
         }
-        //public ResponseEntity<Object> selectUser(@RequestHeader("Auth-access") String token) throws IOException {
+    }
+
+    private void getRequestDetail(String request) {
+        if (request == "") return;
+//        request = request.replaceAll(",$", "");
+        System.out.println("getRequestDetail ==> " + request);
+        String[] tokens = request.split(" ");
+
+        if (KMP(tokens[0], REQUEST_PARAM) != -1) {
+
+        } else if (KMP(tokens[0], PATH_VARIABLE) != -1) {
+
+        } else if (KMP(tokens[0], REQUEST_BODY) != -1) {
+
+        }
+
+        for (int i = 0; i < tokens.length; i++) {
+            System.out.println(tokens[i]);
+        }
+    }
+
+    private void getResponseDetail(String response) {
+        if (response == "") return;
+        System.out.println("getResponseDetail ==> " + response);
+    }
+
+    private void getApi(int i, List<String> api) {
+        Stack<Character> stack = new Stack<>();
+        boolean responseFlag = false;
+        boolean requestFlag = false;
+        String response = "";
+        String request = "";
+
+        while (i < api.size()) {
+            for (int j = 0; j < api.get(i).length(); j++) {
+                switch (api.get(i).charAt(j)) {
+                    case '<':
+                        stack.push('<');
+                        if (requestFlag) {
+                            request += api.get(i).charAt(j);
+                        } else {
+                            responseFlag = true;
+                        }
+                        break;
+                    case '(':
+                        stack.push('(');
+                        if (requestFlag) {
+                            request += api.get(i).charAt(j);
+                        }
+                        break;
+                    case '{':
+                        stack.push('{');
+                        if (requestFlag) {
+                            request += api.get(i).charAt(j);
+                        }
+                        break;
+                    case '[':
+                        stack.push('[');
+                        if (requestFlag) {
+                            request += api.get(i).charAt(j);
+                        }
+                        break;
+                    case '>':
+                        if (stack.peek() == '<') stack.pop();
+                        if (requestFlag) {
+                            request += api.get(i).charAt(j);
+                        } else {
+                            responseFlag = false;
+                            getResponseDetail(response);
+                        }
+                        break;
+                    case ')':
+                        if (stack.peek() == '(') stack.pop();
+                        if (stack.isEmpty()) {
+                            getRequestDetail(request);
+                            return;
+                        }
+                        if (requestFlag) {
+                            request += api.get(i).charAt(j);
+                        }
+                        break;
+                    case '}':
+                        if (stack.peek() == '}') stack.pop();
+                        if (requestFlag) {
+                            request += api.get(i).charAt(j);
+                        }
+                        break;
+                    case ']':
+                        if (stack.peek() == ']') stack.pop();
+                        if (requestFlag) {
+                            request += api.get(i).charAt(j);
+                        }
+                        break;
+                    case '@':
+                        getRequestDetail(request);
+                        request = "";
+                        requestFlag = true;
+                        request += api.get(i).charAt(j);
+                        break;
+                    default:
+                        if (responseFlag) {
+                            response += api.get(i).charAt(j);
+                        }
+                        if (requestFlag) {
+                            request += api.get(i).charAt(j);
+                        }
+                }
+            }
+            i++;
+        }
     }
 
     private List<String> getMethod(String str) {
         List<String> getMethod = new ArrayList<>();
 
-        int targetIdx1 = str.indexOf("@");
-        int targetIdx2 = str.indexOf(METHOD);
+        int targetIdx1 = KMP(str, "@");
+        int targetIdx2 = KMP(str, METHOD);
 
         if (targetIdx1 == -1 || targetIdx2 == -1) return null;
-        String method = str.substring(targetIdx1 + 1, targetIdx2);
+        String method = str.substring(targetIdx1 + 1, targetIdx2 - METHOD.length() + 1);
         getMethod.add(method.toUpperCase());
 
-        targetIdx1 = str.indexOf("\"");
+        targetIdx1 = KMP(str, "\"");
         if (targetIdx1 == -1) return getMethod;
         String subString = str.substring(targetIdx1 + 1, str.length());
-        targetIdx2 = subString.indexOf("\"");
+        targetIdx2 = KMP(subString, "\"");
         String uri = subString.substring(0, targetIdx2);
-
         getMethod.add(uri);
+
         return getMethod;
     }
 
-    static boolean KMP(String parent, String pattern) {
+    static int KMP(String parent, String pattern) {
         int parentLength = parent.length();
         int patternLength = pattern.length();
 
@@ -101,14 +211,13 @@ public class SynchronizeServiceImpl implements SynchronizeService {
             // 글자가 대응될 경우
             if (parent.charAt(i) == pattern.charAt(idx)) {
                 if (idx == patternLength - 1) {
-                    System.out.println(parent);
                     idx = table[idx];
-                    return true;
+                    return i;
                 } else {
                     idx += 1;
                 }
             }
         }
-        return false;
+        return -1;
     }
 }
