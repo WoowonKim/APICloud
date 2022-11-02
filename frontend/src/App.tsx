@@ -1,5 +1,6 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
+import { OAuth2RedirectHandler } from "./components/welcome/OAuth2RedirectHandler";
 import ApiDocs from "./pages/ApiDocs";
 import CreateApi from "./pages/CreateApi/CreateApi";
 import Main from "./pages/Main";
@@ -11,6 +12,11 @@ const App = () => {
     <div>
       <Routes>
         <Route path="/main" element={<Main />} />
+        <Route
+          path="/oauth2/redirect/"
+          element={<OAuth2RedirectHandler />}
+        ></Route>
+        <Route path="/" element={<Main />} />
         <Route path="/welcome" element={<Welcome />} />
         <Route path="/createApi" element={<CreateApi />} />
         <Route path="/apiDocs" element={<ApiDocs />} />

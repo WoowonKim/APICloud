@@ -5,7 +5,6 @@ import Sidebar from "../../components/CreateApi/Sidebar/Sidebar";
 import Table from "../../components/CreateApi/Table/Table";
 import { useSyncedStore } from "@syncedstore/react";
 import { store } from "../../components/CreateApi/store";
-import { getYjsValue } from "@syncedstore/core";
 
 const CreateApi = () => {
   // 서버 정보를 저장할 state (임시 데이터)
