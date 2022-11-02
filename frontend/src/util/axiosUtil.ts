@@ -22,7 +22,6 @@ export function axiosPost(url: string, data: any) {
   });
 }
 
-// delete is a reserved name
 export function axiosDel(url: string) {
   return axiosInstance({
     method: "DELETE",

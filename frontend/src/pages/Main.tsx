@@ -11,9 +11,6 @@ const Main = () => {
   useEffect(() => {
     if (!user) dispatch(fetchUser());
   }, []);
-  useEffect(() => {
-    console.log(user);
-  }, [user]);
   return (
     <div>
       <Header />
