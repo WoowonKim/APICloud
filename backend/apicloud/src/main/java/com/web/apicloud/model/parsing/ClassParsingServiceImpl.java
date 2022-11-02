@@ -19,6 +19,8 @@ public class ClassParsingServiceImpl implements ClassParsingService {
     private static final String[] accessModifier = {"public", "protected", "private", "default", "static"};
     private static final String[] type = {"String", "Long", "long", "Integer", "int", "float", "Float"};
 
+    private static String rootPath = "";
+
     private final FileSearchService fileSearchService;
     private final ParsingService parsingService;
 
@@ -28,7 +30,12 @@ public class ClassParsingServiceImpl implements ClassParsingService {
 //            String str = name.substring(5, name.length() - 1);
 //            System.out.println(str);
 //        }
-        String path = fileSearchService.getClassPath(root, name);
+
+        rootPath = root;
+        // TODO: List 검사
+        // TODO: String 검사
+        // TODO: root 검사
+        String path = fileSearchService.getClassPath(rootPath, name);
         List<String> lines = Files.readAllLines(Paths.get(path));
 //        System.out.println(lines);
 
@@ -52,7 +59,7 @@ public class ClassParsingServiceImpl implements ClassParsingService {
         return null;
     }
 
-    public PropertyVO getProperty(String str) {
+    public PropertyVO getProperty(String str) throws IOException {
         str = str.strip();
         str = str.replaceAll(";$", "");
         String[] tokens = str.split(" ");
@@ -70,12 +77,17 @@ public class ClassParsingServiceImpl implements ClassParsingService {
             if (!state) break;
             j++;
         }
+
+        if ((j + 1) >= tokens.length) return null;
         for (String type : type) {
             if (type.equals(tokens[j])) {
-                if ((j + 1) >= tokens.length) return null;
                 return PropertyVO.builder().name(tokens[j + 1]).type(tokens[j]).build();
             }
         }
-        return null;
+
+        // TODO: 리스트일 경우
+        PropertyVO propertyVO = getBody(rootPath, tokens[j]);
+//        if(propertyVO == null) return null;
+        return PropertyVO.builder().name(tokens[j + 1]).collectionType(LIST).build();
     }
 }
