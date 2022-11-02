@@ -1,18 +1,15 @@
 package com.web.apicloud.model;
 
+import com.web.apicloud.domain.entity.Api;
+import com.web.apicloud.domain.vo.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
-import java.util.StringTokenizer;
+import java.util.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -30,69 +27,108 @@ public class SynchronizeServiceImpl implements SynchronizeService {
 
     @Override
     public Object getFile(String root, String name) throws IOException {
-        List<String> lines = Files.readAllLines(Paths.get("C:/S07P22B309/backend/billow/src/main/java/com/billow/controller/program/ProgramController.java"));
+//        List<String> lines = Files.readAllLines(Paths.get("C:/S07P22B309/backend/billow/src/main/java/com/billow/controller/program/ProgramController.java"));
+        List<String> lines = Files.readAllLines(Paths.get("/Users/bbb381/S07P22B309/backend/billow/src/main/java/com/billow/controller/user/UserController.java"));
+        String value = null;
         int i = 0;
         while (i < lines.size()) {
             if (KMP(lines.get(i), REQUEST_MAPPING) != -1) {
                 int target = KMP(lines.get(i), VALUE);
-                String value = null;
                 if (target != -1) {
                     value = getValue(lines.get(i).substring(target + 1, lines.get(i).length()));
                 } else {
                     value = getValue(lines.get(i));
                 }
-                // TODO: 저장
+                i++;
                 break;
             }
             i++;
         }
 
+        List<ApiVO> apis = new ArrayList<>();
         List<String> api = new ArrayList<>();
         while (i < lines.size()) {
             if (KMP(lines.get(i), METHOD) != -1) {
-                apiParsing(api);
+                ApiVO apiVO = apiParsing(api);
+                if (apiVO != null) {
+                    apis.add(apiVO);
+                }
                 api = new ArrayList<>();
             }
             api.add(lines.get(i++));
         }
+        ApiVO apiVO = apiParsing(api);
+        if (apiVO != null) {
+            apis.add(apiVO);
+        }
+
+        ControllerVO controllerVO = ControllerVO.builder()
+                .commonUri(value)
+                .apis(apis)
+                .build();
+        System.out.println(controllerVO);
         return null;
     }
 
-    private void apiParsing(List<String> api) {
-        if(api.size() == 0) return;
-        System.out.println("api ==> "+api);
+    private ApiVO apiParsing(List<String> api) {
+        if (api.size() == 0) return null;
+        System.out.println("api ==> " + api);
         List<String> getMethod = getMethod(api.get(0));
-        if (getMethod != null && getMethod.size() > 0) {
-            // TODO: 저장
+        if (getMethod == null) return null;
+        String method = null, uri = null;
+        if (getMethod.size() > 0) {
+            method = getMethod.get(0);
         }
-        if (getMethod != null && getMethod.size() > 1) {
-            // TODO: uri 저장
+        if (getMethod.size() > 1) {
+            uri = getMethod.get(1);
         }
-
+        ApiDetailVO apiDetail = null;
         for (int i = 1; i < api.size(); i++) {
             if (KMP(api.get(i), RESPONSE_ENTITY) != -1) {
-                getApi(i, api);
+                apiDetail = getApi(i, api);
                 break;
             }
         }
+
+        if (apiDetail == null) {
+            ApiVO apiVO = ApiVO.builder()
+                    .uri(uri)
+                    .method(method)
+                    .build();
+            return apiVO;
+        }
+        ApiVO apiVO = ApiVO.builder()
+                .uri(uri)
+                .method(method)
+                .parameters(apiDetail.getParameters())
+                .query(apiDetail.getQuery())
+                .requestBody(apiDetail.getRequestBody())
+                .responses(apiDetail.getResponses())
+                .headers(apiDetail.getHeaders())
+                .build();
+        return apiVO;
     }
 
-    private void getRequestDetail(String request) {
+    private void getRequestDetail(ApiDetailVO apiDetail, String request) {
         if (request.equals("")) return;
         System.out.println("getRequestDetail ==> " + request);
         String type = getType(request);
-        String value = null;
+
         int pathVariable = KMP(request, PATH_VARIABLE);
         if (pathVariable != -1) {
             String str = request.substring(pathVariable + 1, request.length());
-            value = getValue(str);
+            String value = getValue(str);
+            PropertyVO parameter = PropertyVO.builder().name(value).type(type).build();
+            apiDetail.getParameters().add(parameter);
         } else {
             int requestParam = KMP(request, REQUEST_PARAM);
             if (requestParam != -1) {
                 int target = KMP(request, VALUE);
                 if (target != -1) {
                     String str = request.substring(target + 1, request.length());
-                    value = getValue(str);
+                    String value = getValue(str);
+                    PropertyVO query = PropertyVO.builder().name(value).type(type).build();
+                    apiDetail.getQuery().getProperties().add(query);
                 }
             } else {
                 int requestBody = KMP(request, REQUEST_BODY);
@@ -102,102 +138,78 @@ public class SynchronizeServiceImpl implements SynchronizeService {
                 }
             }
         }
-
-        // TODO: value, type 저장
     }
 
-    private void getResponseDetail(String response) {
+    private void getResponseDetail(ApiDetailVO apiDetail, String response) {
         if (response.equals("")) return;
         System.out.println("getResponseDetail ==> " + response);
         // TODO: response 탐색
     }
 
-    private void getApi(int i, List<String> api) {
+    private ApiDetailVO getApi(int i, List<String> api) {
         Stack<Character> stack = new Stack<>();
         boolean responseFlag = false;
         boolean requestFlag = false;
         String response = "";
         String request = "";
 
+        ApiDetailVO apiDetail = new ApiDetailVO();
+
         while (i < api.size()) {
             for (int j = 0; j < api.get(i).length(); j++) {
+                if (requestFlag) request += api.get(i).charAt(j);
                 switch (api.get(i).charAt(j)) {
                     case '<':
                         stack.push('<');
-                        if (requestFlag) {
-                            request += api.get(i).charAt(j);
-                        } else {
-                            responseFlag = true;
-                        }
+                        if (!requestFlag) responseFlag = true;
                         break;
                     case '(':
                         stack.push('(');
-                        if (requestFlag) {
-                            request += api.get(i).charAt(j);
-                        }
                         break;
                     case '{':
                         stack.push('{');
-                        if (requestFlag) {
-                            request += api.get(i).charAt(j);
-                        }
                         break;
                     case '[':
                         stack.push('[');
-                        if (requestFlag) {
-                            request += api.get(i).charAt(j);
-                        }
                         break;
                     case '>':
                         if (stack.peek() == '<') stack.pop();
-                        if (requestFlag) {
-                            request += api.get(i).charAt(j);
-                        } else {
-                            if(stack.isEmpty()){
+                        if (!requestFlag) {
+                            if (stack.isEmpty()) {
                                 responseFlag = false;
-                                getResponseDetail(response);
+                                // TODO : response
+                                getResponseDetail(apiDetail, response);
                             }
                         }
                         break;
                     case ')':
                         if (stack.peek() == '(') stack.pop();
                         if (stack.isEmpty()) {
-                            getRequestDetail(request);
-                            return;
-                        }
-                        if (requestFlag) {
-                            request += api.get(i).charAt(j);
+                            // TODO : requestBody, parameters, query
+                            getRequestDetail(apiDetail, request);
+                            return apiDetail;
                         }
                         break;
                     case '}':
                         if (stack.peek() == '}') stack.pop();
-                        if (requestFlag) {
-                            request += api.get(i).charAt(j);
-                        }
                         break;
                     case ']':
                         if (stack.peek() == ']') stack.pop();
-                        if (requestFlag) {
-                            request += api.get(i).charAt(j);
-                        }
                         break;
                     case '@':
-                        getRequestDetail(request);
+                        // TODO : requestBody, parameters, query
+                        getRequestDetail(apiDetail, request);
                         request = "";
                         requestFlag = true;
                         request += api.get(i).charAt(j);
                         break;
                     default:
-                        if (responseFlag) {
-                            response += api.get(i).charAt(j);
-                        }
-                        if (requestFlag) {
-                            request += api.get(i).charAt(j);
-                        }
+                        if (responseFlag) response += api.get(i).charAt(j);
                 }
             }
             i++;
         }
+        return apiDetail;
     }
 
     private List<String> getMethod(String str) {
@@ -220,14 +232,14 @@ public class SynchronizeServiceImpl implements SynchronizeService {
         if (targetIdx1 == -1) return null;
         String subString = str.substring(targetIdx1 + 1, str.length());
         int targetIdx2 = KMP(subString, "\"");
-        System.out.println(subString.substring(0, targetIdx2));
+//        System.out.println(subString.substring(0, targetIdx2));
         return subString.substring(0, targetIdx2);
     }
 
     private String getType(String str) {
         for (String type : type) {
             if (KMP(str, type) != -1) {
-                System.out.println("type ==> " + type);
+//                System.out.println("type ==> " + type);
                 return type;
             }
         }
