@@ -50,6 +50,7 @@ public class ControllerContributor implements ProjectContributor {
             JavaTypeDeclaration controllerType = compilationUnit.createTypeDeclaration(controller.getName());
             controllerType.modifiers(Modifier.PUBLIC);
             controllerType.annotate(Annotation.name("org.springframework.web.bind.annotation.RestController"));
+            controllerType.annotate(Annotation.name("org.springframework.web.bind.annotation.RequestMapping", builder -> builder.attribute("value", String.class, controller.getCommonUri())));
             List<ApiVO> apis = controller.getApis();
             if (apis != null) {
                 apis.forEach(apiConsumer(sourceCode, controllerType));
