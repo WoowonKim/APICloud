@@ -257,7 +257,37 @@ public class CustomJavaSourceCodeWriter implements SourceCodeWriter<CustomJavaSo
     private void writeExpression(IndentingWriter writer, JavaExpression expression) {
         if (expression instanceof JavaMethodInvocation) {
             writeMethodInvocation(writer, (JavaMethodInvocation) expression);
+        } else if(expression instanceof JavaClassCreation) {
+            writeClassCreation(writer, (JavaClassCreation) expression);
         }
+    }
+
+    private void writeClassCreation(IndentingWriter writer, JavaClassCreation classCreation) {
+        writer.println(getClassCreation(classCreation));
+    }
+
+    private String getClassCreation(JavaClassCreation classCreation) {
+        String code = "new " + getUnqualifiedName(classCreation.getType());
+        if(classCreation.getGenericType() != null) {
+            code += "<" + getUnqualifiedName(classCreation.getGenericType()) + ">";
+        }
+        List<JavaArgument> arguments = classCreation.getArguments();
+        code += "(" + arguments.stream().map(argument -> {
+            String argumentCode;
+            if(argument instanceof JavaClassCreation) {
+                argumentCode = getClassCreation((JavaClassCreation) argument);
+            } else if(argument instanceof JavaEnum) {
+                argumentCode = getEnum((JavaEnum) argument);
+            } else {
+                argumentCode = "";
+            }
+            return argumentCode;
+        }).collect(Collectors.joining(", ")) + ")";
+        return code;
+    }
+
+    private String getEnum(JavaEnum argument) {
+        return argument.getTarget() + "." +argument.getName();
     }
 
     private void writeMethodInvocation(IndentingWriter writer, JavaMethodInvocation methodInvocation) {
@@ -285,11 +315,26 @@ public class CustomJavaSourceCodeWriter implements SourceCodeWriter<CustomJavaSo
                 imports.addAll(getRequiredImports(methodDeclaration.getAnnotations(), this::determineImports));
                 imports.addAll(getRequiredImports(methodDeclaration.getParameters(),
                         (parameter) -> Collections.singletonList(parameter.getType())));
+                methodDeclaration.getStatements().forEach(statement -> {
+                    if(statement instanceof JavaExpressionStatement) {
+                        JavaExpression javaExpression = ((JavaExpressionStatement) statement).getExpression();
+                        if(javaExpression instanceof JavaMethodInvocation) {
+                            addImport(imports, ((JavaMethodInvocation) javaExpression).getTarget());
+                        } else if(javaExpression instanceof JavaClassCreation) {
+                            addImportsOfClassCreation(imports, (JavaClassCreation) javaExpression);
+                        }
+                    }
+                });
                 imports.addAll(getRequiredImports(
                         methodDeclaration.getStatements().stream().filter(JavaExpressionStatement.class::isInstance)
                                 .map(JavaExpressionStatement.class::cast).map(JavaExpressionStatement::getExpression)
                                 .filter(JavaMethodInvocation.class::isInstance).map(JavaMethodInvocation.class::cast),
                         (methodInvocation) -> Collections.singleton(methodInvocation.getTarget())));
+                imports.addAll(getRequiredImports(
+                        methodDeclaration.getStatements().stream().filter(JavaExpressionStatement.class::isInstance)
+                                .map(JavaExpressionStatement.class::cast).map(JavaExpressionStatement::getExpression)
+                                .filter(JavaMethodInvocation.class::isInstance).map(JavaClassCreation.class::cast),
+                        (methodInvocation) -> Collections.singleton(methodInvocation.getType())));
                 imports.addAll(getRequiredImports(
                         methodDeclaration.getParameters().stream()
                         .map(AnnotatableParameter::getAnnotations)
@@ -300,6 +345,24 @@ public class CustomJavaSourceCodeWriter implements SourceCodeWriter<CustomJavaSo
         }
         Collections.sort(imports);
         return new LinkedHashSet<>(imports);
+    }
+
+    private void addImportsOfClassCreation(List<String> imports, JavaClassCreation javaClassCreation) {
+        addImport(imports, javaClassCreation.getType());
+        addImport(imports, javaClassCreation.getGenericType());
+        javaClassCreation.getArguments().forEach(argument -> {
+            if(argument instanceof JavaClassCreation) {
+                addImportsOfClassCreation(imports, (JavaClassCreation) argument);
+            } else if(argument instanceof JavaEnum) {
+                addImport(imports, ((JavaEnum) argument).getTarget());
+            }
+        });
+    }
+
+    private void addImport(List<String> imports, String target) {
+        if(requiresImport(target)) {
+            imports.add(target);
+        }
     }
 
     private Collection<String> determineImports(Annotation annotation) {
