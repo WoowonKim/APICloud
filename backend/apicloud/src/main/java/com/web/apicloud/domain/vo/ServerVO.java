@@ -36,4 +36,6 @@ public class ServerVO {
     private String javaVersion;
 
     private List<String> dependencies;
+
+    private String contextUri;
 }

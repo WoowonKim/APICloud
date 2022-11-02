@@ -8,7 +8,7 @@ const WelcomeHeader = () => {
         <div className="logo">API Cloud</div>
         <div className="buttonWrapper">
           <div className="signIn">
-            <a href="http://localhost:8005/oauth2/authorization/google">
+            <a href="http://localhost:8005/api/oauth2/authorize/google?redirect_uri=http://localhost:3000/oauth2/redirect">
               구글 로그인
             </a>
           </div>

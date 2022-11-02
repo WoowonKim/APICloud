@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import { ApisType, ControllerType, ServerInfoType } from "./ApisType";
+import { ApisType, ControllerType } from "./ApisType";
 import "./CreateApi.scss";
 import Sidebar from "../../components/CreateApi/Sidebar/Sidebar";
 import Table from "../../components/CreateApi/Table/Table";
 import { useSyncedStore } from "@syncedstore/react";
 import { store } from "../../components/CreateApi/store";
-import { getYjsValue } from "@syncedstore/core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
