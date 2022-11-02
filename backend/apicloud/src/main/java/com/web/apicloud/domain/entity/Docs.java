@@ -43,6 +43,9 @@ public class Docs {
 
     private String encryptedUrl;
 
+    @Lob
+    private String detail;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -53,7 +56,7 @@ public class Docs {
     }
 
     @Builder
-    public Docs(Long id, String docsName, String serverUrl, String contextUri, Integer javaVersion, String springVersion, Integer buildManagement, String groupPackage, String packageName, Integer packaging, String encryptedUrl, Group group) {
+    public Docs(Long id, String docsName, String serverUrl, String contextUri, Integer javaVersion, String springVersion, Integer buildManagement, String groupPackage, String packageName, Integer packaging, String encryptedUrl, Group group, String detail) {
         this.id = id;
         this.docsName = docsName;
         this.serverUrl = serverUrl;
@@ -66,6 +69,7 @@ public class Docs {
         this.packaging = packaging;
         this.encryptedUrl = encryptedUrl;
         this.group = group;
+        this.detail = detail;
     }
 
     public DocListResponse toDto(Long docId, String docName, Long groupId, User groupUser, Integer authority) {
