@@ -25,6 +25,7 @@ import io.spring.initializr.generator.io.IndentingWriterFactory;
 import io.spring.initializr.generator.language.java.JavaSourceCode;
 import io.spring.initializr.generator.language.java.JavaSourceCodeWriter;
 import io.spring.initializr.generator.project.*;
+import io.spring.initializr.generator.spring.configuration.ApplicationPropertiesContributor;
 import io.spring.initializr.metadata.InitializrMetadata;
 import io.spring.initializr.metadata.InitializrMetadataProvider;
 import io.spring.initializr.metadata.support.MetadataBuildItemResolver;
@@ -34,8 +35,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.util.FileSystemUtils;
 
-import java.io.IOException;
-import java.io.StringWriter;
+import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +77,7 @@ public class ProjectWithControllerGenerationInvoker<R extends ProjectRequest> {
      * @param request the project request
      * @return the {@link ProjectWithControllerGenerationResult}
      */
-    public ProjectWithControllerGenerationResult invokeProjectStructureGeneration(R request, DocVO doc) {
+    public ProjectWithControllerGenerationResult invokeProjectStructureGeneration(R request, DocVO doc) throws IOException {
         InitializrMetadata metadata = this.parentApplicationContext.getBean(InitializrMetadataProvider.class).get();
         try {
             ProjectDescription description = this.requestConverter.convert(request, metadata);
@@ -85,6 +86,7 @@ public class ProjectWithControllerGenerationInvoker<R extends ProjectRequest> {
                 projectGenerationContext.registerBean(ControllerContributor.class, () -> new ControllerContributor(JavaSourceCode::new,
                     new JavaSourceCodeWriter(this.indentingWriterFactory),
                     doc));
+                projectGenerationContext.registerBean(ApplicationPropertiesContextUriContributor.class, () -> new ApplicationPropertiesContextUriContributor(doc.getServer().getContextUri()));
                 customizeProjectGenerationContext(projectGenerationContext, metadata);
             });
             ProjectWithControllerGenerationResult result = projectGenerator.generate(description,
@@ -159,6 +161,7 @@ public class ProjectWithControllerGenerationInvoker<R extends ProjectRequest> {
     }
 
     private void addTempFile(Path group, Path file) {
+        System.out.println("addTempFile(): group - "+group.toAbsolutePath() + " file-"+file.toAbsolutePath());
         this.temporaryFiles.compute(group, (path, paths) -> {
             List<Path> newPaths = (paths != null) ? paths : new ArrayList<>();
             newPaths.add(file);
@@ -172,6 +175,7 @@ public class ProjectWithControllerGenerationInvoker<R extends ProjectRequest> {
      * @see #createDistributionFile
      */
     public void cleanTempFiles(Path dir) {
+        System.out.println("cleanTempFiles: "+dir);
         List<Path> tempFiles = this.temporaryFiles.remove(dir);
         if (!tempFiles.isEmpty()) {
             tempFiles.forEach((path) -> {
