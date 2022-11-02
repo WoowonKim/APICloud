@@ -10,16 +10,16 @@
 }
 .testMain {
   width: 80%;
-  margin-left: 9px;
+  // margin-left: 90px;
 }
 .testInfomation {
-  margin-left: 3%;
+  // margin-left: 3%;
 }
 .testInfo {
   display: flex;
 }
 .testSetting {
-  width: 40%;
+  width: 50%;
 }
 
 // ApiSide
@@ -28,9 +28,15 @@
   padding: 5px;
 }
 .apiSideAddress {
-  margin-left: 5px;
-  margin-bottom: 15px;
-  text-align: start;
+  // margin-left: 5px;
+  // background-color: #3a00e5;
+  // position: fixed;
+  // left: 20px;
+  // top: 50px;
+  // background-color: #e7f7fe;
+  // padding: 10px 0px;
+  font-size: 13px;
+  margin: 0px;
 }
 .sideText {
   width: 25%;
@@ -41,26 +47,30 @@
 
 // ApiInput
 .apiInputContainer {
+  margin-top: 5px;
+  // margin-left: 7%;
   display: flex;
-  justify-self: start;
+  justify-content: center;
 }
 .apiInputContainer > input:focus {
   outline: none;
 }
 .apiInput {
-  width: 60%;
+  width: 50%;
   border: none;
   border-bottom: 1px solid #000000;
   border-right: 1px solid #000000;
   border-top: 1px solid #000000;
-  border-top-right-radius: 30px;
-  border-bottom-right-radius: 30px;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
   padding: 1px 50px 1px 10px;
   outline: none;
   font-weight: 500;
   font-size: 14px;
 }
 .apiChoice {
+  // margin-left: 50px;
+  // margin-top: ;
   border: none;
   width: 8%;
   font-size: 13px;
@@ -69,12 +79,12 @@
   padding-left: 10px;
   padding-top: 4px;
   padding-bottom: 5px;
-  border-top-left-radius: 30px;
-  border-bottom-left-radius: 30px;
+  border-top-left-radius: 15px;
+  border-bottom-left-radius: 15px;
   border: 1px solid #000000;
 }
 .apiTestBtn {
-  width: 145px;
+  width: 85px;
   height: 45px;
   margin-left: 7px;
   border-radius: 15px;
@@ -166,7 +176,7 @@
 }
 .bodyArea {
   width: 91%;
-  height: 150px;
+  height: 230px;
   border: 3px solid #e7f7fe;
   resize: none;
   padding: 20px;
@@ -174,12 +184,13 @@
 
 // ApiRespose
 .apiHeaderMainTitle {
+  margin: 0px;
   font-size: 20px;
   border-bottom: 1px solid #000000;
 }
 .apiResponseContainer {
   padding: 5px;
-  margin-left: 3%;
+  // margin-left: %;
 }
 
 .apiResponseContainer > span {
@@ -218,14 +229,14 @@
 .resultResponseBody {
   margin-left: 25px;
   color: #c56d6d;
-  font-weight: bold;
+  // font-weight: bold;
 }
 .resultResponseBodySub {
-  font-weight: bold;
+  // font-weight: bold;
   color: #4880be;
 }
 .resultResponseBodySubNum {
-  font-weight: bold;
+  // font-weight: bold;
   color: green;
 }
 .resultResponseContainer {

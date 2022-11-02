@@ -25,7 +25,7 @@ const TestApi = () => {
         </div>
         <div className="testMain">
           <div className="testInfomation">
-            <ApiAddress />
+            {/* <ApiAddress /> */}
             <ApiInputUri />
           </div>
           <div className="testInfo">

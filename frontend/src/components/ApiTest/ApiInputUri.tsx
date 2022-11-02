@@ -22,9 +22,9 @@ const ApiInputUri = () => {
       <input
         className="apiInput"
         type="text"
-        defaultValue={isInfo.infomethod.address + isInfo.infomethod.commonUri + "/"}
+        defaultValue={isInfo.infomethod.userAddress}
         onChange={(e) => {
-          dispatch(testApiSlice.actions.setAddress({ address: e.target.value }));
+          dispatch(testApiSlice.actions.setUserAddress({ userAddress: e.target.value }));
         }}
       />
       <button
@@ -34,6 +34,14 @@ const ApiInputUri = () => {
         }}
       >
         보내기
+      </button>
+      <button
+        className="apiTestBtn"
+        onClick={() => {
+          testFunction();
+        }}
+      >
+        저장하기
       </button>
     </div>
   );
