@@ -290,6 +290,12 @@ public class CustomJavaSourceCodeWriter implements SourceCodeWriter<CustomJavaSo
                                 .map(JavaExpressionStatement.class::cast).map(JavaExpressionStatement::getExpression)
                                 .filter(JavaMethodInvocation.class::isInstance).map(JavaMethodInvocation.class::cast),
                         (methodInvocation) -> Collections.singleton(methodInvocation.getTarget())));
+                imports.addAll(getRequiredImports(
+                        methodDeclaration.getParameters().stream()
+                        .map(AnnotatableParameter::getAnnotations)
+                        .filter(annotations -> annotations.size() > 0).flatMap(Collection::stream)
+                    , (annotation) -> Collections.singletonList(annotation.getName())
+                ));
             }
         }
         Collections.sort(imports);

@@ -6,7 +6,6 @@ import com.web.apicloud.domain.vo.DocVO;
 import com.web.apicloud.domain.vo.PropertyVO;
 import com.web.apicloud.util.code.java.*;
 import io.spring.initializr.generator.language.Annotation;
-import io.spring.initializr.generator.language.Parameter;
 import io.spring.initializr.generator.language.SourceCodeWriter;
 import io.spring.initializr.generator.language.SourceStructure;
 import io.spring.initializr.generator.language.java.JavaLanguage;
@@ -88,22 +87,11 @@ public class ControllerContributor implements ProjectContributor {
         makeParameters(api.getParameters()).ifPresent(parameters::addAll);
 
         // query에서 파라미터 추가
-        makeParameter(api.getQuery(), "").ifPresent(parameters::add);
+        makeParameter(api.getQuery(), null).ifPresent(parameters::add);
 
         // requestBody에서 파라미터 추가
-        makeParameter(api.getRequestBody(), "@RequestBody").ifPresent(parameters::add);
-
+        makeParameter(api.getRequestBody(), "org.springframework.web.bind.annotation.RequestBody").ifPresent(parameters::add);
         builder.parameters(parameters.toArray(AnnotatableParameter[]::new));
-    }
-
-    // TODO: Annotatable한 parameter type 생성하기
-    private String makeAnnotation(String s, PropertyVO property) {
-        s += "(value = \"" + property.getName() + "\"";
-        if (!property.isRequired()) {
-            s += ", required = false";
-        }
-        s += ")";
-        return s;
     }
 
     private Optional<List<AnnotatableParameter>> makeParameters(List<PropertyVO> properties) {
@@ -111,18 +99,26 @@ public class ControllerContributor implements ProjectContributor {
             return Optional.empty();
         }
         return Optional.of(properties.stream()
-                .map(p -> makeParameter(p, makeAnnotation("@PathVariable", p)).orElse(null))
+                .map(p -> makeParameter(p, "org.springframework.web.bind.annotation.PathVariable").orElse(null))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList())
         );
     }
 
-    private Optional<AnnotatableParameter> makeParameter(PropertyVO property, String annotation) {
+    private Optional<AnnotatableParameter> makeParameter(PropertyVO property, String annotationName) {
         if (property == null) {
             return Optional.empty();
         }
-        return Optional.of(new AnnotatableParameter(("".equals(annotation) ? "" : annotation + " ")
-                + property.getTypeForCode(), property.getName()));
+        AnnotatableParameter parameter = new AnnotatableParameter(property.getTypeForCode(), property.getName());
+        if (annotationName != null) {
+            parameter.annotate(Annotation.name(annotationName, builder -> {
+                builder.attribute("value", String.class, property.getName());
+                if (!property.isRequired()) {
+                    builder.attribute("required", Boolean.class, "false");
+                }
+            }));
+        }
+        return Optional.of(parameter);
     }
 
     private void addDto(CustomJavaSourceCode sourceCode, List<PropertyVO> dtos, String controllerName) {
