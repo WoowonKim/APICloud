@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
-import { faCircleUser } from "@fortawesome/free-solid-svg-icons";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import "./main.scss";
-import { useAppSelector } from "../../store/hooks";
-import { selectUser } from "../../store/slice/userSlice";
+import { useAppSelector } from "../../Store/hooks";
+import { selectUser } from "../../Store/slice/userSlice";
 
 const Header = () => {
   const [userImg, setUserImg] = useState("");

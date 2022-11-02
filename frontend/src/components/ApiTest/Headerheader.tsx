@@ -1,8 +1,8 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { useAppDispatch } from "../../Store";
-import { RootState } from "../../Store/rootReducer";
+import { useAppDispatch } from "../../Store/hooks";
 import testApiSlice from "../../Store/slice/testApi";
+import { RootState } from "../../Store/store";
 
 const Headerheader = () => {
   const isHeaderApi = useSelector((state: RootState) => state.testApi.header);
@@ -23,7 +23,9 @@ const Headerheader = () => {
             type="text"
             defaultValue={isHeaderApi.Accept}
             onChange={(e) => {
-              dispatch(testApiSlice.actions.setAccept({ Accept: e.target.value }));
+              dispatch(
+                testApiSlice.actions.setAccept({ Accept: e.target.value })
+              );
             }}
           />
         </p>
@@ -32,7 +34,11 @@ const Headerheader = () => {
             type="text"
             defaultValue={isHeaderApi.AcceptEncoding}
             onChange={(e) => {
-              dispatch(testApiSlice.actions.setAcceptEncodng({ AcceptEncoding: e.target.value }));
+              dispatch(
+                testApiSlice.actions.setAcceptEncodng({
+                  AcceptEncoding: e.target.value,
+                })
+              );
             }}
           />
         </p>
@@ -41,7 +47,11 @@ const Headerheader = () => {
             type="text"
             defaultValue={isHeaderApi.Connection}
             onChange={(e) => {
-              dispatch(testApiSlice.actions.setConnection({ Connection: e.target.value }));
+              dispatch(
+                testApiSlice.actions.setConnection({
+                  Connection: e.target.value,
+                })
+              );
             }}
           />
         </p>
@@ -59,7 +69,11 @@ const Headerheader = () => {
             type="text"
             defaultValue={isHeaderApi.contentLength}
             onChange={(e) => {
-              dispatch(testApiSlice.actions.setContentLength({ contentLength: e.target.value }));
+              dispatch(
+                testApiSlice.actions.setContentLength({
+                  contentLength: e.target.value,
+                })
+              );
             }}
           />
         </p>
@@ -68,7 +82,11 @@ const Headerheader = () => {
             type="text"
             defaultValue={isHeaderApi.contentType}
             onChange={(e) => {
-              dispatch(testApiSlice.actions.setContentType({ contentType: e.target.value }));
+              dispatch(
+                testApiSlice.actions.setContentType({
+                  contentType: e.target.value,
+                })
+              );
             }}
           />
         </p>
