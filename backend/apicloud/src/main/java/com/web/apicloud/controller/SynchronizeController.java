@@ -25,8 +25,8 @@ public class SynchronizeController {
 
     @GetMapping
     public ResponseEntity<Object> getFile() throws IOException {
-        String root = "C:/S07P22B309";
-        String name = "Program" + "Controller";
+        String root = "C:/billow";
+        String name = "Program";
         Object response = synchronizeService.getFile(root, name);
         return ResponseEntity.ok()
                 .body(null);

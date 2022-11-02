@@ -5,17 +5,19 @@ import {
   flexRender,
 } from "@tanstack/react-table";
 import React, { useEffect, useMemo, useState } from "react";
-import { ApisType, DataType } from "../../../pages/CreateApi/ApisType";
+import { ApisType, ControllerType } from "../../../pages/CreateApi/ApisType";
 import SelectMethods from "../SelectMethods/SelectMethods";
 import "../ControllerAddModal/ControllerAddModal.scss";
+import { MappedTypeDescription } from "@syncedstore/core/types/doc";
 
 // ControllerAddModal에서 받아오는 props의 type 설정
 interface Props {
   data: ApisType[];
-  setData: React.Dispatch<React.SetStateAction<DataType>>;
+  state: MappedTypeDescription<{
+    data: ControllerType[];
+  }>;
 }
-
-const ModalTable = ({ data, setData }: Props) => {
+const ModalTable = ({ data, state }: Props) => {
   const defaultColumn: Partial<ColumnDef<ApisType>> = {
     cell: function Cell({ getValue, row: { index }, column: { id }, table }) {
       const initialValue = getValue<string>();
@@ -58,9 +60,10 @@ const ModalTable = ({ data, setData }: Props) => {
         footer: (props) => props.column.id,
       },
     ],
-
     []
   );
+
+  // const data =
 
   const table = useReactTable({
     data,
@@ -69,22 +72,20 @@ const ModalTable = ({ data, setData }: Props) => {
     getCoreRowModel: getCoreRowModel(),
     meta: {
       updateData: (rowIndex: string | number, columnId: any, value: any) => {
-        setData((old: DataType) => {
-          let copy = JSON.parse(JSON.stringify(old));
-          if (!!value) {
-            old.controller[copy.controller.length - 1].apis.map((row, idx) => {
-              if (idx === rowIndex) {
-                const newData = {
-                  ...copy.controller[copy.controller.length - 1].apis[rowIndex],
-                  [columnId]: value,
-                };
-                copy.controller[copy.controller.length - 1].apis[rowIndex] =
-                  newData;
-              }
-            });
-          }
-          return copy;
-        });
+        if (state.data[state.data.length - 1].apis.length > 0 && value) {
+          state.data[state.data.length - 1].apis.map((row, idx) => {
+            if (idx === rowIndex) {
+              const type =
+                columnId === "uri"
+                  ? "uri"
+                  : columnId === "name"
+                  ? "name"
+                  : "method";
+
+              state.data[state.data.length - 1].apis[rowIndex][type] = value;
+            }
+          });
+        }
       },
     },
     debugTable: true,
