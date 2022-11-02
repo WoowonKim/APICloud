@@ -18,7 +18,6 @@ public class FileSearchServiceImpl implements FileSearchService {
     @Override
     public String getControllerPath(String root, String name) {
         String fileName = name + "Controller.java";
-        System.out.println(fileName);
         subDirList(root, fileName);
         System.out.println("컨트롤러 파일 : " + searchPath);
         if (state) {
@@ -31,7 +30,6 @@ public class FileSearchServiceImpl implements FileSearchService {
     @Override
     public String getClassPath(String root, String name) {
         String fileName = name + ".java";
-        System.out.println(fileName);
         subDirList(root, fileName);
         System.out.println("오브젝트 파일 : " + searchPath);
         if (state) {
@@ -49,7 +47,6 @@ public class FileSearchServiceImpl implements FileSearchService {
         try {
             for (File tmpFile : fileList) {
                 if (tmpFile.isFile()) {
-//                    System.out.println(tmpFile.getName());
 //                    System.out.println("\t 파일 = " + filePath + "/" + tmpFile.getName());
                     if (tmpFile.getName().equals(fileName)) {
                         state = true;
