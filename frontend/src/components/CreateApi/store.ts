@@ -1,5 +1,5 @@
 import { Doc } from "yjs";
-import { ControllerType, DataType } from "./../../pages/CreateApi/ApisType";
+import { ControllerType } from "./../../pages/CreateApi/ApisType";
 import syncedStore, { getYjsValue } from "@syncedstore/core";
 import { WebrtcProvider } from "y-webrtc";
 
