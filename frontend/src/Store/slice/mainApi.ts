@@ -6,6 +6,7 @@ const initialState = {
   userId: 1,
 };
 
+// API DOC 생성하기
 export const setApiDoc: any = createAsyncThunk(
   "mainApi/setApiDoc",
   async (args: any, { rejectWithValue }) => {
@@ -14,6 +15,19 @@ export const setApiDoc: any = createAsyncThunk(
       return response.data;
     } catch (err: any) {
       return rejectWithValue(err.response);
+    }
+  }
+);
+
+// API DOC LIST 조회하기
+export const getApiDocList: any = createAsyncThunk(
+  "mainApi/getDocList",
+  async (args: any, { rejectWithValue }) => {
+    try {
+      const response = await axiosService.get("api/docs");
+      return response.data;
+    } catch (err: any) {
+      return rejectWithValue(err.respone);
     }
   }
 );
@@ -29,6 +43,13 @@ const mainApiSlice = createSlice({
     },
     [setApiDoc.rejected]: (state, action) => {
       console.log("setApiDoc rejected", action.payload);
+    },
+    [getApiDocList.fulfilled]: (state, action) => {
+      if (action.payload.status === 200) {
+      }
+    },
+    [getApiDocList.rejected]: (state, action) => {
+      console.log("getApiDocList rejected", action.payload);
     },
   },
 });

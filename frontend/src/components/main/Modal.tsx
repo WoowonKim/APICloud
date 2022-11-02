@@ -85,6 +85,7 @@ const Modal = ({ onClickToggleModal }: PropsWithChildren<ModalDefaultType>) => {
     packaging: packaging,
   };
 
+  // API DOC 생성하기
   const onSubmit = (e: any) => {
     e.preventDefault();
     dispatch(setApiDoc(createDocRequest)).then((res: any) => {
