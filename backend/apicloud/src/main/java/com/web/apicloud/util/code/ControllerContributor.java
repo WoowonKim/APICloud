@@ -37,7 +37,6 @@ public class ControllerContributor implements ProjectContributor {
     public void contribute(Path projectRoot) throws IOException {
         CustomJavaSourceCode sourceCode = this.sourceFactory.get();
         List<ControllerVO> controllers = doc.getControllers();
-        System.out.println(controllers);
         if (controllers != null) {
             controllers.forEach(controllerConsumer(sourceCode));
         }
@@ -47,7 +46,6 @@ public class ControllerContributor implements ProjectContributor {
 
     private Consumer<ControllerVO> controllerConsumer(CustomJavaSourceCode sourceCode) {
         return (controller) -> {
-            System.out.println("controllerConsumer() " + controller.getName());
             CustomJavaCompilationUnit compilationUnit = sourceCode.createCompilationUnit(doc.getServer().getPackageName() + ".controller", controller.getName());
             CustomJavaTypeDeclaration controllerType = compilationUnit.createTypeDeclaration(controller.getName());
             controllerType.modifiers(Modifier.PUBLIC);
@@ -62,16 +60,17 @@ public class ControllerContributor implements ProjectContributor {
 
     private Consumer<ApiVO> apiConsumer(CustomJavaSourceCode sourceCode, CustomJavaTypeDeclaration controllerType) {
         return api -> {
-            System.out.println("apiConsumer(): " + api.getName());
             addDto(sourceCode, api.getAvailableDTO(), controllerType.getName());
             CustomJavaMethodDeclaration.Builder builder = CustomJavaMethodDeclaration
                     .method(api.getName())
                     .modifiers(Modifier.PUBLIC)
                     .returning("ResponseEntity<" + api.getReturning() + ">");
             addApiParameters(builder, api);
-
-            CustomJavaMethodDeclaration jmd = builder.body(new JavaReturnStatement(new JavaMethodInvocation("new ResponseEntity<" + api.getReturning() + ">",
-                    "", "null")));
+            CustomJavaMethodDeclaration jmd = builder.body(new JavaReturnStatement(
+                    new JavaClassCreation("org.framework.http.RequestEntity", api.getReturning(),
+                            List.of(new JavaClassCreation(api.getReturning(), null, List.of()),
+                                    new JavaEnum("org.framework.http.HttpStatus", "OK")))
+            ));
 
             String methodMappingName = "org.springframework.web.bind.annotation."
                     + Character.toUpperCase(api.getMethod().charAt(0)) + api.getMethod().substring(1) + "Mapping";

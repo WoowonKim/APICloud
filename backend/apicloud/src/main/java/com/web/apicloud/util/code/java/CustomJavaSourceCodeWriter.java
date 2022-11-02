@@ -263,7 +263,7 @@ public class CustomJavaSourceCodeWriter implements SourceCodeWriter<CustomJavaSo
     }
 
     private void writeClassCreation(IndentingWriter writer, JavaClassCreation classCreation) {
-        writer.println(getClassCreation(classCreation));
+        writer.print(getClassCreation(classCreation));
     }
 
     private String getClassCreation(JavaClassCreation classCreation) {
@@ -287,7 +287,7 @@ public class CustomJavaSourceCodeWriter implements SourceCodeWriter<CustomJavaSo
     }
 
     private String getEnum(JavaEnum argument) {
-        return argument.getTarget() + "." +argument.getName();
+        return getUnqualifiedName(argument.getTarget()) + "." +argument.getName();
     }
 
     private void writeMethodInvocation(IndentingWriter writer, JavaMethodInvocation methodInvocation) {
@@ -316,8 +316,8 @@ public class CustomJavaSourceCodeWriter implements SourceCodeWriter<CustomJavaSo
                 imports.addAll(getRequiredImports(methodDeclaration.getParameters(),
                         (parameter) -> Collections.singletonList(parameter.getType())));
                 methodDeclaration.getStatements().forEach(statement -> {
-                    if(statement instanceof JavaExpressionStatement) {
-                        JavaExpression javaExpression = ((JavaExpressionStatement) statement).getExpression();
+                    if(statement instanceof JavaReturnStatement) {
+                        JavaExpression javaExpression = ((JavaReturnStatement) statement).getExpression();
                         if(javaExpression instanceof JavaMethodInvocation) {
                             addImport(imports, ((JavaMethodInvocation) javaExpression).getTarget());
                         } else if(javaExpression instanceof JavaClassCreation) {

@@ -160,7 +160,6 @@ public class ProjectWithControllerGenerationInvoker<R extends ProjectRequest> {
     }
 
     private void addTempFile(Path group, Path file) {
-        System.out.println("addTempFile(): group - "+group.toAbsolutePath() + " file-"+file.toAbsolutePath());
         this.temporaryFiles.compute(group, (path, paths) -> {
             List<Path> newPaths = (paths != null) ? paths : new ArrayList<>();
             newPaths.add(file);
@@ -174,7 +173,6 @@ public class ProjectWithControllerGenerationInvoker<R extends ProjectRequest> {
      * @see #createDistributionFile
      */
     public void cleanTempFiles(Path dir) {
-        System.out.println("cleanTempFiles: "+dir);
         List<Path> tempFiles = this.temporaryFiles.remove(dir);
         if (!tempFiles.isEmpty()) {
             tempFiles.forEach((path) -> {
