@@ -31,11 +31,13 @@ public class ApiVO {
 
     private Map<String, ResponseVO> responses;
 
+    // TODO: ResponseEntity로 묶을지
     public String getReturning() {
-        if(responses == null) {
+        if(responses == null || responses.get("success") == null
+            || responses.get("success").getResponseBody() == null) {
             return "void";
         } else {
-            return "Object";
+            return responses.get("success").getResponseBody().getTypeForCode();
         }
     }
 
