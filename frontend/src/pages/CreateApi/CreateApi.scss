@@ -23,11 +23,11 @@
 }
 
 .apiDocsMaincontainer {
-  margin: 0 50px 0 50px;
+  margin: 0 50px 0 0;
 }
 
 .titleContainer {
-  margin: 50px 0 0 0;
+  margin: 50px 0 0 90px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -54,7 +54,7 @@
 
 .infoContainer {
   display: flex;
-  margin: 0 0 50px;
+  margin: 0 0 50px 90px;
   div {
     margin-right: 3rem;
     p {
@@ -73,12 +73,8 @@
 .tableContainer {
   .apiTable {
     display: flex;
-    margin-bottom: 50px;
-    .plusButtonGroup {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
+    align-items: flex-end;
+    margin: 0 0 50px 50px;
     .apiPlusButton {
       @include buttonStyle();
       width: 40px;
@@ -102,32 +98,9 @@
         }
       }
     }
-    .tablePlusButton {
-      @include buttonStyle();
-      width: 40px;
-      height: 40px;
-      position: relative;
-      .tablePlusText {
-        display: none;
-      }
-      &:hover {
-        .tablePlusText {
-          width: 100px;
-          height: 50px;
-          background-color: #f7f5ff;
-          border-radius: 10px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          position: absolute;
-          top: -50px;
-          right: 20px;
-        }
-      }
-      .plusIcon {
-        width: 20px;
-        height: 20px;
-      }
+    .plusIcon {
+      width: 20px;
+      height: 20px;
     }
   }
 }
@@ -135,7 +108,7 @@
 .tabContainer {
   display: flex;
   align-items: center;
-  margin: 0 0 20px 0;
+  margin: 0 0 20px 90px;
   .tabItem {
     border: none;
     background-color: white;

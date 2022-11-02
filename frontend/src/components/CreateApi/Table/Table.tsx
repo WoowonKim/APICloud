@@ -11,7 +11,7 @@ import "./Table.scss";
 import UseAutosizeTextArea from "./UseAutoSizeTextArea";
 import {
   ControllerType,
-  HeaderType,
+  HeadersType,
   PropertiesType,
 } from "../../../pages/CreateApi/ApisType";
 import TableInfo from "./TableInfo";
@@ -28,10 +28,11 @@ interface Props {
   activeTab: number;
   selectedController: number;
   selectedApi: number;
-  data: PropertiesType[] | HeaderType[];
+  data: PropertiesType[] | HeadersType[];
   state: MappedTypeDescription<{
     data: ControllerType[];
   }>;
+  responseType?: string;
 }
 
 const Table = ({
@@ -40,8 +41,9 @@ const Table = ({
   selectedApi,
   data,
   state,
+  responseType,
 }: Props) => {
-  const defaultColumn: Partial<ColumnDef<PropertiesType | HeaderType>> = {
+  const defaultColumn: Partial<ColumnDef<PropertiesType | HeadersType>> = {
     cell: function Cell({ getValue, row: { index }, column: { id }, table }) {
       const initialValue = getValue<string>();
       const [value, setValue] = useState<string>(initialValue);
@@ -64,7 +66,6 @@ const Table = ({
           onBlur={onBlur}
           className="tableInput"
           type="checkbox"
-          checked={value === "true" ? true : false}
         />
       ) : (
         <textarea
@@ -79,7 +80,7 @@ const Table = ({
     },
   };
 
-  const columns = useMemo<ColumnDef<PropertiesType | HeaderType>[]>(
+  const columns = useMemo<ColumnDef<PropertiesType | HeadersType>[]>(
     () =>
       activeTab === 1
         ? [
@@ -109,25 +110,7 @@ const Table = ({
           ]
         : [
             {
-              header: "success",
-              footer: (props) => props.column.id,
-              columns: [
-                {
-                  accessorKey: "name",
-                  footer: (props) => props.column.id,
-                },
-                {
-                  accessorKey: "type",
-                  footer: (props) => props.column.id,
-                },
-                {
-                  accessorKey: "required",
-                  footer: (props) => props.column.id,
-                },
-              ],
-            },
-            {
-              header: "fail",
+              header: responseType ? responseType : "",
               footer: (props) => props.column.id,
               columns: [
                 {
@@ -168,11 +151,11 @@ const Table = ({
               ? "type"
               : "required";
           if (activeTab === 1) {
-            state.data[selectedController].apis[selectedApi].header.map(
+            state.data[selectedController].apis[selectedApi].headers.map(
               (row, idx) => {
                 if (idx === rowIndex && state.data) {
                   const type = columnId === "key" ? "key" : "value";
-                  state.data[selectedController].apis[selectedApi].header[
+                  state.data[selectedController].apis[selectedApi].headers[
                     rowIndex
                   ][type] = value;
                 }
@@ -211,34 +194,22 @@ const Table = ({
                 }
               }
             });
-          } else {
-            state.data[selectedController].apis[
-              selectedApi
-            ].responses.fail.properties.map((row, idx) => {
+          } else if (
+            activeTab === 5 &&
+            (responseType === "fail" || responseType === "success")
+          ) {
+            state.data[selectedController].apis[selectedApi].responses[
+              responseType
+            ].properties.map((row, idx) => {
               if (idx === rowIndex && state.data) {
                 if (type === "required") {
-                  state.data[selectedController].apis[
-                    selectedApi
-                  ].responses.fail.properties[rowIndex][type] = newValue;
+                  state.data[selectedController].apis[selectedApi].responses[
+                    responseType
+                  ].properties[rowIndex][type] = newValue;
                 } else {
-                  state.data[selectedController].apis[
-                    selectedApi
-                  ].responses.fail.properties[rowIndex][type] = value;
-                }
-              }
-            });
-            state.data[selectedController].apis[
-              selectedApi
-            ].responses.success.properties.map((row, idx) => {
-              if (idx === rowIndex && state.data) {
-                if (type === "required") {
-                  state.data[selectedController].apis[
-                    selectedApi
-                  ].responses.success.properties[rowIndex][type] = newValue;
-                } else {
-                  state.data[selectedController].apis[
-                    selectedApi
-                  ].responses.success.properties[rowIndex][type] = value;
+                  state.data[selectedController].apis[selectedApi].responses[
+                    responseType
+                  ].properties[rowIndex][type] = value;
                 }
               }
             });
@@ -255,7 +226,13 @@ const Table = ({
     responseType?: string
   ) => {
     const value =
-      type === "name" ? "name" : type === "type" ? "type" : "required";
+      type === "name"
+        ? "name"
+        : type === "type"
+        ? "type"
+        : type === "dtoName"
+        ? "dtoName"
+        : "required";
     if (activeTab === 3 && state.data) {
       if (value === "required") {
         state.data[selectedController].apis[selectedApi].query[value] =
@@ -296,6 +273,7 @@ const Table = ({
         selectedApi={selectedApi}
         selectedController={selectedController}
         state={state}
+        responseType={responseType}
       />
       <table>
         <thead>
