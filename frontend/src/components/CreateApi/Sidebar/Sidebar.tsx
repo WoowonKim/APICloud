@@ -1,12 +1,8 @@
-import {
-  faEllipsis,
-  faEllipsisVertical,
-  faPlus,
-} from "@fortawesome/free-solid-svg-icons";
+import { faEllipsisVertical, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { MappedTypeDescription } from "@syncedstore/core/types/doc";
-import React, { useEffect, useState } from "react";
-import { ControllerType, DataType } from "../../../pages/CreateApi/ApisType";
+import React, { useState } from "react";
+import { ControllerType } from "../../../pages/CreateApi/ApisType";
 import ControllerAddModal from "../ControllerAddModal/ControllerAddModal";
 import { SelectedItem } from "../SelectMethods/SelectMethods";
 import "./Sidebar.scss";
