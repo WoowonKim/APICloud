@@ -83,7 +83,7 @@ public class ControllerContributor implements ProjectContributor {
     }
 
     private void addApiParameters(CustomJavaMethodDeclaration.Builder builder, ApiVO api) {
-        List<Parameter> parameters = new ArrayList<>();
+        List<AnnotatableParameter> parameters = new ArrayList<>();
         // path에서 파라미터 추가
         makeParameters(api.getParameters()).ifPresent(parameters::addAll);
 
@@ -93,7 +93,7 @@ public class ControllerContributor implements ProjectContributor {
         // requestBody에서 파라미터 추가
         makeParameter(api.getRequestBody(), "@RequestBody").ifPresent(parameters::add);
 
-        builder.parameters(parameters.toArray(Parameter[]::new));
+        builder.parameters(parameters.toArray(AnnotatableParameter[]::new));
     }
 
     // TODO: Annotatable한 parameter type 생성하기
@@ -106,7 +106,7 @@ public class ControllerContributor implements ProjectContributor {
         return s;
     }
 
-    private Optional<List<Parameter>> makeParameters(List<PropertyVO> properties) {
+    private Optional<List<AnnotatableParameter>> makeParameters(List<PropertyVO> properties) {
         if (properties == null) {
             return Optional.empty();
         }
@@ -117,11 +117,11 @@ public class ControllerContributor implements ProjectContributor {
         );
     }
 
-    private Optional<Parameter> makeParameter(PropertyVO property, String annotation) {
+    private Optional<AnnotatableParameter> makeParameter(PropertyVO property, String annotation) {
         if (property == null) {
             return Optional.empty();
         }
-        return Optional.of(new Parameter(("".equals(annotation) ? "" : annotation + " ")
+        return Optional.of(new AnnotatableParameter(("".equals(annotation) ? "" : annotation + " ")
                 + property.getTypeForCode(), property.getName()));
     }
 

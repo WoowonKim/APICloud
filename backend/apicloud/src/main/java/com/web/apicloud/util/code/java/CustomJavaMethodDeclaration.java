@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import com.web.apicloud.util.code.AnnotatableParameter;
 import io.spring.initializr.generator.language.Annotatable;
 import io.spring.initializr.generator.language.Annotation;
 import io.spring.initializr.generator.language.Parameter;
@@ -38,11 +39,11 @@ public final class CustomJavaMethodDeclaration implements Annotatable {
 
 	private final int modifiers;
 
-	private final List<Parameter> parameters;
+	private final List<AnnotatableParameter> parameters;
 
 	private final List<JavaStatement> statements;
 
-	private CustomJavaMethodDeclaration(String name, String returnType, int modifiers, List<Parameter> parameters,
+	private CustomJavaMethodDeclaration(String name, String returnType, int modifiers, List<AnnotatableParameter> parameters,
 										List<JavaStatement> statements) {
 		this.name = name;
 		this.returnType = returnType;
@@ -63,7 +64,7 @@ public final class CustomJavaMethodDeclaration implements Annotatable {
 		return this.returnType;
 	}
 
-	List<Parameter> getParameters() {
+	List<AnnotatableParameter> getParameters() {
 		return this.parameters;
 	}
 
@@ -92,7 +93,7 @@ public final class CustomJavaMethodDeclaration implements Annotatable {
 
 		private final String name;
 
-		private List<Parameter> parameters = new ArrayList<>();
+		private List<AnnotatableParameter> parameters = new ArrayList<>();
 
 		private String returnType = "void";
 
@@ -112,7 +113,7 @@ public final class CustomJavaMethodDeclaration implements Annotatable {
 			return this;
 		}
 
-		public Builder parameters(Parameter... parameters) {
+		public Builder parameters(AnnotatableParameter... parameters) {
 			this.parameters = Arrays.asList(parameters);
 			return this;
 		}

@@ -18,6 +18,7 @@
 
 package com.web.apicloud.util.code.java;
 
+import com.web.apicloud.util.code.AnnotatableParameter;
 import io.spring.initializr.generator.io.IndentingWriter;
 import io.spring.initializr.generator.io.IndentingWriterFactory;
 import io.spring.initializr.generator.language.*;
@@ -131,7 +132,9 @@ public class CustomJavaSourceCodeWriter implements SourceCodeWriter<CustomJavaSo
     }
 
     private void writeAnnotations(IndentingWriter writer, Annotatable annotatable) {
-        annotatable.getAnnotations().forEach((annotation) -> writeAnnotation(writer, annotation));
+        annotatable.getAnnotations().forEach((annotation) -> {
+            writeAnnotation(writer, annotation);
+        });
     }
 
     private void writeAnnotation(IndentingWriter writer, Annotation annotation) {
@@ -149,6 +152,31 @@ public class CustomJavaSourceCodeWriter implements SourceCodeWriter<CustomJavaSo
             writer.print(")");
         }
         writer.println();
+    }
+
+    private String getAnnotations(Annotatable annotatable) {
+        StringBuilder code = new StringBuilder();
+        for(Annotation annotation : annotatable.getAnnotations()) {
+            code.append(getAnnotation(annotation)).append(" ");
+        }
+        return code.toString();
+    }
+
+    private String getAnnotation(Annotation annotation) {
+        String code = "@" + getUnqualifiedName(annotation.getName());
+        List<Annotation.Attribute> attributes = annotation.getAttributes();
+        if (!attributes.isEmpty()) {
+            code += "(";
+            if (attributes.size() == 1 && attributes.get(0).getName().equals("value")) {
+                code += formatAnnotationAttribute(attributes.get(0));
+            } else {
+                code += attributes.stream()
+                        .map((attribute) -> attribute.getName() + " = " + formatAnnotationAttribute(attribute))
+                        .collect(Collectors.joining(", "));
+            }
+            code += ")";
+        }
+        return code;
     }
 
     private String formatAnnotationAttribute(Annotation.Attribute attribute) {
@@ -192,10 +220,10 @@ public class CustomJavaSourceCodeWriter implements SourceCodeWriter<CustomJavaSo
         writeAnnotations(writer, methodDeclaration);
         writeModifiers(writer, METHOD_MODIFIERS, methodDeclaration.getModifiers());
         writer.print(getUnqualifiedName(methodDeclaration.getReturnType()) + " " + methodDeclaration.getName() + "(");
-        List<Parameter> parameters = methodDeclaration.getParameters();
+        List<AnnotatableParameter> parameters = methodDeclaration.getParameters();
         if (!parameters.isEmpty()) {
             writer.print(parameters.stream()
-                    .map((parameter) -> getUnqualifiedName(parameter.getType()) + " " + parameter.getName())
+                    .map((parameter) -> getAnnotations(parameter) + getUnqualifiedName(parameter.getType()) + " " + parameter.getName())
                     .collect(Collectors.joining(", ")));
         }
         writer.println(") {");
