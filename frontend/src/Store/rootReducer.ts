@@ -4,7 +4,7 @@ import testApiSlice from "./slice/testApi";
 
 const rootReducer = combineReducers({
   testApi: testApiSlice.reducer,
-  sideApit: sideApiSlice.reducer,
+  sideApi: sideApiSlice.reducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

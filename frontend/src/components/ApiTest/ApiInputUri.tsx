@@ -28,8 +28,6 @@ export type Props = {
 
 const ApiInputUri = () => {
   const isInfo = useSelector((state: RootState) => state.testApi);
-  const isInfoHeader = useSelector((state: RootState) => state.testApi.header);
-  const isInfoBody = useSelector((state: RootState) => state.testApi.body);
   const dispatch = useAppDispatch();
   const testFunction = () => {
     // 보내기 클릭 시 전송해야하는 객체이므로 임시로 log처리 추후 변경 예정

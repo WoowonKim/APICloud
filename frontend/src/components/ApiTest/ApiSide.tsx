@@ -1,11 +1,18 @@
 import React from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../Store/rootReducer";
 import "./ApiTest.scss";
 
 const ApiSide = () => {
-  const right = ">";
+  const isTestApiList = useSelector((state: RootState) => state.sideApi);
   return (
-    <div className="apiSide">
-      <p> {right} Api폴더 목록</p>
+    <div className="">
+      {isTestApiList.map((it, idx) => (
+        <div key={idx}>
+          <p>{it.infomethod.method}</p>
+          <p>{it.infomethod.userAddress}</p>
+        </div>
+      ))}
     </div>
   );
 };

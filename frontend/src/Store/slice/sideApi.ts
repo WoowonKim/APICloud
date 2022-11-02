@@ -21,7 +21,27 @@ export type SideApiProps = {
   body: string;
 };
 
-const initialState: SideApiProps[] = [];
+const initialState: SideApiProps[] = [
+  {
+    header: {
+      contentType: "",
+      contentLength: "",
+      Host: "",
+      Accept: "",
+      AcceptEncoding: "",
+      Connection: "",
+      Token: "",
+      Cookie: "",
+    },
+    infomethod: {
+      address: "",
+      commonUri: "",
+      userAddress: "",
+      method: "",
+    },
+    body: "",
+  },
+];
 
 const sideApiSlice = createSlice({
   name: "sideApi",
