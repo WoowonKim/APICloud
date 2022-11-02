@@ -1,12 +1,19 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { axiosGet } from "../../util/axiosUtil";
+import { axiosGet, axiosPost } from "../../util/axiosUtil";
 import { RootState } from "../store";
 
-interface userState {
+export interface userConfig {
   authenticated: boolean;
   currentUser: any;
   loading: boolean;
 }
+
+const initialState: userConfig = {
+  authenticated: false,
+  currentUser: null,
+  loading: true,
+};
+
 export const fetchUser = createAsyncThunk("user/fetchUser", async () => {
   try {
     const response = await axiosGet("users/me");
@@ -15,13 +22,8 @@ export const fetchUser = createAsyncThunk("user/fetchUser", async () => {
     return err;
   }
 });
-const initialState: userState = {
-  authenticated: false,
-  currentUser: null,
-  loading: true,
-};
 
-export const userSlice = createSlice({
+const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {},
@@ -45,7 +47,6 @@ export const userSlice = createSlice({
   },
 });
 
-const { actions, reducer } = userSlice;
-export default reducer;
-export const {} = actions;
+export default userSlice.reducer;
+export const {} = userSlice.actions;
 export const selectUser = (state: RootState) => state.user.currentUser;
