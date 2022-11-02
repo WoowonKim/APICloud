@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 public class PropertyVO {
-    static final String DTO_CRAETE_TYPE = "Object";
+    static final String DTO_CREATE_TYPE = "Object";
 
     static final String LIST = "List";
 
@@ -29,7 +29,7 @@ public class PropertyVO {
     private List<PropertyVO> properties;
 
     public void getDtos(List<PropertyVO> dtos) {
-        if (DTO_CRAETE_TYPE.equals(type)) {
+        if (DTO_CREATE_TYPE.equals(type)) {
             for (PropertyVO property : properties) {
                 property.getDtos(dtos);
             }
@@ -53,6 +53,6 @@ public class PropertyVO {
     }
 
     public boolean isDtoCreationRequired() {
-        return DTO_CRAETE_TYPE.equals(type);
+        return DTO_CREATE_TYPE.equals(type);
     }
 }
