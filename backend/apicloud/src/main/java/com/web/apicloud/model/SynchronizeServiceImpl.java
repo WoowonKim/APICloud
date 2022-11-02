@@ -23,12 +23,18 @@ public class SynchronizeServiceImpl implements SynchronizeService {
     private static final String REQUEST_BODY = "RequestBody";
     private static final String VALUE = "value";
     private static final String[] type = {"String", "Long", "long", "Integer", "int", "float", "Float"};
+    private static String rootPath = "";
 
     private final ClassParsingService classParsingService;
+    private final FileSearchService fileSearchService;
 
     @Override
     public Object getFile(String root, String name) throws IOException {
-        List<String> lines = Files.readAllLines(Paths.get("C:/S07P22B309/backend/billow/src/main/java/com/billow/controller/program/ProgramController.java"));
+        rootPath = root;
+        String path = fileSearchService.getControllerPath(rootPath, name);
+        if (path == null) return null;
+        List<String> lines = Files.readAllLines(Paths.get(path));
+//        List<String> lines = Files.readAllLines(Paths.get("C:/S07P22B309/backend/billow/src/main/java/com/billow/controller/program/ProgramController.java"));
 //        List<String> lines = Files.readAllLines(Paths.get("/Users/bbb381/S07P22B309/backend/billow/src/main/java/com/billow/controller/user/UserController.java"));
         String value = null;
         int i = 0;
@@ -71,9 +77,9 @@ public class SynchronizeServiceImpl implements SynchronizeService {
         return null;
     }
 
-    private ApiVO apiParsing(List<String> api) {
+    private ApiVO apiParsing(List<String> api) throws IOException {
         if (api.size() == 0) return null;
-        System.out.println("api ==> " + api);
+//        System.out.println("api ==> " + api);
         List<String> getMethod = getMethod(api.get(0));
         if (getMethod == null) return null;
         String method = null, uri = null;
@@ -110,9 +116,9 @@ public class SynchronizeServiceImpl implements SynchronizeService {
         return apiVO;
     }
 
-    private void getRequestDetail(ApiDetailVO apiDetail, String request) {
+    private void getRequestDetail(ApiDetailVO apiDetail, String request) throws IOException {
         if (request.equals("")) return;
-        System.out.println("getRequestDetail ==> " + request);
+//        System.out.println("getRequestDetail ==> " + request);
         String type = getType(request);
 
         int pathVariable = KMP(request, PATH_VARIABLE);
@@ -135,7 +141,7 @@ public class SynchronizeServiceImpl implements SynchronizeService {
                 int requestBody = KMP(request, REQUEST_BODY);
                 if (requestBody != -1) {
                     String[] tokens = request.split(" ");
-                    apiDetail.setRequestBody(classParsingService.getBody(tokens[1]));
+                    apiDetail.setRequestBody(classParsingService.getBody(rootPath, tokens[1]));
                 }
             }
         }
@@ -143,11 +149,11 @@ public class SynchronizeServiceImpl implements SynchronizeService {
 
     private void getResponseDetail(ApiDetailVO apiDetail, String response) {
         if (response.equals("")) return;
-        System.out.println("getResponseDetail ==> " + response);
+//        System.out.println("getResponseDetail ==> " + response);
         // TODO: response 탐색
     }
 
-    private ApiDetailVO getApi(int i, List<String> api) {
+    private ApiDetailVO getApi(int i, List<String> api) throws IOException {
         Stack<Character> stack = new Stack<>();
         boolean responseFlag = false;
         boolean requestFlag = false;
