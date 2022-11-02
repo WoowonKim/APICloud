@@ -94,7 +94,7 @@ public class DocsServiceImpl implements DocsService{
     @Override
     public String encryptUrl(Long docId) throws NoSuchAlgorithmException {
         String encryptedDocId = sha256.encrypt(docId.toString());
-        String encryptedUrl = "http://localhost:3000/" + encryptedDocId;
+        String encryptedUrl = encryptedDocId;
         saveEncryptedUrl(docId, encryptedUrl);
         return encryptedUrl;
     }

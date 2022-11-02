@@ -4,12 +4,14 @@ import {
   configureStore,
   ThunkAction,
 } from "@reduxjs/toolkit";
+import mainApiSlice from "./slice/mainApi";
 import testApiSlice from "./slice/testApi";
 
 import userReducer from "./slice/userSlice";
 
 const reducers = combineReducers({
   user: userReducer,
+  mainApi: mainApiSlice.reducer,
   testApi: testApiSlice.reducer,
 });
 
