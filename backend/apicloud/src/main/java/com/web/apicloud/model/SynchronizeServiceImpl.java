@@ -1,6 +1,5 @@
 package com.web.apicloud.model;
 
-import com.web.apicloud.domain.entity.Api;
 import com.web.apicloud.domain.vo.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,10 +24,12 @@ public class SynchronizeServiceImpl implements SynchronizeService {
     private static final String VALUE = "value";
     private static final String[] type = {"String", "Long", "long", "Integer", "int", "float", "Float"};
 
+    private final ClassParsingService classParsingService;
+
     @Override
     public Object getFile(String root, String name) throws IOException {
-//        List<String> lines = Files.readAllLines(Paths.get("C:/S07P22B309/backend/billow/src/main/java/com/billow/controller/program/ProgramController.java"));
-        List<String> lines = Files.readAllLines(Paths.get("/Users/bbb381/S07P22B309/backend/billow/src/main/java/com/billow/controller/user/UserController.java"));
+        List<String> lines = Files.readAllLines(Paths.get("C:/S07P22B309/backend/billow/src/main/java/com/billow/controller/program/ProgramController.java"));
+//        List<String> lines = Files.readAllLines(Paths.get("/Users/bbb381/S07P22B309/backend/billow/src/main/java/com/billow/controller/user/UserController.java"));
         String value = null;
         int i = 0;
         while (i < lines.size()) {
@@ -134,7 +135,7 @@ public class SynchronizeServiceImpl implements SynchronizeService {
                 int requestBody = KMP(request, REQUEST_BODY);
                 if (requestBody != -1) {
                     String[] tokens = request.split(" ");
-                    System.out.println(tokens[1]);
+                    apiDetail.setRequestBody(classParsingService.getBody(tokens[1]));
                 }
             }
         }
