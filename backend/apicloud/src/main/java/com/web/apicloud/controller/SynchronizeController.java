@@ -1,6 +1,5 @@
 package com.web.apicloud.controller;
 
-import com.web.apicloud.domain.entity.Controller;
 import com.web.apicloud.domain.vo.ControllerVO;
 import com.web.apicloud.model.SynchronizeService;
 import lombok.RequiredArgsConstructor;
