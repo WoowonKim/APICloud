@@ -1,5 +1,7 @@
 package com.web.apicloud.controller;
 
+import com.web.apicloud.domain.entity.Controller;
+import com.web.apicloud.domain.vo.ControllerVO;
 import com.web.apicloud.model.SynchronizeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,11 +21,11 @@ public class SynchronizeController {
     private final SynchronizeService synchronizeService;
 
     @GetMapping
-    public ResponseEntity<Object> getFile() throws IOException {
+    public ResponseEntity<ControllerVO> getFile() throws IOException {
         String root = "C:/billow";
         String name = "Program";
-        Object response = synchronizeService.getFile(root, name);
+        ControllerVO response = synchronizeService.getFile(root, name);
         return ResponseEntity.ok()
-                .body(null);
+                .body(response);
     }
 }

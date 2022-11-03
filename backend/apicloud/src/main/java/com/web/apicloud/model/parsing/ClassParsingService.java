@@ -1,4 +1,4 @@
-package com.web.apicloud.model;
+package com.web.apicloud.model.parsing;
 
 import com.web.apicloud.domain.vo.PropertyVO;
 

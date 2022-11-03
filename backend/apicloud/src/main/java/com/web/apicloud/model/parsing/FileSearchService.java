@@ -1,4 +1,4 @@
-package com.web.apicloud.model;
+package com.web.apicloud.model.parsing;
 
 public interface FileSearchService {
 
