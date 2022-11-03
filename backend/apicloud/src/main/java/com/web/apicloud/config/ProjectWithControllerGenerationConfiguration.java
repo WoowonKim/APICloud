@@ -3,10 +3,10 @@ package com.web.apicloud.config;
 import com.web.apicloud.controller.ProjectWithControllerGenerationController;
 import com.web.apicloud.domain.vo.DocVO;
 import com.web.apicloud.util.code.ControllerContributor;
+import com.web.apicloud.util.code.java.CustomJavaSourceCode;
+import com.web.apicloud.util.code.java.CustomJavaSourceCodeWriter;
 import com.web.apicloud.util.code.ProjectWithControllerGenerationInvoker;
 import io.spring.initializr.generator.io.IndentingWriterFactory;
-import io.spring.initializr.generator.language.java.JavaSourceCode;
-import io.spring.initializr.generator.language.java.JavaSourceCodeWriter;
 import io.spring.initializr.generator.project.ProjectGenerationConfiguration;
 import io.spring.initializr.metadata.InitializrMetadataProvider;
 import io.spring.initializr.web.project.DefaultProjectRequestPlatformVersionTransformer;
@@ -37,6 +37,6 @@ public class ProjectWithControllerGenerationConfiguration {
 
     @Bean
     ControllerContributor controllerContributor() {
-        return new ControllerContributor(JavaSourceCode::new, new JavaSourceCodeWriter(this.indentingWriterFactory), new DocVO());
+        return new ControllerContributor(CustomJavaSourceCode::new, new CustomJavaSourceCodeWriter(this.indentingWriterFactory), new DocVO());
     }
 }

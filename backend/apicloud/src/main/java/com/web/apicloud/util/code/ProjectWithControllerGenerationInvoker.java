@@ -19,13 +19,12 @@
 package com.web.apicloud.util.code;
 
 import com.web.apicloud.domain.vo.DocVO;
+import com.web.apicloud.util.code.java.CustomJavaSourceCode;
+import com.web.apicloud.util.code.java.CustomJavaSourceCodeWriter;
 import io.spring.initializr.generator.buildsystem.BuildItemResolver;
 import io.spring.initializr.generator.buildsystem.BuildWriter;
 import io.spring.initializr.generator.io.IndentingWriterFactory;
-import io.spring.initializr.generator.language.java.JavaSourceCode;
-import io.spring.initializr.generator.language.java.JavaSourceCodeWriter;
 import io.spring.initializr.generator.project.*;
-import io.spring.initializr.generator.spring.configuration.ApplicationPropertiesContributor;
 import io.spring.initializr.metadata.InitializrMetadata;
 import io.spring.initializr.metadata.InitializrMetadataProvider;
 import io.spring.initializr.metadata.support.MetadataBuildItemResolver;
@@ -35,8 +34,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.util.FileSystemUtils;
 
-import java.io.*;
-import java.nio.file.Files;
+import java.io.IOException;
+import java.io.StringWriter;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -83,8 +82,8 @@ public class ProjectWithControllerGenerationInvoker<R extends ProjectRequest> {
             ProjectDescription description = this.requestConverter.convert(request, metadata);
             ProjectGenerator projectGenerator = new ProjectGenerator((
                     projectGenerationContext) -> {
-                projectGenerationContext.registerBean(ControllerContributor.class, () -> new ControllerContributor(JavaSourceCode::new,
-                    new JavaSourceCodeWriter(this.indentingWriterFactory),
+                projectGenerationContext.registerBean(ControllerContributor.class, () -> new ControllerContributor(CustomJavaSourceCode::new,
+                    new CustomJavaSourceCodeWriter(this.indentingWriterFactory),
                     doc));
                 projectGenerationContext.registerBean(ApplicationPropertiesContextUriContributor.class, () -> new ApplicationPropertiesContextUriContributor(doc.getServer().getContextUri()));
                 customizeProjectGenerationContext(projectGenerationContext, metadata);
@@ -161,7 +160,6 @@ public class ProjectWithControllerGenerationInvoker<R extends ProjectRequest> {
     }
 
     private void addTempFile(Path group, Path file) {
-        System.out.println("addTempFile(): group - "+group.toAbsolutePath() + " file-"+file.toAbsolutePath());
         this.temporaryFiles.compute(group, (path, paths) -> {
             List<Path> newPaths = (paths != null) ? paths : new ArrayList<>();
             newPaths.add(file);
@@ -175,7 +173,6 @@ public class ProjectWithControllerGenerationInvoker<R extends ProjectRequest> {
      * @see #createDistributionFile
      */
     public void cleanTempFiles(Path dir) {
-        System.out.println("cleanTempFiles: "+dir);
         List<Path> tempFiles = this.temporaryFiles.remove(dir);
         if (!tempFiles.isEmpty()) {
             tempFiles.forEach((path) -> {
