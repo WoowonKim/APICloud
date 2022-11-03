@@ -32,7 +32,7 @@ public class SynchronizeServiceImpl implements SynchronizeService {
     private final FileSearchService fileSearchService;
 
     @Override
-    public Object getFile(String root, String name) throws IOException {
+    public ControllerVO getFile(String root, String name) throws IOException {
         rootPath = root;
         String path = fileSearchService.getControllerPath(rootPath, name);
         if (path == null) return null;
@@ -77,7 +77,7 @@ public class SynchronizeServiceImpl implements SynchronizeService {
                 .apis(apis)
                 .build();
         System.out.println(controllerVO);
-        return null;
+        return controllerVO;
     }
 
     private ApiVO apiParsing(List<String> api) throws IOException {

@@ -26,20 +26,27 @@ public class ClassParsingServiceImpl implements ClassParsingService {
 
     @Override
     public PropertyVO getBody(String root, String name) throws IOException {
-//        if (parsingService.KMP(name, LIST) != -1) {
-//            String str = name.substring(5, name.length() - 1);
-//            System.out.println(str);
-//        }
+        PropertyVO requestBody = new PropertyVO();
 
+        if (parsingService.KMP(name, LIST) != -1) {
+            name = name.substring(5, name.length() - 1);
+            requestBody.setCollectionType(LIST);
+            System.out.println(name);
+        }
+
+        for (String type : type) {
+            if (type.equals(name)) {
+                requestBody.setType(name);
+                return requestBody;
+            }
+        }
+        requestBody.setDtoName(name);
+        requestBody.setType("Object");
         rootPath = root;
-        // TODO: List 검사
-        // TODO: String 검사
-        // TODO: root 검사
+        if (rootPath.equals("") || rootPath == null) return null;
+
         String path = fileSearchService.getClassPath(rootPath, name);
         List<String> lines = Files.readAllLines(Paths.get(path));
-//        System.out.println(lines);
-
-        PropertyVO requestBody = new PropertyVO();
 
         int i = 0;
         while (i < lines.size()) {
@@ -56,7 +63,7 @@ public class ClassParsingServiceImpl implements ClassParsingService {
             i++;
         }
         System.out.println(requestBody);
-        return null;
+        return requestBody;
     }
 
     public PropertyVO getProperty(String str) throws IOException {
@@ -79,15 +86,24 @@ public class ClassParsingServiceImpl implements ClassParsingService {
         }
 
         if ((j + 1) >= tokens.length) return null;
-        for (String type : type) {
-            if (type.equals(tokens[j])) {
-                return PropertyVO.builder().name(tokens[j + 1]).type(tokens[j]).build();
-            }
-        }
+        PropertyVO getPropertyVO = getBody(rootPath, tokens[j]);
+//        getPropertyVO.setName(tokens[j + 1]);
+//        getPropertyVO.setCollectionType(getPropertyVO.getCollectionType());
+        return PropertyVO.builder()
+                .dtoName(getPropertyVO.getDtoName())
+                .name(tokens[j + 1])
+                .type(getPropertyVO.getType())
+                .collectionType(getPropertyVO.getCollectionType())
+                .properties(getPropertyVO.getProperties()).build();
+
+//        return getPropertyVO;
+//        for (String type : type) {
+//            if (type.equals(tokens[j])) {
+//                return PropertyVO.builder().name(tokens[j + 1]).type(tokens[j]).build();
+//            }
+//        }
 
         // TODO: 리스트일 경우
-        PropertyVO propertyVO = getBody(rootPath, tokens[j]);
 //        if(propertyVO == null) return null;
-        return PropertyVO.builder().name(tokens[j + 1]).collectionType(LIST).build();
     }
 }
