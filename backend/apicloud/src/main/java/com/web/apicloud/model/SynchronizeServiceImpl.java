@@ -122,14 +122,12 @@ public class SynchronizeServiceImpl implements SynchronizeService {
     private void getRequestDetail(ApiDetailVO apiDetail, String request) throws IOException {
         if (request.equals("")) return;
         String type = parsingService.getType(request);
-        System.out.println(request);
 
         int pathVariable = parsingService.KMP(request, PATH_VARIABLE);
         if (pathVariable != -1) {
             String str = request.substring(pathVariable + 1, request.length());
             String value = parsingService.getValue(str);
             boolean required = parsingService.getRequired(str);
-            System.out.println(required);
             PropertyVO parameter = PropertyVO.builder().name(value).type(type).required(required).build();
             apiDetail.getParameters().add(parameter);
         } else {
@@ -140,7 +138,6 @@ public class SynchronizeServiceImpl implements SynchronizeService {
                     String str = request.substring(target + 1, request.length());
                     String value = parsingService.getValue(str);
                     boolean required = parsingService.getRequired(str);
-                    System.out.println(required);
                     PropertyVO query = PropertyVO.builder().name(value).type(type).required(required).build();
                     apiDetail.getQuery().getProperties().add(query);
                 }
