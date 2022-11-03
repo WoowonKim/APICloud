@@ -2,6 +2,7 @@ package com.web.apicloud.model;
 
 import com.web.apicloud.domain.vo.*;
 import com.web.apicloud.model.parsing.ClassParsingService;
+import com.web.apicloud.model.parsing.ClassParsingServiceImpl;
 import com.web.apicloud.model.parsing.FileSearchService;
 import com.web.apicloud.model.parsing.ParsingService;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,7 @@ public class SynchronizeServiceImpl implements SynchronizeService {
     @Override
     public ControllerVO getFile(String root, String name) throws IOException {
         rootPath = root;
+
         String path = fileSearchService.getControllerPath(rootPath, name);
         if (path == null) return null;
         List<String> lines = Files.readAllLines(Paths.get(path));
@@ -57,6 +59,7 @@ public class SynchronizeServiceImpl implements SynchronizeService {
         List<String> api = new ArrayList<>();
         while (i < lines.size()) {
             if (parsingService.KMP(lines.get(i), METHOD) != -1) {
+                ClassParsingServiceImpl.useObject = new ArrayList<>();
                 ApiVO apiVO = apiParsing(api);
                 if (apiVO != null) {
                     apis.add(apiVO);
@@ -119,12 +122,15 @@ public class SynchronizeServiceImpl implements SynchronizeService {
     private void getRequestDetail(ApiDetailVO apiDetail, String request) throws IOException {
         if (request.equals("")) return;
         String type = parsingService.getType(request);
+        System.out.println(request);
 
         int pathVariable = parsingService.KMP(request, PATH_VARIABLE);
         if (pathVariable != -1) {
             String str = request.substring(pathVariable + 1, request.length());
             String value = parsingService.getValue(str);
-            PropertyVO parameter = PropertyVO.builder().name(value).type(type).build();
+            boolean required = parsingService.getRequired(str);
+            System.out.println(required);
+            PropertyVO parameter = PropertyVO.builder().name(value).type(type).required(required).build();
             apiDetail.getParameters().add(parameter);
         } else {
             int requestParam = parsingService.KMP(request, REQUEST_PARAM);
@@ -133,13 +139,17 @@ public class SynchronizeServiceImpl implements SynchronizeService {
                 if (target != -1) {
                     String str = request.substring(target + 1, request.length());
                     String value = parsingService.getValue(str);
-                    PropertyVO query = PropertyVO.builder().name(value).type(type).build();
+                    boolean required = parsingService.getRequired(str);
+                    System.out.println(required);
+                    PropertyVO query = PropertyVO.builder().name(value).type(type).required(required).build();
                     apiDetail.getQuery().getProperties().add(query);
                 }
             } else {
                 int requestBody = parsingService.KMP(request, REQUEST_BODY);
                 if (requestBody != -1) {
                     String[] tokens = request.split(" ");
+//                    boolean required = parsingService.getRequired(request);
+//                    System.out.println(required);
                     apiDetail.setRequestBody(classParsingService.getBody(rootPath, tokens[1]));
                 }
             }
