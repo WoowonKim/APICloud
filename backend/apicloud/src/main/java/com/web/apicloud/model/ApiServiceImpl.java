@@ -1,7 +1,9 @@
 package com.web.apicloud.model;
 
+import com.web.apicloud.domain.dto.DetailResponse;
 import com.web.apicloud.domain.entity.Docs;
 import com.web.apicloud.domain.repository.DocsRepository;
+import com.web.apicloud.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -10,25 +12,19 @@ import org.springframework.stereotype.Service;
 public class ApiServiceImpl implements ApiService{
 
     private final DocsRepository docsRepository;
+
     @Override
-    public String getDetailById(Long id) {
-        Docs doc = docsRepository.findById(id).orElse(null);
-        if(doc != null && doc.getDetail() != null) {
-            return doc.getDetail();
-        }
-        return "나중에 Exception 처리할 부분";
+    public DetailResponse getDetailById(Long id) {
+        Docs doc = docsRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("doc", "id", id));
+        return DetailResponse.builder().detail(doc.getDetail()).build();
     }
 
     @Override
-    public String updateDetailById(Long id, String detail) {
-        Docs doc = docsRepository.findById(id).orElse(null);
-        if(doc != null) {
-            doc.setDetail(detail);
-            docsRepository.save(doc);
-            return doc.getDetail();
-        }
-        return "나중에 Exception 처리할 부분";
+    public DetailResponse updateDetailById(Long id, String detail) {
+        Docs doc = docsRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("doc", "id", id));
+        doc.updateDetail(detail);
+        docsRepository.save(doc);
+        return DetailResponse.builder().detail(detail).build();
     }
-
 
 }
