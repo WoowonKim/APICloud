@@ -1,4 +1,3 @@
-import { type } from "os";
 import React, { useState } from "react";
 
 const dummy = {
@@ -36,7 +35,7 @@ const ApiResponse = () => {
         onClick={() => {
           flag(0);
         }}
-        className={responseFlag == 0 ? "headerClickList" : "headerNoClicklist"}
+        className={responseFlag === 0 ? "headerClickList" : "headerNoClicklist"}
       >
         Header
       </span>
@@ -44,7 +43,7 @@ const ApiResponse = () => {
         onClick={() => {
           flag(1);
         }}
-        className={responseFlag == 1 ? "headerClickList" : "headerNoClicklist"}
+        className={responseFlag === 1 ? "headerClickList" : "headerNoClicklist"}
       >
         Body
       </span>
@@ -52,7 +51,7 @@ const ApiResponse = () => {
         onClick={() => {
           flag(2);
         }}
-        className={responseFlag == 2 ? "headerClickList" : "headerNoClicklist"}
+        className={responseFlag === 2 ? "headerClickList" : "headerNoClicklist"}
       >
         Cookie
       </span>
@@ -75,7 +74,7 @@ const ApiResponse = () => {
             ))}
           </div>
         )}
-        {responseFlag == 1 && (
+        {responseFlag === 1 && (
           <div>
             <p>{start}</p>
             {testObj.map((it, idx) => (

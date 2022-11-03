@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useAppDispatch } from "../../Store";
-import { RootState } from "../../Store/rootReducer";
+import { RootState } from "../../Store/store";
 import testApiSlice from "../../Store/slice/testApi";
+import { useAppDispatch } from "../../Store/hooks";
 interface type {
   sideApiList: number;
 }
@@ -28,9 +28,7 @@ const HeaderToken = ({ sideApiList }: type) => {
             <input
               type="text"
               onChange={(e) => {
-                dispatch(
-                  testApiSlice.actions.setToken({ Token: e.target.value })
-                );
+                dispatch(testApiSlice.actions.setToken({ Token: e.target.value }));
               }}
               defaultValue={isApi.Token}
             />
@@ -39,9 +37,7 @@ const HeaderToken = ({ sideApiList }: type) => {
             <input
               type="text"
               onChange={(e) => {
-                dispatch(
-                  testApiSlice.actions.setCookie({ Cookie: e.target.value })
-                );
+                dispatch(testApiSlice.actions.setCookie({ Cookie: e.target.value }));
               }}
               defaultValue={isApi.Cookie}
             />

@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction } from "react";
 import { useSelector } from "react-redux";
-import { RootState } from "../../Store/rootReducer";
+import { RootState } from "../../Store/store";
 import "./ApiTest.scss";
 
 interface sideApi {
