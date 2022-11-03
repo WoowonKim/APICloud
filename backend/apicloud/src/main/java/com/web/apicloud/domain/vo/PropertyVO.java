@@ -1,5 +1,7 @@
 package com.web.apicloud.domain.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,6 +14,7 @@ import java.util.Set;
 @AllArgsConstructor
 //@NoArgsConstructor
 @Data
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class PropertyVO {
     static final String DTO_CREATE_TYPE = "Object";
 
@@ -43,6 +46,7 @@ public class PropertyVO {
         }
     }
 
+    @JsonIgnore
     public String getTypeForCode() {
         String type;
         if (isDtoCreationRequired()) {
@@ -58,6 +62,7 @@ public class PropertyVO {
         }
     }
 
+    @JsonIgnore
     public boolean isDtoCreationRequired() {
         return DTO_CREATE_TYPE.equals(type);
     }

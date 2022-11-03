@@ -8,6 +8,7 @@ import com.web.apicloud.domain.entity.Docs;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import com.web.apicloud.domain.entity.User;
+import com.web.apicloud.domain.vo.ControllerVO;
 import com.web.apicloud.domain.vo.DocVO;
 
 public interface DocsService {
@@ -26,4 +27,6 @@ public interface DocsService {
     UpdateDocDto updateDoc(Long docId, UpdateDocDto updateDocDto);
 
     void deleteDoc(Long docId);
+
+    byte[] getExcelFile(List<ControllerVO> docVOByDocsId);
 }

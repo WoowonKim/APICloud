@@ -13,12 +13,9 @@ import com.web.apicloud.domain.repository.DocsRepository;
 import com.web.apicloud.domain.repository.GroupRepository;
 import com.web.apicloud.domain.repository.GroupUserRepository;
 import com.web.apicloud.domain.repository.UserRepository;
-import com.web.apicloud.domain.vo.ApiVO;
-import com.web.apicloud.domain.vo.ControllerVO;
-import com.web.apicloud.domain.vo.DocVO;
-import com.web.apicloud.domain.vo.ServerVO;
+import com.web.apicloud.domain.vo.*;
+import com.web.apicloud.exception.InternalServerErrorException;
 import com.web.apicloud.util.SHA256;
-import io.spring.initializr.web.project.WebProjectRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -152,5 +149,62 @@ public class DocsServiceImpl implements DocsService{
     public void deleteDoc(Long docId) {
         Docs doc = findByDocsId(docId);
         docsRepository.delete(doc);
+    }
+
+    @Override
+    public byte[] getExcelFile(List<ControllerVO> controllers) {
+        StringBuffer csvContent = new StringBuffer();
+
+        controllers.forEach(controller -> {
+            csvContent.append("controller name,common uri\n");
+            csvContent.append(controller.getName()).append(",").append(controller.getCommonUri()).append("\n");
+            csvContent.append("name,uri,method,query,parameters,requestBody,success,fail\n");
+            controller.getApis().forEach(api -> {
+                csvContent.append(api.getName()).append(",")
+                        .append(api.getUri()).append(",")
+                        .append(api.getMethod()).append(",")
+                        .append("\"").append(makeCsvFromProperty(api.getQuery())).append("\"").append(",")
+                        .append("\"").append(makeCsvFromProperties(api.getParameters())).append("\"").append(",")
+                        .append("\"").append(makeCsvFromProperty(api.getRequestBody())).append("\"").append(",");
+                makeCsvFromResponse(api.getResponses().get("success"), csvContent).append(",");
+                makeCsvFromResponse(api.getResponses().get("fail"), csvContent).append("\n");
+            });
+            csvContent.append("\n");
+        });
+
+        return csvContent.toString().getBytes();
+    }
+
+    private StringBuffer makeCsvFromResponse(ResponseVO response, StringBuffer csvContent) {
+        if(response == null) {
+            return csvContent;
+        }
+        return csvContent.append("\"").append("status: ").append(response.getStatus()).append("\n")
+                .append(makeCsvFromProperty(response.getResponseBody())).append("\"");
+    }
+
+    private StringBuffer makeCsvFromProperties(List<PropertyVO> properties) {
+        StringBuffer csvContent = new StringBuffer();
+        if(properties == null) {
+            return csvContent;
+        }
+        properties.forEach(property -> {
+            csvContent.append(makeCsvFromProperty(property)).append("\n");
+        });
+        return csvContent;
+    }
+
+    private String makeCsvFromProperty(PropertyVO property) {
+        String csv = "";
+        if(property == null) {
+            return csv;
+        }
+        try {
+            csv += objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(property);
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage());
+            throw new InternalServerErrorException("csv 변환에 실패햐였습니다.");
+        }
+        return csv.replace("\"", "");
     }
 }
