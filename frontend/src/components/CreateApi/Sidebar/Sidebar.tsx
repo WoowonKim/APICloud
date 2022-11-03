@@ -1,24 +1,40 @@
 import { faEllipsisVertical, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { MappedTypeDescription } from "@syncedstore/core/types/doc";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ControllerType } from "../../../pages/CreateApi/ApisType";
 import ControllerAddModal from "../ControllerAddModal/ControllerAddModal";
 import { SelectedItem } from "../SelectMethods/SelectMethods";
 import "./Sidebar.scss";
 
 interface Props {
-  addController: () => void;
+  handleController: (method: string, index?: number) => void;
   addApi: (index: number) => void;
   state: MappedTypeDescription<{
     data: ControllerType[];
   }>;
   handleSidebarApi: (index: number, idx: number) => void;
+  selectedApi: number;
+  selectedController: number;
+  addedApiIndex: number;
+  addedControllerIndex: number;
 }
 
-const Sidebar = ({ addController, addApi, state, handleSidebarApi }: Props) => {
+const Sidebar = ({
+  handleController,
+  addApi,
+  state,
+  handleSidebarApi,
+  selectedApi,
+  selectedController,
+  addedControllerIndex,
+}: Props) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editControllerIndex, setEditControllerIndex] = useState(-1);
+
+  useEffect(() => {
+    setEditControllerIndex(-1);
+  }, []);
   return (
     <>
       {isModalVisible && (
@@ -27,6 +43,8 @@ const Sidebar = ({ addController, addApi, state, handleSidebarApi }: Props) => {
           addApi={addApi}
           state={state}
           editControllerIndex={editControllerIndex}
+          setEditControllerIndex={setEditControllerIndex}
+          addedControllerIndex={addedControllerIndex}
         />
       )}
       <div className="sidebar">
@@ -35,7 +53,7 @@ const Sidebar = ({ addController, addApi, state, handleSidebarApi }: Props) => {
           <button
             className="sidebarTitleButton"
             onClick={() => {
-              addController();
+              handleController("add");
               setIsModalVisible(!isModalVisible);
             }}
           >
@@ -48,25 +66,44 @@ const Sidebar = ({ addController, addApi, state, handleSidebarApi }: Props) => {
             <div key={index} className="sidebarContentContainer">
               <div className="sidebarControllerGroup">
                 <div className="controllerItem">{item.name}</div>
-                <button
-                  className="sidebarMenuButton"
-                  onClick={() => {
-                    setEditControllerIndex(index);
-                    setIsModalVisible((curr) => !curr);
-                  }}
-                >
-                  <FontAwesomeIcon
-                    icon={faEllipsisVertical}
-                    className="sidebarMenuIcon"
-                  />
-                  <div className="sidebarControllerEdit">수정하기</div>
-                </button>
+                <div className="dropdown">
+                  <button className="sidebarMenuButton">
+                    <FontAwesomeIcon
+                      icon={faEllipsisVertical}
+                      className="sidebarMenuIcon"
+                    />
+                  </button>
+                  <div className="sidebarMenuVisible">
+                    <button
+                      onClick={() => {
+                        setEditControllerIndex(index);
+                        setIsModalVisible((curr) => !curr);
+                      }}
+                      className="sidebarControllerEdit"
+                    >
+                      수정하기
+                    </button>
+                    <button
+                      onClick={() => {
+                        handleController("delete", index);
+                      }}
+                      className="sidebarControllerEdit"
+                    >
+                      삭제하기
+                    </button>
+                  </div>
+                </div>
               </div>
-              {item.apis.length > 0 &&
+              {item.apis &&
+                item.apis.length > 0 &&
                 item.apis.map((api, idx) => (
                   <div
                     key={idx}
-                    className="apiListGroup"
+                    className={
+                      idx === selectedApi && index === selectedController
+                        ? "apiListGroup active"
+                        : "apiListGroup"
+                    }
                     onClick={() => handleSidebarApi(index, idx)}
                   >
                     <SelectedItem
