@@ -140,8 +140,8 @@
 }
 
 .modalTableContainer {
-  table {
-    width: 100%;
+  .modalTable {
+    width: 90%;
     .tableHeadText {
       font-size: 1em;
     }
@@ -153,4 +153,5 @@
   outline: none;
   border: none;
   padding: 2px;
+  width: 100%;
 }
