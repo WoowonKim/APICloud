@@ -16,6 +16,19 @@ public class ApiServiceImpl implements ApiService{
         if(doc != null && doc.getDetail() != null) {
             return doc.getDetail();
         }
-        return "";
+        return "나중에 Exception 처리할 부분";
     }
+
+    @Override
+    public String updateDetailById(Long id, String detail) {
+        Docs doc = docsRepository.findById(id).orElse(null);
+        if(doc != null) {
+            doc.setDetail(detail);
+            docsRepository.save(doc);
+            return doc.getDetail();
+        }
+        return "나중에 Exception 처리할 부분";
+    }
+
+
 }
