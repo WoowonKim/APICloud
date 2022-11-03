@@ -136,6 +136,7 @@ public class ProjectWithControllerGenerationController {
 
     public ResponseEntity<byte[]> springZip(DocVO doc, Map<String, String> header) throws IOException {
         ProjectRequest request = projectRequest(header);
+        if(doc == null) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         updateProjectRequestByServerInfo(request, doc.getServer());
         ProjectWithControllerGenerationResult result = this.projectGenerationInvoker.invokeProjectStructureGeneration(request, doc);
         Path archive = createArchive(result, "zip", ZipArchiveOutputStream::new, ZipArchiveEntry::new,
