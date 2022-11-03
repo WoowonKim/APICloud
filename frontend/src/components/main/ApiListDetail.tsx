@@ -14,10 +14,10 @@ interface Props {
 const ApiListDetail = ({ apiList, apiDocList }: Props) => {
   const navigate = useNavigate();
   const moveApidocs = () => {
-    navigate("/welcome");
+    navigate("/apidocs");
   };
   const list = apiList === 0 ? apiDocList : apiDocList;
-  
+
   return (
     <div className="ApiListDetail">
       {apiDocList?.map((it, idx) => (

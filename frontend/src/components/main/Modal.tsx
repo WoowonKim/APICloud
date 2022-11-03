@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleUser } from "@fortawesome/free-solid-svg-icons";
@@ -7,11 +7,12 @@ import { userDummy } from "./ListDummy";
 import { useDispatch } from "react-redux";
 import { setApiDoc } from "../../Store/slice/mainApi";
 
-interface ModalDefaultType {
+interface Props {
   onClickToggleModal: () => void;
+  setIsDocCreated: any;
 }
 
-const Modal = ({ onClickToggleModal }: PropsWithChildren<ModalDefaultType>) => {
+const Modal = ({ onClickToggleModal, setIsDocCreated }: Props) => {
   const [docsName, setDocsName] = useState("");
   const [serverUrl, setServerUrl] = useState("");
   const [contextUri, setContextUri] = useState("");
@@ -92,6 +93,8 @@ const Modal = ({ onClickToggleModal }: PropsWithChildren<ModalDefaultType>) => {
       if (res.payload?.status === 200) {
         setEncryptedUrl(res.payload.encryptedUrl);
         console.log(res.payload.encryptedUrl);
+        setIsDocCreated(true);
+        onClickToggleModal();
       }
     });
   };

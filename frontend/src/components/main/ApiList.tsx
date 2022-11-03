@@ -18,7 +18,12 @@ export type ApiDocType = {
   authority: number;
 };
 
-const ApiList = () => {
+interface Props {
+  isDocCreated: boolean;
+  setIsDocCreated: any;
+}
+
+const ApiList = ({ isDocCreated, setIsDocCreated }: Props) => {
   const [apiList, setApiList] = useState(0);
   const [apiDocList, setApiDocList] = useState<ApiDocType[] | []>([]);
 
@@ -37,8 +42,11 @@ const ApiList = () => {
   }, []);
 
   useEffect(() => {
-    console.log(apiDocList);
-  }, [apiDocList]);
+    if (isDocCreated) {
+      dispatchGetDocList();
+      setIsDocCreated(false);
+    }
+  }, [isDocCreated]);
 
   return (
     <div className="ApiList">
