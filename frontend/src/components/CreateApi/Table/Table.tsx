@@ -1,19 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import {
-  ColumnDef,
-  useReactTable,
-  getCoreRowModel,
-  flexRender,
-  RowData,
-  ColumnResizeMode,
-} from "@tanstack/react-table";
+import { ColumnDef, useReactTable, getCoreRowModel, flexRender, RowData, ColumnResizeMode } from "@tanstack/react-table";
 import "./Table.scss";
 import UseAutosizeTextArea from "./UseAutoSizeTextArea";
-import {
-  ControllerType,
-  HeadersType,
-  PropertiesType,
-} from "../../../pages/CreateApi/ApisType";
+import { ControllerType, HeadersType, PropertiesType } from "../../../pages/CreateApi/ApisType";
 import TableInfo from "./TableInfo";
 import { MappedTypeDescription } from "@syncedstore/core/types/doc";
 
@@ -35,14 +24,7 @@ interface Props {
   responseType?: string;
 }
 
-const Table = ({
-  activeTab,
-  selectedController,
-  selectedApi,
-  data,
-  state,
-  responseType,
-}: Props) => {
+const Table = ({ activeTab, selectedController, selectedApi, data, state, responseType }: Props) => {
   const defaultColumn: Partial<ColumnDef<PropertiesType | HeadersType>> = {
     cell: function Cell({ getValue, row: { index }, column: { id }, table }) {
       const initialValue = getValue<string>();
@@ -60,16 +42,10 @@ const Table = ({
       UseAutosizeTextArea(textAreaRef.current, value);
 
       return id === "required" ? (
-        <input
-          value={value as string}
-          onChange={(e) => setValue(e.target.value)}
-          onBlur={onBlur}
-          className="tableInput"
-          type="checkbox"
-        />
+        <input value={(value as string) || ""} onChange={(e) => setValue(e.target.value)} onBlur={onBlur} className="tableInput" type="checkbox" />
       ) : (
         <textarea
-          value={value as string}
+          value={(value as string) || ""}
           onChange={(e) => setValue(e.target.value)}
           onBlur={onBlur}
           className="tableInput"
@@ -131,8 +107,7 @@ const Table = ({
     [activeTab]
   );
 
-  const [columnResizeMode, setColumnResizeMode] =
-    useState<ColumnResizeMode>("onChange");
+  const [columnResizeMode, setColumnResizeMode] = useState<ColumnResizeMode>("onChange");
 
   const table = useReactTable({
     data,
@@ -144,72 +119,42 @@ const Table = ({
       updateData: (rowIndex: string | number, columnId: any, value: any) => {
         if (!!value && state.data) {
           const newValue = value === "true" ? false : true;
-          const type =
-            columnId === "name"
-              ? "name"
-              : columnId === "type"
-              ? "type"
-              : "required";
+          const type = columnId === "name" ? "name" : columnId === "type" ? "type" : "required";
           if (activeTab === 1) {
-            state.data[selectedController].apis[selectedApi].headers.map(
-              (row, idx) => {
-                if (idx === rowIndex && state.data) {
-                  const type = columnId === "key" ? "key" : "value";
-                  state.data[selectedController].apis[selectedApi].headers[
-                    rowIndex
-                  ][type] = value;
-                }
+            state.data[selectedController].apis[selectedApi].headers.map((row, idx) => {
+              if (idx === rowIndex && state.data) {
+                const type = columnId === "key" ? "key" : "value";
+                state.data[selectedController].apis[selectedApi].headers[rowIndex][type] = value;
               }
-            );
+            });
           } else if (activeTab === 2) {
-            state.data[selectedController].apis[selectedApi].parameters.map(
-              (row, idx) => {
-                if (idx === rowIndex && state.data) {
-                  if (type === "required") {
-                    state.data[selectedController].apis[selectedApi].parameters[
-                      rowIndex
-                    ][type] = newValue;
-                  } else {
-                    state.data[selectedController].apis[selectedApi].parameters[
-                      rowIndex
-                    ][type] = value;
-                  }
-                }
-              }
-            );
-          } else if (activeTab === 3 || activeTab === 4) {
-            const tab = activeTab === 3 ? "query" : "requestBody";
-            state.data[selectedController].apis[selectedApi][
-              tab
-            ].properties.map((row, idx) => {
+            state.data[selectedController].apis[selectedApi].parameters.map((row, idx) => {
               if (idx === rowIndex && state.data) {
                 if (type === "required") {
-                  state.data[selectedController].apis[selectedApi][
-                    tab
-                  ].properties[rowIndex][type] = newValue;
+                  state.data[selectedController].apis[selectedApi].parameters[rowIndex][type] = newValue;
                 } else {
-                  state.data[selectedController].apis[selectedApi][
-                    tab
-                  ].properties[rowIndex][type] = value;
+                  state.data[selectedController].apis[selectedApi].parameters[rowIndex][type] = value;
                 }
               }
             });
-          } else if (
-            activeTab === 5 &&
-            (responseType === "fail" || responseType === "success")
-          ) {
-            state.data[selectedController].apis[selectedApi].responses[
-              responseType
-            ].properties.map((row, idx) => {
+          } else if (activeTab === 3 || activeTab === 4) {
+            const tab = activeTab === 3 ? "query" : "requestBody";
+            state.data[selectedController].apis[selectedApi][tab].properties.map((row, idx) => {
               if (idx === rowIndex && state.data) {
                 if (type === "required") {
-                  state.data[selectedController].apis[selectedApi].responses[
-                    responseType
-                  ].properties[rowIndex][type] = newValue;
+                  state.data[selectedController].apis[selectedApi][tab].properties[rowIndex][type] = newValue;
                 } else {
-                  state.data[selectedController].apis[selectedApi].responses[
-                    responseType
-                  ].properties[rowIndex][type] = value;
+                  state.data[selectedController].apis[selectedApi][tab].properties[rowIndex][type] = value;
+                }
+              }
+            });
+          } else if (activeTab === 5 && (responseType === "fail" || responseType === "success")) {
+            state.data[selectedController].apis[selectedApi].responses[responseType].properties.map((row, idx) => {
+              if (idx === rowIndex && state.data) {
+                if (type === "required") {
+                  state.data[selectedController].apis[selectedApi].responses[responseType].properties[rowIndex][type] = newValue;
+                } else {
+                  state.data[selectedController].apis[selectedApi].responses[responseType].properties[rowIndex][type] = value;
                 }
               }
             });
@@ -220,47 +165,27 @@ const Table = ({
     debugTable: true,
   });
 
-  const handleBasicInfo = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    type: string,
-    responseType?: string
-  ) => {
-    const value =
-      type === "name"
-        ? "name"
-        : type === "type"
-        ? "type"
-        : type === "dtoName"
-        ? "dtoName"
-        : "required";
+  const handleBasicInfo = (e: React.ChangeEvent<HTMLInputElement>, type: string, responseType?: string) => {
+    const value = type === "name" ? "name" : type === "type" ? "type" : type === "dtoName" ? "dtoName" : "required";
     if (activeTab === 3 && state.data) {
       if (value === "required") {
-        state.data[selectedController].apis[selectedApi].query[value] =
-          e.target.checked;
+        state.data[selectedController].apis[selectedApi].query[value] = e.target.checked;
       } else {
-        state.data[selectedController].apis[selectedApi].query[value] =
-          e.target.value;
+        state.data[selectedController].apis[selectedApi].query[value] = e.target.value;
       }
     } else if (activeTab === 4 && state.data) {
       if (value === "required") {
-        state.data[selectedController].apis[selectedApi].requestBody[value] =
-          e.target.checked;
+        state.data[selectedController].apis[selectedApi].requestBody[value] = e.target.checked;
       } else {
-        state.data[selectedController].apis[selectedApi].requestBody[value] =
-          e.target.value;
+        state.data[selectedController].apis[selectedApi].requestBody[value] = e.target.value;
       }
     } else if (activeTab === 5 && state.data) {
       const response = responseType === "fail" ? "fail" : "success";
-      const value2 =
-        type === "status" ? "status" : type === "type" ? "type" : "required";
+      const value2 = type === "status" ? "status" : type === "type" ? "type" : "required";
       if (value2 === "required") {
-        state.data[selectedController].apis[selectedApi].responses[response][
-          value2
-        ] = e.target.checked;
+        state.data[selectedController].apis[selectedApi].responses[response][value2] = e.target.checked;
       } else {
-        state.data[selectedController].apis[selectedApi].responses[response][
-          "type"
-        ] = e.target.value;
+        state.data[selectedController].apis[selectedApi].responses[response]["type"] = e.target.value;
       }
     }
   };
@@ -290,26 +215,16 @@ const Table = ({
                       },
                     }}
                   >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                     <div
                       {...{
                         onMouseDown: header.getResizeHandler(),
                         onTouchStart: header.getResizeHandler(),
-                        className: `resizer ${
-                          header.column.getIsResizing() ? "isResizing" : ""
-                        }`,
+                        className: `resizer ${header.column.getIsResizing() ? "isResizing" : ""}`,
                         style: {
                           transform:
-                            columnResizeMode === "onEnd" &&
-                            header.column.getIsResizing()
-                              ? `translateX(${
-                                  table.getState().columnSizingInfo.deltaOffset
-                                }px)`
+                            columnResizeMode === "onEnd" && header.column.getIsResizing()
+                              ? `translateX(${table.getState().columnSizingInfo.deltaOffset}px)`
                               : "",
                         },
                       }}
@@ -325,14 +240,7 @@ const Table = ({
             return (
               <tr key={row.id}>
                 {row.getVisibleCells().map((cell) => {
-                  return (
-                    <td key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </td>
-                  );
+                  return <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>;
                 })}
               </tr>
             );

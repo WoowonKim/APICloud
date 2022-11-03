@@ -5,11 +5,7 @@ import "./Table.scss";
 
 interface Props {
   activeTab: number;
-  handleBasicInfo: (
-    e: React.ChangeEvent<HTMLInputElement>,
-    type: string,
-    responseType?: string
-  ) => void;
+  handleBasicInfo: (e: React.ChangeEvent<HTMLInputElement>, type: string, responseType?: string) => void;
   selectedController: number;
   selectedApi: number;
   state: MappedTypeDescription<{
@@ -18,14 +14,7 @@ interface Props {
   responseType?: string;
 }
 
-const TableInfo = ({
-  activeTab,
-  handleBasicInfo,
-  selectedApi,
-  selectedController,
-  state,
-  responseType,
-}: Props) => {
+const TableInfo = ({ activeTab, handleBasicInfo, selectedApi, selectedController, state, responseType }: Props) => {
   console.log(activeTab);
 
   return (
@@ -43,8 +32,7 @@ const TableInfo = ({
             value={
               activeTab === 3
                 ? state.data[selectedController].apis[selectedApi].query.dtoName
-                : state.data[selectedController].apis[selectedApi].requestBody
-                    .dtoName
+                : state.data[selectedController].apis[selectedApi].requestBody.dtoName || ""
             }
           />
           <label htmlFor={`name${activeTab}`} className="tableInfoLabel">
@@ -58,8 +46,7 @@ const TableInfo = ({
             value={
               activeTab === 3
                 ? state.data[selectedController].apis[selectedApi].query.name
-                : state.data[selectedController].apis[selectedApi].requestBody
-                    .name
+                : state.data[selectedController].apis[selectedApi].requestBody.name || ""
             }
           />
           <label htmlFor={`type${activeTab}`} className="tableInfoLabel">
@@ -73,8 +60,7 @@ const TableInfo = ({
             value={
               activeTab === 3 && state.data
                 ? state.data[selectedController].apis[selectedApi].query.type
-                : state.data[selectedController].apis[selectedApi].requestBody
-                    .type
+                : state.data[selectedController].apis[selectedApi].requestBody.type || ""
             }
           />
           <label htmlFor={`required${activeTab}`} className="tableInfoLabel">
@@ -87,19 +73,16 @@ const TableInfo = ({
             onChange={(e) => handleBasicInfo(e, "required")}
             checked={
               activeTab === 3 && state.data
-                ? state.data[selectedController].apis[selectedApi].query
-                    .required
+                ? state.data[selectedController].apis[selectedApi].query.required
                   ? true
                   : false
-                : state.data[selectedController].apis[selectedApi].requestBody
-                    .required
+                : state.data[selectedController].apis[selectedApi].requestBody.required
                 ? true
                 : false
             }
           />
         </div>
-      ) : activeTab === 5 &&
-        (responseType === "fail" || responseType === "success") ? (
+      ) : activeTab === 5 && (responseType === "fail" || responseType === "success") ? (
         <div className="tableInfoInputGroup">
           <div>
             <p className="responseTypeLabel">{responseType}</p>
@@ -111,11 +94,7 @@ const TableInfo = ({
               type="text"
               id="successName"
               onChange={(e) => handleBasicInfo(e, "status", responseType)}
-              value={
-                state.data[selectedController].apis[selectedApi].responses[
-                  responseType
-                ].status
-              }
+              value={state.data[selectedController].apis[selectedApi].responses[responseType].status || ""}
             />
             <label htmlFor="successType" className="tableInfoLabel">
               type
@@ -125,11 +104,7 @@ const TableInfo = ({
               type="text"
               id="successType"
               onChange={(e) => handleBasicInfo(e, "type", responseType)}
-              value={
-                state.data[selectedController].apis[selectedApi].responses[
-                  responseType
-                ].type
-              }
+              value={state.data[selectedController].apis[selectedApi].responses[responseType].type || ""}
             />
             <label htmlFor="successRequired" className="tableInfoLabel">
               required
@@ -138,13 +113,7 @@ const TableInfo = ({
               type="checkbox"
               id="successRequired"
               onChange={(e) => handleBasicInfo(e, "required", responseType)}
-              checked={
-                state.data[selectedController].apis[selectedApi].responses[
-                  responseType
-                ].required
-                  ? true
-                  : false
-              }
+              checked={state.data[selectedController].apis[selectedApi].responses[responseType].required ? true : false}
             />
           </div>
         </div>
