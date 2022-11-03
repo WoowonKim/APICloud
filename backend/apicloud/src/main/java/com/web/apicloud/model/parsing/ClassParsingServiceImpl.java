@@ -46,6 +46,7 @@ public class ClassParsingServiceImpl implements ClassParsingService {
         if (rootPath.equals("") || rootPath == null) return null;
 
         String path = fileSearchService.getClassPath(rootPath, name);
+        if (path == null) return null;
         List<String> lines = Files.readAllLines(Paths.get(path));
 
         int i = 0;
@@ -87,23 +88,11 @@ public class ClassParsingServiceImpl implements ClassParsingService {
 
         if ((j + 1) >= tokens.length) return null;
         PropertyVO getPropertyVO = getBody(rootPath, tokens[j]);
-//        getPropertyVO.setName(tokens[j + 1]);
-//        getPropertyVO.setCollectionType(getPropertyVO.getCollectionType());
         return PropertyVO.builder()
                 .dtoName(getPropertyVO.getDtoName())
                 .name(tokens[j + 1])
                 .type(getPropertyVO.getType())
                 .collectionType(getPropertyVO.getCollectionType())
                 .properties(getPropertyVO.getProperties()).build();
-
-//        return getPropertyVO;
-//        for (String type : type) {
-//            if (type.equals(tokens[j])) {
-//                return PropertyVO.builder().name(tokens[j + 1]).type(tokens[j]).build();
-//            }
-//        }
-
-        // TODO: 리스트일 경우
-//        if(propertyVO == null) return null;
     }
 }

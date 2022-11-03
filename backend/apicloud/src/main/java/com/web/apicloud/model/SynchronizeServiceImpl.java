@@ -37,8 +37,6 @@ public class SynchronizeServiceImpl implements SynchronizeService {
         String path = fileSearchService.getControllerPath(rootPath, name);
         if (path == null) return null;
         List<String> lines = Files.readAllLines(Paths.get(path));
-//        List<String> lines = Files.readAllLines(Paths.get("C:/S07P22B309/backend/billow/src/main/java/com/billow/controller/program/ProgramController.java"));
-//        List<String> lines = Files.readAllLines(Paths.get("/Users/bbb381/S07P22B309/backend/billow/src/main/java/com/billow/controller/user/UserController.java"));
         String value = null;
         int i = 0;
         while (i < lines.size()) {
@@ -82,7 +80,6 @@ public class SynchronizeServiceImpl implements SynchronizeService {
 
     private ApiVO apiParsing(List<String> api) throws IOException {
         if (api.size() == 0) return null;
-//        System.out.println("api ==> " + api);
         List<String> getMethod = parsingService.getMethod(api.get(0));
         if (getMethod == null) return null;
         String method = null, uri = null;
@@ -121,7 +118,6 @@ public class SynchronizeServiceImpl implements SynchronizeService {
 
     private void getRequestDetail(ApiDetailVO apiDetail, String request) throws IOException {
         if (request.equals("")) return;
-//        System.out.println("getRequestDetail ==> " + request);
         String type = parsingService.getType(request);
 
         int pathVariable = parsingService.KMP(request, PATH_VARIABLE);
@@ -150,10 +146,12 @@ public class SynchronizeServiceImpl implements SynchronizeService {
         }
     }
 
-    private void getResponseDetail(ApiDetailVO apiDetail, String response) {
+    private void getResponseDetail(ApiDetailVO apiDetail, String response) throws IOException {
         if (response.equals("")) return;
-//        System.out.println("getResponseDetail ==> " + response);
-        // TODO: response 탐색
+        Map<String, ResponseVO> getResponseMap = new HashMap<>();
+        ResponseVO getResponse = ResponseVO.builder().responseBody(classParsingService.getBody(rootPath, response)).build();
+        getResponseMap.put("success", getResponse);
+        apiDetail.setResponses(getResponseMap);
     }
 
     private ApiDetailVO getApi(int i, List<String> api) throws IOException {
@@ -187,7 +185,6 @@ public class SynchronizeServiceImpl implements SynchronizeService {
                         if (!requestFlag) {
                             if (stack.isEmpty()) {
                                 responseFlag = false;
-                                // TODO : response
                                 getResponseDetail(apiDetail, response);
                             }
                         }
@@ -195,7 +192,6 @@ public class SynchronizeServiceImpl implements SynchronizeService {
                     case ')':
                         if (stack.peek() == '(') stack.pop();
                         if (stack.isEmpty()) {
-                            // TODO : requestBody, parameters, query
                             getRequestDetail(apiDetail, request);
                             return apiDetail;
                         }
@@ -207,7 +203,6 @@ public class SynchronizeServiceImpl implements SynchronizeService {
                         if (stack.peek() == ']') stack.pop();
                         break;
                     case '@':
-                        // TODO : requestBody, parameters, query
                         getRequestDetail(apiDetail, request);
                         request = "";
                         requestFlag = true;
