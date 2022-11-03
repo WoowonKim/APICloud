@@ -9,7 +9,7 @@ const initialState = {
     Accept: "*/*",
     AcceptEncoding: "gzip, deflate, br",
     Connection: "keep-alive",
-    Token: "1q2w3esdfsjgh1i231923y08r7",
+    Token: "",
     Cookie: "",
   },
   infomethod: {

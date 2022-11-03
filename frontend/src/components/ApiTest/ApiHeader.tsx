@@ -27,7 +27,7 @@ const ApiHeader = ({ sideApiList }: type) => {
       >
         Token
       </span>
-      <div className="headerList">{headerTokenFlag == 0 ? <Headerheader sideApiList={sideApiList} /> : <HeaderToken />}</div>
+      <div className="headerList">{headerTokenFlag == 0 ? <Headerheader sideApiList={sideApiList} /> : <HeaderToken sideApiList={sideApiList} />}</div>
     </div>
   );
 };
