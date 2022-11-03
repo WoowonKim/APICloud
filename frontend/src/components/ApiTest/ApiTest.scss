@@ -10,10 +10,6 @@
 }
 .testMain {
   width: 80%;
-  // margin-left: 90px;
-}
-.testInfomation {
-  // margin-left: 3%;
 }
 .testInfo {
   display: flex;
@@ -28,13 +24,6 @@
   padding: 5px;
 }
 .apiSideAddress {
-  // margin-left: 5px;
-  // background-color: #3a00e5;
-  // position: fixed;
-  // left: 20px;
-  // top: 50px;
-  // background-color: #e7f7fe;
-  // padding: 10px 0px;
   font-size: 13px;
   margin: 0px;
 }
@@ -48,7 +37,6 @@
 // ApiInput
 .apiInputContainer {
   margin-top: 5px;
-  // margin-left: 7%;
   display: flex;
   justify-content: center;
 }
@@ -69,8 +57,6 @@
   font-size: 14px;
 }
 .apiChoice {
-  // margin-left: 50px;
-  // margin-top: ;
   border: none;
   width: 8%;
   font-size: 13px;
@@ -190,7 +176,6 @@
 }
 .apiResponseContainer {
   padding: 5px;
-  // margin-left: %;
 }
 
 .apiResponseContainer > span {
@@ -229,14 +214,11 @@
 .resultResponseBody {
   margin-left: 25px;
   color: #c56d6d;
-  // font-weight: bold;
 }
 .resultResponseBodySub {
-  // font-weight: bold;
   color: #4880be;
 }
 .resultResponseBodySubNum {
-  // font-weight: bold;
   color: green;
 }
 .resultResponseContainer {

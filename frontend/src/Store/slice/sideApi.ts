@@ -48,7 +48,6 @@ const sideApiSlice = createSlice({
   initialState,
   reducers: {
     addMethodUri(state, action) {
-      // console.log("addMethodUri ===> ", action.payload);
       state.push(action.payload);
     },
   },
