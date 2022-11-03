@@ -59,31 +59,41 @@ const CreateApi = () => {
     responses: {
       fail: {
         status: 400,
-        type: "",
-        required: true,
-        properties: [
-          {
-            name: "",
-            type: "",
-            required: true,
-            properties: [],
-            collectionType: "",
-          },
-        ],
+        responseBody: {
+          dtoName: "",
+          name: "",
+          type: "",
+          collectionType: "",
+          properties: [
+            {
+              name: "",
+              type: "",
+              required: true,
+              properties: [],
+              collectionType: "",
+            },
+          ],
+          required: true,
+        },
       },
       success: {
         status: 200,
-        type: "",
-        required: true,
-        properties: [
-          {
-            name: "",
-            type: "",
-            required: true,
-            properties: [],
-            collectionType: "",
-          },
-        ],
+        responseBody: {
+          dtoName: "",
+          name: "",
+          type: "",
+          collectionType: "",
+          properties: [
+            {
+              name: "",
+              type: "",
+              required: true,
+              properties: [],
+              collectionType: "",
+            },
+          ],
+          required: true,
+        },
       },
     },
   });
@@ -109,7 +119,7 @@ const CreateApi = () => {
   const handleController = (method: string, index?: number) => {
     if (method === "add") {
       state.data.push(controllerData);
-      setAddedApiIndex(state.data.length);
+      setAddedControllerIndex(state.data.length - 1);
     } else if (method === "delete" && typeof index === "number") {
       state.data.splice(index, 1);
     }
@@ -118,7 +128,7 @@ const CreateApi = () => {
   // api 추가 함수 -> 기존 데이터에 새 데이터 추가
   const addApi = (index: number) => {
     state.data[index].apis.push(apiData);
-    setAddedControllerIndex(state.data[index].apis.length);
+    setAddedApiIndex(state.data[index].apis.length);
   };
 
   // table의 row 추가 함수
@@ -148,7 +158,7 @@ const CreateApi = () => {
     } else if (activeTab === 5 && responseType) {
       state.data[selectedController].apis[selectedApi].responses[
         responseType
-      ].properties.push({
+      ].responseBody.properties.push({
         name: "",
         type: "",
         required: true,
@@ -166,6 +176,16 @@ const CreateApi = () => {
   };
   // 데이터 확인 용 로그
   console.log(JSON.parse(JSON.stringify(state.data)));
+  console.log(
+    selectedApi > -1 &&
+      selectedController > -1 &&
+      JSON.parse(
+        JSON.stringify(
+          state.data[selectedController].apis[selectedApi].responses.success
+            .status
+        )
+      )
+  );
 
   return (
     <div className="apiDocscontainer">
@@ -262,20 +282,20 @@ const CreateApi = () => {
                     ? JSON.parse(
                         JSON.stringify(
                           state.data[selectedController].apis[selectedApi].query
-                            .properties
+                            ?.properties
                         )
                       )
                     : activeTab === 4
                     ? JSON.parse(
                         JSON.stringify(
                           state.data[selectedController].apis[selectedApi]
-                            .requestBody.properties
+                            .requestBody?.properties
                         )
                       )
                     : JSON.parse(
                         JSON.stringify(
                           state.data[selectedController].apis[selectedApi]
-                            .responses.success.properties
+                            .responses.success.responseBody?.properties
                         )
                       )
                 }
@@ -299,7 +319,7 @@ const CreateApi = () => {
                 data={JSON.parse(
                   JSON.stringify(
                     state.data[selectedController].apis[selectedApi].responses
-                      .fail.properties
+                      .fail.responseBody?.properties
                   )
                 )}
                 state={state}

@@ -80,6 +80,7 @@ td,
   resize: none;
   height: auto;
   line-height: 1.5;
+  z-index: 1;
 }
 
 .commonUri {
@@ -92,10 +93,38 @@ td,
   margin: 10px 0;
 }
 
-.tableInfoInputGroup {
-  margin: 2rem 0;
+.tableInfoGroup {
+  margin: 10px 0 2rem 0;
+  display: flex;
+  .tableInfoInputGroup {
+    display: flex;
+    align-items: flex-end;
+    .tableInfoLabel {
+      font-size: 1em;
+      font-weight: bold;
+      margin: 1rem 1rem 0 0;
+    }
+    .tableInfoInput {
+      outline: none;
+      border: none;
+      border-bottom: 1px solid black;
+      font-size: 1.1em;
+      margin: 1rem 1rem 0 0;
+    }
+  }
+}
+
+.responseTypeGroup {
+  display: flex;
+  align-items: flex-end;
+  .responseTypeLabel {
+    font-size: 1.1em;
+    font-weight: bold;
+    margin: 0 20px 0 0;
+  }
   .tableInfoLabel {
     font-size: 1em;
+    font-weight: bold;
     margin: 1rem 1rem 0 0;
   }
   .tableInfoInput {
@@ -107,6 +136,13 @@ td,
   }
 }
 
-.responseTypeLabel {
-  font-size: 1.1em;
+.typeInputContainer {
+  display: flex;
+  align-items: flex-end;
+  margin: 15px 10px 0 0;
+  .typeInputLabel {
+    font-size: 1em;
+    font-weight: bold;
+    margin: 0 1rem 0 0;
+  }
 }

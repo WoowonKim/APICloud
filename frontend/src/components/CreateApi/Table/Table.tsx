@@ -76,7 +76,7 @@ const Table = ({
         ) {
           state.data[selectedController].apis[selectedApi].responses[
             responseType
-          ].properties.splice(index, 1);
+          ].responseBody.properties.splice(index, 1);
         }
       };
 
@@ -249,16 +249,16 @@ const Table = ({
           ) {
             state.data[selectedController].apis[selectedApi].responses[
               responseType
-            ].properties.map((row, idx) => {
+            ].responseBody.properties.map((row, idx) => {
               if (idx === rowIndex && state.data) {
                 if (type === "required") {
                   state.data[selectedController].apis[selectedApi].responses[
                     responseType
-                  ].properties[rowIndex][type] = newValue;
+                  ].responseBody.properties[rowIndex][type] = newValue;
                 } else {
                   state.data[selectedController].apis[selectedApi].responses[
                     responseType
-                  ].properties[rowIndex][type] = value;
+                  ].responseBody.properties[rowIndex][type] = value;
                 }
               }
             });
@@ -270,11 +270,11 @@ const Table = ({
   });
 
   const handleBasicInfo = (
-    e: React.ChangeEvent<HTMLInputElement>,
+    e: React.ChangeEvent<HTMLInputElement> | string,
     type: string,
     responseType?: string
   ) => {
-    const value =
+    const key =
       type === "name"
         ? "name"
         : type === "type"
@@ -283,33 +283,62 @@ const Table = ({
         ? "dtoName"
         : "required";
     if (activeTab === 3 && state.data) {
-      if (value === "required") {
-        state.data[selectedController].apis[selectedApi].query[value] =
+      if (typeof e !== "string" && key === "required") {
+        state.data[selectedController].apis[selectedApi].query[key] =
           e.target.checked;
-      } else {
-        state.data[selectedController].apis[selectedApi].query[value] =
+      } else if (
+        typeof e !== "string" &&
+        (key === "name" || key === "dtoName")
+      ) {
+        state.data[selectedController].apis[selectedApi].query[key] =
           e.target.value;
+      } else if (typeof e === "string" && key === "type") {
+        state.data[selectedController].apis[selectedApi].query[key] = e;
       }
     } else if (activeTab === 4 && state.data) {
-      if (value === "required") {
-        state.data[selectedController].apis[selectedApi].requestBody[value] =
+      if (typeof e !== "string" && key === "required") {
+        state.data[selectedController].apis[selectedApi].requestBody[key] =
           e.target.checked;
-      } else {
-        state.data[selectedController].apis[selectedApi].requestBody[value] =
+      } else if (
+        typeof e !== "string" &&
+        (key === "name" || key === "dtoName")
+      ) {
+        state.data[selectedController].apis[selectedApi].requestBody[key] =
           e.target.value;
+      } else if (typeof e === "string" && key === "type") {
+        state.data[selectedController].apis[selectedApi].requestBody[key] = e;
       }
     } else if (activeTab === 5 && state.data) {
       const response = responseType === "fail" ? "fail" : "success";
-      const value2 =
-        type === "status" ? "status" : type === "type" ? "type" : "required";
-      if (value2 === "required") {
+      const key2 =
+        type === "name"
+          ? "name"
+          : type === "type"
+          ? "type"
+          : type === "dtoName"
+          ? "dtoName"
+          : type === "status"
+          ? "status"
+          : "required";
+      if (typeof e !== "string" && key2 === "required") {
+        state.data[selectedController].apis[selectedApi].responses[
+          response
+        ].responseBody[key2] = e.target.checked;
+      } else if (
+        typeof e !== "string" &&
+        (key2 === "name" || key2 === "dtoName")
+      ) {
+        state.data[selectedController].apis[selectedApi].responses[
+          response
+        ].responseBody[key2] = e.target.value;
+      } else if (typeof e !== "string" && key2 === "status") {
         state.data[selectedController].apis[selectedApi].responses[response][
-          value2
-        ] = e.target.checked;
-      } else {
-        state.data[selectedController].apis[selectedApi].responses[response][
-          "type"
-        ] = e.target.value;
+          key2
+        ] = Number(e.target.value);
+      } else if (typeof e === "string" && key2 === "type") {
+        state.data[selectedController].apis[selectedApi].responses[
+          response
+        ].responseBody[key2] = e;
       }
     }
   };

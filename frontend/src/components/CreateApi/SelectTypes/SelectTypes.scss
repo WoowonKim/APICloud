@@ -1,0 +1,43 @@
+.selectBox {
+  width: 100px;
+  cursor: pointer;
+  z-index: 2;
+  margin-top: 5px;
+}
+
+.itemList {
+  list-style-type: none;
+  display: inline-block;
+  right: 0;
+  padding: 0;
+  width: 100%;
+  margin: 0;
+  transition: 0.3s ease-in;
+  .item {
+    transition: 0.1s;
+    display: flex;
+    align-items: center;
+    padding: 0 0 5px 10px;
+    &:hover {
+      background-color: #dadada;
+    }
+  }
+}
+
+.selectBoxContainer {
+  box-shadow: 0px 4px 26px -10px rgba(0, 0, 0, 0.81);
+  margin: 10px 0 0 0;
+  padding: 0;
+  border-radius: 10px;
+  position: relative;
+  background-color: white;
+}
+
+.selectedItemContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #dadada;
+  padding: 0 0 3px 0;
+  width: 100px;
+}
