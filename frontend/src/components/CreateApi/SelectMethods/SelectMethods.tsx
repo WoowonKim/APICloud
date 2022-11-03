@@ -23,11 +23,12 @@ export const SelectedItem = styled.button`
 interface Props {
   onBlur?: (temp?: string) => void;
   setValue?: React.Dispatch<React.SetStateAction<string>>;
+  value?: string;
 }
 
-const SelectMethods = ({ onBlur, setValue }: Props) => {
+const SelectMethods = ({ onBlur, setValue, value }: Props) => {
   const [visible, setVisible] = useState(false);
-  const [selectedMethod, setSelectedMethod] = useState("GET");
+  const [selectedMethod, setSelectedMethod] = useState(value ? value : "GET");
 
   const handleSelect = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
     const eventTarget = e.target as HTMLElement;
