@@ -60,7 +60,6 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-@RequestMapping("/api")
 public class ProjectWithControllerGenerationController {
 
     private static final Log logger = LogFactory.getLog(io.spring.initializr.web.controller.ProjectGenerationController.class);
