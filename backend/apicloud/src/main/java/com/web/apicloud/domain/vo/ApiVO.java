@@ -5,9 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Builder
 @AllArgsConstructor
@@ -43,16 +41,17 @@ public class ApiVO {
 
     public List<PropertyVO> getAvailableDTO() {
         List<PropertyVO> dtos = new ArrayList<>();
+        Set<String> dtoNames = new HashSet<>();
         if(requestBody != null) {
-            requestBody.getDtos(dtos);
+            requestBody.getDtos(dtos, dtoNames);
         }
         if(query != null) {
-            query.getDtos(dtos);
+            query.getDtos(dtos, dtoNames);
         }
         if(responses != null) {
             for(ResponseVO response : responses.values()) {
                 if(response.getResponseBody() != null) {
-                    response.getResponseBody().getDtos(dtos);
+                    response.getResponseBody().getDtos(dtos, dtoNames);
                 }
             }
         }

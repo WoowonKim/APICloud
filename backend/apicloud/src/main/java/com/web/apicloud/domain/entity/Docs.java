@@ -43,6 +43,9 @@ public class Docs {
 
     private String encryptedUrl;
 
+    @Lob
+    private String detail;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -53,7 +56,7 @@ public class Docs {
     }
 
     @Builder
-    public Docs(Long id, String docsName, String serverUrl, String contextUri, Integer javaVersion, String springVersion, Integer buildManagement, String groupPackage, String packageName, Integer packaging, String encryptedUrl, Group group) {
+    public Docs(Long id, String docsName, String serverUrl, String contextUri, Integer javaVersion, String springVersion, Integer buildManagement, String groupPackage, String packageName, Integer packaging, String encryptedUrl, Group group, String detail) {
         this.id = id;
         this.docsName = docsName;
         this.serverUrl = serverUrl;
@@ -66,6 +69,7 @@ public class Docs {
         this.packaging = packaging;
         this.encryptedUrl = encryptedUrl;
         this.group = group;
+        this.detail = detail;
     }
 
     public DocListResponse toDto(Long docId, String docName, Long groupId, User groupUser, Integer authority) {
@@ -83,6 +87,6 @@ public class Docs {
 //        DocVO.builder().server(
 //                ServerVO.builder().artifactId().build()
 //        )
-        return "{\"server\": {\"bootVersion\": \"2.7.4\",\"type\": \"gradle-project\",\"language\": \"java\",\"baseDir\": \"apicloud\",\"groupId\": \"com.ssafy\",\"artifactId\": \"apicloud\",\"name\": \"apicloud\",\"description\": \"api auto creation tool\",\"packageName\": \"com.ssafy.apicloud\",\"packaging\": \"jar\",\"javaVersion\": \"11\",\"dependencies\": []},\"controllers\": [{\"name\": \"UserController\",\"commonUri\": \"/user\",\"apis\": [{\"name\": \"login\",\"uri\": \"/login\",\"method\": \"post\",\"requestBody\": {\"dtoName\": \"LoginRequest\",\"name\": \"loginRequest\",\"type\": \"Object\",\"properties\": [{\"name\": \"id\",\"type\": \"String\",\"required\": true},{\"name\": \"password\",\"type\": \"String\",\"required\": true}]},\"responses\": {\"fail\": {},\"success\": {\"status\": 200,\"responseBody\": {\"name\": \"msg\",\"type\": \"String\"}}}},{\"name\": \"logout\",\"uri\": \"/logout/{id}\",\"method\": \"get\",\"parameters\": [{\"name\": \"id\",\"type\": \"String\",\"required\": true}],\"responses\": {\"fail\": {},\"success\": {\"status\": 200,\"responseBody\": {\"name\": \"msg\",\"type\": \"String\"}}}},{\"name\": \"find\",\"uri\": \"/find/{userId}\",\"method\": \"post\",\"parameters\": [{\"name\": \"userId\",\"type\": \"String\",\"required\": true}],\"query\" : {\"dtoName\": \"FindRequest\",\"name\": \"findRequest\",\"type\": \"Object\",\"properties\": [{\"name\": \"id\",\"type\": \"String\",\"required\": false},{\"name\": \"name\",\"type\": \"String\",\"required\": false}]},\"responses\": {\"fail\": {},\"success\": {\"status\": 200,\"responseBody\": {\"dtoName\": \"FindResponse\",\"name\": \"findResponses\",\"type\": \"Object\",\"collectionType\": \"List\",\"properties\": [{\"name\": \"id\",\"type\": \"String\"},{\"dtoName\": \"FindInfo\",\"name\": \"findInfo\",\"type\": \"Object\",\"properties\": [{\"name\": \"count\",\"type\": \"Integer\"},{\"name\": \"score\",\"type\": \"Double\"}]}]}}}}]}]}";
+        return "{\"server\": {\"bootVersion\": \"2.7.4\",\"type\": \"gradle-project\",\"language\": \"java\",\"baseDir\": \"apicloud\",\"groupId\": \"com.ssafy\",\"artifactId\": \"apicloud\",\"name\": \"apicloud\",\"description\": \"api auto creation tool\",\"packageName\": \"com.ssafy.apicloud\",\"packaging\": \"jar\",\"javaVersion\": \"11\",\"dependencies\": []},\"controllers\": [{\"name\": \"UserController\",\"commonUri\": \"/user\",\"apis\": [{\"name\": \"login\",\"uri\": \"/login\",\"method\": \"post\",\"requestBody\": {\"dtoName\": \"LoginRequest\",\"name\": \"loginRequest\",\"type\": \"Object\",\"properties\": [{\"name\": \"id\",\"type\": \"String\",\"required\": true},{\"name\": \"password\",\"type\": \"String\",\"required\": true}]},\"responses\": {\"fail\": {},\"success\": {\"status\": 200,\"responseBody\": {\"name\": \"msg\",\"type\": \"String\"}}}},{\"name\": \"logout\",\"uri\": \"/logout\",\"method\": \"get\",\"parameters\": [{\"name\": \"id\",\"type\": \"String\",\"required\": true}],\"responses\": {\"fail\": {},\"success\": {\"status\": 200,\"responseBody\": {\"name\": \"msg\",\"type\": \"String\"}}}},{\"name\": \"find\",\"uri\": \"/find/{userId}\",\"method\": \"post\",\"parameters\": [{\"name\": \"userId\",\"type\": \"String\",\"required\": true}],\"query\" : {\"dtoName\": \"FindRequest\",\"name\": \"findRequest\",\"type\": \"Object\",\"properties\": [{\"name\": \"id\",\"type\": \"String\",\"required\": false},{\"name\": \"name\",\"type\": \"String\",\"required\": false}]},\"responses\": {\"fail\": {},\"success\": {\"status\": 200,\"responseBody\": {\"dtoName\": \"FindResponse\",\"name\": \"findResponses\",\"type\": \"Object\",\"collectionType\": \"List\",\"properties\": [{\"name\": \"id\",\"type\": \"String\"},{\"dtoName\": \"FindInfo\",\"name\": \"findInfo\",\"type\": \"Object\",\"properties\": [{\"name\": \"count\",\"type\": \"Integer\"},{\"name\": \"score\",\"type\": \"Double\"},{\"dtoName\": \"User\",\"name\": \"user\",\"type\": \"Object\",\"properties\": [{\"dtoName\": \"User\",\"name\": \"user\",\"type\": \"Object\"}]}]}]}}}}]}]}";
     }
 }

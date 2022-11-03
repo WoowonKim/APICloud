@@ -1,9 +1,8 @@
 import React from "react";
 import { useSelector } from "react-redux";
-
-import { useAppDispatch } from "../../Store";
-import { RootState } from "../../Store/rootReducer";
+import { useAppDispatch } from "../../Store/hooks";
 import testApiSlice from "../../Store/slice/testApi";
+import { RootState } from "../../Store/store";
 
 const HeaderToken = () => {
   const isApi = useSelector((state: RootState) => state.testApi.header);
@@ -20,7 +19,9 @@ const HeaderToken = () => {
             <input
               type="text"
               onChange={(e) => {
-                dispatch(testApiSlice.actions.setToken({ Token: e.target.value }));
+                dispatch(
+                  testApiSlice.actions.setToken({ Token: e.target.value })
+                );
               }}
               defaultValue={isApi.Token}
             />
@@ -29,7 +30,9 @@ const HeaderToken = () => {
             <input
               type="text"
               onChange={(e) => {
-                dispatch(testApiSlice.actions.setCookie({ Cookie: e.target.value }));
+                dispatch(
+                  testApiSlice.actions.setCookie({ Cookie: e.target.value })
+                );
               }}
               defaultValue={isApi.Cookie}
             />
@@ -41,7 +44,9 @@ const HeaderToken = () => {
             <input
               type="text"
               onChange={(e) => {
-                dispatch(testApiSlice.actions.setToken({ Token: e.target.value }));
+                dispatch(
+                  testApiSlice.actions.setToken({ Token: e.target.value })
+                );
               }}
               defaultValue={isApi.Token}
             />
@@ -50,7 +55,9 @@ const HeaderToken = () => {
             <input
               type="text"
               onChange={(e) => {
-                dispatch(testApiSlice.actions.setCookie({ Cookie: e.target.value }));
+                dispatch(
+                  testApiSlice.actions.setCookie({ Cookie: e.target.value })
+                );
               }}
               defaultValue={isApi.Cookie}
             />

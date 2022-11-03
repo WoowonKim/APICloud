@@ -1,5 +1,5 @@
 import React from "react";
-import { GuestDummy, ManagerDummy } from "./ApiList";
+import { ApiDocType } from "./ApiList";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
@@ -7,33 +7,41 @@ import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 
 interface Props {
-  ManagerDummy: ManagerDummy[];
-  GuestDummy: GuestDummy[];
-  ApiList: number;
+  apiList: number;
+  apiDocList: ApiDocType[];
 }
 
-const ApiListDetail = ({ ManagerDummy, GuestDummy, ApiList }: Props) => {
+const ApiListDetail = ({ apiList, apiDocList }: Props) => {
   const navigate = useNavigate();
   const moveApidocs = () => {
     navigate("/welcome");
   };
-  const list = ApiList === 0 ? ManagerDummy : GuestDummy;
+  const list = apiList === 0 ? apiDocList : apiDocList;
+  
   return (
     <div className="ApiListDetail">
-      {list?.map((it, idx) => (
+      {apiDocList?.map((it, idx) => (
         <div className="listContent" key={idx}>
-          <p>{it.apiTitle}</p>
+          <p>{it.docId}</p>
           <div className="content" onClick={moveApidocs}>
-            <p>{it.apiContent}</p>
+            <p>{it.docName}</p>
           </div>
           <div className="userSetting">
             <div className="userSettingSub">
               <div className="member">
                 <FontAwesomeIcon icon={faUser} />
-                {it.member}
+                {it.groupUser.name}
               </div>
-              <FontAwesomeIcon className="DeatilIcon" icon={faRightToBracket} onClick={moveApidocs} />
-              {ApiList == 0 ? <FontAwesomeIcon className="DeatilIcon" icon={faTrash} /> : <div></div>}
+              <FontAwesomeIcon
+                className="DeatilIcon"
+                icon={faRightToBracket}
+                onClick={moveApidocs}
+              />
+              {apiList === 0 ? (
+                <FontAwesomeIcon className="DeatilIcon" icon={faTrash} />
+              ) : (
+                <div></div>
+              )}
             </div>
           </div>
         </div>

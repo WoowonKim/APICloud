@@ -1,9 +1,8 @@
 import React from "react";
 import { useSelector } from "react-redux";
-
-import { useAppDispatch } from "../../Store";
-import { RootState } from "../../Store/rootReducer";
+import { useAppDispatch } from "../../Store/hooks";
 import testApiSlice from "../../Store/slice/testApi";
+import { RootState } from "../../Store/store";
 import MethodTest from "./MethodTest";
 
 const ApiInputUri = () => {
@@ -22,9 +21,13 @@ const ApiInputUri = () => {
       <input
         className="apiInput"
         type="text"
-        defaultValue={isInfo.infomethod.address + isInfo.infomethod.commonUri + "/"}
+        defaultValue={
+          isInfo.infomethod.address + isInfo.infomethod.commonUri + "/"
+        }
         onChange={(e) => {
-          dispatch(testApiSlice.actions.setAddress({ address: e.target.value }));
+          dispatch(
+            testApiSlice.actions.setAddress({ address: e.target.value })
+          );
         }}
       />
       <button

@@ -1,26 +1,50 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { getApiDocList } from "../../Store/slice/mainApi";
 import ApiListDetail from "./ApiListDetail";
-import { ManagerDummy, GuestDummy } from "./ListDummy";
 
-export type ManagerDummy = {
-  id: string;
-  apiTitle: string;
-  apiContent: string;
-  member: number;
+export type ApiDocType = {
+  docId: number;
+  docName: string;
+  groupId: number;
+  groupUser: {
+    id: number;
+    email: string;
+    name: string;
+    provider: string;
+    providerId: string;
+    imageUrl: string;
+  };
+  authority: number;
 };
-export type GuestDummy = {
-  id: string;
-  apiTitle: string;
-  apiContent: string;
-  member: number;
-};
+
 const ApiList = () => {
-  const [ApiList, setApiList] = useState(0);
+  const [apiList, setApiList] = useState(0);
+  const [apiDocList, setApiDocList] = useState<ApiDocType[] | []>([]);
+
+  const dispatch = useDispatch();
+
+  const dispatchGetDocList = () => {
+    dispatch(getApiDocList()).then((res: any) => {
+      if (res.payload?.status === 200) {
+        setApiDocList(res.payload.docList);
+      }
+    });
+  };
+
+  useEffect(() => {
+    dispatchGetDocList();
+  }, []);
+
+  useEffect(() => {
+    console.log(apiDocList);
+  }, [apiDocList]);
+
   return (
     <div className="ApiList">
       <div className="ApiListTitle">
         <span
-          className={ApiList == 0 ? "ClickList" : "noClicklist"}
+          className={apiList === 0 ? "ClickList" : "noClicklist"}
           onClick={() => {
             setApiList(0);
           }}
@@ -28,7 +52,7 @@ const ApiList = () => {
           관리자로 진행중인 API
         </span>
         <span
-          className={ApiList == 1 ? "ClickList" : "noClicklist"}
+          className={apiList === 1 ? "ClickList" : "noClicklist"}
           onClick={() => {
             setApiList(1);
           }}
@@ -37,7 +61,7 @@ const ApiList = () => {
         </span>
       </div>
       <div className="ApiListContent">
-        <ApiListDetail ManagerDummy={ManagerDummy} GuestDummy={GuestDummy} ApiList={ApiList} />
+        <ApiListDetail apiList={apiList} apiDocList={apiDocList} />
       </div>
     </div>
   );
