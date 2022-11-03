@@ -9,6 +9,8 @@ import { ApisType, ControllerType } from "../../../pages/CreateApi/ApisType";
 import SelectMethods from "../SelectMethods/SelectMethods";
 import "../ControllerAddModal/ControllerAddModal.scss";
 import { MappedTypeDescription } from "@syncedstore/core/types/doc";
+import { faRemove } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 // ControllerAddModal에서 받아오는 props의 type 설정
 interface Props {
@@ -16,8 +18,15 @@ interface Props {
   state: MappedTypeDescription<{
     data: ControllerType[];
   }>;
+  editControllerIndex: number;
+  addedControllerIndex: number;
 }
-const ModalTable = ({ data, state }: Props) => {
+const ModalTable = ({
+  data,
+  state,
+  editControllerIndex,
+  addedControllerIndex,
+}: Props) => {
   const defaultColumn: Partial<ColumnDef<ApisType>> = {
     cell: function Cell({ getValue, row: { index }, column: { id }, table }) {
       const initialValue = getValue<string>();
@@ -27,12 +36,24 @@ const ModalTable = ({ data, state }: Props) => {
         table.options.meta?.updateData(index, id, temp ? temp : value);
       };
 
+      const deleteApi = () => {
+        state.data[
+          editControllerIndex > -1 ? editControllerIndex : addedControllerIndex
+        ].apis.splice(index, 1);
+      };
+
       useEffect(() => {
         setValue(initialValue);
       }, [initialValue]);
 
       return id === "method" ? (
-        <SelectMethods onBlur={onBlur} setValue={setValue} />
+        <SelectMethods onBlur={onBlur} setValue={setValue} value={value} />
+      ) : id === "delete" ? (
+        <FontAwesomeIcon
+          icon={faRemove}
+          className="removeIcon"
+          onClick={deleteApi}
+        />
       ) : (
         <input
           value={value as string}
@@ -59,11 +80,14 @@ const ModalTable = ({ data, state }: Props) => {
         accessorKey: "method",
         footer: (props) => props.column.id,
       },
+      {
+        accessorKey: "delete",
+        footer: (props) => props.column.id,
+        size: 50,
+      },
     ],
     []
   );
-
-  // const data =
 
   const table = useReactTable({
     data,
@@ -72,8 +96,19 @@ const ModalTable = ({ data, state }: Props) => {
     getCoreRowModel: getCoreRowModel(),
     meta: {
       updateData: (rowIndex: string | number, columnId: any, value: any) => {
-        if (state.data[state.data.length - 1].apis.length > 0 && value) {
-          state.data[state.data.length - 1].apis.map((row, idx) => {
+        if (
+          state.data[
+            editControllerIndex > -1
+              ? editControllerIndex
+              : addedControllerIndex
+          ].apis.length > 0 &&
+          value
+        ) {
+          state.data[
+            editControllerIndex > -1
+              ? editControllerIndex
+              : addedControllerIndex
+          ].apis.map((row, idx) => {
             if (idx === rowIndex) {
               const type =
                 columnId === "uri"
@@ -82,7 +117,11 @@ const ModalTable = ({ data, state }: Props) => {
                   ? "name"
                   : "method";
 
-              state.data[state.data.length - 1].apis[rowIndex][type] = value;
+              state.data[
+                editControllerIndex > -1
+                  ? editControllerIndex
+                  : addedControllerIndex
+              ].apis[rowIndex][type] = value;
             }
           });
         }
@@ -92,7 +131,7 @@ const ModalTable = ({ data, state }: Props) => {
   });
 
   return (
-    <table>
+    <table className="modalTable">
       <thead>
         {table.getHeaderGroups().map((headerGroup) => (
           <tr key={headerGroup.id}>
