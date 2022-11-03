@@ -9,7 +9,6 @@ import io.spring.initializr.generator.language.Annotation;
 import io.spring.initializr.generator.language.SourceCodeWriter;
 import io.spring.initializr.generator.language.SourceStructure;
 import io.spring.initializr.generator.language.java.JavaLanguage;
-import io.spring.initializr.generator.language.java.JavaMethodInvocation;
 import io.spring.initializr.generator.language.java.JavaReturnStatement;
 import io.spring.initializr.generator.project.contributor.ProjectContributor;
 import lombok.RequiredArgsConstructor;
@@ -17,10 +16,7 @@ import lombok.RequiredArgsConstructor;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -52,15 +48,17 @@ public class ControllerContributor implements ProjectContributor {
             controllerType.annotate(Annotation.name("org.springframework.web.bind.annotation.RestController"));
             controllerType.annotate(Annotation.name("org.springframework.web.bind.annotation.RequestMapping", builder -> builder.attribute("value", String.class, controller.getCommonUri())));
             List<ApiVO> apis = controller.getApis();
+            Map<String, PropertyVO> dtos = new HashMap<>();
             if (apis != null) {
-                apis.forEach(apiConsumer(sourceCode, controllerType));
+                apis.forEach(apiConsumer(controllerType, dtos));
             }
+            addDto(sourceCode, dtos, controllerType.getName());
         };
     }
 
-    private Consumer<ApiVO> apiConsumer(CustomJavaSourceCode sourceCode, CustomJavaTypeDeclaration controllerType) {
+    private Consumer<ApiVO> apiConsumer(CustomJavaTypeDeclaration controllerType, Map<String, PropertyVO> dtos) {
         return api -> {
-            addDto(sourceCode, api.getAvailableDTO(), controllerType.getName());
+            api.getAvailableDTO(dtos);
             CustomJavaMethodDeclaration.Builder builder = CustomJavaMethodDeclaration
                     .method(api.getName())
                     .modifiers(Modifier.PUBLIC)
@@ -120,8 +118,9 @@ public class ControllerContributor implements ProjectContributor {
         return Optional.of(parameter);
     }
 
-    private void addDto(CustomJavaSourceCode sourceCode, List<PropertyVO> dtos, String controllerName) {
-        for (PropertyVO dto : dtos) {
+    private void addDto(CustomJavaSourceCode sourceCode, Map<String, PropertyVO> dtos, String controllerName) {
+        for (String dtoKey : dtos.keySet()) {
+            PropertyVO dto = dtos.get(dtoKey);
             CustomJavaTypeDeclaration dtoType = sourceCode.createCompilationUnit(doc.getServer().getPackageName() + ".dto." + controllerName.toLowerCase(), dto.getDtoName()).createTypeDeclaration(dto.getDtoName());
             dtoType.modifiers(Modifier.PUBLIC);
             if (dto.getProperties() != null) {
