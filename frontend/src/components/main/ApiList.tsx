@@ -69,7 +69,7 @@ const ApiList = ({ isDocCreated, setIsDocCreated }: Props) => {
         </span>
       </div>
       <div className="ApiListContent">
-        <ApiListDetail apiList={apiList} apiDocList={apiDocList} />
+        <ApiListDetail apiList={apiList} apiDocList={apiDocList} dispatchGetDocList={dispatchGetDocList} />
       </div>
     </div>
   );

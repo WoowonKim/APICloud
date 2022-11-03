@@ -32,6 +32,19 @@ export const getApiDocList: any = createAsyncThunk(
   }
 );
 
+// API DOC 삭제하기
+export const deleteApiDoc: any = createAsyncThunk(
+  "mainApi/deleteApiDoc",
+  async (args: any, { rejectWithValue }) => {
+    try {
+      const response = await axiosService.delete(`api/docs/${args.docId}`);
+      return response.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response);
+    }
+  }
+);
+
 const mainApiSlice = createSlice({
   name: "mainApi",
   initialState,
