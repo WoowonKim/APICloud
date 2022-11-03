@@ -1,9 +1,4 @@
-import {
-  ColumnDef,
-  useReactTable,
-  getCoreRowModel,
-  flexRender,
-} from "@tanstack/react-table";
+import { ColumnDef, useReactTable, getCoreRowModel, flexRender } from "@tanstack/react-table";
 import React, { useEffect, useMemo, useState } from "react";
 import { ApisType, ControllerType } from "../../../pages/CreateApi/ApisType";
 import SelectMethods from "../SelectMethods/SelectMethods";
@@ -75,12 +70,7 @@ const ModalTable = ({ data, state }: Props) => {
         if (state.data[state.data.length - 1].apis.length > 0 && value) {
           state.data[state.data.length - 1].apis.map((row, idx) => {
             if (idx === rowIndex) {
-              const type =
-                columnId === "uri"
-                  ? "uri"
-                  : columnId === "name"
-                  ? "name"
-                  : "method";
+              const type = columnId === "uri" ? "uri" : columnId === "name" ? "name" : "method";
 
               state.data[state.data.length - 1].apis[rowIndex][type] = value;
             }
@@ -108,19 +98,12 @@ const ModalTable = ({ data, state }: Props) => {
                   }}
                   className="tableHeadText"
                 >
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
+                  {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                   <div
                     {...{
                       onMouseDown: header.getResizeHandler(),
                       onTouchStart: header.getResizeHandler(),
-                      className: `resizer ${
-                        header.column.getIsResizing() ? "isResizing" : ""
-                      }`,
+                      className: `resizer ${header.column.getIsResizing() ? "isResizing" : ""}`,
                     }}
                   />
                 </th>
@@ -134,11 +117,7 @@ const ModalTable = ({ data, state }: Props) => {
           return (
             <tr key={row.id}>
               {row.getVisibleCells().map((cell) => {
-                return (
-                  <td key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                );
+                return <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>;
               })}
             </tr>
           );

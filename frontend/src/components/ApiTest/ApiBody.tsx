@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useAppDispatch } from "../../Store";
-import { RootState } from "../../Store/rootReducer";
+import { useAppDispatch } from "../../Store/hooks";
+
 import testApiSlice from "../../Store/slice/testApi";
+import { RootState } from "../../Store/store";
 interface type {
   sideApiList: number;
 }
@@ -19,11 +20,7 @@ const ApiBody = ({ sideApiList }: type) => {
     dispatch(testApiSlice.actions.setBody({ body: e.target.value }));
   };
 
-  const handleSetTab = (e: {
-    keyCode?: any;
-    preventDefault?: any;
-    target: any;
-  }) => {
+  const handleSetTab = (e: { keyCode?: any; preventDefault?: any; target: any }) => {
     if (e.keyCode === 9) {
       e.preventDefault();
       let val = e.target.value;

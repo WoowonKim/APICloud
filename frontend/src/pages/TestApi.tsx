@@ -7,8 +7,6 @@ import ApiInputUri from "../components/ApiTest/ApiInputUri";
 import ApiResponse from "../components/ApiTest/ApiResponse";
 import ApiSide from "../components/ApiTest/ApiSide";
 import "../components/ApiTest/ApiTest.scss";
-import { useSelector } from "react-redux";
-import { RootState } from "../Store/rootReducer";
 
 const TestApi = () => {
   const [sideApiList, setSidApiList] = useState<number>(0);
