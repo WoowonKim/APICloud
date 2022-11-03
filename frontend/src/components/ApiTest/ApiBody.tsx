@@ -1,10 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../Store";
+import { RootState } from "../../Store/rootReducer";
 import testApiSlice from "../../Store/slice/testApi";
-
-const ApiBody = () => {
+interface type {
+  sideApiList: number;
+}
+const ApiBody = ({ sideApiList }: type) => {
   const [textValue, setTextValue] = useState("");
+  const listInfo = useSelector((state: RootState) => state.sideApi);
+  const [bodyValue, setBodyValue] = useState(listInfo[sideApiList].body);
   const dispatch = useAppDispatch();
+  useEffect(() => {
+    setBodyValue(listInfo[sideApiList].body);
+  }, [sideApiList]);
   const handleSetValue = (e: { target: { value: React.SetStateAction<string> } }) => {
     setTextValue(e.target.value);
     dispatch(testApiSlice.actions.setBody({ body: e.target.value }));
@@ -25,15 +34,28 @@ const ApiBody = () => {
   return (
     <div className="apiBodyContainer">
       <span>Body</span>
-      <textarea
-        className="bodyArea"
-        placeholder="값을 입력해 주세요"
-        value={textValue}
-        onChange={(e) => {
-          handleSetValue(e);
-        }}
-        onKeyDown={(e) => handleSetTab(e)}
-      ></textarea>
+      {sideApiList === 0 ? (
+        <textarea
+          className="bodyArea"
+          placeholder="값을 입력해 주세요"
+          value={textValue}
+          onChange={(e) => {
+            handleSetValue(e);
+          }}
+          onKeyDown={(e) => handleSetTab(e)}
+        ></textarea>
+      ) : (
+        <textarea
+          className="bodyArea"
+          placeholder="값을 입력해 주세요"
+          value={bodyValue}
+          onChange={(e) => {
+            handleSetValue(e);
+            setBodyValue(e.target.value);
+          }}
+          onKeyDown={(e) => handleSetTab(e)}
+        ></textarea>
+      )}
     </div>
   );
 };

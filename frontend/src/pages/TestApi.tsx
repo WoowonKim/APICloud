@@ -27,7 +27,7 @@ const TestApi = () => {
           <div className="testInfo">
             <div className="testSetting">
               <ApiHeader sideApiList={sideApiList} />
-              <ApiBody />
+              <ApiBody sideApiList={sideApiList} />
             </div>
             <ApiResponse />
           </div>
