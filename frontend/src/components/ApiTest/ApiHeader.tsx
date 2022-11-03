@@ -2,7 +2,11 @@ import React, { useState } from "react";
 import Headerheader from "./Headerheader";
 import HeaderToken from "./HeaderToken";
 
-const ApiHeader = () => {
+interface type {
+  sideApiList: number;
+}
+
+const ApiHeader = ({ sideApiList }: type) => {
   const [headerTokenFlag, setHeaderTokenFlag] = useState<number | null>(0);
   return (
     <div className="apiHeaderContainer">
@@ -23,7 +27,7 @@ const ApiHeader = () => {
       >
         Token
       </span>
-      <div className="headerList">{headerTokenFlag == 0 ? <Headerheader /> : <HeaderToken />}</div>
+      <div className="headerList">{headerTokenFlag == 0 ? <Headerheader sideApiList={sideApiList} /> : <HeaderToken sideApiList={sideApiList} />}</div>
     </div>
   );
 };

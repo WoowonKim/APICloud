@@ -9,13 +9,13 @@ const initialState = {
     Accept: "*/*",
     AcceptEncoding: "gzip, deflate, br",
     Connection: "keep-alive",
-    Token: "1q2w3esdfsjgh1i231923y08r7",
+    Token: "",
     Cookie: "",
   },
   infomethod: {
-    fixAddress: "https://localhost:8080",
     address: "https://localhost:8080",
     commonUri: "/ApiCloud",
+    userAddress: "https://localhost:8080/ApiCloud/",
     method: "GET",
   },
   body: "",
@@ -25,6 +25,9 @@ const testApiSlice = createSlice({
   name: "testApi",
   initialState,
   reducers: {
+    setUserAddress(state, action) {
+      state.infomethod.userAddress = action.payload.userAddress;
+    },
     setCookie(state, action) {
       state.header.Cookie = action.payload.cookie;
     },

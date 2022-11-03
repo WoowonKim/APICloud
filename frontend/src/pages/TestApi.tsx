@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../components/main/Header";
 import ApiAddress from "../components/ApiTest/ApiAddress";
 import ApiBody from "../components/ApiTest/ApiBody";
@@ -7,31 +7,27 @@ import ApiInputUri from "../components/ApiTest/ApiInputUri";
 import ApiResponse from "../components/ApiTest/ApiResponse";
 import ApiSide from "../components/ApiTest/ApiSide";
 import "../components/ApiTest/ApiTest.scss";
-
-/**
- * 기본 객체 : Header, Token, Cookie
- * 테스트 객체 : URI + Method + Body 를 보내면 Response 객체를 반환
- * Response 객체 : Header, Body, Status, Cookie 값이 있어야한다.
- * Side에는 Api 폴더 구조 정리
- */
+import { useSelector } from "react-redux";
+import { RootState } from "../Store/rootReducer";
 
 const TestApi = () => {
+  const [sideApiList, setSidApiList] = useState<number>(0);
   return (
     <div>
       <Header />
       <div className="testContainer">
         <div className="testSide">
-          <ApiSide />
+          <ApiSide setSidApiList={setSidApiList} />
         </div>
         <div className="testMain">
           <div className="testInfomation">
-            <ApiAddress />
-            <ApiInputUri />
+            {/* <ApiAddress /> */}
+            <ApiInputUri sideApiList={sideApiList} />
           </div>
           <div className="testInfo">
             <div className="testSetting">
-              <ApiHeader />
-              <ApiBody />
+              <ApiHeader sideApiList={sideApiList} />
+              <ApiBody sideApiList={sideApiList} />
             </div>
             <ApiResponse />
           </div>

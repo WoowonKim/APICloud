@@ -1,11 +1,20 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useAppDispatch } from "../../Store/hooks";
+import { useAppDispatch } from "../../Store";
+import { RootState } from "../../Store/rootReducer";
 import testApiSlice from "../../Store/slice/testApi";
-import { RootState } from "../../Store/store";
-
-const HeaderToken = () => {
+interface type {
+  sideApiList: number;
+}
+const HeaderToken = ({ sideApiList }: type) => {
   const isApi = useSelector((state: RootState) => state.testApi.header);
+  const listInfo = useSelector((state: RootState) => state.sideApi);
+  const [tokenValue, setTokenValue] = useState(listInfo[sideApiList].header.Token);
+  const [cookieValue, setCookieValue] = useState(listInfo[sideApiList].header.Cookie);
+  useEffect(() => {
+    setTokenValue(listInfo[sideApiList].header.Token);
+    setCookieValue(listInfo[sideApiList].header.Cookie);
+  }, [sideApiList]);
   const dispatch = useAppDispatch();
   return (
     <>
@@ -13,7 +22,7 @@ const HeaderToken = () => {
         <p>Token :</p>
         <p>Cookie :</p>
       </div>
-      {isApi.Token.length == 0 ? (
+      {sideApiList === 0 ? (
         <div className="headerListContent">
           <p>
             <input
@@ -43,23 +52,21 @@ const HeaderToken = () => {
           <p>
             <input
               type="text"
+              value={tokenValue}
               onChange={(e) => {
-                dispatch(
-                  testApiSlice.actions.setToken({ Token: e.target.value })
-                );
+                dispatch(testApiSlice.actions.setToken({ Token: e.target.value }));
+                setTokenValue(e.target.value);
               }}
-              defaultValue={isApi.Token}
             />
           </p>
           <p>
             <input
               type="text"
+              value={cookieValue}
               onChange={(e) => {
-                dispatch(
-                  testApiSlice.actions.setCookie({ Cookie: e.target.value })
-                );
+                dispatch(testApiSlice.actions.setCookie({ Cookie: e.target.value }));
+                setCookieValue(e.target.value);
               }}
-              defaultValue={isApi.Cookie}
             />
           </p>
         </div>
