@@ -57,6 +57,10 @@ public class Docs {
         this.encryptedUrl = encryptedUrl;
     }
 
+    public void updateDetail(String detail) {
+        this.detail = detail;
+    }
+
     @Builder
     public Docs(Long id, String docsName, String serverUrl, String contextUri, String javaVersion, String springVersion, Integer buildManagement, String groupPackage, String packageName, Integer packaging, String encryptedUrl, Group group, String detail) {
         this.id = id;

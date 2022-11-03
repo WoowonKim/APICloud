@@ -5,9 +5,13 @@ import lombok.Getter;
 
 @Getter
 public class UserResponse {
+
     private Long id;
+
     private String email;
+
     private String name;
+
     private String imgUrl;
 
     public UserResponse(User user) {
@@ -16,4 +20,5 @@ public class UserResponse {
         this.name = user.getName();
         this.imgUrl = user.getImageUrl();
     }
+
 }
