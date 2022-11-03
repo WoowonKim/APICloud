@@ -75,7 +75,7 @@ public class ClassParsingServiceImpl implements ClassParsingService {
 
     public PropertyVO getProperty(String str) throws IOException {
         str = str.strip();
-        str = str.replaceAll(";$", "");
+        str = str.replaceAll(";", "");
         String[] tokens = str.split(" ");
         if (tokens.length <= 1) return null;
 

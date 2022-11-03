@@ -111,7 +111,7 @@ public class SynchronizeServiceImpl implements SynchronizeService {
                 .uri(uri)
                 .method(method)
                 .parameters(apiDetail.getParameters())
-                .query(apiDetail.getQuery())
+                .queries(apiDetail.getQueries())
                 .requestBody(apiDetail.getRequestBody())
                 .responses(apiDetail.getResponses())
                 .headers(apiDetail.getHeaders())
@@ -120,34 +120,39 @@ public class SynchronizeServiceImpl implements SynchronizeService {
     }
 
     private void getRequestDetail(ApiDetailVO apiDetail, String request) throws IOException {
+        System.out.println(request);
         if (request.equals("")) return;
-        String type = parsingService.getType(request);
 
         int pathVariable = parsingService.KMP(request, PATH_VARIABLE);
         if (pathVariable != -1) {
             String str = request.substring(pathVariable + 1, request.length());
             String value = parsingService.getValue(str);
-            boolean required = parsingService.getRequired(str);
-            PropertyVO parameter = PropertyVO.builder().name(value).type(type).required(required).build();
+            if (value == null) value = parsingService.getName(str);
+            PropertyVO parameter = PropertyVO.builder().name(value).type(parsingService.getType(request)).required(parsingService.getRequired(str)).build();
             apiDetail.getParameters().add(parameter);
         } else {
             int requestParam = parsingService.KMP(request, REQUEST_PARAM);
             if (requestParam != -1) {
-                int target = parsingService.KMP(request, VALUE);
-                if (target != -1) {
-                    String str = request.substring(target + 1, request.length());
-                    String value = parsingService.getValue(str);
-                    boolean required = parsingService.getRequired(str);
-                    PropertyVO query = PropertyVO.builder().name(value).type(type).required(required).build();
-                    apiDetail.getQuery().getProperties().add(query);
-                }
+                String str = request.substring(requestParam + 1, request.length());
+                String value = parsingService.getValue(str);
+                if (value == null) value = parsingService.getName(str);
+                String type = parsingService.getParamType(request);
+                PropertyVO query = classParsingService.getBody(rootPath, type);
+                apiDetail.getQueries().add(PropertyVO.builder()
+                        .dtoName(query.getDtoName())
+                        .collectionType(query.getCollectionType())
+                        .required(parsingService.getRequired(str))
+                        .properties(query.getProperties())
+                        .name(value)
+                        .type(query.getType())
+                        .build());
             } else {
                 int requestBody = parsingService.KMP(request, REQUEST_BODY);
                 if (requestBody != -1) {
                     String[] tokens = request.split(" ");
-//                    boolean required = parsingService.getRequired(request);
-//                    System.out.println(required);
-                    apiDetail.setRequestBody(classParsingService.getBody(rootPath, tokens[1]));
+                    apiDetail.setRequestBody(classParsingService.getBody(rootPath, tokens[tokens.length - 2]));
+                    apiDetail.getRequestBody().setRequired(parsingService.getRequired(request));
+                    apiDetail.getRequestBody().setName(tokens[tokens.length - 1].substring(0, tokens[tokens.length - 1].length() - 1));
                 }
             }
         }
@@ -210,10 +215,17 @@ public class SynchronizeServiceImpl implements SynchronizeService {
                         if (stack.peek() == ']') stack.pop();
                         break;
                     case '@':
-                        getRequestDetail(apiDetail, request);
-                        request = "";
+//                        getRequestDetail(apiDetail, request);
+//                        request = "";
                         requestFlag = true;
                         request += api.get(i).charAt(j);
+                        break;
+                    case ',':
+                        if (stack.size() != 1) break;
+                        getRequestDetail(apiDetail, request);
+                        request = "";
+                        requestFlag = false;
+//                        request += api.get(i).charAt(j);
                         break;
                     default:
                         if (responseFlag) response += api.get(i).charAt(j);

@@ -12,4 +12,8 @@ public interface ParsingService {
     List<String> getMethod(String str);
 
     boolean getRequired(String str);
+
+    String getParamType(String request);
+
+    String getName(String str);
 }

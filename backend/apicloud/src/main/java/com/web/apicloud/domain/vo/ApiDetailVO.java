@@ -20,7 +20,7 @@ public class ApiDetailVO {
 
     private List<PropertyVO> parameters;
 
-    private PropertyVO query;
+    private List<PropertyVO> queries;
 
     private List<HeaderVO> headers;
 
@@ -29,7 +29,7 @@ public class ApiDetailVO {
     public ApiDetailVO() {
         this.requestBody = new PropertyVO();
         this.parameters = new ArrayList<>();
-        this.query = new PropertyVO();
+        this.queries = new ArrayList<>();
         this.headers = new ArrayList<>();
         this.responses = new HashMap<>();
     }
