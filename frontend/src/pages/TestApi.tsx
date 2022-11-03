@@ -10,30 +10,8 @@ import "../components/ApiTest/ApiTest.scss";
 import { useSelector } from "react-redux";
 import { RootState } from "../Store/rootReducer";
 
-interface sideType {
-  header: {
-    contentType: string;
-    contentLength: string;
-    Host: string;
-    Accept: string;
-    AcceptEncoding: string;
-    Connection: string;
-    Token: string;
-    Cookie: string;
-  };
-  infomethod: {
-    address: string;
-    commonUri: string;
-    userAddress: string;
-    method: string;
-  };
-  body: string;
-}
 const TestApi = () => {
-  const responseList = useSelector((state: RootState) => state.sideApi);
   const [sideApiList, setSidApiList] = useState<number>(0);
-  const [responseApiList, setResponseApiList] = useState<sideType | null>();
-
   return (
     <div>
       <Header />
@@ -48,7 +26,7 @@ const TestApi = () => {
           </div>
           <div className="testInfo">
             <div className="testSetting">
-              <ApiHeader />
+              <ApiHeader sideApiList={sideApiList} />
               <ApiBody />
             </div>
             <ApiResponse />
