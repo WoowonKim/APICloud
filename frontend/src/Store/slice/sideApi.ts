@@ -21,34 +21,15 @@ export type SideApiProps = {
   body: string;
 };
 
-const initialState: SideApiProps[] = [
-  {
-    header: {
-      contentType: "",
-      contentLength: "",
-      Host: "",
-      Accept: "",
-      AcceptEncoding: "",
-      Connection: "",
-      Token: "",
-      Cookie: "",
-    },
-    infomethod: {
-      address: "",
-      commonUri: "",
-      userAddress: "",
-      method: "",
-    },
-    body: "",
-  },
-];
-
 const sideApiSlice = createSlice({
   name: "sideApi",
-  initialState,
+  initialState: [] as SideApiProps[],
   reducers: {
     addMethodUri(state, action) {
       state.push(action.payload);
+    },
+    removeMethoUri(state, action) {
+      return state.filter((it, idx) => idx !== action.payload);
     },
   },
   extraReducers: {},
