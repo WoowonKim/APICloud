@@ -19,11 +19,11 @@
 package com.web.apicloud.util.code;
 
 import com.web.apicloud.domain.vo.DocVO;
+import com.web.apicloud.util.code.java.CustomJavaSourceCode;
+import com.web.apicloud.util.code.java.CustomJavaSourceCodeWriter;
 import io.spring.initializr.generator.buildsystem.BuildItemResolver;
 import io.spring.initializr.generator.buildsystem.BuildWriter;
 import io.spring.initializr.generator.io.IndentingWriterFactory;
-import io.spring.initializr.generator.language.java.JavaSourceCode;
-import io.spring.initializr.generator.language.java.JavaSourceCodeWriter;
 import io.spring.initializr.generator.project.*;
 import io.spring.initializr.metadata.InitializrMetadata;
 import io.spring.initializr.metadata.InitializrMetadataProvider;
@@ -76,15 +76,16 @@ public class ProjectWithControllerGenerationInvoker<R extends ProjectRequest> {
      * @param request the project request
      * @return the {@link ProjectWithControllerGenerationResult}
      */
-    public ProjectWithControllerGenerationResult invokeProjectStructureGeneration(R request, DocVO doc) {
+    public ProjectWithControllerGenerationResult invokeProjectStructureGeneration(R request, DocVO doc) throws IOException {
         InitializrMetadata metadata = this.parentApplicationContext.getBean(InitializrMetadataProvider.class).get();
         try {
             ProjectDescription description = this.requestConverter.convert(request, metadata);
             ProjectGenerator projectGenerator = new ProjectGenerator((
                     projectGenerationContext) -> {
-                projectGenerationContext.registerBean(ControllerContributor.class, () -> new ControllerContributor(JavaSourceCode::new,
-                    new JavaSourceCodeWriter(this.indentingWriterFactory),
+                projectGenerationContext.registerBean(ControllerContributor.class, () -> new ControllerContributor(CustomJavaSourceCode::new,
+                    new CustomJavaSourceCodeWriter(this.indentingWriterFactory),
                     doc));
+                projectGenerationContext.registerBean(ApplicationPropertiesContextUriContributor.class, () -> new ApplicationPropertiesContextUriContributor(doc.getServer().getContextUri()));
                 customizeProjectGenerationContext(projectGenerationContext, metadata);
             });
             ProjectWithControllerGenerationResult result = projectGenerator.generate(description,

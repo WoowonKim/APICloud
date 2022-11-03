@@ -8,8 +8,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 @SpringBootApplication
 @EnableConfigurationProperties(AppProperties.class)
 public class ApicloudApplication {
-	public static void main(String[] args) {
-		SpringApplication.run(ApicloudApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(ApicloudApplication.class, args);
+    }
 
 }

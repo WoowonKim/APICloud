@@ -4,6 +4,7 @@ import { useAppDispatch } from "../../Store";
 import { RootState } from "../../Store/rootReducer";
 import sideApiSlice from "../../Store/slice/sideApi";
 import testApiSlice from "../../Store/slice/testApi";
+import { RootState } from "../../Store/store";
 import MethodTest from "./MethodTest";
 
 interface list {

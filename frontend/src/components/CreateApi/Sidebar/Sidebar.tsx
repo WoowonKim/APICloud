@@ -1,11 +1,8 @@
-import {
-  faEllipsis,
-  faEllipsisVertical,
-  faPlus,
-} from "@fortawesome/free-solid-svg-icons";
+import { faEllipsisVertical, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { MappedTypeDescription } from "@syncedstore/core/types/doc";
 import React, { useState } from "react";
-import { ControllerType, DataType } from "../../../pages/CreateApi/ApisType";
+import { ControllerType } from "../../../pages/CreateApi/ApisType";
 import ControllerAddModal from "../ControllerAddModal/ControllerAddModal";
 import { SelectedItem } from "../SelectMethods/SelectMethods";
 import "./Sidebar.scss";
@@ -13,29 +10,22 @@ import "./Sidebar.scss";
 interface Props {
   addController: () => void;
   addApi: (index: number) => void;
-  data: DataType;
-  setData: React.Dispatch<React.SetStateAction<DataType>>;
+  state: MappedTypeDescription<{
+    data: ControllerType[];
+  }>;
   handleSidebarApi: (index: number, idx: number) => void;
 }
 
-const Sidebar = ({
-  addController,
-  addApi,
-  data,
-  setData,
-  handleSidebarApi,
-}: Props) => {
+const Sidebar = ({ addController, addApi, state, handleSidebarApi }: Props) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editControllerIndex, setEditControllerIndex] = useState(-1);
-
   return (
     <>
       {isModalVisible && (
         <ControllerAddModal
           setIsModalVisible={setIsModalVisible}
           addApi={addApi}
-          setData={setData}
-          data={data}
+          state={state}
           editControllerIndex={editControllerIndex}
         />
       )}
@@ -52,8 +42,9 @@ const Sidebar = ({
             <FontAwesomeIcon icon={faPlus} className="apiPlusButtonIcon" />
           </button>
         </div>
-        {data.controller.length > 0 &&
-          data.controller.map((item: ControllerType, index) => (
+        {state.data &&
+          state.data.length > 0 &&
+          state.data.map((item: ControllerType, index) => (
             <div key={index} className="sidebarContentContainer">
               <div className="sidebarControllerGroup">
                 <div className="controllerItem">{item.name}</div>

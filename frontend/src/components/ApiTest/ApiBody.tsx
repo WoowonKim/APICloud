@@ -19,7 +19,11 @@ const ApiBody = ({ sideApiList }: type) => {
     dispatch(testApiSlice.actions.setBody({ body: e.target.value }));
   };
 
-  const handleSetTab = (e: { keyCode?: any; preventDefault?: any; target: any }) => {
+  const handleSetTab = (e: {
+    keyCode?: any;
+    preventDefault?: any;
+    target: any;
+  }) => {
     if (e.keyCode === 9) {
       e.preventDefault();
       let val = e.target.value;

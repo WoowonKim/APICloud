@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { RootState } from "../../Store/rootReducer";
+import { RootState } from "../../Store/store";
 
 const ApiAddress = () => {
   const isAddress = useSelector((state: RootState) => state.testApi.infomethod);

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useAppDispatch } from "../../Store";
-import { RootState } from "../../Store/rootReducer";
+import { useAppDispatch } from "../../Store/hooks";
 import testApiSlice from "../../Store/slice/testApi";
 interface type {
   sideApiList: number;

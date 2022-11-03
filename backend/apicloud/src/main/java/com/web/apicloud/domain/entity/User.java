@@ -32,16 +32,19 @@ public class User {
 
     private String providerId;
 
+    private String imageUrl;
     @Builder
-    public User(Long id, String email, String name, AuthProvider provider, String providerId) {
+    public User(Long id, String email, String name, AuthProvider provider, String providerId, String imageUrl) {
         this.id = id;
         this.email = email;
         this.name = name;
         this.provider = provider;
         this.providerId = providerId;
+        this.imageUrl = imageUrl;
     }
 
-    public void setName(String name) {
+    public void updateUser(String name, String imageUrl) {
         this.name = name;
+        this.imageUrl = imageUrl;
     }
 }

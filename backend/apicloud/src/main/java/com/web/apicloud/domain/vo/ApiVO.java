@@ -5,9 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Builder
 @AllArgsConstructor
@@ -31,26 +29,29 @@ public class ApiVO {
 
     private Map<String, ResponseVO> responses;
 
+    // TODO: ResponseEntity로 묶을지
     public String getReturning() {
-        if(responses == null) {
+        if(responses == null || responses.get("success") == null
+            || responses.get("success").getResponseBody() == null) {
             return "void";
         } else {
-            return "Object";
+            return responses.get("success").getResponseBody().getTypeForCode();
         }
     }
 
     public List<PropertyVO> getAvailableDTO() {
         List<PropertyVO> dtos = new ArrayList<>();
+        Set<String> dtoNames = new HashSet<>();
         if(requestBody != null) {
-            requestBody.getDtos(dtos);
+            requestBody.getDtos(dtos, dtoNames);
         }
         if(query != null) {
-            query.getDtos(dtos);
+            query.getDtos(dtos, dtoNames);
         }
         if(responses != null) {
             for(ResponseVO response : responses.values()) {
                 if(response.getResponseBody() != null) {
-                    response.getResponseBody().getDtos(dtos);
+                    response.getResponseBody().getDtos(dtos, dtoNames);
                 }
             }
         }

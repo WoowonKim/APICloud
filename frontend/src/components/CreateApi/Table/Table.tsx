@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   ColumnDef,
   useReactTable,
@@ -16,11 +10,12 @@ import {
 import "./Table.scss";
 import UseAutosizeTextArea from "./UseAutoSizeTextArea";
 import {
-  DataType,
-  HeaderType,
+  ControllerType,
+  HeadersType,
   PropertiesType,
 } from "../../../pages/CreateApi/ApisType";
 import TableInfo from "./TableInfo";
+import { MappedTypeDescription } from "@syncedstore/core/types/doc";
 
 declare module "@tanstack/react-table" {
   interface TableMeta<TData extends RowData> {
@@ -33,9 +28,11 @@ interface Props {
   activeTab: number;
   selectedController: number;
   selectedApi: number;
-  data: PropertiesType[] | HeaderType[];
-  setData: React.Dispatch<React.SetStateAction<DataType>>;
-  wholeData: DataType;
+  data: PropertiesType[] | HeadersType[];
+  state: MappedTypeDescription<{
+    data: ControllerType[];
+  }>;
+  responseType?: string;
 }
 
 const Table = ({
@@ -43,10 +40,10 @@ const Table = ({
   selectedController,
   selectedApi,
   data,
-  setData,
-  wholeData,
+  state,
+  responseType,
 }: Props) => {
-  const defaultColumn: Partial<ColumnDef<PropertiesType | HeaderType>> = {
+  const defaultColumn: Partial<ColumnDef<PropertiesType | HeadersType>> = {
     cell: function Cell({ getValue, row: { index }, column: { id }, table }) {
       const initialValue = getValue<string>();
       const [value, setValue] = useState<string>(initialValue);
@@ -69,7 +66,6 @@ const Table = ({
           onBlur={onBlur}
           className="tableInput"
           type="checkbox"
-          checked={value === "true" ? true : false}
         />
       ) : (
         <textarea
@@ -84,7 +80,7 @@ const Table = ({
     },
   };
 
-  const columns = useMemo<ColumnDef<PropertiesType | HeaderType>[]>(
+  const columns = useMemo<ColumnDef<PropertiesType | HeadersType>[]>(
     () =>
       activeTab === 1
         ? [
@@ -114,11 +110,11 @@ const Table = ({
           ]
         : [
             {
-              header: "success",
+              header: responseType ? responseType : "",
               footer: (props) => props.column.id,
               columns: [
                 {
-                  accessorKey: "status",
+                  accessorKey: "name",
                   footer: (props) => props.column.id,
                 },
                 {
@@ -127,24 +123,6 @@ const Table = ({
                 },
                 {
                   accessorKey: "required",
-                  footer: (props) => props.column.id,
-                },
-              ],
-            },
-            {
-              header: "fail",
-              footer: (props) => props.column.id,
-              columns: [
-                {
-                  accessorKey: "status1",
-                  footer: (props) => props.column.id,
-                },
-                {
-                  accessorKey: "type1",
-                  footer: (props) => props.column.id,
-                },
-                {
-                  accessorKey: "required1",
                   footer: (props) => props.column.id,
                 },
               ],
@@ -164,103 +142,79 @@ const Table = ({
     getCoreRowModel: getCoreRowModel(),
     meta: {
       updateData: (rowIndex: string | number, columnId: any, value: any) => {
-        setData((old: DataType) => {
-          let copy = JSON.parse(JSON.stringify(old));
-          if (!!value) {
-            if (activeTab === 1) {
-              old.controller[selectedController].apis[selectedApi].header.map(
-                (row, idx) => {
-                  if (idx === rowIndex) {
-                    const newData = {
-                      ...copy.controller[selectedController].apis[selectedApi]
-                        .header[rowIndex],
-                      [columnId]: value,
-                    };
-                    copy.controller[selectedController].apis[
-                      selectedApi
-                    ].header[rowIndex] = newData;
+        if (!!value && state.data) {
+          const newValue = value === "true" ? false : true;
+          const type =
+            columnId === "name"
+              ? "name"
+              : columnId === "type"
+              ? "type"
+              : "required";
+          if (activeTab === 1) {
+            state.data[selectedController].apis[selectedApi].headers.map(
+              (row, idx) => {
+                if (idx === rowIndex && state.data) {
+                  const type = columnId === "key" ? "key" : "value";
+                  state.data[selectedController].apis[selectedApi].headers[
+                    rowIndex
+                  ][type] = value;
+                }
+              }
+            );
+          } else if (activeTab === 2) {
+            state.data[selectedController].apis[selectedApi].parameters.map(
+              (row, idx) => {
+                if (idx === rowIndex && state.data) {
+                  if (type === "required") {
+                    state.data[selectedController].apis[selectedApi].parameters[
+                      rowIndex
+                    ][type] = newValue;
+                  } else {
+                    state.data[selectedController].apis[selectedApi].parameters[
+                      rowIndex
+                    ][type] = value;
                   }
                 }
-              );
-            } else if (activeTab === 2) {
-              old.controller[selectedController].apis[
-                selectedApi
-              ].parameters.map((row, idx) => {
-                if (idx === rowIndex) {
-                  const newValue = value === "true" ? "false" : "true";
-                  const newData = {
-                    ...copy.controller[selectedController].apis[selectedApi]
-                      .parameters[rowIndex],
-                    [columnId]: columnId === "required" ? newValue : value,
-                  };
-                  copy.controller[selectedController].apis[
-                    selectedApi
-                  ].parameters[rowIndex] = newData;
+              }
+            );
+          } else if (activeTab === 3 || activeTab === 4) {
+            const tab = activeTab === 3 ? "query" : "requestBody";
+            state.data[selectedController].apis[selectedApi][
+              tab
+            ].properties.map((row, idx) => {
+              if (idx === rowIndex && state.data) {
+                if (type === "required") {
+                  state.data[selectedController].apis[selectedApi][
+                    tab
+                  ].properties[rowIndex][type] = newValue;
+                } else {
+                  state.data[selectedController].apis[selectedApi][
+                    tab
+                  ].properties[rowIndex][type] = value;
                 }
-              });
-            } else if (activeTab === 3) {
-              old.controller[selectedController].apis[
-                selectedApi
-              ].query.properties.map((row, idx) => {
-                if (idx === rowIndex) {
-                  const newData = {
-                    ...copy.controller[selectedController].apis[selectedApi]
-                      .query.properties[rowIndex],
-                    [columnId]: value,
-                  };
-                  copy.controller[selectedController].apis[
-                    selectedApi
-                  ].query.properties[rowIndex] = newData;
+              }
+            });
+          } else if (
+            activeTab === 5 &&
+            (responseType === "fail" || responseType === "success")
+          ) {
+            state.data[selectedController].apis[selectedApi].responses[
+              responseType
+            ].properties.map((row, idx) => {
+              if (idx === rowIndex && state.data) {
+                if (type === "required") {
+                  state.data[selectedController].apis[selectedApi].responses[
+                    responseType
+                  ].properties[rowIndex][type] = newValue;
+                } else {
+                  state.data[selectedController].apis[selectedApi].responses[
+                    responseType
+                  ].properties[rowIndex][type] = value;
                 }
-              });
-            } else if (activeTab === 4) {
-              old.controller[selectedController].apis[
-                selectedApi
-              ].requestBody.properties.map((row, idx) => {
-                if (idx === rowIndex) {
-                  const newData = {
-                    ...copy.controller[selectedController].apis[selectedApi]
-                      .requestBody.properties[rowIndex],
-                    [columnId]: value,
-                  };
-                  copy.controller[selectedController].apis[
-                    selectedApi
-                  ].requestBody.properties[rowIndex] = newData;
-                }
-              });
-            } else {
-              old.controller[selectedController].apis[
-                selectedApi
-              ].responses.fail.properties.map((row, idx) => {
-                if (idx === rowIndex) {
-                  const newData = {
-                    ...copy.controller[selectedController].apis[selectedApi]
-                      .responses.fail.properties[rowIndex],
-                    [columnId]: value,
-                  };
-                  copy.controller[selectedController].apis[
-                    selectedApi
-                  ].responses.fail.properties[rowIndex] = newData;
-                }
-              });
-              old.controller[selectedController].apis[
-                selectedApi
-              ].responses.success.properties.map((row, idx) => {
-                if (idx === rowIndex) {
-                  const newData = {
-                    ...copy.controller[selectedController].apis[selectedApi]
-                      .responses.success.properties[rowIndex],
-                    [columnId]: value,
-                  };
-                  copy.controller[selectedController].apis[
-                    selectedApi
-                  ].responses.success.properties[rowIndex] = newData;
-                }
-              });
-            }
+              }
+            });
           }
-          return copy;
-        });
+        }
       },
     },
     debugTable: true,
@@ -271,38 +225,44 @@ const Table = ({
     type: string,
     responseType?: string
   ) => {
-    setData((old: DataType) => {
-      let copy = JSON.parse(JSON.stringify(old));
-      if (activeTab === 3) {
-        copy.controller[selectedController].apis[selectedApi].query = {
-          ...old.controller[selectedController].apis[selectedApi].query,
-          [type]: type === "required" ? e.target.checked : e.target.value,
-        };
-      } else if (activeTab === 4) {
-        copy.controller[selectedController].apis[selectedApi].requestBody = {
-          ...old.controller[selectedController].apis[selectedApi].requestBody,
-          [type]: type === "required" ? e.target.checked : e.target.value,
-        };
-      } else if (activeTab === 5 && responseType) {
-        if (responseType === "fail") {
-          copy.controller[selectedController].apis[selectedApi].responses.fail =
-            {
-              ...old.controller[selectedController].apis[selectedApi].responses
-                .fail,
-              [type]: type === "required" ? e.target.checked : e.target.value,
-            };
-        } else if (responseType === "success") {
-          copy.controller[selectedController].apis[
-            selectedApi
-          ].responses.success = {
-            ...old.controller[selectedController].apis[selectedApi].responses
-              .success,
-            [type]: type === "required" ? e.target.checked : e.target.value,
-          };
-        }
+    const value =
+      type === "name"
+        ? "name"
+        : type === "type"
+        ? "type"
+        : type === "dtoName"
+        ? "dtoName"
+        : "required";
+    if (activeTab === 3 && state.data) {
+      if (value === "required") {
+        state.data[selectedController].apis[selectedApi].query[value] =
+          e.target.checked;
+      } else {
+        state.data[selectedController].apis[selectedApi].query[value] =
+          e.target.value;
       }
-      return copy;
-    });
+    } else if (activeTab === 4 && state.data) {
+      if (value === "required") {
+        state.data[selectedController].apis[selectedApi].requestBody[value] =
+          e.target.checked;
+      } else {
+        state.data[selectedController].apis[selectedApi].requestBody[value] =
+          e.target.value;
+      }
+    } else if (activeTab === 5 && state.data) {
+      const response = responseType === "fail" ? "fail" : "success";
+      const value2 =
+        type === "status" ? "status" : type === "type" ? "type" : "required";
+      if (value2 === "required") {
+        state.data[selectedController].apis[selectedApi].responses[response][
+          value2
+        ] = e.target.checked;
+      } else {
+        state.data[selectedController].apis[selectedApi].responses[response][
+          "type"
+        ] = e.target.value;
+      }
+    }
   };
 
   return (
@@ -312,7 +272,8 @@ const Table = ({
         handleBasicInfo={handleBasicInfo}
         selectedApi={selectedApi}
         selectedController={selectedController}
-        wholeData={wholeData}
+        state={state}
+        responseType={responseType}
       />
       <table>
         <thead>

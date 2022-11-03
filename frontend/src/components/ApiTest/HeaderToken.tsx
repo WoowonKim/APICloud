@@ -28,7 +28,9 @@ const HeaderToken = ({ sideApiList }: type) => {
             <input
               type="text"
               onChange={(e) => {
-                dispatch(testApiSlice.actions.setToken({ Token: e.target.value }));
+                dispatch(
+                  testApiSlice.actions.setToken({ Token: e.target.value })
+                );
               }}
               defaultValue={isApi.Token}
             />
@@ -37,7 +39,9 @@ const HeaderToken = ({ sideApiList }: type) => {
             <input
               type="text"
               onChange={(e) => {
-                dispatch(testApiSlice.actions.setCookie({ Cookie: e.target.value }));
+                dispatch(
+                  testApiSlice.actions.setCookie({ Cookie: e.target.value })
+                );
               }}
               defaultValue={isApi.Cookie}
             />
