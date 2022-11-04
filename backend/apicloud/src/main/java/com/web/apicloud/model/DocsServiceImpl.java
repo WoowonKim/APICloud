@@ -19,6 +19,7 @@ import com.web.apicloud.util.SHA256;
 import com.web.apicloud.util.TextUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.sql.Update;
 import org.springframework.stereotype.Service;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -133,19 +134,10 @@ public class DocsServiceImpl implements DocsService{
     }
 
     @Override
-    public DocListResponse getDoc(Long userId, Long docId) {
-        User user = findByUserId(userId);
-        List<GroupUser> groupUsers = groupUserRepository.findByUser(user);
-        DocListResponse docListResponse = null;
-        for (GroupUser groupUser : groupUsers) {
-            List<Docs> docs = docsRepository.findByGroup(groupUser.getGroup());
-            for (Docs doc : docs) {
-                if (docId.equals(doc.getId())) {
-                    docListResponse = doc.toDto(doc.getId(), doc.getDocsName(), doc.getGroup().getId(), groupUser.getUser(), groupUser.getAuthority());
-                }
-            }
-        }
-        return docListResponse;
+    public UpdateDocDto getDoc(Long docId) {
+        Docs doc = findByDocsId(docId);
+        UpdateDocDto updateDocDto = doc.toDto(doc.getId(), doc.getDocsName(), doc.getServerUrl(), doc.getContextUri(), doc.getJavaVersion(), doc.getSpringVersion(), doc.getBuildManagement(), doc.getGroupPackage(), doc.getPackageName(), doc.getPackaging());
+        return updateDocDto;
     }
 
     @Override

@@ -2,12 +2,12 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import mainApiSlice from "../../Store/slice/mainApi";
 import { RootState } from "../../Store/store";
-import Modal from "./Modal";
+import CreateModal from "./CreateModal";
 
 const Start = () => {
   const dispatch = useDispatch();
-  const isOpenModal = useSelector(
-    (state: RootState) => state.mainApi.isOpenModal
+  const isOpenCreateModal = useSelector(
+    (state: RootState) => state.mainApi.isOpenCreateModal
   );
 
   return (
@@ -18,13 +18,13 @@ const Start = () => {
           <button
             onClick={() =>
               dispatch(
-                mainApiSlice.actions.setIsOpenModal({ isOpenModal: true })
+                mainApiSlice.actions.setIsOpenCreateModal({ isOpenCreateModal: true })
               )
             }
           >
             생성하기
           </button>
-          {isOpenModal && <Modal></Modal>}
+          {isOpenCreateModal && <CreateModal></CreateModal>}
         </div>
         <div>
           <img
