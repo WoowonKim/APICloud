@@ -133,7 +133,7 @@ public class DocsServiceImpl implements DocsService{
     public UpdateDocDto updateDoc(Long docId, UpdateDocDto updateDocDto) {
         Docs doc = findByDocsId(docId);
         doc.setServerUrl(updateDocDto.getServerUrl());
-        doc.setContextUrl(updateDocDto.getContextUrl());
+        doc.setContextUri(updateDocDto.getContextUrl());
         doc.setJavaVersion(updateDocDto.getJavaVersion());
         doc.setSpringVersion(updateDocDto.getSpringVersion());
         doc.setBuildManagement(updateDocDto.getBuildManagement());
@@ -163,7 +163,7 @@ public class DocsServiceImpl implements DocsService{
                 csvContent.append(api.getName()).append(",")
                         .append(api.getUri()).append(",")
                         .append(api.getMethod()).append(",")
-                        .append("\"").append(makeCsvFromProperty(api.getQuery())).append("\"").append(",")
+                        .append("\"").append(makeCsvFromProperties(api.getQueries())).append("\"").append(",")
                         .append("\"").append(makeCsvFromProperties(api.getParameters())).append("\"").append(",")
                         .append("\"").append(makeCsvFromProperty(api.getRequestBody())).append("\"").append(",");
                 makeCsvFromResponse(api.getResponses().get("success"), csvContent).append(",");
