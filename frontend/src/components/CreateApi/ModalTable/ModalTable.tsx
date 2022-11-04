@@ -51,7 +51,7 @@ const ModalTable = ({
         />
       ) : (
         <input
-          value={value as string}
+          value={(value as string) || ""}
           onChange={(e) => setValue(e.target.value)}
           onBlur={() => onBlur()}
           className="modalTableInput"
