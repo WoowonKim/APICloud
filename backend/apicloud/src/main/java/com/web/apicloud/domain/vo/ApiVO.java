@@ -1,18 +1,18 @@
 package com.web.apicloud.domain.vo;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+//@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ApiVO {
 
     private String name;
@@ -25,7 +25,7 @@ public class ApiVO {
 
     private List<PropertyVO> parameters;
 
-    private PropertyVO query;
+    private List<PropertyVO> queries;
 
     private List<HeaderVO> headers;
 
@@ -41,21 +41,22 @@ public class ApiVO {
         }
     }
 
-    public List<PropertyVO> getAvailableDTO() {
-        List<PropertyVO> dtos = new ArrayList<>();
-        if(requestBody != null) {
-            requestBody.getDtos(dtos);
-        }
-        if(query != null) {
-            query.getDtos(dtos);
-        }
-        if(responses != null) {
-            for(ResponseVO response : responses.values()) {
-                if(response.getResponseBody() != null) {
-                    response.getResponseBody().getDtos(dtos);
-                }
-            }
-        }
-        return dtos;
-    }
+//    public List<PropertyVO> getAvailableDTO() {
+//        List<PropertyVO> dtos = new ArrayList<>();
+//        Set<String> dtoNames = new HashSet<>();
+//        if(requestBody != null) {
+//            requestBody.getDtos(dtos, dtoNames);
+//        }
+//        if(query != null) {
+//            query.getDtos(dtos, dtoNames);
+//        }
+//        if(responses != null) {
+//            for(ResponseVO response : responses.values()) {
+//                if(response.getResponseBody() != null) {
+//                    response.getResponseBody().getDtos(dtos, dtoNames);
+//                }
+//            }
+//        }
+//        return dtos;
+//    }
 }

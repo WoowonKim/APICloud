@@ -14,7 +14,7 @@ public class CreateDocRequest {
 
     private String contextUrl;
 
-    private Integer javaVersion;
+    private String javaVersion;
 
     private String springVersion;
 

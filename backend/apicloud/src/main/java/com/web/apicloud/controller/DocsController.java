@@ -1,9 +1,12 @@
 package com.web.apicloud.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.web.apicloud.domain.dto.CreateDocRequest;
 import com.web.apicloud.domain.dto.DocListResponse;
 import com.web.apicloud.domain.dto.UpdateDocDto;
+import com.web.apicloud.domain.vo.DocVO;
 import com.web.apicloud.model.DocsService;
+import com.web.apicloud.util.FileUtils;
 import com.web.apicloud.util.ResponseHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -73,7 +76,14 @@ public class DocsController {
     }
 
     @GetMapping("/{docsId}/project")
-    public ResponseEntity<byte[]> exportProject(@PathVariable Long docsId, @RequestHeader Map<String, String> headers) throws IOException {
+    public ResponseEntity<byte[]> exportProject(@PathVariable("docsId") Long docsId, @RequestHeader Map<String, String> headers) throws IOException {
         return projectGenerationController.springZip(docsService.getDocVOByDocsId(docsId), headers);
+    }
+
+    @GetMapping("/{docsId}/csv")
+    public ResponseEntity<byte[]> exportCsv(@PathVariable("docsId") Long docsId) throws JsonProcessingException {
+        DocVO doc = docsService.getDocVOByDocsId(docsId);
+        byte[] file = docsService.getExcelFile(doc.getControllers());
+        return FileUtils.createResponseEntity(file, "text/csv", doc.getServer().getName() + ".csv");
     }
 }

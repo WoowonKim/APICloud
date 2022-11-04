@@ -2,13 +2,17 @@ import React, { useState } from "react";
 import Headerheader from "./Headerheader";
 import HeaderToken from "./HeaderToken";
 
-const ApiHeader = () => {
+interface type {
+  sideApiList: number;
+}
+
+const ApiHeader = ({ sideApiList }: type) => {
   const [headerTokenFlag, setHeaderTokenFlag] = useState<number | null>(0);
   return (
     <div className="apiHeaderContainer">
       <p className="apiHeaderMainTitle">Request</p>
       <span
-        className={headerTokenFlag == 0 ? "headerClickList" : "headerNoClicklist"}
+        className={headerTokenFlag === 0 ? "headerClickList" : "headerNoClicklist"}
         onClick={() => {
           setHeaderTokenFlag(0);
         }}
@@ -16,14 +20,14 @@ const ApiHeader = () => {
         Header
       </span>
       <span
-        className={headerTokenFlag == 1 ? "headerClickList" : "headerNoClicklist"}
+        className={headerTokenFlag === 1 ? "headerClickList" : "headerNoClicklist"}
         onClick={() => {
           setHeaderTokenFlag(1);
         }}
       >
         Token
       </span>
-      <div className="headerList">{headerTokenFlag == 0 ? <Headerheader /> : <HeaderToken />}</div>
+      <div className="headerList">{headerTokenFlag === 0 ? <Headerheader sideApiList={sideApiList} /> : <HeaderToken sideApiList={sideApiList} />}</div>
     </div>
   );
 };

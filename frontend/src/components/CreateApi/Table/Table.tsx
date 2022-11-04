@@ -16,6 +16,8 @@ import {
 } from "../../../pages/CreateApi/ApisType";
 import TableInfo from "./TableInfo";
 import { MappedTypeDescription } from "@syncedstore/core/types/doc";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faRemove } from "@fortawesome/free-solid-svg-icons";
 
 declare module "@tanstack/react-table" {
   interface TableMeta<TData extends RowData> {
@@ -52,6 +54,32 @@ const Table = ({
         table.options.meta?.updateData(index, id, value);
       };
 
+      const deleteApi = () => {
+        if (activeTab === 1) {
+          state.data[selectedController].apis[selectedApi].headers.splice(
+            index,
+            1
+          );
+        } else if (activeTab === 2) {
+          state.data[selectedController].apis[selectedApi].parameters.splice(
+            index,
+            1
+          );
+        } else if (activeTab === 3 || activeTab === 4) {
+          const tab = activeTab === 3 ? "query" : "requestBody";
+          state.data[selectedController].apis[selectedApi][
+            tab
+          ].properties.splice(index, 1);
+        } else if (
+          activeTab === 5 &&
+          (responseType === "fail" || responseType === "success")
+        ) {
+          state.data[selectedController].apis[selectedApi].responses[
+            responseType
+          ].properties.splice(index, 1);
+        }
+      };
+
       useEffect(() => {
         setValue(initialValue);
       }, [initialValue]);
@@ -66,6 +94,12 @@ const Table = ({
           onBlur={onBlur}
           className="tableInput"
           type="checkbox"
+        />
+      ) : id === "delete" ? (
+        <FontAwesomeIcon
+          icon={faRemove}
+          className="removeIcon"
+          onClick={deleteApi}
         />
       ) : (
         <textarea
@@ -92,6 +126,11 @@ const Table = ({
               accessorKey: "value",
               footer: (props) => props.column.id,
             },
+            {
+              accessorKey: "delete",
+              footer: (props) => props.column.id,
+              size: 50,
+            },
           ]
         : activeTab === 2 || activeTab === 3 || activeTab === 4
         ? [
@@ -106,6 +145,11 @@ const Table = ({
             {
               accessorKey: "required",
               footer: (props) => props.column.id,
+            },
+            {
+              accessorKey: "delete",
+              footer: (props) => props.column.id,
+              size: 50,
             },
           ]
         : [
@@ -124,6 +168,11 @@ const Table = ({
                 {
                   accessorKey: "required",
                   footer: (props) => props.column.id,
+                },
+                {
+                  accessorKey: "delete",
+                  footer: (props) => props.column.id,
+                  size: 50,
                 },
               ],
             },

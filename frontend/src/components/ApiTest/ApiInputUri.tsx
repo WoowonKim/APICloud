@@ -1,35 +1,55 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../Store/hooks";
+import sideApiSlice from "../../Store/slice/sideApi";
 import testApiSlice from "../../Store/slice/testApi";
 import { RootState } from "../../Store/store";
 import MethodTest from "./MethodTest";
 
-const ApiInputUri = () => {
+interface list {
+  sideApiList: number;
+}
+
+const ApiInputUri = ({ sideApiList }: list) => {
   const isInfo = useSelector((state: RootState) => state.testApi);
+  const listInfo = useSelector((state: RootState) => state.sideApi);
   const dispatch = useAppDispatch();
+  const [value, setValue] = useState(listInfo[sideApiList].infomethod.userAddress);
+  useEffect(() => {
+    setValue(listInfo[sideApiList].infomethod.userAddress);
+  }, [sideApiList]);
   const testFunction = () => {
     // 보내기 클릭 시 전송해야하는 객체이므로 임시로 log처리 추후 변경 예정
     console.log("isInfo ====> ", isInfo);
   };
 
+  const wordApi = listInfo[sideApiList].infomethod.method;
+
   return (
     <div className="apiInputContainer">
       <span className="apiChoice">
-        <MethodTest />
+        <MethodTest methodApiWord={wordApi} />
       </span>
-      <input
-        className="apiInput"
-        type="text"
-        defaultValue={
-          isInfo.infomethod.address + isInfo.infomethod.commonUri + "/"
-        }
-        onChange={(e) => {
-          dispatch(
-            testApiSlice.actions.setAddress({ address: e.target.value })
-          );
-        }}
-      />
+      {sideApiList === 0 ? (
+        <input
+          className="apiInput"
+          type="text"
+          defaultValue={isInfo.infomethod.userAddress}
+          onChange={(e) => {
+            dispatch(testApiSlice.actions.setUserAddress({ userAddress: e.target.value }));
+          }}
+        />
+      ) : (
+        <input
+          className="apiInput"
+          type="text"
+          value={value}
+          onChange={(e) => {
+            dispatch(testApiSlice.actions.setUserAddress({ userAddress: e.target.value }));
+            setValue(e.target.value);
+          }}
+        />
+      )}
       <button
         className="apiTestBtn"
         onClick={() => {
@@ -37,6 +57,14 @@ const ApiInputUri = () => {
         }}
       >
         보내기
+      </button>
+      <button
+        className="apiTestBtn"
+        onClick={() => {
+          dispatch(sideApiSlice.actions.addMethodUri(isInfo));
+        }}
+      >
+        저장하기
       </button>
     </div>
   );

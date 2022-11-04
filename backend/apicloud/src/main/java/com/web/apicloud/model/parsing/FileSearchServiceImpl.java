@@ -1,4 +1,4 @@
-package com.web.apicloud.model;
+package com.web.apicloud.model.parsing;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

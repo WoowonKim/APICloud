@@ -33,6 +33,7 @@ public class User {
     private String providerId;
 
     private String imageUrl;
+
     @Builder
     public User(Long id, String email, String name, AuthProvider provider, String providerId, String imageUrl) {
         this.id = id;
@@ -47,4 +48,5 @@ public class User {
         this.name = name;
         this.imageUrl = imageUrl;
     }
+
 }

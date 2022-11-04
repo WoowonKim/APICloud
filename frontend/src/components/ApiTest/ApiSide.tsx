@@ -1,10 +1,27 @@
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../Store/store";
 import "./ApiTest.scss";
 
-const ApiSide = () => {
+interface sideApi {
+  setSidApiList: Dispatch<SetStateAction<number>>;
+}
+
+const ApiSide = ({ setSidApiList }: sideApi) => {
+  const isTestApiList = useSelector((state: RootState) => state.sideApi);
   return (
-    <div className="apiSide">
-      <p> ApiSide</p>
+    <div className="">
+      {isTestApiList.map((it, idx) => (
+        <div
+          key={idx}
+          onClick={() => {
+            setSidApiList(idx);
+          }}
+        >
+          <p>{it.infomethod.method}</p>
+          <p>{it.infomethod.userAddress}</p>
+        </div>
+      ))}
     </div>
   );
 };
