@@ -48,7 +48,7 @@ const HeaderToken = ({ sideApiList }: type) => {
           <p>
             <input
               type="text"
-              value={tokenValue}
+              value={tokenValue || ""}
               onChange={(e) => {
                 dispatch(testApiSlice.actions.setToken({ Token: e.target.value }));
                 setTokenValue(e.target.value);
@@ -58,7 +58,7 @@ const HeaderToken = ({ sideApiList }: type) => {
           <p>
             <input
               type="text"
-              value={cookieValue}
+              value={cookieValue || ""}
               onChange={(e) => {
                 dispatch(testApiSlice.actions.setCookie({ Cookie: e.target.value }));
                 setCookieValue(e.target.value);

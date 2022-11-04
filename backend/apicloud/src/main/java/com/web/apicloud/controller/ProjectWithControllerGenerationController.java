@@ -21,6 +21,7 @@ import com.web.apicloud.domain.vo.ApiVO;
 import com.web.apicloud.domain.vo.ControllerVO;
 import com.web.apicloud.domain.vo.DocVO;
 import com.web.apicloud.domain.vo.ServerVO;
+import com.web.apicloud.util.FileUtils;
 import com.web.apicloud.util.code.ProjectWithControllerGenerationInvoker;
 import com.web.apicloud.util.code.ProjectWithControllerGenerationResult;
 import io.spring.initializr.generator.buildsystem.BuildSystem;
@@ -110,14 +111,14 @@ public class ProjectWithControllerGenerationController {
     public ResponseEntity<byte[]> pom(ProjectRequest request) {
         request.setType("maven-build");
         byte[] mavenPom = this.projectGenerationInvoker.invokeBuildGeneration(request);
-        return createResponseEntity(mavenPom, "application/octet-stream", "pom.xml");
+        return FileUtils.createResponseEntity(mavenPom, "application/octet-stream", "pom.xml");
     }
 
     @RequestMapping(path = { "/build", "/build.gradle" })
     public ResponseEntity<byte[]> gradle(ProjectRequest request) {
         request.setType("gradle-build");
         byte[] gradleBuild = this.projectGenerationInvoker.invokeBuildGeneration(request);
-        return createResponseEntity(gradleBuild, "application/octet-stream", "build.gradle");
+        return FileUtils.createResponseEntity(gradleBuild, "application/octet-stream", "build.gradle");
     }
 
     @RequestMapping("/starter.zip")
@@ -136,6 +137,7 @@ public class ProjectWithControllerGenerationController {
 
     public ResponseEntity<byte[]> springZip(DocVO doc, Map<String, String> header) throws IOException {
         ProjectRequest request = projectRequest(header);
+        if(doc == null) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         updateProjectRequestByServerInfo(request, doc.getServer());
         ProjectWithControllerGenerationResult result = this.projectGenerationInvoker.invokeProjectStructureGeneration(request, doc);
         Path archive = createArchive(result, "zip", ZipArchiveOutputStream::new, ZipArchiveEntry::new,
@@ -241,15 +243,8 @@ public class ProjectWithControllerGenerationController {
             throws IOException {
         byte[] bytes = Files.readAllBytes(archive);
         logger.info(String.format("Uploading: %s (%s bytes)", archive, bytes.length));
-        ResponseEntity<byte[]> result = createResponseEntity(bytes, contentType, fileName);
+        ResponseEntity<byte[]> result = FileUtils.createResponseEntity(bytes, contentType, fileName);
         this.projectGenerationInvoker.cleanTempFiles(dir);
         return result;
     }
-
-    private ResponseEntity<byte[]> createResponseEntity(byte[] content, String contentType, String fileName) {
-        String contentDispositionValue = "attachment; filename=\"" + fileName + "\"";
-        return ResponseEntity.ok().header("Content-Type", contentType)
-                .header("Content-Disposition", contentDispositionValue).body(content);
-    }
-
 }

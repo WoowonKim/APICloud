@@ -10,10 +10,10 @@ interface type {
 const ApiBody = ({ sideApiList }: type) => {
   const [textValue, setTextValue] = useState("");
   const listInfo = useSelector((state: RootState) => state.sideApi);
-  const [bodyValue, setBodyValue] = useState(listInfo[sideApiList].body);
+  const [bodyValue, setBodyValue] = useState(listInfo[sideApiList]?.body);
   const dispatch = useAppDispatch();
   useEffect(() => {
-    setBodyValue(listInfo[sideApiList].body);
+    setBodyValue(listInfo[sideApiList]?.body);
   }, [sideApiList]);
   const handleSetValue = (e: { target: { value: React.SetStateAction<string> } }) => {
     setTextValue(e.target.value);
@@ -39,7 +39,7 @@ const ApiBody = ({ sideApiList }: type) => {
         <textarea
           className="bodyArea"
           placeholder="값을 입력해 주세요"
-          value={textValue}
+          value={textValue || ""}
           onChange={(e) => {
             handleSetValue(e);
           }}
@@ -49,7 +49,7 @@ const ApiBody = ({ sideApiList }: type) => {
         <textarea
           className="bodyArea"
           placeholder="값을 입력해 주세요"
-          value={bodyValue}
+          value={bodyValue || ""}
           onChange={(e) => {
             handleSetValue(e);
             setBodyValue(e.target.value);
