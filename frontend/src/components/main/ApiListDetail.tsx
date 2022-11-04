@@ -1,12 +1,12 @@
 import React from "react";
 import { ApiDocType } from "./ApiList";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { faPenToSquare, faUser } from "@fortawesome/free-solid-svg-icons";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { deleteApiDoc } from "../../Store/slice/mainApi";
+import mainApiSlice, { deleteApiDoc } from "../../Store/slice/mainApi";
 
 interface Props {
   apiList: number;
@@ -51,11 +51,27 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
                 onClick={moveApidocs}
               />
               {apiList === 0 ? (
-                <FontAwesomeIcon
-                  className="DeatilIcon"
-                  icon={faTrash}
-                  onClick={() => dispatchDeleteDoc(it.docId)}
-                />
+                <>
+                  <FontAwesomeIcon
+                    className="DeatilIcon"
+                    icon={faPenToSquare}
+                    onClick={() => {
+                      dispatch(
+                        mainApiSlice.actions.setIsOpenModal({
+                          isOpenModal: true,
+                        })
+                      );
+                      dispatch(
+                        mainApiSlice.actions.setDocId({ docId: it.docId })
+                      );
+                    }}
+                  />
+                  <FontAwesomeIcon
+                    className="DeatilIcon"
+                    icon={faTrash}
+                    onClick={() => dispatchDeleteDoc(it.docId)}
+                  />
+                </>
               ) : (
                 <div></div>
               )}

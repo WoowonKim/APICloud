@@ -27,7 +27,7 @@ public class Docs {
 
     private String serverUrl;
 
-    private String contextUri;
+    private String contextUrl;
 
     private Integer javaVersion;
 
@@ -53,11 +53,11 @@ public class Docs {
     }
 
     @Builder
-    public Docs(Long id, String docsName, String serverUrl, String contextUri, Integer javaVersion, String springVersion, Integer buildManagement, String groupPackage, String packageName, Integer packaging, String encryptedUrl, Group group) {
+    public Docs(Long id, String docsName, String serverUrl, String contextUrl, Integer javaVersion, String springVersion, Integer buildManagement, String groupPackage, String packageName, Integer packaging, String encryptedUrl, Group group) {
         this.id = id;
         this.docsName = docsName;
         this.serverUrl = serverUrl;
-        this.contextUri = contextUri;
+        this.contextUrl = contextUrl;
         this.javaVersion = javaVersion;
         this.springVersion = springVersion;
         this.buildManagement = buildManagement;
