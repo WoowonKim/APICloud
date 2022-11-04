@@ -38,6 +38,14 @@ export function axiosGet(url: string) {
   });
 }
 
+export function axiosPut(url: string, data: any) {
+  return axiosInstance({
+    method: "PUT",
+    url,
+    headers: getHeaders(),
+  });
+}
+
 export function axiosPatch(url: string, data: any) {
   return axiosInstance({
     method: "PATCH",

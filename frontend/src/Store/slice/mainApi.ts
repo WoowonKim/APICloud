@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
-import axiosService from "../axiosService";
+import { axiosDel, axiosGet, axiosPost, axiosPut } from "../../util/axiosUtil";
 
 const initialState = {
   userId: 1,
@@ -15,7 +15,7 @@ export const setApiDoc: any = createAsyncThunk(
   async (args: any, { rejectWithValue }) => {
     console.log(args);
     try {
-      const response = await axiosService.post("api/docs", args);
+      const response = await axiosPost("api/docs", args);
       return response.data;
     } catch (err: any) {
       return rejectWithValue(err.response);
@@ -28,7 +28,7 @@ export const getApiDocList: any = createAsyncThunk(
   "mainApi/getDocList",
   async (args: any, { rejectWithValue }) => {
     try {
-      const response = await axiosService.get("api/docs");
+      const response = await axiosGet("api/docs");
       return response.data;
     } catch (err: any) {
       return rejectWithValue(err.respone);
@@ -41,7 +41,7 @@ export const updateApiDoc: any = createAsyncThunk(
   "mainApi/updateApiDoc",
   async (args: any, { rejectWithValue }) => {
     try {
-      const response = await axiosService.put(
+      const response = await axiosPut(
         `api/docs/${args.docId}`,
         args.updateDocRequest
       );
@@ -57,7 +57,7 @@ export const deleteApiDoc: any = createAsyncThunk(
   "mainApi/deleteApiDoc",
   async (args: any, { rejectWithValue }) => {
     try {
-      const response = await axiosService.delete(`api/docs/${args.docId}`);
+      const response = await axiosDel(`api/docs/${args.docId}`);
       return response.data;
     } catch (err: any) {
       return rejectWithValue(err.response);
