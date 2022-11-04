@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ApisType, ControllerType } from "./ApisType";
+import { ApisType, ControllerType, PropertiesType } from "./ApisType";
 import "./CreateApi.scss";
 import Sidebar from "../../components/CreateApi/Sidebar/Sidebar";
 import Table from "../../components/CreateApi/Table/Table";
@@ -19,19 +19,12 @@ const CreateApi = () => {
       name: "",
       type: "",
       collectionType: "",
-      properties: [
-        {
-          name: "",
-          type: "",
-          required: true,
-          properties: [],
-          collectionType: "",
-        },
-      ],
+      properties: [],
       required: true,
     },
     parameters: [
       {
+        dtoName: "",
         name: "",
         type: "",
         required: true,
@@ -44,46 +37,32 @@ const CreateApi = () => {
       name: "",
       type: "",
       collectionType: "",
-      properties: [
-        {
-          name: "",
-          type: "",
-          required: true,
-          properties: [],
-          collectionType: "",
-        },
-      ],
+      properties: [],
       required: true,
     },
     headers: [{ key: "", value: "" }],
     responses: {
       fail: {
         status: 400,
-        type: "",
-        required: true,
-        properties: [
-          {
-            name: "",
-            type: "",
-            required: true,
-            properties: [],
-            collectionType: "",
-          },
-        ],
+        responseBody: {
+          dtoName: "",
+          name: "",
+          type: "",
+          collectionType: "",
+          properties: [],
+          required: true,
+        },
       },
       success: {
         status: 200,
-        type: "",
-        required: true,
-        properties: [
-          {
-            name: "",
-            type: "",
-            required: true,
-            properties: [],
-            collectionType: "",
-          },
-        ],
+        responseBody: {
+          dtoName: "",
+          name: "",
+          type: "",
+          collectionType: "",
+          properties: [],
+          required: true,
+        },
       },
     },
   });
@@ -93,6 +72,15 @@ const CreateApi = () => {
     commonUri: "",
     apis: [],
   });
+
+  const propertiesData: PropertiesType = {
+    dtoName: "",
+    name: "",
+    type: "",
+    required: true,
+    collectionType: "",
+    properties: [],
+  };
 
   const state = useSyncedStore(store);
   // 테이블의 탭 전환을 위한 state
@@ -109,7 +97,7 @@ const CreateApi = () => {
   const handleController = (method: string, index?: number) => {
     if (method === "add") {
       state.data.push(controllerData);
-      setAddedApiIndex(state.data.length);
+      setAddedControllerIndex(state.data.length - 1);
     } else if (method === "delete" && typeof index === "number") {
       state.data.splice(index, 1);
     }
@@ -118,7 +106,7 @@ const CreateApi = () => {
   // api 추가 함수 -> 기존 데이터에 새 데이터 추가
   const addApi = (index: number) => {
     state.data[index].apis.push(apiData);
-    setAddedControllerIndex(state.data[index].apis.length);
+    setAddedApiIndex(state.data[index].apis.length);
   };
 
   // table의 row 추가 함수
@@ -129,32 +117,18 @@ const CreateApi = () => {
         value: "",
       });
     } else if (activeTab === 2) {
-      state.data[selectedController].apis[selectedApi].parameters.push({
-        name: "",
-        type: "",
-        required: true,
-        properties: [],
-        collectionType: "",
-      });
+      state.data[selectedController].apis[selectedApi].parameters.push(
+        propertiesData
+      );
     } else if (activeTab === 3 || activeTab === 4) {
       const tab = activeTab === 3 ? "query" : "requestBody";
-      state.data[selectedController].apis[selectedApi][tab].properties.push({
-        name: "",
-        type: "",
-        required: true,
-        properties: [],
-        collectionType: "",
-      });
+      state.data[selectedController].apis[selectedApi][tab].properties.push(
+        propertiesData
+      );
     } else if (activeTab === 5 && responseType) {
       state.data[selectedController].apis[selectedApi].responses[
         responseType
-      ].properties.push({
-        name: "",
-        type: "",
-        required: true,
-        properties: [],
-        collectionType: "",
-      });
+      ].responseBody.properties.push(propertiesData);
     }
   };
 
@@ -244,38 +218,46 @@ const CreateApi = () => {
                 selectedController={selectedController}
                 selectedApi={selectedApi}
                 data={
-                  activeTab === 1
+                  activeTab === 1 &&
+                  state.data.length > 0 &&
+                  state.data[selectedController].apis.length > 0
                     ? JSON.parse(
                         JSON.stringify(
                           state.data[selectedController].apis[selectedApi]
                             .headers
                         )
                       )
-                    : activeTab === 2
+                    : activeTab === 2 &&
+                      state.data.length > 0 &&
+                      state.data[selectedController].apis.length > 0
                     ? JSON.parse(
                         JSON.stringify(
                           state.data[selectedController].apis[selectedApi]
                             .parameters
                         )
                       )
-                    : activeTab === 3
+                    : activeTab === 3 &&
+                      state.data.length > 0 &&
+                      state.data[selectedController].apis.length > 0
                     ? JSON.parse(
                         JSON.stringify(
                           state.data[selectedController].apis[selectedApi].query
-                            .properties
+                            ?.properties
                         )
                       )
-                    : activeTab === 4
+                    : activeTab === 4 &&
+                      state.data.length > 0 &&
+                      state.data[selectedController].apis.length > 0
                     ? JSON.parse(
                         JSON.stringify(
                           state.data[selectedController].apis[selectedApi]
-                            .requestBody.properties
+                            .requestBody?.properties
                         )
                       )
                     : JSON.parse(
                         JSON.stringify(
                           state.data[selectedController].apis[selectedApi]
-                            .responses.success.properties
+                            .responses.success.responseBody?.properties
                         )
                       )
                 }
@@ -299,7 +281,7 @@ const CreateApi = () => {
                 data={JSON.parse(
                   JSON.stringify(
                     state.data[selectedController].apis[selectedApi].responses
-                      .fail.properties
+                      .fail.responseBody?.properties
                   )
                 )}
                 state={state}
