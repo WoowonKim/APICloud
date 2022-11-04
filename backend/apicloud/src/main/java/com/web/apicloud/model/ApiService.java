@@ -1,6 +1,11 @@
 package com.web.apicloud.model;
 
+import com.web.apicloud.domain.dto.DetailResponse;
+
 public interface ApiService {
-    public String getDetailById(Long id);
-    public String updateDetailById(Long id, String detail);
+
+    public DetailResponse getDetailById(Long id);
+
+    public DetailResponse updateDetailById(Long id, String detail);
+
 }

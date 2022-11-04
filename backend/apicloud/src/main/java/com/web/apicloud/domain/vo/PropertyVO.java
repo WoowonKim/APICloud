@@ -46,6 +46,7 @@ public class PropertyVO {
         }
     }
 
+    @JsonIgnore
     public String getTypeForCode() {
         String type;
         if (isDtoCreationRequired()) {
@@ -61,6 +62,7 @@ public class PropertyVO {
         }
     }
 
+    @JsonIgnore
     public boolean isDtoCreationRequired() {
         return DTO_CREATE_TYPE.equals(type);
     }
