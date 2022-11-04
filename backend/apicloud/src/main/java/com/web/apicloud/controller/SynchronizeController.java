@@ -1,5 +1,6 @@
 package com.web.apicloud.controller;
 
+import com.web.apicloud.domain.dto.synchronize.ControllerDTO;
 import com.web.apicloud.domain.vo.ControllerVO;
 import com.web.apicloud.model.SynchronizeService;
 import lombok.RequiredArgsConstructor;
@@ -20,11 +21,12 @@ public class SynchronizeController {
     private final SynchronizeService synchronizeService;
 
     @GetMapping
-    public ResponseEntity<ControllerVO> getFile() throws IOException {
-//        String root = "C:/billow";
-        String root = "/Users/bbb381/S07P22B309/";
+    public ResponseEntity<ControllerDTO> getFile() throws IOException {
+        // TODO : doc id, controlloer id 받기
+        String root = "C:/billow";
+//        String root = "/Users/bbb381/S07P22B309/";
         String name = "Program";
-        ControllerVO response = synchronizeService.getFile(root, name);
+        ControllerDTO response = synchronizeService.getFile(1L, 0, root, name);
         return ResponseEntity.ok()
                 .body(response);
     }
