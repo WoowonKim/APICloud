@@ -1,11 +1,10 @@
 package com.web.apicloud.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.web.apicloud.domain.dto.CreateDocRequest;
-import com.web.apicloud.domain.dto.DocListResponse;
-import com.web.apicloud.domain.dto.UpdateDocDto;
+import com.web.apicloud.domain.dto.*;
 import com.web.apicloud.domain.vo.DocVO;
 import com.web.apicloud.model.DocsService;
+import com.web.apicloud.model.NotionService;
 import com.web.apicloud.util.FileUtils;
 import com.web.apicloud.util.ResponseHandler;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +22,9 @@ import java.util.Map;
 @RequestMapping("/docs")
 public class DocsController {
     private final DocsService docsService;
+
+    private final NotionService notionService;
+
     // FIXME: controller 안의 로직 밖에서 수행하거나 해당 controller api 막기
     private final ProjectWithControllerGenerationController projectGenerationController;
 
@@ -95,7 +97,15 @@ public class DocsController {
     @GetMapping("/{docsId}/csv")
     public ResponseEntity<byte[]> exportCsv(@PathVariable("docsId") Long docsId) throws JsonProcessingException {
         DocVO doc = docsService.getDocVOByDocsId(docsId);
-        byte[] file = docsService.getExcelFile(doc.getControllers());
+        byte[] file = docsService.getCsvFile(doc.getControllers());
         return FileUtils.createResponseEntity(file, "text/csv", doc.getServer().getName() + ".csv");
+    }
+
+    @PostMapping("/{docsId}/notion")
+    public ResponseEntity<NotionExportResponse> exportNotion(@PathVariable("docsId") Long docsId,
+                                                             @RequestBody(required = false) NotionExportRequest request) throws JsonProcessingException {
+        DocVO doc = docsService.getDocVOByDocsId(docsId);
+        notionService.makeApiPage(request.getToken(), request.getDatabaseId(), doc);
+        return ResponseEntity.ok().body(new NotionExportResponse("https://www.notion.so/" + request.getDatabaseId()));
     }
 }

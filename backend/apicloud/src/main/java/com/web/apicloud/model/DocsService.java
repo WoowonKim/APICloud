@@ -30,5 +30,5 @@ public interface DocsService {
 
     void deleteDoc(Long docId);
 
-    byte[] getExcelFile(List<ControllerVO> docVOByDocsId);
+    byte[] getCsvFile(List<ControllerVO> docVOByDocsId);
 }
