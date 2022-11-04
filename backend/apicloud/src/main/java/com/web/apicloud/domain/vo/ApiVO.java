@@ -41,22 +41,20 @@ public class ApiVO {
         }
     }
 
-//    public List<PropertyVO> getAvailableDTO() {
-//        List<PropertyVO> dtos = new ArrayList<>();
-//        Set<String> dtoNames = new HashSet<>();
-//        if(requestBody != null) {
-//            requestBody.getDtos(dtos, dtoNames);
-//        }
-//        if(query != null) {
-//            query.getDtos(dtos, dtoNames);
-//        }
-//        if(responses != null) {
-//            for(ResponseVO response : responses.values()) {
-//                if(response.getResponseBody() != null) {
-//                    response.getResponseBody().getDtos(dtos, dtoNames);
-//                }
-//            }
-//        }
-//        return dtos;
-//    }
+    // public Map<String, PropertyVO> getAvailableDTO(Map<String, PropertyVO> dtos) {
+    //     if(requestBody != null) {
+    //         requestBody.getDtos(dtos);
+    //     }
+    //     if(query != null) {
+    //         query.getDtos(dtos);
+    //     }
+    //     if(responses != null) {
+    //         for(ResponseVO response : responses.values()) {
+    //             if(response.getResponseBody() != null) {
+    //                 response.getResponseBody().getDtos(dtos);
+    //             }
+    //         }
+    //     }
+    //     return dtos;
+    // }
 }
