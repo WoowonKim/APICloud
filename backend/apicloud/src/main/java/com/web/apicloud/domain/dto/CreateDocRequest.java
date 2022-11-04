@@ -12,7 +12,7 @@ public class CreateDocRequest {
 
     private String serverUrl;
 
-    private String contextUri;
+    private String contextUrl;
 
     private String javaVersion;
 
@@ -32,7 +32,7 @@ public class CreateDocRequest {
         return Docs.builder()
                 .docsName(docsName)
                 .serverUrl(serverUrl)
-                .contextUri(contextUri)
+                .contextUrl(contextUrl)
                 .javaVersion(javaVersion)
                 .springVersion(springVersion)
                 .buildManagement(buildManagement)

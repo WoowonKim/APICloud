@@ -133,7 +133,7 @@ public class DocsServiceImpl implements DocsService{
     public UpdateDocDto updateDoc(Long docId, UpdateDocDto updateDocDto) {
         Docs doc = findByDocsId(docId);
         doc.setServerUrl(updateDocDto.getServerUrl());
-        doc.setContextUri(updateDocDto.getContextUrl());
+        doc.setContextUrl(updateDocDto.getContextUrl());
         doc.setJavaVersion(updateDocDto.getJavaVersion());
         doc.setSpringVersion(updateDocDto.getSpringVersion());
         doc.setBuildManagement(updateDocDto.getBuildManagement());
