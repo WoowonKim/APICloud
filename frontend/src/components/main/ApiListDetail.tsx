@@ -5,8 +5,10 @@ import { faPenToSquare, faUser } from "@fortawesome/free-solid-svg-icons";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import mainApiSlice, { deleteApiDoc } from "../../Store/slice/mainApi";
+import UpdateModal from "./UpdateModal";
+import { RootState } from "../../Store/store";
 
 interface Props {
   apiList: number;
@@ -17,6 +19,9 @@ interface Props {
 const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const isOpenUpdateModal = useSelector(
+    (state: RootState) => state.mainApi.isOpenUpdateModal
+  );
 
   const moveApidocs = () => {
     navigate("/apidocs");
@@ -33,6 +38,7 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
 
   return (
     <div className="ApiListDetail">
+      {isOpenUpdateModal && <UpdateModal></UpdateModal>}
       {apiDocList?.map((it, idx) => (
         <div className="listContent" key={idx}>
           <p>{it.docId}</p>
@@ -57,8 +63,8 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
                     icon={faPenToSquare}
                     onClick={() => {
                       dispatch(
-                        mainApiSlice.actions.setIsOpenModal({
-                          isOpenModal: true,
+                        mainApiSlice.actions.setIsOpenUpdateModal({
+                          isOpenUpdateModal: true,
                         })
                       );
                       dispatch(

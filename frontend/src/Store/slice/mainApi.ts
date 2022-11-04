@@ -5,7 +5,8 @@ import { axiosDel, axiosGet, axiosPost, axiosPut } from "../../util/axiosUtil";
 const initialState = {
   userId: 1,
   docId: 0,
-  isOpenModal: false,
+  isOpenCreateModal: false,
+  isOpenUpdateModal: false,
   isDocCreated: false,
   isDocUpdated: false,
 };
@@ -86,8 +87,11 @@ const mainApiSlice = createSlice({
     setDocId(state, action) {
       state.docId = action.payload.docId;
     },
-    setIsOpenModal(state, action) {
-      state.isOpenModal = action.payload.isOpenModal;
+    setIsOpenCreateModal(state, action) {
+      state.isOpenCreateModal = action.payload.isOpenCreateModal;
+    },
+    setIsOpenUpdateModal(state, action) {
+      state.isOpenUpdateModal = action.payload.isOpenUpdateModal;
     },
     setIsDocCreated(state, action) {
       state.isDocCreated = action.payload.isDocCreated;
