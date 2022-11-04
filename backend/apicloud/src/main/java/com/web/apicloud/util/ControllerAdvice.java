@@ -56,12 +56,12 @@ public class ControllerAdvice {
         return new Message(runtimeException.getMessage());
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler({RuntimeException.class, Exception.class})
-    public Message commonException(Exception e) {
-        log.info(e.getMessage());
-        return new Message("오류가 발생했습니다.");
-    }
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+//    @ExceptionHandler({RuntimeException.class, Exception.class})
+//    public Message commonException(Exception e) {
+//        log.info(e.getMessage());
+//        return new Message("오류가 발생했습니다.");
+//    }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler({ExpiredJwtException.class, UnauthorizedException.class})

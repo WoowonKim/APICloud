@@ -60,7 +60,7 @@ public class ControllerContributor implements ProjectContributor {
 
     private Consumer<ApiVO> apiConsumer(CustomJavaSourceCode sourceCode, CustomJavaTypeDeclaration controllerType) {
         return api -> {
-            addDto(sourceCode, api.getAvailableDTO(), controllerType.getName());
+//            addDto(sourceCode, api.getAvailableDTO(), controllerType.getName());
             CustomJavaMethodDeclaration.Builder builder = CustomJavaMethodDeclaration
                     .method(api.getName())
                     .modifiers(Modifier.PUBLIC)
@@ -86,7 +86,7 @@ public class ControllerContributor implements ProjectContributor {
         makeParameters(api.getParameters()).ifPresent(parameters::addAll);
 
         // query에서 파라미터 추가
-        makeParameter(api.getQuery(), null).ifPresent(parameters::add);
+//        makeParameter(api.getQuery(), null).ifPresent(parameters::add);
 
         // requestBody에서 파라미터 추가
         makeParameter(api.getRequestBody(), "org.springframework.web.bind.annotation.RequestBody").ifPresent(parameters::add);
