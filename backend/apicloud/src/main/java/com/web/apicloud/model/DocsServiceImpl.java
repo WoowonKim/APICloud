@@ -164,7 +164,7 @@ public class DocsServiceImpl implements DocsService{
                 csvContent.append(api.getName()).append(",")
                         .append(api.getUri()).append(",")
                         .append(api.getMethod()).append(",")
-//                        .append("\"").append(makeCsvFromProperty(api.getQuery())).append("\"").append(",")
+                        .append("\"").append(makeCsvFromProperties(api.getQueries())).append("\"").append(",")
                         .append("\"").append(makeCsvFromProperties(api.getParameters())).append("\"").append(",")
                         .append("\"").append(makeCsvFromProperty(api.getRequestBody())).append("\"").append(",");
                 makeCsvFromResponse(api.getResponses().get("success"), csvContent).append(",");
