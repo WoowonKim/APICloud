@@ -29,7 +29,9 @@ const ApiInputUri = ({ sideApiList }: list) => {
   };
 
   const wordApi = listInfo[sideApiList]?.infomethod.method;
-
+  const pushInfoUri = (e: SideApiProps) => {
+    dispatch(sideApiSlice.actions.checkMethod(e));
+  };
   return (
     <div className="apiInputContainer">
       <span className="apiChoice">
@@ -66,7 +68,7 @@ const ApiInputUri = ({ sideApiList }: list) => {
       <button
         className="apiTestBtn"
         onClick={() => {
-          dispatch(sideApiSlice.actions.addMethodUri(isInfo));
+          pushInfoUri(isInfo);
         }}
       >
         저장하기
