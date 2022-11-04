@@ -22,7 +22,7 @@ public interface DocsService {
 
     List<DocListResponse> getDocs(Long userId);
 
-    DocListResponse getDoc(Long userId, Long docId);
+    UpdateDocDto getDoc(Long docId);
 
     DocVO getDocVOByDocsId(Long docId) throws JsonProcessingException;
     
