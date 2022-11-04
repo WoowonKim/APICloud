@@ -53,8 +53,6 @@ const ControllerAddModal = ({
   };
 
   const checkApiValidation = () => {
-    console.log(editControllerIndex, addedControllerIndex);
-
     for (let item of state.data[
       editControllerIndex > -1 ? editControllerIndex : addedControllerIndex
     ].apis) {
