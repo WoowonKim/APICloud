@@ -130,6 +130,22 @@ public class DocsServiceImpl implements DocsService{
     }
 
     @Override
+    public DocListResponse getDoc(Long userId, Long docId) {
+        User user = findByUserId(userId);
+        List<GroupUser> groupUsers = groupUserRepository.findByUser(user);
+        DocListResponse docListResponse = null;
+        for (GroupUser groupUser : groupUsers) {
+            List<Docs> docs = docsRepository.findByGroup(groupUser.getGroup());
+            for (Docs doc : docs) {
+                if (docId.equals(doc.getId())) {
+                    docListResponse = doc.toDto(doc.getId(), doc.getDocsName(), doc.getGroup().getId(), groupUser.getUser(), groupUser.getAuthority());
+                }
+            }
+        }
+        return docListResponse;
+    }
+
+    @Override
     public UpdateDocDto updateDoc(Long docId, UpdateDocDto updateDocDto) {
         Docs doc = findByDocsId(docId);
         doc.setDocsName(updateDocDto.getDocsName());

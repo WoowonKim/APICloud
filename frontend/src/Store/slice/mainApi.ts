@@ -26,13 +26,26 @@ export const setApiDoc: any = createAsyncThunk(
 
 // API DOC LIST 조회하기
 export const getApiDocList: any = createAsyncThunk(
-  "mainApi/getDocList",
+  "mainApi/getApiDocList",
   async (args: any, { rejectWithValue }) => {
     try {
       const response = await axiosGet("docs");
       return response.data;
     } catch (err: any) {
       return rejectWithValue(err.respone);
+    }
+  }
+);
+
+// 특정 API DOC 조회하기
+export const getApiDoc: any = createAsyncThunk(
+  "mainApi/getApiDoc",
+  async (args: any, { rejectWithValue }) => {
+    try {
+      const response = await axiosGet(`docs/${args.docId}`);
+      return response.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response);
     }
   }
 );
@@ -81,7 +94,7 @@ const mainApiSlice = createSlice({
     },
     setIsDocUpdated(state, action) {
       state.isDocUpdated = action.payload.isDocUpdated;
-    }
+    },
   },
   extraReducers: {
     [setApiDoc.fulfilled]: (state, action) => {
