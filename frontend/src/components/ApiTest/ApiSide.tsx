@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useAppDispatch } from "../../Store/hooks";
-import sideApiSlice from "../../Store/slice/sideApi";
+import { useAppDispatch, useAppSelector } from "../../Store/hooks";
+import sideApiSlice, { selectSideApi } from "../../Store/slice/sideApi";
 import { RootState } from "../../Store/store";
 import "./ApiTest.scss";
 
@@ -11,7 +11,7 @@ interface sideApi {
 
 const ApiSide = ({ setSidApiList }: sideApi) => {
   const dispatch = useAppDispatch();
-  const isTestApiList = useSelector((state: RootState) => state.sideApi);
+  const isTestApiList = useAppSelector(selectSideApi);
 
   return (
     <div className="">

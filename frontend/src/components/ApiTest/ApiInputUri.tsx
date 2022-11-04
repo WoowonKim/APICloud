@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useAppDispatch } from "../../Store/hooks";
-import sideApiSlice, { SideApiProps } from "../../Store/slice/sideApi";
-import testApiSlice from "../../Store/slice/testApi";
+import { useAppDispatch, useAppSelector } from "../../Store/hooks";
+import sideApiSlice, { selectSideApi, SideApiProps } from "../../Store/slice/sideApi";
+import testApiSlice, { selectTestApi } from "../../Store/slice/testApi";
 import { RootState } from "../../Store/store";
 import MethodTest from "./MethodTest";
 
@@ -11,8 +11,8 @@ interface list {
 }
 
 const ApiInputUri = ({ sideApiList }: list) => {
-  const isInfo = useSelector((state: RootState) => state.testApi);
-  const listInfo = useSelector((state: RootState) => state.sideApi);
+  const isInfo = useAppSelector(selectTestApi);
+  const listInfo = useAppSelector(selectSideApi);
   const dispatch = useAppDispatch();
   const [value, setValue] = useState(listInfo[sideApiList]?.infomethod.userAddress);
   const [defaultFlag, setDefaltFlag] = useState(false);
