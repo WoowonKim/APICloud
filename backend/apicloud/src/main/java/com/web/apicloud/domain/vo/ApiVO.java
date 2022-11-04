@@ -1,5 +1,6 @@
 package com.web.apicloud.domain.vo;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,6 +12,7 @@ import java.util.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+//@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ApiVO {
 
     private String name;
@@ -23,7 +25,7 @@ public class ApiVO {
 
     private List<PropertyVO> parameters;
 
-    private PropertyVO query;
+    private List<PropertyVO> queries;
 
     private List<HeaderVO> headers;
 
@@ -39,20 +41,20 @@ public class ApiVO {
         }
     }
 
-    public Map<String, PropertyVO> getAvailableDTO(Map<String, PropertyVO> dtos) {
-        if(requestBody != null) {
-            requestBody.getDtos(dtos);
-        }
-        if(query != null) {
-            query.getDtos(dtos);
-        }
-        if(responses != null) {
-            for(ResponseVO response : responses.values()) {
-                if(response.getResponseBody() != null) {
-                    response.getResponseBody().getDtos(dtos);
-                }
-            }
-        }
-        return dtos;
-    }
+    // public Map<String, PropertyVO> getAvailableDTO(Map<String, PropertyVO> dtos) {
+    //     if(requestBody != null) {
+    //         requestBody.getDtos(dtos);
+    //     }
+    //     if(query != null) {
+    //         query.getDtos(dtos);
+    //     }
+    //     if(responses != null) {
+    //         for(ResponseVO response : responses.values()) {
+    //             if(response.getResponseBody() != null) {
+    //                 response.getResponseBody().getDtos(dtos);
+    //             }
+    //         }
+    //     }
+    //     return dtos;
+    // }
 }
