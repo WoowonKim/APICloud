@@ -7,7 +7,6 @@ import com.web.apicloud.domain.entity.Docs;
 import com.web.apicloud.domain.repository.DocsRepository;
 import com.web.apicloud.domain.vo.*;
 import com.web.apicloud.exception.NotFoundException;
-import com.web.apicloud.exception.ResourceNotFoundException;
 import com.web.apicloud.model.parsing.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,12 +30,13 @@ public class SynchronizeServiceImpl implements SynchronizeService {
     private static final String REQUEST_BODY = "RequestBody";
     private static final String VALUE = "value";
     private static String rootPath = "";
-    private static final String NOT_FOUND_DOCS = "해당 API DOC을 찾을 수 없습니다.";
+    private static final String NOT_FOUND_DOCS = "해당 API Doc을 찾을 수 없습니다.";
     private static final String NOT_FOUND_CONTROLLER = "해당 Controller를 찾을 수 없습니다.";
 
     private final ParsingService parsingService;
     private final ClassParsingService classParsingService;
     private final FileSearchService fileSearchService;
+    private final CompareService compareService;
     private final DocsRepository docsRepository;
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -95,9 +95,8 @@ public class SynchronizeServiceImpl implements SynchronizeService {
         DocVO detailVO = objectMapper.readValue(doc.getDetail(), DocVO.class);
         if (detailVO.getControllers().size() <= controllerId) new NotFoundException(NOT_FOUND_CONTROLLER);
         ControllerVO original = detailVO.getControllers().get(controllerId);
-        System.out.println(original);
-        ControllerDTO controllerDTO = ControllerMapper.INSTANCE.ControllerVOToControllerDTO(controllerVO);
-        return controllerDTO;
+
+        return compareService.compareControllerVO(original, controllerVO);
     }
 
     private ApiVO apiParsing(List<String> api) throws IOException {

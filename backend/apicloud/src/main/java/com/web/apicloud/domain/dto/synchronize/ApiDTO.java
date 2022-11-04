@@ -27,4 +27,8 @@ public class ApiDTO {
     private List<PropertyDTO> queries;
 
     private Map<String, ResponseDTO> responses;
+
+    private Integer uriFlag;
+
+    private Integer methodFlag;
 }

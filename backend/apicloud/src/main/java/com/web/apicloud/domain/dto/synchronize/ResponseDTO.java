@@ -14,4 +14,6 @@ public class ResponseDTO {
     private Integer status;
 
     private PropertyDTO responseBody;
+
+    private Integer statusFlag;
 }

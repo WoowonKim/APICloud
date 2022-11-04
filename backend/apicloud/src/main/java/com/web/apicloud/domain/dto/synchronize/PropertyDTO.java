@@ -24,6 +24,16 @@ public class PropertyDTO {
 
     private List<PropertyDTO> properties;
 
+    private Integer dtoNameFlag;
+
+    private Integer nameFlag;
+
+    private Integer typeFlag;
+
+    private Integer collectionTypeFlag;
+
+    private Integer requiredFlag;
+
     public PropertyDTO() {
         this.properties = new ArrayList<>();
     }

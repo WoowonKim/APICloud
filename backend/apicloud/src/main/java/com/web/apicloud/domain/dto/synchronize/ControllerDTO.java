@@ -18,4 +18,6 @@ public class ControllerDTO {
     private String commonUri;
 
     private List<ApiDTO> apis;
+
+    private Integer commonUriFlag;
 }
