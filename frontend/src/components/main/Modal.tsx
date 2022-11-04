@@ -1,27 +1,32 @@
-import React, { PropsWithChildren, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleUser } from "@fortawesome/free-solid-svg-icons";
 import { faLink } from "@fortawesome/free-solid-svg-icons";
 import { userDummy } from "./ListDummy";
-import { useDispatch } from "react-redux";
-import { setApiDoc } from "../../Store/slice/mainApi";
+import { useDispatch, useSelector } from "react-redux";
+import mainApiSlice, {
+  setApiDoc,
+  updateApiDoc,
+} from "../../Store/slice/mainApi";
+import { RootState } from "../../Store/store";
 
-interface ModalDefaultType {
-  onClickToggleModal: () => void;
-}
-
-const Modal = ({ onClickToggleModal }: PropsWithChildren<ModalDefaultType>) => {
+const Modal = () => {
   const [docsName, setDocsName] = useState("");
   const [serverUrl, setServerUrl] = useState("");
   const [contextUri, setContextUri] = useState("");
   const [javaVersion, setJavaVersion] = useState(0);
-  const [springVerion, setSpringVersion] = useState("");
+  const [springVersion, setSpringVersion] = useState("");
   const [buildManagement, setBuildManagement] = useState(0);
   const [groupPackage, setGroupPackage] = useState("");
   const [packageName, setPackageName] = useState("");
   const [packaging, setPackaging] = useState(0);
   const [encryptedUrl, setEncryptedUrl] = useState("");
+
+  const docId = useSelector((state: RootState) => state.mainApi.docId);
+  const isOpenModal = useSelector(
+    (state: RootState) => state.mainApi.isOpenModal
+  );
 
   const dispatch = useDispatch();
 
@@ -30,7 +35,7 @@ const Modal = ({ onClickToggleModal }: PropsWithChildren<ModalDefaultType>) => {
     serverUrl &&
     contextUri &&
     javaVersion &&
-    springVerion &&
+    springVersion &&
     buildManagement &&
     groupPackage &&
     packageName &&
@@ -78,22 +83,55 @@ const Modal = ({ onClickToggleModal }: PropsWithChildren<ModalDefaultType>) => {
     serverUrl: serverUrl,
     contextUri: contextUri,
     javaVersion: javaVersion,
-    springVerion: springVerion,
+    springVersion: springVersion,
     buildManagement: buildManagement,
     groupPackage: groupPackage,
     packageName: packageName,
     packaging: packaging,
   };
 
-  // API DOC 생성하기
+  const updateDocRequest = {
+    docId: docId,
+    docsName: docsName,
+    serverUrl: serverUrl,
+    contextUri: contextUri,
+    javaVersion: javaVersion,
+    springVersion: springVersion,
+    buildManagement: buildManagement,
+    groupPackage: groupPackage,
+    packageName: packageName,
+    packaging: packaging,
+  };
+
+  // API DOC 생성하기 및 수정하기
   const onSubmit = (e: any) => {
     e.preventDefault();
-    dispatch(setApiDoc(createDocRequest)).then((res: any) => {
-      if (res.payload?.status === 200) {
-        setEncryptedUrl(res.payload.encryptedUrl);
-        console.log(res.payload.encryptedUrl);
-      }
-    });
+    if (docId === 0) {
+      dispatch(setApiDoc(createDocRequest)).then((res: any) => {
+        if (res.payload?.status === 200) {
+          setEncryptedUrl(res.payload.encryptedUrl);
+          console.log(res.payload.encryptedUrl);
+          dispatch(mainApiSlice.actions.setIsOpenModal({ isOpenModal: false }));
+          dispatch(
+            mainApiSlice.actions.setIsDocCreated({ isDocCreated: true })
+          );
+        }
+      });
+    } else {
+      dispatch(
+        updateApiDoc({ docId: docId, updateDocRequest: updateDocRequest })
+      ).then((res: any) => {
+        if (res.payload?.status === 200) {
+          dispatch(mainApiSlice.actions.setDocId({ docId: 0 }));
+          dispatch(mainApiSlice.actions.setIsOpenModal({ isOpenModal: false }));
+          dispatch(
+            mainApiSlice.actions.setIsDocUpdated({
+              isDocUpdated: true,
+            })
+          );
+        }
+      });
+    }
   };
 
   return (
@@ -116,9 +154,9 @@ const Modal = ({ onClickToggleModal }: PropsWithChildren<ModalDefaultType>) => {
                 onChange={onChangeServerUrl}
               />
               <input
-                className="contextUri"
+                className="contextUrl"
                 type="text"
-                placeholder="생성할 contextUri를 작성해주세요"
+                placeholder="생성할 contextUrl를 작성해주세요"
                 onChange={onChangeContextUri}
               />
               <input
@@ -196,8 +234,10 @@ const Modal = ({ onClickToggleModal }: PropsWithChildren<ModalDefaultType>) => {
       <Backdrop
         onClick={(e: React.MouseEvent) => {
           e.preventDefault();
-          if (onClickToggleModal) {
-            onClickToggleModal();
+          if (isOpenModal) {
+            dispatch(
+              mainApiSlice.actions.setIsOpenModal({ isOpenModal: false })
+            );
           }
         }}
       />

@@ -6,11 +6,13 @@ import lombok.Data;
 public class UpdateDocDto {
     private Long docId;
 
+    private String docsName;
+
     private String serverUrl;
 
-    private String contextUrl;
+    private String contextUri;
 
-    private Integer javaVersion;
+    private String javaVersion;
 
     private String springVersion;
 

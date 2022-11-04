@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -20,6 +21,7 @@ public class ClassParsingServiceImpl implements ClassParsingService {
     private static final String[] type = {"String", "Long", "long", "Integer", "int", "float", "Float"};
 
     private static String rootPath = "";
+    public static ArrayList<String> useObject = new ArrayList<>();
 
     private final FileSearchService fileSearchService;
     private final ParsingService parsingService;
@@ -40,8 +42,12 @@ public class ClassParsingServiceImpl implements ClassParsingService {
                 return requestBody;
             }
         }
+
         requestBody.setDtoName(name);
         requestBody.setType("Object");
+        if(useObject.contains(name)) return requestBody;
+        useObject.add(name);
+
         rootPath = root;
         if (rootPath.equals("") || rootPath == null) return null;
 
@@ -69,7 +75,7 @@ public class ClassParsingServiceImpl implements ClassParsingService {
 
     public PropertyVO getProperty(String str) throws IOException {
         str = str.strip();
-        str = str.replaceAll(";$", "");
+        str = str.replaceAll(";", "");
         String[] tokens = str.split(" ");
         if (tokens.length <= 1) return null;
 
@@ -88,6 +94,7 @@ public class ClassParsingServiceImpl implements ClassParsingService {
 
         if ((j + 1) >= tokens.length) return null;
         PropertyVO getPropertyVO = getBody(rootPath, tokens[j]);
+        if(getPropertyVO == null) return null;
         return PropertyVO.builder()
                 .dtoName(getPropertyVO.getDtoName())
                 .name(tokens[j + 1])

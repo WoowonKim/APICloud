@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { axiosGet, axiosPost } from "../../util/axiosUtil";
+import { axiosGet } from "../../util/axiosUtil";
 import { RootState } from "../store";
 
 export interface userConfig {

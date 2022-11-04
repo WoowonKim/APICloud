@@ -1,7 +1,7 @@
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { MappedTypeDescription } from "@syncedstore/core/types/doc";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { ControllerType } from "../../../pages/CreateApi/ApisType";
 import ModalTable from "../ModalTable/ModalTable";
 import "./ControllerAddModal.scss";
@@ -13,26 +13,58 @@ interface Props {
     data: ControllerType[];
   }>;
   editControllerIndex: number;
+  setEditControllerIndex: React.Dispatch<React.SetStateAction<number>>;
+  addedControllerIndex: number;
 }
 const ControllerAddModal = ({
   setIsModalVisible,
   addApi,
   state,
   editControllerIndex,
+  setEditControllerIndex,
+  addedControllerIndex,
 }: Props) => {
   // controller의 정보를 입력받아 저장할 state
-  const [controllerName, setControllerName] = useState("");
-  const [controllerUri, setControllerUri] = useState("");
+  const [controllerName, setControllerName] = useState(
+    editControllerIndex > -1 ? state.data?.[editControllerIndex].name : ""
+  );
+  const [controllerUri, setControllerUri] = useState(
+    editControllerIndex > -1 ? state.data?.[editControllerIndex].commonUri : ""
+  );
 
   // controller의 추가 여부를 확인할 flag
-  const [isControllerAdd, setIsControllerAdd] = useState(false);
+  const [isControllerAdd, setIsControllerAdd] = useState(
+    editControllerIndex > -1 ? true : false
+  );
 
-  // modal이 렌더링될 때 기본값 초기화
-  useEffect(() => {
-    setIsControllerAdd(false);
-    setControllerName("");
-    setControllerUri("");
-  }, []);
+  // controller 유효성 검사 확인 flag
+  const [isControllerAddPossible, setIsControllerAddPossible] = useState(
+    editControllerIndex > -1 ? true : false
+  );
+  // api 유효성 검사 확인 flag
+  const [isApiAddPossible, setIsApiAddPossible] = useState(
+    editControllerIndex > -1 ? true : false
+  );
+
+  const checkControllerValidation = () => {
+    if (controllerName.trim() && controllerUri.trim()) {
+      setIsControllerAddPossible(!isControllerAdd);
+    }
+  };
+
+  const checkApiValidation = () => {
+    for (let item of state.data[
+      editControllerIndex > -1 ? editControllerIndex : addedControllerIndex
+    ].apis) {
+      if (!item["name"].trim() || !item["uri"].trim()) {
+        setIsApiAddPossible(false);
+        return;
+      }
+    }
+    setIsApiAddPossible(true);
+    setIsModalVisible((curr) => !curr);
+  };
+
   return (
     <div className="sidebarModalContainer">
       <div className="modalInnerContainer">
@@ -50,12 +82,13 @@ const ControllerAddModal = ({
               id="controllerUri"
               onChange={(e) => {
                 setControllerUri(e.target.value);
+                checkControllerValidation();
               }}
               className="controllerInput1"
               placeholder="/test"
               defaultValue={
                 editControllerIndex > -1
-                  ? state.data?.[editControllerIndex].commonUri
+                  ? state.data[editControllerIndex].commonUri
                   : ""
               }
             />
@@ -69,12 +102,13 @@ const ControllerAddModal = ({
               id="controllerName"
               onChange={(e) => {
                 setControllerName(e.target.value);
+                checkControllerValidation();
               }}
               className="controllerInput1"
               placeholder="TestController"
               defaultValue={
                 editControllerIndex > -1
-                  ? state.data?.[editControllerIndex].name
+                  ? state.data[editControllerIndex].name
                   : ""
               }
             />
@@ -92,6 +126,7 @@ const ControllerAddModal = ({
               }
               setIsControllerAdd(true);
             }}
+            disabled={!isControllerAddPossible}
           >
             {isControllerAdd ? "Controller 수정" : "Controller 추가"}
           </button>
@@ -130,13 +165,18 @@ const ControllerAddModal = ({
                 )
               )}
               state={state}
+              editControllerIndex={editControllerIndex}
+              addedControllerIndex={addedControllerIndex}
             />
           </div>
         </div>
+        {!isApiAddPossible && (
+          <p className="controllerInfoText">Api 정보를 모두 입력해주세요</p>
+        )}
         <button
           className="controllerModalCloseButton"
           disabled={!isControllerAdd}
-          onClick={() => setIsModalVisible((curr) => !curr)}
+          onClick={checkApiValidation}
         >
           Controller 추가 완료하기
         </button>
@@ -149,8 +189,9 @@ const ControllerAddModal = ({
             editControllerIndex === -1 &&
             state.data.length > 0
           ) {
-            state.data.pop();
+            state.data.splice(state.data.length - 1, 1);
           }
+          setEditControllerIndex(-1);
           setIsModalVisible((curr) => !curr);
         }}
       ></div>

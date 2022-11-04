@@ -97,18 +97,28 @@ const CreateApi = () => {
   const state = useSyncedStore(store);
   // 테이블의 탭 전환을 위한 state
   const [activeTab, setActiveTab] = useState(1);
-  // 선택된 api를 저장할 state
+  // 선택된 api,controller 저장 state
   const [selectedApi, setSelectedApi] = useState(-1);
   const [selectedController, setSelectedController] = useState(-1);
 
-  // controller 추가 함수 -> 기존 데이터에 새 데이터 추가
-  const addController = () => {
-    state.data.push(controllerData);
+  // 추가된 api, controller index를 저장할 state
+  const [addedApiIndex, setAddedApiIndex] = useState(-1);
+  const [addedControllerIndex, setAddedControllerIndex] = useState(-1);
+
+  // controller 추가/삭제 함수 -> 기존 데이터에 새 데이터 추가
+  const handleController = (method: string, index?: number) => {
+    if (method === "add") {
+      state.data.push(controllerData);
+      setAddedApiIndex(state.data.length);
+    } else if (method === "delete" && typeof index === "number") {
+      state.data.splice(index, 1);
+    }
   };
 
   // api 추가 함수 -> 기존 데이터에 새 데이터 추가
   const addApi = (index: number) => {
     state.data[index].apis.push(apiData);
+    setAddedControllerIndex(state.data[index].apis.length);
   };
 
   // table의 row 추가 함수
@@ -160,10 +170,14 @@ const CreateApi = () => {
   return (
     <div className="apiDocscontainer">
       <Sidebar
-        addController={addController}
+        handleController={handleController}
         addApi={addApi}
         state={state}
         handleSidebarApi={handleSidebarApi}
+        selectedApi={selectedApi}
+        selectedController={selectedController}
+        addedApiIndex={addedApiIndex}
+        addedControllerIndex={addedControllerIndex}
       />
       <div className="apiDocsMaincontainer">
         <div className="titleContainer">
