@@ -25,6 +25,9 @@ const ApiList = () => {
   const isDocCreated = useSelector(
     (state: RootState) => state.mainApi.isDocCreated
   );
+  const isDocUpdated = useSelector(
+    (state: RootState) => state.mainApi.isDocUpdated
+  );
 
   const dispatch = useDispatch();
 
@@ -45,8 +48,11 @@ const ApiList = () => {
     if (isDocCreated) {
       dispatchGetDocList();
       dispatch(mainApiSlice.actions.setIsDocCreated({ isDocCreated: false }));
+    } else if (isDocUpdated) {
+      dispatchGetDocList();
+      dispatch(mainApiSlice.actions.setIsDocUpdated({ isDocUpdated: false }));
     }
-  }, [isDocCreated]);
+  }, [isDocCreated, isDocUpdated]);
 
   return (
     <div className="ApiList">

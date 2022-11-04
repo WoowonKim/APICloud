@@ -132,8 +132,9 @@ public class DocsServiceImpl implements DocsService{
     @Override
     public UpdateDocDto updateDoc(Long docId, UpdateDocDto updateDocDto) {
         Docs doc = findByDocsId(docId);
+        doc.setDocsName(updateDocDto.getDocsName());
         doc.setServerUrl(updateDocDto.getServerUrl());
-        doc.setContextUri(updateDocDto.getContextUrl());
+        doc.setContextUri(updateDocDto.getContextUri());
         doc.setJavaVersion(updateDocDto.getJavaVersion());
         doc.setSpringVersion(updateDocDto.getSpringVersion());
         doc.setBuildManagement(updateDocDto.getBuildManagement());
