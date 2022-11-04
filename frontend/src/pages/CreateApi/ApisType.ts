@@ -25,7 +25,7 @@ export type ApisType = {
   method: string;
   requestBody: DtoType;
   parameters: PropertiesType[];
-  query: DtoType;
+  queries: PropertiesType[];
   headers: HeadersType[];
   responses: ResponsesType;
 };

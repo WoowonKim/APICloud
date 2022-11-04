@@ -32,14 +32,16 @@ const CreateApi = () => {
         collectionType: "",
       },
     ],
-    query: {
-      dtoName: "",
-      name: "",
-      type: "",
-      collectionType: "",
-      properties: [],
-      required: true,
-    },
+    queries: [
+      {
+        dtoName: "",
+        name: "",
+        type: "",
+        required: true,
+        properties: [],
+        collectionType: "",
+      },
+    ],
     headers: [{ key: "", value: "" }],
     responses: {
       fail: {
@@ -116,15 +118,15 @@ const CreateApi = () => {
         key: "",
         value: "",
       });
-    } else if (activeTab === 2) {
-      state.data[selectedController].apis[selectedApi].parameters.push(
+    } else if (activeTab === 2 || activeTab === 3) {
+      const tab = activeTab === 3 ? "queries" : "parameters";
+      state.data[selectedController].apis[selectedApi][tab].push(
         propertiesData
       );
-    } else if (activeTab === 3 || activeTab === 4) {
-      const tab = activeTab === 3 ? "query" : "requestBody";
-      state.data[selectedController].apis[selectedApi][tab].properties.push(
-        propertiesData
-      );
+    } else if (activeTab === 4) {
+      state.data[selectedController].apis[
+        selectedApi
+      ].requestBody.properties.push(propertiesData);
     } else if (activeTab === 5 && responseType) {
       state.data[selectedController].apis[selectedApi].responses[
         responseType
@@ -189,7 +191,7 @@ const CreateApi = () => {
             className={activeTab === 3 ? "tabItem active" : "tabItem"}
             onClick={() => setActiveTab(3)}
           >
-            query
+            queries
           </div>
           <div
             className={activeTab === 4 ? "tabItem active" : "tabItem"}
@@ -241,8 +243,8 @@ const CreateApi = () => {
                       state.data[selectedController].apis.length > 0
                     ? JSON.parse(
                         JSON.stringify(
-                          state.data[selectedController].apis[selectedApi].query
-                            ?.properties
+                          state.data[selectedController].apis[selectedApi]
+                            .queries
                         )
                       )
                     : activeTab === 4 &&
