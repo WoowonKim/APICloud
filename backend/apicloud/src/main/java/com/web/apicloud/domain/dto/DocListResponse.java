@@ -16,4 +16,5 @@ public class DocListResponse {
     private User groupUser;
 
     private Integer authority;
+
 }

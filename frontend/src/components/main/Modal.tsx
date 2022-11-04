@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleUser } from "@fortawesome/free-solid-svg-icons";
@@ -14,7 +14,7 @@ import { RootState } from "../../Store/store";
 const Modal = () => {
   const [docsName, setDocsName] = useState("");
   const [serverUrl, setServerUrl] = useState("");
-  const [contextUrl, setContextUrl] = useState("");
+  const [contextUri, setContextUri] = useState("");
   const [javaVersion, setJavaVersion] = useState(0);
   const [springVersion, setSpringVersion] = useState("");
   const [buildManagement, setBuildManagement] = useState(0);
@@ -33,7 +33,7 @@ const Modal = () => {
   const canGoNext =
     docsName &&
     serverUrl &&
-    contextUrl &&
+    contextUri &&
     javaVersion &&
     springVersion &&
     buildManagement &&
@@ -49,8 +49,8 @@ const Modal = () => {
     setServerUrl(e.target.value);
   };
 
-  const onChangeContextUrl = (e: any) => {
-    setContextUrl(e.target.value);
+  const onChangeContextUri = (e: any) => {
+    setContextUri(e.target.value);
   };
 
   const onChangeJavaVersion = (e: any) => {
@@ -81,7 +81,7 @@ const Modal = () => {
     userId: 1,
     docsName: docsName,
     serverUrl: serverUrl,
-    contextUrl: contextUrl,
+    contextUri: contextUri,
     javaVersion: javaVersion,
     springVersion: springVersion,
     buildManagement: buildManagement,
@@ -92,8 +92,9 @@ const Modal = () => {
 
   const updateDocRequest = {
     docId: docId,
+    docsName: docsName,
     serverUrl: serverUrl,
-    contextUrl: contextUrl,
+    contextUri: contextUri,
     javaVersion: javaVersion,
     springVersion: springVersion,
     buildManagement: buildManagement,
@@ -123,6 +124,11 @@ const Modal = () => {
         if (res.payload?.status === 200) {
           dispatch(mainApiSlice.actions.setDocId({ docId: 0 }));
           dispatch(mainApiSlice.actions.setIsOpenModal({ isOpenModal: false }));
+          dispatch(
+            mainApiSlice.actions.setIsDocUpdated({
+              isDocUpdated: true,
+            })
+          );
         }
       });
     }
@@ -151,7 +157,7 @@ const Modal = () => {
                 className="contextUrl"
                 type="text"
                 placeholder="생성할 contextUrl를 작성해주세요"
-                onChange={onChangeContextUrl}
+                onChange={onChangeContextUri}
               />
               <input
                 className="javaVersion"

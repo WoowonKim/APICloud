@@ -27,7 +27,7 @@ public class Docs {
 
     private String serverUrl;
 
-    private String contextUrl;
+    private String contextUri;
 
     private String javaVersion;
 
@@ -62,11 +62,11 @@ public class Docs {
     }
 
     @Builder
-    public Docs(Long id, String docsName, String serverUrl, String contextUrl, Integer javaVersion, String springVersion, Integer buildManagement, String groupPackage, String packageName, Integer packaging, String encryptedUrl, Group group) {
+    public Docs(Long id, String docsName, String serverUrl, String contextUri, String javaVersion, String springVersion, Integer buildManagement, String groupPackage, String packageName, Integer packaging, String encryptedUrl, Group group) {
         this.id = id;
         this.docsName = docsName;
         this.serverUrl = serverUrl;
-        this.contextUrl = contextUrl;
+        this.contextUri = contextUri;
         this.javaVersion = javaVersion;
         this.springVersion = springVersion;
         this.buildManagement = buildManagement;
@@ -75,7 +75,6 @@ public class Docs {
         this.packaging = packaging;
         this.encryptedUrl = encryptedUrl;
         this.group = group;
-        this.detail = detail;
     }
 
     public DocListResponse toDto(Long docId, String docName, Long groupId, User groupUser, Integer authority) {

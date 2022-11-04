@@ -42,6 +42,7 @@ export function axiosPut(url: string, data: any) {
   return axiosInstance({
     method: "PUT",
     url,
+    data,
     headers: getHeaders(),
   });
 }
