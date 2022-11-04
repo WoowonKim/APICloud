@@ -51,6 +51,18 @@ public class DocsController {
         }
     }
 
+    @GetMapping("/{docId}")
+    public ResponseEntity<Object> getSpecificDoc(@PathVariable Long docId) {
+        try {
+            log.info("특정 API DOC 조회 API 호출");
+            DocListResponse docListResponse = docsService.getDoc(1L, docId);
+            return ResponseHandler.generateResponse("특정 API DOC 조회에 성공했습니다.", HttpStatus.OK, "doc", docListResponse);
+        } catch (Exception e) {
+            log.info("특정 API DOC 조회 API 에러", e);
+            return ResponseHandler.generateResponse("특정 API DOC 조회에 실패했습니다.", HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @PutMapping("/{docId}")
     public ResponseEntity<Object> updateDoc(@PathVariable Long docId, @RequestBody UpdateDocDto updateDocDto) {
         try {
