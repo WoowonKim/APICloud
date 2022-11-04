@@ -40,11 +40,12 @@ export type DtoType = {
 };
 
 export type PropertiesType = {
+  dtoName: string;
   name: string;
   type: string;
   required: boolean;
   collectionType: string;
-  properties?: [] | PropertiesType;
+  properties: PropertiesType[];
 };
 
 export type HeadersType = {

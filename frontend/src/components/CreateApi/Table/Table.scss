@@ -77,9 +77,6 @@ td,
   outline: none;
   font-size: 15px;
   border: none;
-  resize: none;
-  height: auto;
-  line-height: 1.5;
   z-index: 1;
 }
 
@@ -140,9 +137,24 @@ td,
   display: flex;
   align-items: flex-end;
   margin: 15px 10px 0 0;
+  position: relative;
   .typeInputLabel {
     font-size: 1em;
     font-weight: bold;
     margin: 0 1rem 0 0;
+  }
+}
+
+.typeInfoContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  .infoIcon {
+    cursor: pointer;
+    border-radius: 100%;
+    border: 1px solid black;
+    padding: 3px;
+    width: 15px;
+    height: 15px;
   }
 }

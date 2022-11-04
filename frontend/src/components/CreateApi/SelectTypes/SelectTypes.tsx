@@ -10,11 +10,21 @@ interface Props {
   handleBasicInfo?: (
     e: React.ChangeEvent<HTMLInputElement> | string,
     type: string,
+    depth: number,
     responseType?: string
   ) => void;
+  responseType?: string;
+  depth?: number;
 }
 
-const SelectTypes = ({ onBlur, setValue, value, handleBasicInfo }: Props) => {
+const SelectTypes = ({
+  onBlur,
+  setValue,
+  value,
+  handleBasicInfo,
+  responseType,
+  depth,
+}: Props) => {
   const [visible, setVisible] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState(
     value ? value : "String"
@@ -24,8 +34,8 @@ const SelectTypes = ({ onBlur, setValue, value, handleBasicInfo }: Props) => {
     const eventTarget = e.target as HTMLElement;
     setSelectedMethod(eventTarget.innerText);
     setVisible(!visible);
-    if (handleBasicInfo) {
-      handleBasicInfo(eventTarget.innerText, "type");
+    if (handleBasicInfo && depth) {
+      handleBasicInfo(eventTarget.innerText, "type", depth, responseType);
     }
     // Props에 해당 값이 있을 경우 함수 호출
     if (setValue && onBlur) {

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ApisType, ControllerType } from "./ApisType";
+import { ApisType, ControllerType, PropertiesType } from "./ApisType";
 import "./CreateApi.scss";
 import Sidebar from "../../components/CreateApi/Sidebar/Sidebar";
 import Table from "../../components/CreateApi/Table/Table";
@@ -19,19 +19,12 @@ const CreateApi = () => {
       name: "",
       type: "",
       collectionType: "",
-      properties: [
-        {
-          name: "",
-          type: "",
-          required: true,
-          properties: [],
-          collectionType: "",
-        },
-      ],
+      properties: [],
       required: true,
     },
     parameters: [
       {
+        dtoName: "",
         name: "",
         type: "",
         required: true,
@@ -44,15 +37,7 @@ const CreateApi = () => {
       name: "",
       type: "",
       collectionType: "",
-      properties: [
-        {
-          name: "",
-          type: "",
-          required: true,
-          properties: [],
-          collectionType: "",
-        },
-      ],
+      properties: [],
       required: true,
     },
     headers: [{ key: "", value: "" }],
@@ -64,15 +49,7 @@ const CreateApi = () => {
           name: "",
           type: "",
           collectionType: "",
-          properties: [
-            {
-              name: "",
-              type: "",
-              required: true,
-              properties: [],
-              collectionType: "",
-            },
-          ],
+          properties: [],
           required: true,
         },
       },
@@ -83,15 +60,7 @@ const CreateApi = () => {
           name: "",
           type: "",
           collectionType: "",
-          properties: [
-            {
-              name: "",
-              type: "",
-              required: true,
-              properties: [],
-              collectionType: "",
-            },
-          ],
+          properties: [],
           required: true,
         },
       },
@@ -103,6 +72,15 @@ const CreateApi = () => {
     commonUri: "",
     apis: [],
   });
+
+  const propertiesData: PropertiesType = {
+    dtoName: "",
+    name: "",
+    type: "",
+    required: true,
+    collectionType: "",
+    properties: [],
+  };
 
   const state = useSyncedStore(store);
   // 테이블의 탭 전환을 위한 state
@@ -139,32 +117,18 @@ const CreateApi = () => {
         value: "",
       });
     } else if (activeTab === 2) {
-      state.data[selectedController].apis[selectedApi].parameters.push({
-        name: "",
-        type: "",
-        required: true,
-        properties: [],
-        collectionType: "",
-      });
+      state.data[selectedController].apis[selectedApi].parameters.push(
+        propertiesData
+      );
     } else if (activeTab === 3 || activeTab === 4) {
       const tab = activeTab === 3 ? "query" : "requestBody";
-      state.data[selectedController].apis[selectedApi][tab].properties.push({
-        name: "",
-        type: "",
-        required: true,
-        properties: [],
-        collectionType: "",
-      });
+      state.data[selectedController].apis[selectedApi][tab].properties.push(
+        propertiesData
+      );
     } else if (activeTab === 5 && responseType) {
       state.data[selectedController].apis[selectedApi].responses[
         responseType
-      ].responseBody.properties.push({
-        name: "",
-        type: "",
-        required: true,
-        properties: [],
-        collectionType: "",
-      });
+      ].responseBody.properties.push(propertiesData);
     }
   };
 
@@ -176,16 +140,6 @@ const CreateApi = () => {
   };
   // 데이터 확인 용 로그
   console.log(JSON.parse(JSON.stringify(state.data)));
-  console.log(
-    selectedApi > -1 &&
-      selectedController > -1 &&
-      JSON.parse(
-        JSON.stringify(
-          state.data[selectedController].apis[selectedApi].responses.success
-            .status
-        )
-      )
-  );
 
   return (
     <div className="apiDocscontainer">
@@ -264,28 +218,36 @@ const CreateApi = () => {
                 selectedController={selectedController}
                 selectedApi={selectedApi}
                 data={
-                  activeTab === 1
+                  activeTab === 1 &&
+                  state.data.length > 0 &&
+                  state.data[selectedController].apis.length > 0
                     ? JSON.parse(
                         JSON.stringify(
                           state.data[selectedController].apis[selectedApi]
                             .headers
                         )
                       )
-                    : activeTab === 2
+                    : activeTab === 2 &&
+                      state.data.length > 0 &&
+                      state.data[selectedController].apis.length > 0
                     ? JSON.parse(
                         JSON.stringify(
                           state.data[selectedController].apis[selectedApi]
                             .parameters
                         )
                       )
-                    : activeTab === 3
+                    : activeTab === 3 &&
+                      state.data.length > 0 &&
+                      state.data[selectedController].apis.length > 0
                     ? JSON.parse(
                         JSON.stringify(
                           state.data[selectedController].apis[selectedApi].query
                             ?.properties
                         )
                       )
-                    : activeTab === 4
+                    : activeTab === 4 &&
+                      state.data.length > 0 &&
+                      state.data[selectedController].apis.length > 0
                     ? JSON.parse(
                         JSON.stringify(
                           state.data[selectedController].apis[selectedApi]

@@ -1,11 +1,12 @@
 .selectBox {
   width: 100px;
   cursor: pointer;
-  z-index: 2;
   margin-top: 5px;
+  z-index: 3;
 }
 
 .itemList {
+  z-index: 3;
   list-style-type: none;
   display: inline-block;
   right: 0;
