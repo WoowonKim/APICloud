@@ -16,6 +16,7 @@ import com.web.apicloud.domain.repository.UserRepository;
 import com.web.apicloud.domain.vo.*;
 import com.web.apicloud.exception.InternalServerErrorException;
 import com.web.apicloud.util.SHA256;
+import com.web.apicloud.util.TextUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,8 @@ public class DocsServiceImpl implements DocsService{
     private final GroupUserRepository groupUserRepository;
 
     private final SHA256 sha256;
+
+    private final TextUtils textUtils;
 
     private final ObjectMapper objectMapper;
 
@@ -169,7 +172,7 @@ public class DocsServiceImpl implements DocsService{
     }
 
     @Override
-    public byte[] getExcelFile(List<ControllerVO> controllers) {
+    public byte[] getCsvFile(List<ControllerVO> controllers) {
         StringBuffer csvContent = new StringBuffer();
 
         controllers.forEach(controller -> {
@@ -180,48 +183,15 @@ public class DocsServiceImpl implements DocsService{
                 csvContent.append(api.getName()).append(",")
                         .append(api.getUri()).append(",")
                         .append(api.getMethod()).append(",")
-                        .append("\"").append(makeCsvFromProperties(api.getQueries())).append("\"").append(",")
-                        .append("\"").append(makeCsvFromProperties(api.getParameters())).append("\"").append(",")
-                        .append("\"").append(makeCsvFromProperty(api.getRequestBody())).append("\"").append(",");
-                makeCsvFromResponse(api.getResponses().get("success"), csvContent).append(",");
-                makeCsvFromResponse(api.getResponses().get("fail"), csvContent).append("\n");
+                        .append("\"").append(textUtils.makeTextFromProperties(api.getQueries())).append("\"").append(",")
+                        .append("\"").append(textUtils.makeTextFromProperties(api.getParameters())).append("\"").append(",")
+                        .append("\"").append(textUtils.makeTextFromProperty(api.getRequestBody())).append("\"").append(",")
+                        .append("\"").append(textUtils.makeTextFromResponse(api.getResponses().get("success"))).append("\"").append(",")
+                        .append("\"").append(textUtils.makeTextFromResponse(api.getResponses().get("fail"))).append("\"").append("\n");
             });
             csvContent.append("\n");
         });
 
         return csvContent.toString().getBytes();
-    }
-
-    private StringBuffer makeCsvFromResponse(ResponseVO response, StringBuffer csvContent) {
-        if(response == null) {
-            return csvContent;
-        }
-        return csvContent.append("\"").append("status: ").append(response.getStatus()).append("\n")
-                .append(makeCsvFromProperty(response.getResponseBody())).append("\"");
-    }
-
-    private StringBuffer makeCsvFromProperties(List<PropertyVO> properties) {
-        StringBuffer csvContent = new StringBuffer();
-        if(properties == null) {
-            return csvContent;
-        }
-        properties.forEach(property -> {
-            csvContent.append(makeCsvFromProperty(property)).append("\n");
-        });
-        return csvContent;
-    }
-
-    private String makeCsvFromProperty(PropertyVO property) {
-        String csv = "";
-        if(property == null) {
-            return csv;
-        }
-        try {
-            csv += objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(property);
-        } catch (JsonProcessingException e) {
-            log.error(e.getMessage());
-            throw new InternalServerErrorException("csv 변환에 실패햐였습니다.");
-        }
-        return csv.replace("\"", "");
     }
 }
