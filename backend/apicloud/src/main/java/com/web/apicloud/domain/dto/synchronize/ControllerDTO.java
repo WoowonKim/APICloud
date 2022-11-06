@@ -19,5 +19,5 @@ public class ControllerDTO {
 
     private List<ApiDTO> apis;
 
-    private Integer commonUriFlag;
+    private boolean commonUriFlag;
 }

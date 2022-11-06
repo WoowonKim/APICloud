@@ -28,7 +28,9 @@ public class ApiDTO {
 
     private Map<String, ResponseDTO> responses;
 
-    private Integer uriFlag;
+    private boolean uriFlag;
 
-    private Integer methodFlag;
+    private boolean methodFlag;
+
+    private boolean createFlag;
 }

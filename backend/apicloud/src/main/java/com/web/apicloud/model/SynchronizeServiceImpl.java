@@ -95,7 +95,6 @@ public class SynchronizeServiceImpl implements SynchronizeService {
         DocVO detailVO = objectMapper.readValue(doc.getDetail(), DocVO.class);
         if (detailVO.getControllers().size() <= controllerId) new NotFoundException(NOT_FOUND_CONTROLLER);
         ControllerVO original = detailVO.getControllers().get(controllerId);
-
         return compareService.compareControllerVO(original, controllerVO);
     }
 
@@ -233,8 +232,6 @@ public class SynchronizeServiceImpl implements SynchronizeService {
                         if (stack.peek() == ']') stack.pop();
                         break;
                     case '@':
-//                        getRequestDetail(apiDetail, request);
-//                        request = "";
                         requestFlag = true;
                         request += api.get(i).charAt(j);
                         break;
@@ -243,7 +240,6 @@ public class SynchronizeServiceImpl implements SynchronizeService {
                         getRequestDetail(apiDetail, request);
                         request = "";
                         requestFlag = false;
-//                        request += api.get(i).charAt(j);
                         break;
                     default:
                         if (responseFlag) response += api.get(i).charAt(j);
