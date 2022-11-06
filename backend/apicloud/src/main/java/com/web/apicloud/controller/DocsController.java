@@ -1,12 +1,10 @@
 package com.web.apicloud.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.web.apicloud.domain.dto.CreateDocRequest;
-import com.web.apicloud.domain.dto.DocListResponse;
-import com.web.apicloud.domain.dto.UpdateDocDto;
 import com.web.apicloud.domain.entity.Group;
 import com.web.apicloud.domain.entity.GroupUser;
 import com.web.apicloud.domain.entity.User;
+import com.web.apicloud.domain.dto.*;
 import com.web.apicloud.domain.vo.DocVO;
 import com.web.apicloud.domain.vo.UserAuthorityVO;
 import com.web.apicloud.model.DocsService;
@@ -14,6 +12,7 @@ import com.web.apicloud.model.GroupUserService;
 import com.web.apicloud.model.UserService;
 import com.web.apicloud.security.CurrentUser;
 import com.web.apicloud.security.UserPrincipal;
+import com.web.apicloud.model.NotionService;
 import com.web.apicloud.util.FileUtils;
 import com.web.apicloud.util.ResponseHandler;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +32,9 @@ import java.util.Map;
 public class DocsController {
 
     private final DocsService docsService;
+
+    private final NotionService notionService;
+
     // FIXME: controller 안의 로직 밖에서 수행하거나 해당 controller api 막기
 
     private final ProjectWithControllerGenerationController projectGenerationController;
@@ -79,6 +81,18 @@ public class DocsController {
         }
     }
 
+    @GetMapping("/{docId}")
+    public ResponseEntity<Object> getSpecificDoc(@PathVariable Long docId) {
+        try {
+            log.info("특정 API DOC 조회 API 호출");
+            UpdateDocDto updateDocDto = docsService.getDoc(docId);
+            return ResponseHandler.generateResponse("특정 API DOC 조회에 성공했습니다.", HttpStatus.OK, "docInformation", updateDocDto);
+        } catch (Exception e) {
+            log.info("특정 API DOC 조회 API 에러", e);
+            return ResponseHandler.generateResponse("특정 API DOC 조회에 실패했습니다.", HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @PutMapping("/{docId}")
     public ResponseEntity<Object> updateDoc(@PathVariable Long docId, @RequestBody UpdateDocDto updateDocDto) {
         try {
@@ -111,7 +125,15 @@ public class DocsController {
     @GetMapping("/{docsId}/csv")
     public ResponseEntity<byte[]> exportCsv(@PathVariable("docsId") Long docsId) throws JsonProcessingException {
         DocVO doc = docsService.getDocVOByDocsId(docsId);
-        byte[] file = docsService.getExcelFile(doc.getControllers());
+        byte[] file = docsService.getCsvFile(doc.getControllers());
         return FileUtils.createResponseEntity(file, "text/csv", doc.getServer().getName() + ".csv");
+    }
+
+    @PostMapping("/{docsId}/notion")
+    public ResponseEntity<NotionExportResponse> exportNotion(@PathVariable("docsId") Long docsId,
+                                                             @RequestBody(required = false) NotionExportRequest request) throws JsonProcessingException {
+        DocVO doc = docsService.getDocVOByDocsId(docsId);
+        notionService.makeApiPage(request.getToken(), request.getDatabaseId(), doc);
+        return ResponseEntity.ok().body(new NotionExportResponse("https://www.notion.so/" + request.getDatabaseId()));
     }
 }

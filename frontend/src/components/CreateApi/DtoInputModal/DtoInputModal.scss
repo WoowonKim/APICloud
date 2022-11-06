@@ -1,0 +1,57 @@
+.dtoInputModal {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  z-index: 4;
+}
+
+.dtoModalContainer {
+  width: 25rem;
+  min-height: 16rem;
+  height: auto;
+  background-color: white;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  border-radius: 1rem;
+  padding: 1rem 3rem;
+  box-shadow: 2px 2px 25px -12px rgba(0, 0, 0, 0.92);
+}
+
+.dtoInputModalCloseButton {
+  width: 100%;
+  height: 100%;
+  background: none;
+  border: none;
+  outline: none;
+}
+
+.dtoModalTitleContainer {
+  margin: 1rem 0 1rem 50px;
+}
+
+#dtoModalName,
+#dtoModalDtoName {
+  border: none;
+  outline: none;
+  font-size: 2em;
+}
+
+#dtoModalName {
+  border-bottom: 1px solid black;
+  font-size: 1em;
+}
+
+.dtoModalInputGroup {
+  display: flex;
+  align-items: flex-end;
+  margin: 10px 0;
+  .dtoModalLabel {
+    margin: 0 20px 0 0;
+  }
+}
+
+.dtoModalTableContainer {
+  display: flex;
+  align-items: flex-end;
+}

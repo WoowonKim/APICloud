@@ -8,9 +8,11 @@ import { selectUser, fetchUser } from "../Store/slice/userSlice";
 const Main = () => {
   const dispatch = useAppDispatch();
   const user = useAppSelector(selectUser);
+
   useEffect(() => {
     if (!user) dispatch(fetchUser());
   }, []);
+
   return (
     <div>
       <Header />

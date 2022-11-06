@@ -9,19 +9,19 @@ interface type {
 const Headerheader = ({ sideApiList }: type) => {
   const isHeaderApi = useSelector((state: RootState) => state.testApi.header);
   const listInfo = useSelector((state: RootState) => state.sideApi);
-  const [acceptValue, setAcceptValue] = useState(listInfo[sideApiList].header.Accept);
-  const [acceptEncodingValue, setAcceptEncdingValue] = useState(listInfo[sideApiList].header.AcceptEncoding);
-  const [connectionValue, setConnectionValue] = useState(listInfo[sideApiList].header.Connection);
-  const [hostValue, setHostValue] = useState(listInfo[sideApiList].header.Host);
-  const [contentLengthValue, setContentLengthValue] = useState(listInfo[sideApiList].header.contentLength);
-  const [contentTypeValue, setContentTypeValue] = useState(listInfo[sideApiList].header.contentType);
+  const [acceptValue, setAcceptValue] = useState(listInfo[sideApiList]?.header.Accept);
+  const [acceptEncodingValue, setAcceptEncdingValue] = useState(listInfo[sideApiList]?.header.AcceptEncoding);
+  const [connectionValue, setConnectionValue] = useState(listInfo[sideApiList]?.header.Connection);
+  const [hostValue, setHostValue] = useState(listInfo[sideApiList]?.header.Host);
+  const [contentLengthValue, setContentLengthValue] = useState(listInfo[sideApiList]?.header.contentLength);
+  const [contentTypeValue, setContentTypeValue] = useState(listInfo[sideApiList]?.header.contentType);
   useEffect(() => {
-    setAcceptValue(listInfo[sideApiList].header.Accept);
-    setAcceptEncdingValue(listInfo[sideApiList].header.AcceptEncoding);
-    setConnectionValue(listInfo[sideApiList].header.Connection);
-    setHostValue(listInfo[sideApiList].header.Host);
-    setContentLengthValue(listInfo[sideApiList].header.contentLength);
-    setContentTypeValue(listInfo[sideApiList].header.contentType);
+    setAcceptValue(listInfo[sideApiList]?.header.Accept);
+    setAcceptEncdingValue(listInfo[sideApiList]?.header.AcceptEncoding);
+    setConnectionValue(listInfo[sideApiList]?.header.Connection);
+    setHostValue(listInfo[sideApiList]?.header.Host);
+    setContentLengthValue(listInfo[sideApiList]?.header.contentLength);
+    setContentTypeValue(listInfo[sideApiList]?.header.contentType);
   }, [sideApiList]);
   const dispatch = useAppDispatch();
   return (
@@ -39,7 +39,7 @@ const Headerheader = ({ sideApiList }: type) => {
           <p>
             <input
               type="text"
-              defaultValue={isHeaderApi.Accept}
+              defaultValue={isHeaderApi.Accept || ""}
               onChange={(e) => {
                 dispatch(testApiSlice.actions.setAccept({ Accept: e.target.value }));
               }}
@@ -48,7 +48,7 @@ const Headerheader = ({ sideApiList }: type) => {
           <p>
             <input
               type="text"
-              defaultValue={isHeaderApi.AcceptEncoding}
+              defaultValue={isHeaderApi.AcceptEncoding || ""}
               onChange={(e) => {
                 dispatch(testApiSlice.actions.setAcceptEncodng({ AcceptEncoding: e.target.value }));
               }}
@@ -57,7 +57,7 @@ const Headerheader = ({ sideApiList }: type) => {
           <p>
             <input
               type="text"
-              defaultValue={isHeaderApi.Connection}
+              defaultValue={isHeaderApi.Connection || ""}
               onChange={(e) => {
                 dispatch(testApiSlice.actions.setConnection({ Connection: e.target.value }));
               }}
@@ -66,7 +66,7 @@ const Headerheader = ({ sideApiList }: type) => {
           <p>
             <input
               type="text"
-              defaultValue={isHeaderApi.Host}
+              defaultValue={isHeaderApi.Host || ""}
               onChange={(e) => {
                 dispatch(testApiSlice.actions.setHost({ Host: e.target.value }));
               }}
@@ -75,7 +75,7 @@ const Headerheader = ({ sideApiList }: type) => {
           <p>
             <input
               type="text"
-              defaultValue={isHeaderApi.contentLength}
+              defaultValue={isHeaderApi.contentLength || ""}
               onChange={(e) => {
                 dispatch(testApiSlice.actions.setContentLength({ contentLength: e.target.value }));
               }}
@@ -84,7 +84,7 @@ const Headerheader = ({ sideApiList }: type) => {
           <p>
             <input
               type="text"
-              defaultValue={isHeaderApi.contentType}
+              defaultValue={isHeaderApi.contentType || ""}
               onChange={(e) => {
                 dispatch(testApiSlice.actions.setContentType({ contentType: e.target.value }));
               }}
@@ -96,7 +96,7 @@ const Headerheader = ({ sideApiList }: type) => {
           <p>
             <input
               type="text"
-              value={acceptValue}
+              value={acceptValue || ""}
               onChange={(e) => {
                 dispatch(testApiSlice.actions.setAccept({ Accept: e.target.value }));
                 setAcceptValue(e.target.value);
@@ -106,7 +106,7 @@ const Headerheader = ({ sideApiList }: type) => {
           <p>
             <input
               type="text"
-              value={acceptEncodingValue}
+              value={acceptEncodingValue || ""}
               onChange={(e) => {
                 dispatch(testApiSlice.actions.setAcceptEncodng({ AcceptEncoding: e.target.value }));
                 setAcceptEncdingValue(e.target.value);
@@ -116,7 +116,7 @@ const Headerheader = ({ sideApiList }: type) => {
           <p>
             <input
               type="text"
-              value={connectionValue}
+              value={connectionValue || ""}
               onChange={(e) => {
                 dispatch(testApiSlice.actions.setConnection({ Connection: e.target.value }));
                 setConnectionValue(e.target.value);
@@ -126,7 +126,7 @@ const Headerheader = ({ sideApiList }: type) => {
           <p>
             <input
               type="text"
-              value={hostValue}
+              value={hostValue || ""}
               onChange={(e) => {
                 dispatch(testApiSlice.actions.setHost({ Host: e.target.value }));
                 setHostValue(e.target.value);
@@ -136,7 +136,7 @@ const Headerheader = ({ sideApiList }: type) => {
           <p>
             <input
               type="text"
-              value={contentLengthValue}
+              value={contentLengthValue || ""}
               onChange={(e) => {
                 dispatch(testApiSlice.actions.setContentLength({ contentLength: e.target.value }));
                 setContentLengthValue(e.target.value);
@@ -146,7 +146,7 @@ const Headerheader = ({ sideApiList }: type) => {
           <p>
             <input
               type="text"
-              value={contentTypeValue}
+              value={contentTypeValue || ""}
               onChange={(e) => {
                 dispatch(testApiSlice.actions.setContentType({ contentType: e.target.value }));
                 setContentTypeValue(e.target.value);

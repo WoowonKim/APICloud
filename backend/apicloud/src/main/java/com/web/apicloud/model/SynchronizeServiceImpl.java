@@ -1,10 +1,13 @@
 package com.web.apicloud.model;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.web.apicloud.domain.dto.synchronize.ControllerDTO;
+import com.web.apicloud.domain.entity.Docs;
+import com.web.apicloud.domain.repository.DocsRepository;
 import com.web.apicloud.domain.vo.*;
-import com.web.apicloud.model.parsing.ClassParsingService;
-import com.web.apicloud.model.parsing.ClassParsingServiceImpl;
-import com.web.apicloud.model.parsing.FileSearchService;
-import com.web.apicloud.model.parsing.ParsingService;
+import com.web.apicloud.exception.NotFoundException;
+import com.web.apicloud.model.parsing.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,12 +31,19 @@ public class SynchronizeServiceImpl implements SynchronizeService {
     private static final String VALUE = "value";
     private static String rootPath = "";
 
+    private static final String NOT_FOUND_DOCS = "해당 API Doc을 찾을 수 없습니다.";
+    private static final String NOT_FOUND_CONTROLLER = "해당 Controller를 찾을 수 없습니다.";
+
     private final ParsingService parsingService;
     private final ClassParsingService classParsingService;
     private final FileSearchService fileSearchService;
+    private final CompareService compareService;
+    private final DocsRepository docsRepository;
+
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public ControllerVO getFile(String root, String name) throws IOException {
+    public ControllerDTO getFile(Long docId, int controllerId, String root, String name) throws IOException {
         rootPath = root;
 
         String path = fileSearchService.getControllerPath(rootPath, name);
@@ -59,7 +69,9 @@ public class SynchronizeServiceImpl implements SynchronizeService {
         List<String> api = new ArrayList<>();
         while (i < lines.size()) {
             if (parsingService.KMP(lines.get(i), METHOD) != -1) {
-                ClassParsingServiceImpl.useObject = new ArrayList<>();
+                ClassParsingServiceImpl.useQuery = new ArrayList<>();
+                ClassParsingServiceImpl.useRequest = new ArrayList<>();
+                ClassParsingServiceImpl.useResponse = new ArrayList<>();
                 ApiVO apiVO = apiParsing(api);
                 if (apiVO != null) {
                     apis.add(apiVO);
@@ -78,7 +90,15 @@ public class SynchronizeServiceImpl implements SynchronizeService {
                 .apis(apis)
                 .build();
         System.out.println(controllerVO);
-        return controllerVO;
+        return compareVO(docId, controllerId, controllerVO);
+    }
+
+    private ControllerDTO compareVO(Long docId, int controllerId, ControllerVO controllerVO) throws JsonProcessingException {
+        Docs doc = docsRepository.findById(docId).orElseThrow(() -> new NotFoundException(NOT_FOUND_DOCS));
+        DocVO detailVO = objectMapper.readValue(doc.getDetail(), DocVO.class);
+        if (detailVO.getControllers().size() <= controllerId) new NotFoundException(NOT_FOUND_CONTROLLER);
+        ControllerVO original = detailVO.getControllers().get(controllerId);
+        return compareService.compareControllerVO(original, controllerVO);
     }
 
     private ApiVO apiParsing(List<String> api) throws IOException {
@@ -137,7 +157,7 @@ public class SynchronizeServiceImpl implements SynchronizeService {
                 String value = parsingService.getValue(str);
                 if (value == null) value = parsingService.getName(str);
                 String type = parsingService.getParamType(request);
-                PropertyVO query = classParsingService.getBody(rootPath, type);
+                PropertyVO query = classParsingService.getBody(rootPath, type, "query");
                 apiDetail.getQueries().add(PropertyVO.builder()
                         .dtoName(query.getDtoName())
                         .collectionType(query.getCollectionType())
@@ -150,7 +170,7 @@ public class SynchronizeServiceImpl implements SynchronizeService {
                 int requestBody = parsingService.KMP(request, REQUEST_BODY);
                 if (requestBody != -1) {
                     String[] tokens = request.split(" ");
-                    apiDetail.setRequestBody(classParsingService.getBody(rootPath, tokens[tokens.length - 2]));
+                    apiDetail.setRequestBody(classParsingService.getBody(rootPath, tokens[tokens.length - 2], "request"));
                     apiDetail.getRequestBody().setRequired(parsingService.getRequired(request));
                     apiDetail.getRequestBody().setName(tokens[tokens.length - 1].substring(0, tokens[tokens.length - 1].length() - 1));
                 }
@@ -161,7 +181,7 @@ public class SynchronizeServiceImpl implements SynchronizeService {
     private void getResponseDetail(ApiDetailVO apiDetail, String response) throws IOException {
         if (response.equals("")) return;
         Map<String, ResponseVO> getResponseMap = new HashMap<>();
-        ResponseVO getResponse = ResponseVO.builder().responseBody(classParsingService.getBody(rootPath, response)).build();
+        ResponseVO getResponse = ResponseVO.builder().responseBody(classParsingService.getBody(rootPath, response, "response")).build();
         getResponseMap.put("success", getResponse);
         apiDetail.setResponses(getResponseMap);
     }
@@ -215,8 +235,6 @@ public class SynchronizeServiceImpl implements SynchronizeService {
                         if (stack.peek() == ']') stack.pop();
                         break;
                     case '@':
-//                        getRequestDetail(apiDetail, request);
-//                        request = "";
                         requestFlag = true;
                         request += api.get(i).charAt(j);
                         break;
@@ -225,7 +243,6 @@ public class SynchronizeServiceImpl implements SynchronizeService {
                         getRequestDetail(apiDetail, request);
                         request = "";
                         requestFlag = false;
-//                        request += api.get(i).charAt(j);
                         break;
                     default:
                         if (responseFlag) response += api.get(i).charAt(j);

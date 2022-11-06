@@ -36,7 +36,7 @@ const MethodTest = ({ methodApiWord }: word) => {
     setVisible(!visible);
   };
   useEffect(() => {
-    if (methodApiWord.length > 0) {
+    if (methodApiWord?.length > 0) {
       setSelectedMethod(methodApiWord);
       dispatch(testApiSlice.actions.setMethod({ method: methodApiWord }));
     }
