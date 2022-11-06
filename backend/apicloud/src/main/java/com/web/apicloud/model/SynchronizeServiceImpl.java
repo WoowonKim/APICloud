@@ -30,6 +30,7 @@ public class SynchronizeServiceImpl implements SynchronizeService {
     private static final String REQUEST_BODY = "RequestBody";
     private static final String VALUE = "value";
     private static String rootPath = "";
+
     private static final String NOT_FOUND_DOCS = "해당 API Doc을 찾을 수 없습니다.";
     private static final String NOT_FOUND_CONTROLLER = "해당 Controller를 찾을 수 없습니다.";
 
@@ -68,7 +69,9 @@ public class SynchronizeServiceImpl implements SynchronizeService {
         List<String> api = new ArrayList<>();
         while (i < lines.size()) {
             if (parsingService.KMP(lines.get(i), METHOD) != -1) {
-                ClassParsingServiceImpl.useObject = new ArrayList<>();
+                ClassParsingServiceImpl.useQuery = new ArrayList<>();
+                ClassParsingServiceImpl.useRequest = new ArrayList<>();
+                ClassParsingServiceImpl.useResponse = new ArrayList<>();
                 ApiVO apiVO = apiParsing(api);
                 if (apiVO != null) {
                     apis.add(apiVO);
@@ -154,7 +157,7 @@ public class SynchronizeServiceImpl implements SynchronizeService {
                 String value = parsingService.getValue(str);
                 if (value == null) value = parsingService.getName(str);
                 String type = parsingService.getParamType(request);
-                PropertyVO query = classParsingService.getBody(rootPath, type);
+                PropertyVO query = classParsingService.getBody(rootPath, type, "query");
                 apiDetail.getQueries().add(PropertyVO.builder()
                         .dtoName(query.getDtoName())
                         .collectionType(query.getCollectionType())
@@ -167,7 +170,7 @@ public class SynchronizeServiceImpl implements SynchronizeService {
                 int requestBody = parsingService.KMP(request, REQUEST_BODY);
                 if (requestBody != -1) {
                     String[] tokens = request.split(" ");
-                    apiDetail.setRequestBody(classParsingService.getBody(rootPath, tokens[tokens.length - 2]));
+                    apiDetail.setRequestBody(classParsingService.getBody(rootPath, tokens[tokens.length - 2], "request"));
                     apiDetail.getRequestBody().setRequired(parsingService.getRequired(request));
                     apiDetail.getRequestBody().setName(tokens[tokens.length - 1].substring(0, tokens[tokens.length - 1].length() - 1));
                 }
@@ -178,7 +181,7 @@ public class SynchronizeServiceImpl implements SynchronizeService {
     private void getResponseDetail(ApiDetailVO apiDetail, String response) throws IOException {
         if (response.equals("")) return;
         Map<String, ResponseVO> getResponseMap = new HashMap<>();
-        ResponseVO getResponse = ResponseVO.builder().responseBody(classParsingService.getBody(rootPath, response)).build();
+        ResponseVO getResponse = ResponseVO.builder().responseBody(classParsingService.getBody(rootPath, response, "response")).build();
         getResponseMap.put("success", getResponse);
         apiDetail.setResponses(getResponseMap);
     }
