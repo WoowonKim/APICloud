@@ -16,7 +16,7 @@
   height: 100%;
   position: fixed;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1;
+  z-index: 3;
 }
 
 .modalInnerContainer {
@@ -49,8 +49,8 @@
   height: 1.5em;
   width: 14em;
   position: absolute;
-  top: 3.7em;
-  left: 3.3em;
+  top: 4.2em;
+  left: 3.5em;
 }
 
 .controllerInfoItem {

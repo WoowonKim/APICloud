@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { getApiDocList } from "../../Store/slice/mainApi";
+import { useDispatch, useSelector } from "react-redux";
+import mainApiSlice, { getApiDocList } from "../../Store/slice/mainApi";
+import { RootState } from "../../Store/store";
 import ApiListDetail from "./ApiListDetail";
 
 export type ApiDocType = {
@@ -21,6 +22,12 @@ export type ApiDocType = {
 const ApiList = () => {
   const [apiList, setApiList] = useState(0);
   const [apiDocList, setApiDocList] = useState<ApiDocType[] | []>([]);
+  const isDocCreated = useSelector(
+    (state: RootState) => state.mainApi.isDocCreated
+  );
+  const isDocUpdated = useSelector(
+    (state: RootState) => state.mainApi.isDocUpdated
+  );
 
   const dispatch = useDispatch();
 
@@ -36,9 +43,16 @@ const ApiList = () => {
     dispatchGetDocList();
   }, []);
 
+  // DOC이 생성될 때마다 DOC 목록 다시 불러오기
   useEffect(() => {
-    console.log(apiDocList);
-  }, [apiDocList]);
+    if (isDocCreated) {
+      dispatchGetDocList();
+      dispatch(mainApiSlice.actions.setIsDocCreated({ isDocCreated: false }));
+    } else if (isDocUpdated) {
+      dispatchGetDocList();
+      dispatch(mainApiSlice.actions.setIsDocUpdated({ isDocUpdated: false }));
+    }
+  }, [isDocCreated, isDocUpdated]);
 
   return (
     <div className="ApiList">
@@ -61,7 +75,11 @@ const ApiList = () => {
         </span>
       </div>
       <div className="ApiListContent">
-        <ApiListDetail apiList={apiList} apiDocList={apiDocList} />
+        <ApiListDetail
+          apiList={apiList}
+          apiDocList={apiDocList}
+          dispatchGetDocList={dispatchGetDocList}
+        />
       </div>
     </div>
   );

@@ -83,13 +83,16 @@
   }
   .apiListGroup {
     display: grid;
+    min-width: 120px;
     grid-template-columns: 1fr 1fr 1fr;
-    align-items: center;
+    align-items: flex-start;
     padding-left: 0.5rem;
     margin-top: 0.5rem;
     .sidebarApiItem {
+      margin-top: 0.5rem;
       margin-left: 1rem;
       font-size: 0.8em;
+      word-break: break-all;
     }
   }
   .active {
