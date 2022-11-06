@@ -2,6 +2,7 @@ package com.web.apicloud.domain.vo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.web.apicloud.util.Message;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

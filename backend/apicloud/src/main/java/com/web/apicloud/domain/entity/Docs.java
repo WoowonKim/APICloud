@@ -9,6 +9,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 
+@ToString
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -74,6 +75,7 @@ public class Docs {
         this.packaging = packaging;
         this.encryptedUrl = encryptedUrl;
         this.group = group;
+        this.detail = detail;
     }
 
     public DocListResponse toDto(Long docId, String docName, Long groupId, User groupUser, Integer authority) {
