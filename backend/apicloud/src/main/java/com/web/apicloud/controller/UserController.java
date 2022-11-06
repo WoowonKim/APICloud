@@ -29,7 +29,7 @@ public class UserController {
 
     @GetMapping("/me")
     public ResponseEntity<UserResponse> getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
-            log.info("DOC 생성 API 호출");
+            log.info("현재 유저 조회 API 호출");
             UserResponse userResponse = userService.findUserById(userPrincipal.getId());
             return ResponseEntity.ok().body(userResponse);
     }

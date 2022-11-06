@@ -3,12 +3,14 @@ package com.web.apicloud.model;
 import com.web.apicloud.domain.vo.ApiVO;
 import com.web.apicloud.domain.vo.ControllerVO;
 import com.web.apicloud.domain.vo.DocVO;
+import com.web.apicloud.exception.NotFoundException;
 import com.web.apicloud.util.TextUtils;
 import lombok.RequiredArgsConstructor;
 import org.jraf.klibnotion.client.*;
 import org.jraf.klibnotion.client.future.FutureNotionClient;
 import org.jraf.klibnotion.client.future.FutureNotionClientUtils;
 import org.jraf.klibnotion.model.base.reference.DatabaseReference;
+import org.jraf.klibnotion.model.base.reference.PageReference;
 import org.jraf.klibnotion.model.block.MutableBlockList;
 import org.jraf.klibnotion.model.database.Database;
 import org.jraf.klibnotion.model.page.Page;
@@ -21,24 +23,17 @@ import java.util.concurrent.ExecutionException;
 @RequiredArgsConstructor
 @Service
 public class NotionServiceImpl implements NotionService {
-    // TODO: pageId로 접근해서 프로젝트 제목, contextUri 등 설정하기
-//    static final String pageId = "3a41732c74be435ba166233b3cf5ae26";
+    // TODO: database.parent 활용해서 프로젝트 제목, contextUri 등 설정하기
 
     private final TextUtils textUtils;
 
-    public void makeApiPage(String token, String databaseId, DocVO doc) {
-        FutureNotionClient client = initClient(token);
-        System.out.println("Database:");
-        Database database = null;
-        try {
-            database = client.getDatabases().getDatabase(databaseId).get();
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
-        }
-        System.out.println(database);
-        System.out.println(database.getPropertySpecs());
+    private static final String NOT_FOUND_CONTROLLER_FOR_EXTRACT = "추출할 컨트롤러 정보가 존재하지 않습니다.";
 
-        Random random = new Random();
+    public void makeApiPage(String token, String databaseId, DocVO doc) {
+        if(doc.getControllers() == null) {
+            throw new NotFoundException(NOT_FOUND_CONTROLLER_FOR_EXTRACT);
+        }
+        FutureNotionClient client = initClient(token);
         for(ControllerVO controller : doc.getControllers()) {
             String controllerName = controller.getName();
             String commonUri = controller.getCommonUri();
