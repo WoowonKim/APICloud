@@ -8,6 +8,7 @@ import com.web.apicloud.util.code.java.*;
 import io.spring.initializr.generator.language.Annotation;
 import io.spring.initializr.generator.language.SourceCodeWriter;
 import io.spring.initializr.generator.language.SourceStructure;
+import io.spring.initializr.generator.language.java.JavaExpressionStatement;
 import io.spring.initializr.generator.language.java.JavaLanguage;
 import io.spring.initializr.generator.language.java.JavaReturnStatement;
 import io.spring.initializr.generator.project.contributor.ProjectContributor;
@@ -58,7 +59,7 @@ public class ControllerContributor implements ProjectContributor {
 
     private Consumer<ApiVO> apiConsumer(CustomJavaTypeDeclaration controllerType, Map<String, PropertyVO> dtos) {
         return api -> {
-             api.getAvailableDTO(dtos);
+            api.getAvailableDTO(dtos);
             CustomJavaMethodDeclaration.Builder builder = CustomJavaMethodDeclaration
                     .method(api.getName())
                     .modifiers(Modifier.PUBLIC)
@@ -127,8 +128,30 @@ public class ControllerContributor implements ProjectContributor {
                 for (PropertyVO property : dto.getProperties()) {
                     dtoType.addFieldDeclaration(CustomJavaFieldDeclaration.field(property.getName()).modifiers(Modifier.PRIVATE)
                             .returning(property.getTypeForCode()));
+                    dtoType.addMethodDeclaration(makeGetter(property));
+                    dtoType.addMethodDeclaration(makeSetter(property));
                 }
             }
         }
+    }
+
+    private CustomJavaMethodDeclaration makeSetter(PropertyVO property) {
+        return CustomJavaMethodDeclaration
+                .method("set" + camelToPascal(property.getName()))
+                .modifiers(Modifier.PUBLIC)
+                .parameters(makeParameter(property, null).get())
+                .body(new JavaExpressionStatement(new PlainJavaCode("this." + property.getName() + " = " + property.getName())));
+    }
+
+    private CustomJavaMethodDeclaration makeGetter(PropertyVO property) {
+        return CustomJavaMethodDeclaration
+                .method("get" + camelToPascal(property.getName()))
+                .modifiers(Modifier.PUBLIC)
+                .returning(property.getTypeForCode())
+                .body(new JavaExpressionStatement(new PlainJavaCode("return this." + property.getName())));
+    }
+
+    private String camelToPascal(String name) {
+        return Character.toUpperCase(name.charAt(0)) + name.substring(1);
     }
 }
