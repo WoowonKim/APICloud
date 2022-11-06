@@ -2,10 +2,14 @@ package com.web.apicloud.domain.dto;
 
 import com.web.apicloud.domain.entity.Docs;
 import com.web.apicloud.domain.entity.Group;
+import com.web.apicloud.domain.vo.UserAuthorityVO;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class CreateDocRequest {
+
     private Long userId;
 
     private String docsName;
@@ -27,6 +31,8 @@ public class CreateDocRequest {
     private Integer packaging;
 
     private Group group;
+
+    private List<UserAuthorityVO> userAuthorityVO;
 
     public Docs toEntity() {
         return Docs.builder()
