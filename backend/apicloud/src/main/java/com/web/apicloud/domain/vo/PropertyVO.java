@@ -9,13 +9,13 @@ import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 @Builder
 @AllArgsConstructor
 //@NoArgsConstructor
 @Data
-//@JsonInclude(JsonInclude.Include.NON_EMPTY)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class PropertyVO {
     static final String DTO_CREATE_TYPE = "Object";
 
@@ -37,14 +37,18 @@ public class PropertyVO {
         this.properties = new ArrayList<>();
     }
 
-    public void getDtos(List<PropertyVO> dtos, Set<String> dtoNames) {
-        if (DTO_CREATE_TYPE.equals(type) && !dtoNames.contains(dtoName)) {
-            dtoNames.add(dtoName);
-            dtos.add(this);
+    public void getDtos(Map<String, PropertyVO> dtos) {
+        if (isDtoCreationRequired()
+                && (!dtos.containsKey(dtoName) || dtos.get(dtoName).hasEmptyProperties())) {
+            dtos.put(dtoName, this);
             for (PropertyVO property : properties) {
-                property.getDtos(dtos, dtoNames);
+                property.getDtos(dtos);
             }
         }
+    }
+
+    private boolean hasEmptyProperties() {
+        return properties == null || properties.isEmpty();
     }
 
     @JsonIgnore

@@ -1,27 +1,46 @@
-import React, { PropsWithChildren, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleUser } from "@fortawesome/free-solid-svg-icons";
 import { faLink } from "@fortawesome/free-solid-svg-icons";
 import { userDummy } from "./ListDummy";
-import { useDispatch } from "react-redux";
-import { setApiDoc } from "../../Store/slice/mainApi";
+import { useDispatch, useSelector } from "react-redux";
+import mainApiSlice, {
+  getApiDoc,
+  updateApiDoc,
+} from "../../Store/slice/mainApi";
+import { RootState } from "../../Store/store";
 
-interface ModalDefaultType {
-  onClickToggleModal: () => void;
-}
+export type DocInformationType = {
+  docId: number;
+  docsName: string;
+  serverUrl: string;
+  contextUri: string;
+  javaVersion: string;
+  springVersion: string;
+  buildManagement: number;
+  groupPackage: string;
+  packageName: string;
+  packaging: number;
+};
 
-const Modal = ({ onClickToggleModal }: PropsWithChildren<ModalDefaultType>) => {
+const UpdateModal = () => {
   const [docsName, setDocsName] = useState("");
   const [serverUrl, setServerUrl] = useState("");
   const [contextUri, setContextUri] = useState("");
-  const [javaVersion, setJavaVersion] = useState(0);
-  const [springVerion, setSpringVersion] = useState("");
-  const [buildManagement, setBuildManagement] = useState(0);
+  const [javaVersion, setJavaVersion] = useState("");
+  const [springVersion, setSpringVersion] = useState("");
+  const [buildManagement, setBuildManagement] = useState("");
   const [groupPackage, setGroupPackage] = useState("");
   const [packageName, setPackageName] = useState("");
-  const [packaging, setPackaging] = useState(0);
-  const [encryptedUrl, setEncryptedUrl] = useState("");
+  const [packaging, setPackaging] = useState("");
+
+  const docsNameInput: any = useRef();
+
+  const docId = useSelector((state: RootState) => state.mainApi.docId);
+  const isOpenUpdateModal = useSelector(
+    (state: RootState) => state.mainApi.isOpenUpdateModal
+  );
 
   const dispatch = useDispatch();
 
@@ -30,71 +49,64 @@ const Modal = ({ onClickToggleModal }: PropsWithChildren<ModalDefaultType>) => {
     serverUrl &&
     contextUri &&
     javaVersion &&
-    springVerion &&
+    springVersion &&
     buildManagement &&
     groupPackage &&
     packageName &&
     packaging;
 
-  const onChangeDocsName = (e: any) => {
-    setDocsName(e.target.value);
-  };
-
-  const onChangeServerUrl = (e: any) => {
-    setServerUrl(e.target.value);
-  };
-
-  const onChangeContextUri = (e: any) => {
-    setContextUri(e.target.value);
-  };
-
-  const onChangeJavaVersion = (e: any) => {
-    setJavaVersion(e.target.value);
-  };
-
-  const onChangeSpringVersion = (e: any) => {
-    setSpringVersion(e.target.value);
-  };
-
-  const onChangeBuildManagement = (e: any) => {
-    setBuildManagement(e.target.value);
-  };
-
-  const onChangeGroupPackage = (e: any) => {
-    setGroupPackage(e.target.value);
-  };
-
-  const onChangePackageName = (e: any) => {
-    setPackageName(e.target.value);
-  };
-
-  const onChangePackaging = (e: any) => {
-    setPackaging(e.target.value);
-  };
-
-  const createDocRequest = {
-    userId: 1,
+  const updateDocRequest = {
+    docId: docId,
     docsName: docsName,
     serverUrl: serverUrl,
     contextUri: contextUri,
     javaVersion: javaVersion,
-    springVerion: springVerion,
+    springVersion: springVersion,
     buildManagement: buildManagement,
     groupPackage: groupPackage,
     packageName: packageName,
     packaging: packaging,
   };
 
-  // API DOC 생성하기
+  // API DOC 수정하기
   const onSubmit = (e: any) => {
     e.preventDefault();
-    dispatch(setApiDoc(createDocRequest)).then((res: any) => {
-      if (res.payload?.status === 200) {
-        setEncryptedUrl(res.payload.encryptedUrl);
-        console.log(res.payload.encryptedUrl);
-      }
-    });
+    if (docId > 0) {
+      dispatch(
+        updateApiDoc({ docId: docId, updateDocRequest: updateDocRequest })
+      ).then((res: any) => {
+        if (res.payload?.status === 200) {
+          dispatch(mainApiSlice.actions.setDocId({ docId: 0 }));
+          dispatch(
+            mainApiSlice.actions.setIsOpenUpdateModal({ isOpenModal: false })
+          );
+          dispatch(
+            mainApiSlice.actions.setIsDocUpdated({
+              isDocUpdated: true,
+            })
+          );
+        }
+      });
+    }
   };
+
+  useEffect(() => {
+    if (docId > 0) {
+      dispatch(getApiDoc({ docId: docId })).then((res: any) => {
+        if (res.payload?.status === 200) {
+          setDocsName(res.payload.docInformation.docsName);
+          setServerUrl(res.payload.docInformation.serverUrl);
+          setContextUri(res.payload.docInformation.contextUri);
+          setJavaVersion(res.payload.docInformation.javaVersion);
+          setSpringVersion(res.payload.docInformation.springVersion);
+          setBuildManagement(res.payload.docInformation.buildManagement);
+          setGroupPackage(res.payload.docInformation.groupPackage);
+          setPackageName(res.payload.docInformation.packageName);
+          setPackaging(res.payload.docInformation.packaging);
+        }
+      });
+    }
+  }, []);
 
   return (
     <ModalContainer>
@@ -102,60 +114,70 @@ const Modal = ({ onClickToggleModal }: PropsWithChildren<ModalDefaultType>) => {
         <div className="modalContainer">
           <div className="modalMain">
             <form onSubmit={onSubmit}>
-              <p>생성하기</p>
+              <p>수정하기</p>
               <input
                 className="docsName"
                 type="text"
                 placeholder="생성할 API 명을 작성해주세요"
-                onChange={onChangeDocsName}
+                ref={docsNameInput}
+                value={docsName}
+                onChange={(e) => setDocsName(e.target.value)}
               />
               <input
                 className="serverUrl"
                 type="text"
                 placeholder="생성할 serverUrl을 작성해주세요"
-                onChange={onChangeServerUrl}
+                value={serverUrl}
+                onChange={(e) => setServerUrl(e.target.value)}
               />
               <input
-                className="contextUri"
+                className="contextUrl"
                 type="text"
-                placeholder="생성할 contextUri를 작성해주세요"
-                onChange={onChangeContextUri}
+                placeholder="생성할 contextUrl를 작성해주세요"
+                value={contextUri}
+                onChange={(e) => setContextUri(e.target.value)}
               />
               <input
                 className="javaVersion"
                 type="text"
                 placeholder="생성할 javaVersion을 작성해주세요"
-                onChange={onChangeJavaVersion}
+                value={javaVersion}
+                onChange={(e) => setJavaVersion(e.target.value)}
               />
               <input
                 className="springVersion"
                 type="text"
                 placeholder="생성할 springVersion을 작성해주세요"
-                onChange={onChangeSpringVersion}
+                value={springVersion}
+                onChange={(e) => setSpringVersion(e.target.value)}
               />
               <input
                 className="buildManagement"
                 type="text"
                 placeholder="생성할 buildManagement을 작성해주세요"
-                onChange={onChangeBuildManagement}
+                value={buildManagement}
+                onChange={(e) => setBuildManagement(e.target.value)}
               />
               <input
                 className="groupPackage"
                 type="text"
                 placeholder="생성할 groupPackage을 작성해주세요"
-                onChange={onChangeGroupPackage}
+                value={groupPackage}
+                onChange={(e) => setGroupPackage(e.target.value)}
               />
               <input
                 className="packageName"
                 type="text"
                 placeholder="생성할 packageName을 작성해주세요"
-                onChange={onChangePackageName}
+                value={packageName}
+                onChange={(e) => setPackageName(e.target.value)}
               />
               <input
                 className="packaging"
                 type="text"
                 placeholder="생성할 packaging을 작성해주세요"
-                onChange={onChangePackaging}
+                value={packaging}
+                onChange={(e) => setPackaging(e.target.value)}
               />
               <p>초대하기</p>
               <input
@@ -196,8 +218,12 @@ const Modal = ({ onClickToggleModal }: PropsWithChildren<ModalDefaultType>) => {
       <Backdrop
         onClick={(e: React.MouseEvent) => {
           e.preventDefault();
-          if (onClickToggleModal) {
-            onClickToggleModal();
+          if (isOpenUpdateModal) {
+            dispatch(
+              mainApiSlice.actions.setIsOpenUpdateModal({
+                isOpenUpdateModal: false,
+              })
+            );
           }
         }}
       />
@@ -210,7 +236,7 @@ const ModalContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  position: fixed;
+  position: absolute;
 `;
 
 const DialogBox = styled.dialog`
@@ -237,4 +263,4 @@ const Backdrop = styled.div`
   z-index: 9999;
 `;
 
-export default Modal;
+export default UpdateModal;

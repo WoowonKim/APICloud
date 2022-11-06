@@ -40,11 +40,12 @@ export type DtoType = {
 };
 
 export type PropertiesType = {
+  dtoName: string;
   name: string;
   type: string;
   required: boolean;
   collectionType: string;
-  properties?: [] | PropertiesType;
+  properties: PropertiesType[];
 };
 
 export type HeadersType = {
@@ -55,15 +56,11 @@ export type HeadersType = {
 export type ResponsesType = {
   fail: {
     status: number;
-    type: string;
-    required: boolean;
-    properties: PropertiesType[];
+    responseBody: DtoType;
   };
   success: {
     status: number;
-    type: string;
-    required: boolean;
-    properties: PropertiesType[];
+    responseBody: DtoType;
   };
 };
 

@@ -1,8 +1,7 @@
 package com.web.apicloud.domain.entity;
 
 import com.web.apicloud.domain.dto.DocListResponse;
-import com.web.apicloud.domain.vo.DocVO;
-import com.web.apicloud.domain.vo.ServerVO;
+import com.web.apicloud.domain.dto.UpdateDocDto;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -76,7 +75,6 @@ public class Docs {
         this.packaging = packaging;
         this.encryptedUrl = encryptedUrl;
         this.group = group;
-        this.detail = detail;
     }
 
     public DocListResponse toDto(Long docId, String docName, Long groupId, User groupUser, Integer authority) {
@@ -86,6 +84,21 @@ public class Docs {
                 .groupId(groupId)
                 .groupUser(groupUser)
                 .authority(authority)
+                .build();
+    }
+
+    public UpdateDocDto toDto(Long docId, String docsName, String serverUrl, String contextUri, String javaVersion, String springVersion, Integer buildManagement, String groupPackage, String packageName, Integer packaging) {
+        return UpdateDocDto.builder()
+                .docId(docId)
+                .docsName(docsName)
+                .serverUrl(serverUrl)
+                .contextUri(contextUri)
+                .javaVersion(javaVersion)
+                .springVersion(springVersion)
+                .buildManagement(buildManagement)
+                .groupPackage(groupPackage)
+                .packageName(packageName)
+                .packaging(packaging)
                 .build();
     }
 }

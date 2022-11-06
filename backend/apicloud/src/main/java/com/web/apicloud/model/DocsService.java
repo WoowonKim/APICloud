@@ -22,11 +22,13 @@ public interface DocsService {
 
     List<DocListResponse> getDocs(Long userId);
 
+    UpdateDocDto getDoc(Long docId);
+
     DocVO getDocVOByDocsId(Long docId) throws JsonProcessingException;
     
     UpdateDocDto updateDoc(Long docId, UpdateDocDto updateDocDto);
 
     void deleteDoc(Long docId);
 
-    byte[] getExcelFile(List<ControllerVO> docVOByDocsId);
+    byte[] getCsvFile(List<ControllerVO> docVOByDocsId);
 }
