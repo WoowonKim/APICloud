@@ -67,6 +67,14 @@ const TableInfo = ({
           </div>
           <div className="typeInputContainer">
             <p className="typeInputLabel">type</p>
+            {state.data[selectedController].apis[selectedApi].requestBody
+              .collectionType === "List" && (
+              <SelectTypes
+                handleBasicInfo={handleBasicInfo}
+                depth={1}
+                isCollection={true}
+              />
+            )}
             <SelectTypes handleBasicInfo={handleBasicInfo} depth={1} />
           </div>
           <div className="tableInfoInputGroup">
@@ -148,6 +156,16 @@ const TableInfo = ({
             </div>
             <div className="typeInputContainer">
               <p className="typeInputLabel">type</p>
+              {state.data[selectedController].apis[selectedApi].responses[
+                responseType
+              ].responseBody.collectionType === "List" && (
+                <SelectTypes
+                  handleBasicInfo={handleBasicInfo}
+                  responseType={responseType}
+                  depth={1}
+                  isCollection={true}
+                />
+              )}
               <SelectTypes
                 handleBasicInfo={handleBasicInfo}
                 responseType={responseType}

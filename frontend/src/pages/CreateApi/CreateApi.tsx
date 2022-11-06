@@ -17,7 +17,7 @@ const CreateApi = () => {
     requestBody: {
       dtoName: "",
       name: "",
-      type: "",
+      type: "String",
       collectionType: "",
       properties: [],
       required: true,
@@ -26,7 +26,7 @@ const CreateApi = () => {
       {
         dtoName: "",
         name: "",
-        type: "",
+        type: "String",
         required: true,
         properties: [],
         collectionType: "",
@@ -36,7 +36,7 @@ const CreateApi = () => {
       {
         dtoName: "",
         name: "",
-        type: "",
+        type: "String",
         required: true,
         properties: [],
         collectionType: "",
@@ -49,7 +49,7 @@ const CreateApi = () => {
         responseBody: {
           dtoName: "",
           name: "",
-          type: "",
+          type: "String",
           collectionType: "",
           properties: [],
           required: true,
@@ -60,7 +60,7 @@ const CreateApi = () => {
         responseBody: {
           dtoName: "",
           name: "",
-          type: "",
+          type: "String",
           collectionType: "",
           properties: [],
           required: true,
@@ -78,7 +78,7 @@ const CreateApi = () => {
   const propertiesData: PropertiesType = {
     dtoName: "",
     name: "",
-    type: "",
+    type: "String",
     required: true,
     collectionType: "",
     properties: [],

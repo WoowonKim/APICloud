@@ -54,7 +54,7 @@ const Table = ({
     const newData = {
       dtoName: "",
       name: "",
-      type: "",
+      type: "String",
       collectionType: "",
       properties: [],
       required: true,
@@ -127,11 +127,12 @@ const Table = ({
     cell: function Cell({ getValue, row: { index }, column: { id }, table }) {
       const initialValue = getValue<string>();
       const [value, setValue] = useState<string>(initialValue);
+      const rootPath = state.data[selectedController].apis[selectedApi];
 
       const onBlur = (temp?: string) => {
         table.options.meta?.updateData(index, id, temp ? temp : value);
         if (temp) {
-          setValue(temp);
+          setValue(id === "type" && temp === "List" ? "String" : temp);
         }
       };
 
@@ -155,6 +156,43 @@ const Table = ({
         />
       ) : id === "type" ? (
         <div className="typeInfoContainer">
+          {activeTab === 2 &&
+          rootPath.parameters[index].collectionType === "List" ? (
+            <SelectTypes
+              onBlur={onBlur}
+              setValue={setValue}
+              value={"List"}
+              isCollection={true}
+            />
+          ) : activeTab === 3 &&
+            rootPath.queries[index].collectionType === "List" ? (
+            <SelectTypes
+              onBlur={onBlur}
+              setValue={setValue}
+              value={"List"}
+              isCollection={true}
+            />
+          ) : activeTab === 4 &&
+            rootPath.requestBody.properties[index].collectionType === "List" ? (
+            <SelectTypes
+              onBlur={onBlur}
+              setValue={setValue}
+              value={"List"}
+              isCollection={true}
+            />
+          ) : activeTab === 5 &&
+            (responseType === "fail" || responseType === "success") &&
+            rootPath.responses[responseType].responseBody.properties[index]
+              .collectionType === "List" ? (
+            <SelectTypes
+              onBlur={onBlur}
+              setValue={setValue}
+              value={"List"}
+              isCollection={true}
+            />
+          ) : (
+            <></>
+          )}
           <SelectTypes onBlur={onBlur} setValue={setValue} value={value} />
           {value === "Object" && (
             <FontAwesomeIcon
@@ -285,9 +323,22 @@ const Table = ({
                       rowIndex
                     ][type] = newValue;
                   } else {
-                    state.data[selectedController].apis[selectedApi][tab][
-                      rowIndex
-                    ][type] = value;
+                    if (type === "type" && value === "List") {
+                      state.data[selectedController].apis[selectedApi][tab][
+                        rowIndex
+                      ].collectionType = value;
+                      state.data[selectedController].apis[selectedApi][tab][
+                        rowIndex
+                      ][type] = "String";
+                    } else if (type === "type" && value === "X") {
+                      state.data[selectedController].apis[selectedApi][tab][
+                        rowIndex
+                      ].collectionType = "";
+                    } else {
+                      state.data[selectedController].apis[selectedApi][tab][
+                        rowIndex
+                      ][type] = value;
+                    }
                   }
                 }
               }
@@ -302,9 +353,22 @@ const Table = ({
                     selectedApi
                   ].requestBody.properties[rowIndex][type] = newValue;
                 } else {
-                  state.data[selectedController].apis[
-                    selectedApi
-                  ].requestBody.properties[rowIndex][type] = value;
+                  if (type === "type" && value === "List") {
+                    state.data[selectedController].apis[
+                      selectedApi
+                    ].requestBody.properties[rowIndex].collectionType = value;
+                    state.data[selectedController].apis[
+                      selectedApi
+                    ].requestBody.properties[rowIndex][type] = "String";
+                  } else if (type === "type" && value === "X") {
+                    state.data[selectedController].apis[
+                      selectedApi
+                    ].requestBody.properties[rowIndex].collectionType = "";
+                  } else {
+                    state.data[selectedController].apis[
+                      selectedApi
+                    ].requestBody.properties[rowIndex][type] = value;
+                  }
                 }
               }
             });
@@ -321,9 +385,22 @@ const Table = ({
                     responseType
                   ].responseBody.properties[rowIndex][type] = newValue;
                 } else {
-                  state.data[selectedController].apis[selectedApi].responses[
-                    responseType
-                  ].responseBody.properties[rowIndex][type] = value;
+                  if (type === "type" && value === "List") {
+                    state.data[selectedController].apis[selectedApi].responses[
+                      responseType
+                    ].responseBody.properties[rowIndex].collectionType = value;
+                    state.data[selectedController].apis[selectedApi].responses[
+                      responseType
+                    ].responseBody.properties[rowIndex][type] = "String";
+                  } else if (type === "type" && value === "X") {
+                    state.data[selectedController].apis[selectedApi].responses[
+                      responseType
+                    ].responseBody.properties[rowIndex].collectionType = "";
+                  } else {
+                    state.data[selectedController].apis[selectedApi].responses[
+                      responseType
+                    ].responseBody.properties[rowIndex][type] = value;
+                  }
                 }
               }
             });
@@ -362,7 +439,14 @@ const Table = ({
       ) {
         rootPath[key] = e.target.value;
       } else if (typeof e === "string" && key === "type") {
-        rootPath[key] = e;
+        if (e === "List") {
+          rootPath.collectionType = "List";
+          rootPath[key] = "String";
+        } else if (e === "X") {
+          rootPath.collectionType = "";
+        } else {
+          rootPath[key] = e;
+        }
       }
     } else if (activeTab === 5 && state.data) {
       const response = responseType === "fail" ? "fail" : "success";
@@ -394,7 +478,14 @@ const Table = ({
           key2
         ] = Number(e.target.value);
       } else if (typeof e === "string" && key2 === "type") {
-        rootPath[key2] = e;
+        if (e === "List") {
+          rootPath.collectionType = "List";
+          rootPath[key2] = "String";
+        } else if (e === "X") {
+          rootPath.collectionType = "X";
+        } else {
+          rootPath[key2] = e;
+        }
       }
     }
   };
