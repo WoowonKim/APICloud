@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../components/main/Header";
 import ApiAddress from "../components/ApiTest/ApiAddress";
 import ApiBody from "../components/ApiTest/ApiBody";
@@ -8,35 +8,25 @@ import ApiResponse from "../components/ApiTest/ApiResponse";
 import ApiSide from "../components/ApiTest/ApiSide";
 import "../components/ApiTest/ApiTest.scss";
 
-export type SiteAddressType = {
-  Address: string;
-  commonUri: string;
-};
-export type subMethod = {
-  method: string;
-  uri: string;
-};
-const siteAddress: SiteAddressType = {
-  Address: "https://localhost:8080",
-  commonUri: "/ApiCloud",
-};
 const TestApi = () => {
-  const [submitMethod, setSubmitMethod] = useState<subMethod | null>(null);
+  const [sideApiList, setSidApiList] = useState<number>(0);
 
   return (
     <div>
       <Header />
       <div className="testContainer">
         <div className="testSide">
-          <ApiSide />
+          <ApiSide setSidApiList={setSidApiList} />
         </div>
         <div className="testMain">
-          <ApiAddress siteAddress={siteAddress} />
-          <ApiInputUri siteAddress={siteAddress} setSubmitMethod={setSubmitMethod} />
+          <div className="testInfomation">
+            {/* <ApiAddress /> */}
+            <ApiInputUri sideApiList={sideApiList} />
+          </div>
           <div className="testInfo">
             <div className="testSetting">
-              <ApiHeader />
-              <ApiBody />
+              <ApiHeader sideApiList={sideApiList} />
+              <ApiBody sideApiList={sideApiList} />
             </div>
             <ApiResponse />
           </div>

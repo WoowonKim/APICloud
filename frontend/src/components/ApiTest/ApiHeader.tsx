@@ -1,27 +1,33 @@
-import React from "react";
+import React, { useState } from "react";
+import Headerheader from "./Headerheader";
+import HeaderToken from "./HeaderToken";
 
-const ApiHeader = () => {
+interface type {
+  sideApiList: number;
+}
+
+const ApiHeader = ({ sideApiList }: type) => {
+  const [headerTokenFlag, setHeaderTokenFlag] = useState<number | null>(0);
   return (
-    <div className="ApiHeaderContainer">
-      <p>Header</p>
-      <div className="HeaderList">
-        <div className="HeaderListTitle">
-          <p>Content-Type :</p>
-          <p>Content-Length :</p>
-          <p>Host :</p>
-          <p>Accept :</p>
-          <p>Accept-Encoding :</p>
-          <p>Connection :</p>
-        </div>
-        <div className="HeaderListContent">
-          <p> application/json</p>
-          <p> calculated when request is sent</p>
-          <p> calculated when request is sent</p>
-          <p> */* </p>
-          <p> gzip, deflate, br</p>
-          <p> keep-alive </p>
-        </div>
-      </div>
+    <div className="apiHeaderContainer">
+      <p className="apiHeaderMainTitle">Request</p>
+      <span
+        className={headerTokenFlag === 0 ? "headerClickList" : "headerNoClicklist"}
+        onClick={() => {
+          setHeaderTokenFlag(0);
+        }}
+      >
+        Header
+      </span>
+      <span
+        className={headerTokenFlag === 1 ? "headerClickList" : "headerNoClicklist"}
+        onClick={() => {
+          setHeaderTokenFlag(1);
+        }}
+      >
+        Token
+      </span>
+      <div className="headerList">{headerTokenFlag === 0 ? <Headerheader sideApiList={sideApiList} /> : <HeaderToken sideApiList={sideApiList} />}</div>
     </div>
   );
 };

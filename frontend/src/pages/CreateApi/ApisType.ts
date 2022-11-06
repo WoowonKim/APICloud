@@ -1,12 +1,16 @@
 export type ServerInfoType = {
-  serverUrl: string;
-  rootUri: string;
-  javaVersion: number;
-  buildManagement: string;
-  groupPackage: string;
-  packageName: string;
-  jarWar: string;
-  springVersion: string;
+  bootVersion: string;
+  type: "maven-project" | "gradle-project";
+  language: "java";
+  baseDir: string; // 프로젝트 zip 파일 이름
+  groupId: string; // com.example
+  artifactId: string; // ===> 대부분 name이랑 같아서 뺄 수도.
+  name: string;
+  description: string; // ===> 빼도 됨
+  packageName: string; // 전체 패키지 이름: com.example.demo
+  packaging: string; // jar, war
+  javaVersion: string; // 자바버전 string값 ( ex. 17, 1.8)
+  dependencies: [];
 };
 
 export type ControllerType = {
@@ -19,28 +23,32 @@ export type ApisType = {
   name: string;
   uri: string;
   method: string;
-  requestBody: DtoType | {};
-  parameters: PropertiesType[] | [];
-  query: DtoType | {};
-  header: HeaderType | [];
-  responses: ResponsesType | {};
+  requestBody: DtoType;
+  parameters: PropertiesType[];
+  query: DtoType;
+  headers: HeadersType[];
+  responses: ResponsesType;
 };
 
 export type DtoType = {
+  dtoName: string;
   name: string;
   type: string;
+  collectionType: string; // List, Map, Set
   properties: PropertiesType[];
   required: boolean;
 };
 
 export type PropertiesType = {
+  dtoName: string;
   name: string;
   type: string;
   required: boolean;
-  properties: [] | PropertiesType;
+  collectionType: string;
+  properties: PropertiesType[];
 };
 
-export type HeaderType = {
+export type HeadersType = {
   key: string;
   value: string;
 };
@@ -48,17 +56,14 @@ export type HeaderType = {
 export type ResponsesType = {
   fail: {
     status: number;
-    type: string;
-    properties: PropertiesType[];
+    responseBody: DtoType;
   };
   success: {
     status: number;
-    type: string;
-    properties: PropertiesType[];
+    responseBody: DtoType;
   };
 };
 
 export type DataType = {
-  server: ServerInfoType;
-  controller: ControllerType[];
+  controllers: ControllerType[];
 };

@@ -1,0 +1,64 @@
+initializr:
+#  env:
+#    boms:
+#      my-api-bom:
+#        groupId: org.acme
+#        artifactId: my-api-dependencies
+#        version: 1.0.0.RELEASE
+#        repositories: my-api-repo-1
+  javaVersions:
+    - id: 11
+      default: false
+    - id: 1.8
+      default: true
+  languages:
+    - name: Java
+      id: java
+      default: true
+    - name: Kotlin
+      id: kotlin
+      default: false
+  packagings:
+    - name: Jar
+      id: jar
+      default: true
+    - name: War
+      id: war
+      default: false
+  group-id:
+    value: com.example
+  artifact-id:
+      value: demo
+  bootVersions:
+    - id: 2.4.0-SNAPSHOT
+      name: 2.4.0 (SNAPSHOT)
+      default: false
+    - id: 2.3.3.BUILD-SNAPSHOT
+      name: 2.3.3 (SNAPSHOT)
+      default: false
+    - id: 2.3.2.RELEASE
+      name: 2.3.2
+      default: true
+  types:
+    - name: Maven Project
+      id: maven-project
+      description: Generate a Maven based project archive
+      tags:
+        build: maven
+        format: project
+      default: true
+      action: /starter.zip
+    - name: Gradle Project
+      id: gradle-project
+      description: Generate a Gradle based project archive
+      tags:
+        build: gradle
+        format: project
+      default: false
+      action: /starter.zip
+  dependencies:
+    - name: Web
+      content:
+        - name: Web
+          id: web
+          description: Full-stack web development with Tomcat and Spring MVC

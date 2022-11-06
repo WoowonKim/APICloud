@@ -1,5 +1,7 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import { useAppDispatch } from "../../Store/hooks";
+import testApiSlice from "../../Store/slice/testApi";
 import "../CreateApi/SelectMethods/SelectMethods.scss";
 
 const Item = styled.div`
@@ -20,22 +22,25 @@ const SelectedItem = styled.button`
   background-color: ${(props) => props.color};
   width: 100%;
 `;
-
-interface Props {
-  setGetMethod: Dispatch<SetStateAction<string>>;
+interface word {
+  methodApiWord: string;
 }
-
-const MethodTest = ({ setGetMethod }: Props) => {
+const MethodTest = ({ methodApiWord }: word) => {
+  const dispatch = useAppDispatch();
   const [visible, setVisible] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState("GET");
-
   const handleSelect = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
     const eventTarget = e.target as HTMLElement;
     setSelectedMethod(eventTarget.innerText);
-    setGetMethod(eventTarget.innerText);
+    dispatch(testApiSlice.actions.setMethod({ method: eventTarget.innerText }));
     setVisible(!visible);
   };
-  const mainColor = "F4F4F4";
+  useEffect(() => {
+    if (methodApiWord?.length > 0) {
+      setSelectedMethod(methodApiWord);
+      dispatch(testApiSlice.actions.setMethod({ method: methodApiWord }));
+    }
+  }, [methodApiWord]);
   return (
     <div className="selectBox" onClick={() => setVisible(!visible)}>
       <SelectedItem
@@ -57,6 +62,7 @@ const MethodTest = ({ setGetMethod }: Props) => {
       >
         {selectedMethod}
       </SelectedItem>
+
       {visible && (
         <div className="selectBoxContainer">
           <ul className="itemList">

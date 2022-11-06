@@ -1,107 +1,161 @@
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { ApisType, ControllerType, PropertiesType } from "./ApisType";
+import "./CreateApi.scss";
 import Sidebar from "../../components/CreateApi/Sidebar/Sidebar";
 import Table from "../../components/CreateApi/Table/Table";
-import "./CreateApi.scss";
-
-// table의 row type 설정
-export type ApiType = {
-  detailUri: String;
-  summary: String;
-  method:
-    | "GET"
-    | "POST"
-    | "PUT"
-    | "DELETE"
-    | "PATCH"
-    | "OPTIONS"
-    | "HEAD"
-    | null;
-  param: String;
-  requestBody: String;
-  header: String;
-  successResponseBody: String;
-  failResponseBody: String;
-  subRows?: ApiType[];
-};
-
-// 전체 api들의 type 설정
-export type ApiListType = {
-  url: string;
-  details: ApiType[];
-};
+import { useSyncedStore } from "@syncedstore/react";
+import { store } from "../../components/CreateApi/store";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
 const CreateApi = () => {
-  // api를 저장하기 위한 state (임시 기본값 설정)
-  const [datas, setDatas] = useState<ApiListType[]>([
-    {
-      url: "",
-      details: [
-        {
-          detailUri: "",
-          summary: "",
-          method: null,
-          param: "",
-          requestBody: "",
-          header: "",
-          successResponseBody: "",
-          failResponseBody: "",
-        },
-      ],
+  // api 정보를 저장할 state
+  const [apiData, setApiData] = useState<ApisType>({
+    name: "",
+    uri: "",
+    method: "GET",
+    requestBody: {
+      dtoName: "",
+      name: "",
+      type: "",
+      collectionType: "",
+      properties: [],
+      required: true,
     },
-  ]);
-
-  // table 추가 함수
-  const addTable = () => {
-    let copy = [...datas];
-    copy.push({
-      url: "",
-      details: [
-        {
-          detailUri: "",
-          summary: "",
-          method: null,
-          param: "",
-          requestBody: "",
-          header: "",
-          successResponseBody: "",
-          failResponseBody: "",
+    parameters: [
+      {
+        dtoName: "",
+        name: "",
+        type: "",
+        required: true,
+        properties: [],
+        collectionType: "",
+      },
+    ],
+    query: {
+      dtoName: "",
+      name: "",
+      type: "",
+      collectionType: "",
+      properties: [],
+      required: true,
+    },
+    headers: [{ key: "", value: "" }],
+    responses: {
+      fail: {
+        status: 400,
+        responseBody: {
+          dtoName: "",
+          name: "",
+          type: "",
+          collectionType: "",
+          properties: [],
+          required: true,
         },
-      ],
-    });
-    setDatas(copy);
+      },
+      success: {
+        status: 200,
+        responseBody: {
+          dtoName: "",
+          name: "",
+          type: "",
+          collectionType: "",
+          properties: [],
+          required: true,
+        },
+      },
+    },
+  });
+  // controller 정보를 저장할 state
+  const [controllerData, setControllerData] = useState<ControllerType>({
+    name: "",
+    commonUri: "",
+    apis: [],
+  });
+
+  const propertiesData: PropertiesType = {
+    dtoName: "",
+    name: "",
+    type: "",
+    required: true,
+    collectionType: "",
+    properties: [],
   };
 
-  // table에 row 추가 함수
-  const addTableRow = (index: number) => {
-    const addData = {
-      detailUri: "",
-      summary: "",
-      method: null,
-      param: "",
-      requestBody: "",
-      header: "",
-      successResponseBody: "",
-      failResponseBody: "",
-    };
+  const state = useSyncedStore(store);
+  // 테이블의 탭 전환을 위한 state
+  const [activeTab, setActiveTab] = useState(1);
+  // 선택된 api,controller 저장 state
+  const [selectedApi, setSelectedApi] = useState(-1);
+  const [selectedController, setSelectedController] = useState(-1);
 
-    setDatas((old) => {
-      let copy = [...old];
-      copy[index] = {
-        url: copy[index].url,
-        details: [...copy[index].details, addData],
-      };
-      return copy;
-    });
+  // 추가된 api, controller index를 저장할 state
+  const [addedApiIndex, setAddedApiIndex] = useState(-1);
+  const [addedControllerIndex, setAddedControllerIndex] = useState(-1);
+
+  // controller 추가/삭제 함수 -> 기존 데이터에 새 데이터 추가
+  const handleController = (method: string, index?: number) => {
+    if (method === "add") {
+      state.data.push(controllerData);
+      setAddedControllerIndex(state.data.length - 1);
+    } else if (method === "delete" && typeof index === "number") {
+      state.data.splice(index, 1);
+    }
   };
+
+  // api 추가 함수 -> 기존 데이터에 새 데이터 추가
+  const addApi = (index: number) => {
+    state.data[index].apis.push(apiData);
+    setAddedApiIndex(state.data[index].apis.length);
+  };
+
+  // table의 row 추가 함수
+  const addTableRow = (responseType?: "fail" | "success") => {
+    if (activeTab === 1) {
+      state.data[selectedController].apis[selectedApi].headers.push({
+        key: "",
+        value: "",
+      });
+    } else if (activeTab === 2) {
+      state.data[selectedController].apis[selectedApi].parameters.push(
+        propertiesData
+      );
+    } else if (activeTab === 3 || activeTab === 4) {
+      const tab = activeTab === 3 ? "query" : "requestBody";
+      state.data[selectedController].apis[selectedApi][tab].properties.push(
+        propertiesData
+      );
+    } else if (activeTab === 5 && responseType) {
+      state.data[selectedController].apis[selectedApi].responses[
+        responseType
+      ].responseBody.properties.push(propertiesData);
+    }
+  };
+
+  // 사이드바의 api 정보 가져오는 함수
+  const handleSidebarApi = (index: number, idx: number) => {
+    setSelectedController(index);
+    setSelectedApi(idx);
+    setActiveTab(1);
+  };
+  // 데이터 확인 용 로그
+  console.log(JSON.parse(JSON.stringify(state.data)));
 
   return (
     <div className="apiDocscontainer">
-      <Sidebar />
-      <div className="mainContainer">
+      <Sidebar
+        handleController={handleController}
+        addApi={addApi}
+        state={state}
+        handleSidebarApi={handleSidebarApi}
+        selectedApi={selectedApi}
+        selectedController={selectedController}
+        addedApiIndex={addedApiIndex}
+        addedControllerIndex={addedControllerIndex}
+      />
+      <div className="apiDocsMaincontainer">
         <div className="titleContainer">
-          <p>APICloud API 명세서</p>
+          <p className="apiDocsTitleText">APICloud API 명세서</p>
           <div className="buttonContainer">
             <button>공유</button>
             <button>동기화</button>
@@ -118,42 +172,123 @@ const CreateApi = () => {
             <p className="infoValue">/api</p>
           </div>
         </div>
+        <div className="tabContainer">
+          <div
+            className={activeTab === 1 ? "tabItem active" : "tabItem"}
+            onClick={() => setActiveTab(1)}
+          >
+            headers
+          </div>
+          <div
+            className={activeTab === 2 ? "tabItem active" : "tabItem"}
+            onClick={() => setActiveTab(2)}
+          >
+            parameters
+          </div>
+          <div
+            className={activeTab === 3 ? "tabItem active" : "tabItem"}
+            onClick={() => setActiveTab(3)}
+          >
+            query
+          </div>
+          <div
+            className={activeTab === 4 ? "tabItem active" : "tabItem"}
+            onClick={() => setActiveTab(4)}
+          >
+            requestBody
+          </div>
+          <div
+            className={activeTab === 5 ? "tabItem active" : "tabItem"}
+            onClick={() => setActiveTab(5)}
+          >
+            responses
+          </div>
+        </div>
         <div className="tableContainer">
-          {datas.map((data, index) => (
+          {selectedApi > -1 && selectedController > -1 && (
             <div className="apiTable">
-              <div className="plusButtonGroup">
-                {index === datas.length - 1 ? (
-                  <>
-                    <button className="tablePlusButton" onClick={addTable}>
-                      <FontAwesomeIcon className="plusIcon" icon={faPlus} />
-                      <div className="tablePlusText">컨트롤러 추가</div>
-                    </button>
-                  </>
-                ) : (
-                  <div></div>
-                )}
-                <button
-                  className="apiPlusButton"
-                  onClick={() => {
-                    addTableRow(index);
-                  }}
-                >
-                  <FontAwesomeIcon className="plusIcon" icon={faPlus} />
-                  <div className="apiPlusText">api 추가</div>
-                </button>
-              </div>
-              <div>
-                <Table
-                  datas={datas}
-                  key={index}
-                  dataIndex={index}
-                  data={data.details}
-                  setData={setDatas}
-                  url={data.url}
-                />
-              </div>
+              <button
+                className="apiPlusButton"
+                onClick={() => addTableRow("success")}
+              >
+                <FontAwesomeIcon icon={faPlus} className="plusIcon" />
+              </button>
+              <Table
+                activeTab={activeTab}
+                selectedController={selectedController}
+                selectedApi={selectedApi}
+                data={
+                  activeTab === 1 &&
+                  state.data.length > 0 &&
+                  state.data[selectedController].apis.length > 0
+                    ? JSON.parse(
+                        JSON.stringify(
+                          state.data[selectedController].apis[selectedApi]
+                            .headers
+                        )
+                      )
+                    : activeTab === 2 &&
+                      state.data.length > 0 &&
+                      state.data[selectedController].apis.length > 0
+                    ? JSON.parse(
+                        JSON.stringify(
+                          state.data[selectedController].apis[selectedApi]
+                            .parameters
+                        )
+                      )
+                    : activeTab === 3 &&
+                      state.data.length > 0 &&
+                      state.data[selectedController].apis.length > 0
+                    ? JSON.parse(
+                        JSON.stringify(
+                          state.data[selectedController].apis[selectedApi].query
+                            ?.properties
+                        )
+                      )
+                    : activeTab === 4 &&
+                      state.data.length > 0 &&
+                      state.data[selectedController].apis.length > 0
+                    ? JSON.parse(
+                        JSON.stringify(
+                          state.data[selectedController].apis[selectedApi]
+                            .requestBody?.properties
+                        )
+                      )
+                    : JSON.parse(
+                        JSON.stringify(
+                          state.data[selectedController].apis[selectedApi]
+                            .responses.success.responseBody?.properties
+                        )
+                      )
+                }
+                state={state}
+                responseType={"success"}
+              />
             </div>
-          ))}
+          )}
+          {selectedApi > -1 && selectedController > -1 && activeTab === 5 && (
+            <div className="apiTable">
+              <button
+                className="apiPlusButton"
+                onClick={() => addTableRow("fail")}
+              >
+                <FontAwesomeIcon icon={faPlus} className="plusIcon" />
+              </button>
+              <Table
+                activeTab={activeTab}
+                selectedController={selectedController}
+                selectedApi={selectedApi}
+                data={JSON.parse(
+                  JSON.stringify(
+                    state.data[selectedController].apis[selectedApi].responses
+                      .fail.responseBody?.properties
+                  )
+                )}
+                state={state}
+                responseType={"fail"}
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>

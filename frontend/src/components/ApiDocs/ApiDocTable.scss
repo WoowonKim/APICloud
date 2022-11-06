@@ -1,0 +1,31 @@
+.apiDocTableWrapper {
+	width: 100%;
+	.title {
+		text-align: center;
+		padding: 7%;
+	}
+	.innerWrapper1 {
+		display: flex;
+	  justify-content: space-between;
+		.tableColumn1 {
+			display: flex;
+			justify-content: center;
+			margin: 2% 15% 2% 15%;
+		}
+	}
+	.innerWrapper2 {
+		display: flex;
+	  justify-content: space-between;
+		margin-top: 2%;
+		.tableColumn2 {
+			display: flex;
+			justify-content: center;
+			margin: 5% 15% 5% 15%;
+			.tableRowContent2 {
+				padding: 20px;
+				background-color: yellow;
+				border-radius: 10px;
+			}
+		}
+	}
+}

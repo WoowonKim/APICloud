@@ -22,6 +22,9 @@
         font-size: 40px;
       }
       .doc {
+        display: flex;
+        justify-content: center;
+        padding: 0px;
         width: 60vw;
         height: 150vh;
         background-color: white;

@@ -87,14 +87,17 @@ public class LoggingInterceptor extends HandlerInterceptorAdapter {
                 String jsonStr = String.valueOf(objectMapper.readTree(cachingRequest.getContentAsByteArray()));         // jackson objectmapper 객체 생성
                 ObjectMapper objectMapper = new ObjectMapper();         // JsonNode 생성 (readValue)
                 JsonNode jsonNode = objectMapper.readTree(jsonStr);         // JsonNode -> Java Object
-                Object obj = objectMapper.treeToValue(jsonNode, Object.class);   // JSONObject에 포함된 CustomerHeader를 추가
+                Message obj = objectMapper.treeToValue(jsonNode, Message.class);   // JSONObject에 포함된 CustomerHeader를 추가
+                System.out.println(obj);
+                System.out.println(obj.getText().getClass());
                 Iterator<JsonNode> itr = jsonNode.iterator();
                 while (itr.hasNext()) {
                     JsonNode temp = itr.next();
                     System.out.println(temp.asText());
                     System.out.println(temp.asText().getClass());
                 }
-
+                Class<?> cls = Class.forName("com.web.trackingtest.Message");
+                System.out.println("=>> "+cls);
 //                String result = webClient.get()
 //                        .uri("/users")
 ////                        .accept(MediaType.APPLICATION_JSON)
