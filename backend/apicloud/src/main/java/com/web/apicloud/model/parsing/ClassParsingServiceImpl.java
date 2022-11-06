@@ -21,13 +21,15 @@ public class ClassParsingServiceImpl implements ClassParsingService {
     private static final String[] type = {"String", "Long", "long", "Integer", "int", "float", "Float"};
 
     private static String rootPath = "";
-    public static ArrayList<String> useObject = new ArrayList<>();
+    public static ArrayList<String> useQuery = new ArrayList<>();
+    public static ArrayList<String> useRequest = new ArrayList<>();
+    public static ArrayList<String> useResponse = new ArrayList<>();
 
     private final FileSearchService fileSearchService;
     private final ParsingService parsingService;
 
     @Override
-    public PropertyVO getBody(String root, String name) throws IOException {
+    public PropertyVO getBody(String root, String name, String category) throws IOException {
         PropertyVO requestBody = new PropertyVO();
 
         if (parsingService.KMP(name, LIST) != -1) {
@@ -45,8 +47,17 @@ public class ClassParsingServiceImpl implements ClassParsingService {
 
         requestBody.setDtoName(name);
         requestBody.setType("Object");
-        if(useObject.contains(name)) return requestBody;
-        useObject.add(name);
+
+        if (category.equals("query")) {
+            if (useQuery.contains(name)) return requestBody;
+            useQuery.add(name);
+        } else if (category.equals("request")) {
+            if (useRequest.contains(name)) return requestBody;
+            useRequest.add(name);
+        } else if (category.equals("response")) {
+            if (useResponse.contains(name)) return requestBody;
+            useResponse.add(name);
+        }
 
         rootPath = root;
         if (rootPath.equals("") || rootPath == null) return null;
@@ -62,7 +73,7 @@ public class ClassParsingServiceImpl implements ClassParsingService {
 
         while (i < lines.size()) {
             if (!lines.get(i).equals("")) {
-                PropertyVO property = getProperty(lines.get(i));
+                PropertyVO property = getProperty(lines.get(i), category);
                 if (property != null) {
                     requestBody.getProperties().add(property);
                 }
@@ -73,7 +84,7 @@ public class ClassParsingServiceImpl implements ClassParsingService {
         return requestBody;
     }
 
-    public PropertyVO getProperty(String str) throws IOException {
+    public PropertyVO getProperty(String str, String category) throws IOException {
         str = str.strip();
         str = str.replaceAll(";", "");
         String[] tokens = str.split(" ");
@@ -93,8 +104,8 @@ public class ClassParsingServiceImpl implements ClassParsingService {
         }
 
         if ((j + 1) >= tokens.length) return null;
-        PropertyVO getPropertyVO = getBody(rootPath, tokens[j]);
-        if(getPropertyVO == null) return null;
+        PropertyVO getPropertyVO = getBody(rootPath, tokens[j], category);
+        if (getPropertyVO == null) return null;
         return PropertyVO.builder()
                 .dtoName(getPropertyVO.getDtoName())
                 .name(tokens[j + 1])
