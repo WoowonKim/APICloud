@@ -2,6 +2,10 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Action } from "@remix-run/router";
 import { RootState } from "../store";
 
+/**
+ * header.contentType => controllers.headers.value
+ */
+
 const initialState = {
   header: {
     contentType: "application/json",
