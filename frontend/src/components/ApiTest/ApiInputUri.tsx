@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { useAppDispatch, useAppSelector } from "../../Store/hooks";
 import sideApiSlice, { selectSideApi, SideApiProps } from "../../Store/slice/sideApi";
 import testApiSlice, { selectTestApi } from "../../Store/slice/testApi";
+import testApiTestSlice, { selectTestApiTest } from "../../Store/slice/testApiTest";
 import { RootState } from "../../Store/store";
 import MethodTest from "./MethodTest";
 
