@@ -49,16 +49,14 @@ public class SynchronizeServiceImpl implements SynchronizeService {
         // TODO: 새로 올라온 파일이 있는지 확인
         // TODO: 있다면 업로드 후에 그거 탐색
         // TODO: 없다면 이미 있는지 확인하고 없으면 에러 리턴, 있으면 그거 탐색
-        if (file == null) {
 
-        } else{
-            s3Service.uploadZip(file);
-        }
-        rootPath = root;
+        // TODO: 그룹 시크릿 키 조회해오기
+        List<String> lines = s3Service.getFile(name, file, "1");
+//        rootPath = root;
 
         String path = fileSearchService.getControllerPath(rootPath, name);
-        if (path == null) return null;
-        List<String> lines = Files.readAllLines(Paths.get(path));
+//        if (path == null) return null;
+//        List<String> lines = Files.readAllLines(Paths.get(path));
         String value = null;
         int i = 0;
         while (i < lines.size()) {
