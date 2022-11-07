@@ -5,6 +5,7 @@ import com.web.apicloud.domain.dto.UpdateDocDto;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -88,9 +89,9 @@ public class Docs {
                 .build();
     }
 
-    public UpdateDocDto toDto(Long docId, String docsName, String serverUrl, String contextUri, String javaVersion, String springVersion, String buildManagement, String groupPackage, String packageName, String packaging) {
+    public UpdateDocDto toUpdateDocDto() {
         return UpdateDocDto.builder()
-                .docId(docId)
+                .docId(id)
                 .docsName(docsName)
                 .serverUrl(serverUrl)
                 .contextUri(contextUri)
@@ -100,6 +101,7 @@ public class Docs {
                 .groupPackage(groupPackage)
                 .packageName(packageName)
                 .packaging(packaging)
+                .detail(detail)
                 .build();
     }
 }
