@@ -75,7 +75,7 @@ const UpdateModal = () => {
       dispatch(
         updateApiDoc({ docId: docId, updateDocRequest: updateDocRequest })
       ).then((res: any) => {
-        if (res.payload?.status === 200) {
+        if (res.meta.requestStatus === "fulfilled") {
           dispatch(mainApiSlice.actions.setDocId({ docId: 0 }));
           dispatch(
             mainApiSlice.actions.setIsOpenUpdateModal({ isOpenModal: false })
@@ -93,7 +93,7 @@ const UpdateModal = () => {
   useEffect(() => {
     if (docId > 0) {
       dispatch(getApiDoc({ docId: docId })).then((res: any) => {
-        if (res.payload?.status === 200) {
+        if (res.meta.requestStatus === "fulfilled") {
           setDocsName(res.payload.docsName);
           setServerUrl(res.payload.serverUrl);
           setContextUri(res.payload.contextUri);

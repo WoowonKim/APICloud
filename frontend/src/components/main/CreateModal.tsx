@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleUser } from "@fortawesome/free-solid-svg-icons";
 import { faLink } from "@fortawesome/free-solid-svg-icons";
-import { userDummy } from "./ListDummy";
 import { useDispatch, useSelector } from "react-redux";
 import mainApiSlice, {
   getApiCreationInfo,
@@ -97,7 +96,7 @@ const CreateModal = () => {
     e.preventDefault();
     if (docId === 0) {
       dispatch(setApiDoc(createDocRequest)).then((res: any) => {
-        if (res.payload?.status === 200) {
+        if (res.meta.requestStatus === "fulfilled") {
           setEncryptedUrl(res.payload.encryptedUrl);
           console.log(res.payload.encryptedUrl);
           dispatch(

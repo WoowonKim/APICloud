@@ -7,7 +7,7 @@ import { DocInformationType } from "../main/UpdateModal";
 import "./ApiDocPaper.scss";
 
 const ApiDocPaper = () => {
-  const [docInform, setDocInform] = useState<DocInformationType>();  // Doc 기본 정보
+  const [docInform, setDocInform] = useState<DocInformationType>(); // Doc 기본 정보
   const [detailJson, setDetailJson] = useState(); // Doc Detail 정보
   const [docInformKeys, setDocInformKeys] = useState<string[]>();
   const [docInformValues, setDocInformValues] = useState<(string | number)[]>();
@@ -20,8 +20,8 @@ const ApiDocPaper = () => {
   // DOC 기본 정보 가져오기
   const dispatchGetApiDoc: any = (docId: number) => {
     dispatch(getApiDoc({ docId: docId })).then((res: any) => {
-      if (res.payload?.status === 200) {
-        setDocInform(res.payload.docInformation);
+      if (res.meta.requestStatus === "fulfilled") {
+        setDocInform(res.payload);
       }
     });
   };
@@ -30,7 +30,7 @@ const ApiDocPaper = () => {
   const dispatchGetApiDetail: any = (docId: number) => {
     dispatch(getApiDetail({ docId: docId })).then((res: any) => {
       if (res.meta.requestStatus === "fulfilled") {
-        setDetailJson(JSON.parse(res.payload.detail));
+        setDetailJson(JSON.parse(res.payload));
       }
     });
   };
@@ -53,7 +53,6 @@ const ApiDocPaper = () => {
       setDetailValues(Object.values(detailJson));
     }
   }, [detailJson]);
-
 
   return (
     <div className="apiDocTableWrapper">
