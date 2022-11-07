@@ -18,13 +18,13 @@ public interface DocsService {
 
     Long saveDocGetDocId(CreateDocRequest createDocDto);
 
-    String encryptUrl(Long docId) throws NoSuchAlgorithmException;
+    String encryptUrl(Long docId);
 
     List<DocListResponse> getDocs(Long userId);
 
     UpdateDocDto getDoc(Long docId);
 
-    DocVO getDocVOByDocsId(Long docId) throws JsonProcessingException;
+    DocVO getDocVOByDocsId(Long docId);
     
     UpdateDocDto updateDoc(Long docId, UpdateDocDto updateDocDto);
 

@@ -15,6 +15,7 @@ interface Props {
   ) => void;
   responseType?: string;
   depth?: number;
+  isCollection?: boolean;
 }
 
 const SelectTypes = ({
@@ -24,6 +25,7 @@ const SelectTypes = ({
   handleBasicInfo,
   responseType,
   depth,
+  isCollection,
 }: Props) => {
   const [visible, setVisible] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState(
@@ -45,24 +47,32 @@ const SelectTypes = ({
   };
 
   // String, List, Map, Byte, Character, Boolean, Integer, Long, Short, Float, Double, Object
-  const typeList = [
-    "String",
-    "Boolean",
-    "Integer",
-    "Long",
-    "List",
-    "Object",
-    "Byte",
-    "Character",
-    "Short",
-    "Float",
-    "Double",
-  ];
+  const typeList = isCollection
+    ? ["List", "X"]
+    : [
+        "String",
+        "Boolean",
+        "Integer",
+        "Long",
+        "List",
+        "Object",
+        "Byte",
+        "Character",
+        "Short",
+        "Float",
+        "Double",
+      ];
 
   return (
     <div className="selectBox" onClick={() => setVisible(!visible)}>
       <div className="selectedItemContainer">
-        <div className="selectedItem">{selectedMethod}</div>
+        {isCollection ? (
+          <div className="selectedItem">List</div>
+        ) : (
+          <div className="selectedItem">
+            {selectedMethod !== "List" ? selectedMethod : "String"}
+          </div>
+        )}
         <FontAwesomeIcon icon={faChevronDown} />
       </div>
       {visible && (

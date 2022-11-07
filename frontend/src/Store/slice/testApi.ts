@@ -1,5 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Action } from "@remix-run/router";
+import { RootState } from "../store";
+
+/**
+ * header.contentType => controllers.headers.value
+ */
 
 const initialState = {
   header: {
@@ -66,3 +71,4 @@ const testApiSlice = createSlice({
 });
 
 export default testApiSlice;
+export const selectTestApi = (state: RootState) => state.testApi;

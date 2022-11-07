@@ -259,6 +259,8 @@ public class CustomJavaSourceCodeWriter implements SourceCodeWriter<CustomJavaSo
             writeMethodInvocation(writer, (JavaMethodInvocation) expression);
         } else if(expression instanceof JavaClassCreation) {
             writeClassCreation(writer, (JavaClassCreation) expression);
+        } else if(expression instanceof PlainJavaCode) {
+            writer.print(((PlainJavaCode) expression).getValue());
         }
     }
 
