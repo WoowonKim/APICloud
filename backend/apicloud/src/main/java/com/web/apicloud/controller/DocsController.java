@@ -1,17 +1,15 @@
 package com.web.apicloud.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.web.apicloud.domain.dto.*;
 import com.web.apicloud.domain.vo.DocVO;
 import com.web.apicloud.model.DocsService;
 import com.web.apicloud.model.NotionService;
 import com.web.apicloud.util.FileUtils;
-import com.web.apicloud.util.ResponseHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -32,28 +30,28 @@ public class DocsController {
         log.info("DOC 생성 API 호출");
         Long docId = docsService.saveDocGetDocId(createDocRequest);
         String encryptedUrl = docsService.encryptUrl(docId);
-        return ResponseEntity.ok().body(Map.of("encryptedUrl", encryptedUrl));
+        return ResponseEntity.ok().body(new CreateDocResponse(encryptedUrl));
     }
 
     @GetMapping()
     public ResponseEntity<Object> getDocListByUser() {
         log.info("사용자별 DOC 리스트 조회 API 호출");
         List<DocListResponse> docListResponses = docsService.getDocs(1L);
-        return ResponseEntity.ok().body(Map.of("docList", docListResponses));
+        return ResponseEntity.ok().body(docListResponses);
     }
 
     @GetMapping("/{docId}")
     public ResponseEntity<Object> getSpecificDoc(@PathVariable Long docId) {
         log.info("특정 API DOC 조회 API 호출");
         UpdateDocDto updateDocDto = docsService.getDoc(docId);
-        return ResponseEntity.ok().body(Map.of("docInformation", updateDocDto));
+        return ResponseEntity.ok().body(updateDocDto);
     }
 
     @PutMapping("/{docId}")
     public ResponseEntity<Object> updateDoc(@PathVariable Long docId, @RequestBody UpdateDocDto updateDocDto) {
         log.info("DOC 수정 API 호출");
         UpdateDocDto updateDocResponse = docsService.updateDoc(docId, updateDocDto);
-        return ResponseEntity.ok().body(Map.of("updateDocDto", updateDocResponse));
+        return ResponseEntity.ok().body(updateDocResponse);
     }
 
     @DeleteMapping("/{docId}")
