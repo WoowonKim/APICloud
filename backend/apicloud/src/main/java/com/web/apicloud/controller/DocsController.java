@@ -57,6 +57,7 @@ public class DocsController {
     public ResponseEntity<Object> getSpecificDoc(@PathVariable Long docId) {
         try {
             log.info("특정 API DOC 조회 API 호출");
+
             UpdateDocDto updateDocDto = docsService.getDoc(docId);
             return ResponseHandler.generateResponse("특정 API DOC 조회에 성공했습니다.", HttpStatus.OK, "docInformation", updateDocDto);
         } catch (Exception e) {
