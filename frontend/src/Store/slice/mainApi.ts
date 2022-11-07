@@ -80,6 +80,19 @@ export const deleteApiDoc: any = createAsyncThunk(
   }
 );
 
+// API DOC 생성 정보 조회하기
+export const getApiCreationInfo: any = createAsyncThunk(
+  "mainApi/getApiCreationInfo",
+  async (args: any, { rejectWithValue }) => {
+    try {
+      const response = await axiosGet(`metadata/client`);
+      return response.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response);
+    }
+  }
+);
+
 const mainApiSlice = createSlice({
   name: "mainApi",
   initialState,
@@ -122,6 +135,14 @@ const mainApiSlice = createSlice({
     },
     [updateApiDoc.rejected]: (state, action) => {
       console.log("updateApiDoc rejected", action.payload);
+    },
+    [getApiCreationInfo.fulfilled]: (state, action) => {
+      if (action.payload.status === 200) {
+        console.log("getApiCreationInfo fulfilled", action.payload);
+      }
+    },
+    [getApiCreationInfo.rejected]: (state, action) => {
+      console.log("getApiCreationInfo rejected", action.payload);
     },
   },
 });

@@ -1,18 +1,17 @@
 package com.web.apicloud.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.web.apicloud.domain.dto.*;
 import com.web.apicloud.domain.entity.Group;
 import com.web.apicloud.domain.entity.GroupUser;
 import com.web.apicloud.domain.entity.User;
-import com.web.apicloud.domain.dto.*;
 import com.web.apicloud.domain.vo.DocVO;
 import com.web.apicloud.domain.vo.UserAuthorityVO;
 import com.web.apicloud.model.DocsService;
 import com.web.apicloud.model.GroupUserService;
+import com.web.apicloud.model.NotionService;
 import com.web.apicloud.model.UserService;
 import com.web.apicloud.security.CurrentUser;
 import com.web.apicloud.security.UserPrincipal;
-import com.web.apicloud.model.NotionService;
 import com.web.apicloud.util.FileUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,10 +52,12 @@ public class DocsController {
         log.info("DOC 생성 API 호출");
         Long docId = docsService.saveDocGetDocId(createDocRequest);
         String encryptedUrl = docsService.encryptUrl(docId);
-        Group group = docsService.findByDocsId(docId).getGroup();
+        if (createDocRequest.getUserAuthorityVO() != null) {
+            Group group = docsService.findByDocsId(docId).getGroup();
             for (UserAuthorityVO userAuthorityVO : createDocRequest.getUserAuthorityVO()) {
                 groupUserService.registerUser(group, userAuthorityVO);
             }
+        }
         return ResponseEntity.ok().body(new CreateDocResponse(encryptedUrl));
     }
 
