@@ -23,8 +23,8 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
     (state: RootState) => state.mainApi.isOpenUpdateModal
   );
 
-  const moveApidocs = () => {
-    navigate("/apidocs");
+  const moveApidocs: any = (docId: number) => {
+    navigate(`/apiDocs/${docId}`);
   };
   const list = apiList === 0 ? apiDocList : apiDocList;
 
@@ -42,7 +42,13 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
       {apiDocList?.map((it, idx) => (
         <div className="listContent" key={idx}>
           <p>{it.docId}</p>
-          <div className="content" onClick={moveApidocs}>
+          <div
+            className="content"
+            onClick={() => {
+              moveApidocs(it.encryptedUrl);
+              dispatch(mainApiSlice.actions.setDocId({ docId: it.docId }));
+            }}
+          >
             <p>{it.docName}</p>
           </div>
           <div className="userSetting">

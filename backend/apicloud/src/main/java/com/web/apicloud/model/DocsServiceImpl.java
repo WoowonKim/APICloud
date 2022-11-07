@@ -130,7 +130,7 @@ public class DocsServiceImpl implements DocsService {
         for (GroupUser groupUser : groupUsers) {
             List<Docs> docs = docsRepository.findByGroup(groupUser.getGroup());
             for (Docs doc : docs) {
-                DocListResponse docListResponse = doc.toDto(doc.getId(), doc.getDocsName(), doc.getGroup().getId(), groupUser.getUser(), groupUser.getAuthority());
+                DocListResponse docListResponse = doc.toDto(doc.getId(), doc.getDocsName(), doc.getGroup().getId(), groupUser.getUser(), groupUser.getAuthority(), doc.getEncryptedUrl());
                 docListResponses.add(docListResponse);
             }
         }
