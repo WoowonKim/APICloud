@@ -16,11 +16,12 @@ const Item = styled.div`
 const SelectedItem = styled.button`
   border: none;
   border-radius: 10px;
-  padding: 5px 10px;
+  padding: 5px 10px 5px 10px;
   margin-top: 5px;
   font-weight: bold;
   background-color: ${(props) => props.color};
   width: 100%;
+  cursor: pointer;
 `;
 interface word {
   methodApiWord: string;
@@ -42,7 +43,7 @@ const MethodTest = ({ methodApiWord }: word) => {
     }
   }, [methodApiWord]);
   return (
-    <div className="selectBox" onClick={() => setVisible(!visible)}>
+    <div className="selectBoxTESTApi" onClick={() => setVisible(!visible)}>
       <SelectedItem
         color={
           selectedMethod === "GET"
