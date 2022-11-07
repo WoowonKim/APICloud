@@ -2,16 +2,9 @@ import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
 import Sidebar from "../components/ApiDocs/Sidebar";
-import '../components/ApiDocs/ApiDocs.scss'
+import "../components/ApiDocs/ApiDocs.scss";
 import ApiDocPaper from "../components/ApiDocs/ApiDocPaper";
-import { ApiDocsDummy1, ApiDocsDummy2 } from "../components/ApiDocs/ApiDocsDummy";
 import MakeToPDF from "../components/ApiDocs/MakeToPDF";
-
-export type ApiDocsDummy = {
-  id: number;
-  category: string;
-  content: string;
-};
 
 const ApiDocs = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,12 +12,12 @@ const ApiDocs = () => {
     setIsOpen(true);
   };
 
-  const pdf = MakeToPDF()
+  const pdf = MakeToPDF();
 
   const onClick = async (e: any) => {
-    e.preventDefault()
-    await pdf.viewWithPdf()
-  }
+    e.preventDefault();
+    await pdf.viewWithPdf();
+  };
 
   return (
     <div className="apiDocContainer">
@@ -38,13 +31,13 @@ const ApiDocs = () => {
         <div className="docBox">
           <div className="title">API DOC 페이지</div>
           <div className="doc">
-            <ApiDocPaper ApiDocsDummy1={ApiDocsDummy1} ApiDocsDummy2={ApiDocsDummy2} />
+            <ApiDocPaper />
           </div>
           <button onClick={onClick}>pdf로 변환</button>
         </div>
       </div>
     </div>
-  )
+  );
 };
 
 export default ApiDocs;

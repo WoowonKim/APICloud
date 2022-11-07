@@ -10,6 +10,10 @@ import mainApiSlice, {
   setApiDoc,
 } from "../../Store/slice/mainApi";
 import { RootState } from "../../Store/store";
+import { useAppSelector } from "../../Store/hooks";
+import { selectUser } from "../../Store/slice/userSlice";
+import { axiosGet } from "../../util/axiosUtil";
+import { AnyArray } from "immer/dist/internal";
 
 export type DocInformationType = {
   docId: number;
@@ -25,6 +29,7 @@ export type DocInformationType = {
 };
 
 const CreateModal = () => {
+  const currentUser = useAppSelector(selectUser);
   const [docsName, setDocsName] = useState("");
   const [serverUrl, setServerUrl] = useState("");
   const [contextUri, setContextUri] = useState("");
@@ -34,6 +39,9 @@ const CreateModal = () => {
   const [groupPackage, setGroupPackage] = useState("");
   const [packageName, setPackageName] = useState("");
   const [packaging, setPackaging] = useState("");
+  const [searcUser, setSerchUser] = useState("");
+  const [searchUserRes, setSearchUserRes] = useState<any>();
+  const [invitedUsers, setInvitedUsers] = useState<AnyArray>([]);
   const [encryptedUrl, setEncryptedUrl] = useState("");
   const [isDefaultAvailable, setIsDefaultAvailable] = useState(false);
   const [creationInfo, setCreationInfo] = useState({} as any);
@@ -72,7 +80,6 @@ const CreateModal = () => {
 
   useEffect(() => {
     dispatch(getApiCreationInfo()).then((res: any) => {
-      console.log(res.payload);
       setCreationInfo(res.payload);
       setDocsName(res.payload.name.default);
       setJavaVersion(res.payload.javaVersion.default);
@@ -102,6 +109,28 @@ const CreateModal = () => {
         }
       });
     }
+  };
+
+  const search = async (email: any) => {
+    await axiosGet("/users?email=" + email)
+      .then((res) => {
+        if (res.data.id === currentUser.id) {
+          console.log("나다");
+          alert("본인 이메일 입니다.");
+          setSearchUserRes(undefined);
+        } else {
+          setSearchUserRes(res.data);
+        }
+      })
+      .catch(() => {
+        setSearchUserRes(null);
+      });
+  };
+
+  const handleAuthortyChange = (e: any, idx: number) => {
+    let copy = [...invitedUsers];
+    copy[idx].authority = e.target.value;
+    setInvitedUsers(copy);
   };
 
   return (
@@ -213,43 +242,87 @@ const CreateModal = () => {
                     </>
                   ))}
                 </div>
-                <p>초대하기</p>
-                <input
-                  className="groupMember"
-                  type="text"
-                  placeholder="추가할 사용자의 이메일을 작성해주세요"
-                />
-                <p>그룹목록</p>
-                <p>API 편집 권한이 있는 사용자</p>
-                <div className="apiUser">
-                  {userDummy.map((it, idx) => (
-                    <div className="apiUserList" key={idx}>
-                      <FontAwesomeIcon
-                        className="apiUserIcon"
-                        icon={faCircleUser}
-                      />
-                      <div className="apiUserTitle">
-                        <p>{it.name}</p>
-                        <p>{it.id}</p>
-                      </div>
-                      <p className="apiAuthority">{it.authority}</p>
-                    </div>
-                  ))}
-                </div>
-                <div className="modalBtn">
-                  <button className="copyBtn">
-                    <FontAwesomeIcon icon={faLink} />
-                    <span>링크복사</span>
-                  </button>
+              <p>초대하기</p>
+              <input
+                className="groupMember"
+                type="text"
+                placeholder="추가할 사용자의 이메일을 작성해주세요"
+                onChange={(e) => {
+                  setSerchUser(e.target.value);
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  search(searcUser);
+                }}
+              >
+                검색하기
+              </button>
+              {searchUserRes && (
+                <div>
+                  <span>{searchUserRes.name}</span>
                   <button
-                    className="makeBtn"
-                    type="submit"
-                    disabled={!canGoNext}
+                    type="button"
+                    onClick={() => {
+                      let copy = [...invitedUsers];
+                      const isIncluded = copy.find((ele) => {
+                        if (ele.userId === searchUserRes.id) {
+                          return true;
+                        }
+                      });
+                      if (isIncluded) {
+                        alert("이미 추가된 유저입니다.");
+                        return;
+                      }
+                      copy.push({
+                        userId: searchUserRes.id,
+                        name: searchUserRes.name,
+                        email: searchUserRes.email,
+                        authority: 3,
+                      });
+                      setInvitedUsers(copy);
+                    }}
                   >
-                    완료
+                    추가하기
                   </button>
                 </div>
-              </form>
+              )}
+              {searchUserRes === null && <p>존재하지 않는 사용자 입니다.</p>}
+              <p>그룹목록</p>
+              <div className="apiUser">
+                {invitedUsers.map((it, idx) => (
+                  <div className="apiUserList" key={idx}>
+                    <FontAwesomeIcon
+                      className="apiUserIcon"
+                      icon={faCircleUser}
+                    />
+                    <div className="apiUserTitle">
+                      <p>{it.name}</p>
+                      <p>{it.email}</p>
+                    </div>
+                    <select
+                      onChange={(e) => {
+                        handleAuthortyChange(e, idx);
+                      }}
+                      value={it.authority}
+                    >
+                      <option value="2">editor</option>
+                      <option value="3">viewer</option>
+                    </select>
+                  </div>
+                ))}
+              </div>
+              <div className="modalBtn">
+                <button className="copyBtn">
+                  <FontAwesomeIcon icon={faLink} />
+                  <span>링크복사</span>
+                </button>
+                <button className="makeBtn" type="submit" disabled={!canGoNext}>
+                  완료
+                </button>
+              </div>
+            </form>
             )}
           </div>
         </div>

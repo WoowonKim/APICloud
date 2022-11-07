@@ -8,9 +8,16 @@
 		display: flex;
 	  justify-content: space-between;
 		.tableColumn1 {
-			display: flex;
-			justify-content: center;
+			justify-content: flex-start;
 			margin: 2% 15% 2% 15%;
+			.tableRow1 {
+				height: 5vh;
+				margin: 5%, 2%, 5%, 2%;
+			}
+			.tableRowContent1 {
+				height: 5vh;
+				margin: 5%, 2%, 5%, 2%;
+			}
 		}
 	}
 	.innerWrapper2 {
@@ -21,6 +28,9 @@
 			display: flex;
 			justify-content: center;
 			margin: 5% 15% 5% 15%;
+			.tableRow2 {
+				height: 5vh;
+			}
 			.tableRowContent2 {
 				padding: 20px;
 				background-color: yellow;

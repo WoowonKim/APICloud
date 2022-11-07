@@ -28,4 +28,6 @@ public class UpdateDocDto {
 
     private Long groupId;
 
+    private String detail;
+
 }

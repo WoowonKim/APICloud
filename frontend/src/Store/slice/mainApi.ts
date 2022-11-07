@@ -15,7 +15,6 @@ const initialState = {
 export const setApiDoc: any = createAsyncThunk(
   "mainApi/setApiDoc",
   async (args: any, { rejectWithValue }) => {
-    console.log(args);
     try {
       const response = await axiosPost("docs", args);
       return response.data;
