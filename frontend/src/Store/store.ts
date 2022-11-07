@@ -1,4 +1,5 @@
 import { Action, combineReducers, configureStore, ThunkAction } from "@reduxjs/toolkit";
+import apiDocsApiSlice from "./slice/apiDocsApi";
 import mainApiSlice from "./slice/mainApi";
 import sideApiSlice from "./slice/sideApi";
 import testApiSlice from "./slice/testApi";
@@ -11,6 +12,7 @@ const reducers = combineReducers({
   testApi: testApiSlice.reducer,
   sideApi: sideApiSlice.reducer,
   testApiTest: testApiTestSlice.reducer,
+  apiDocsApi: apiDocsApiSlice.reducer,
 });
 
 export const store = configureStore({
