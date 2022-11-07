@@ -19,11 +19,10 @@ interface Props {
 const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const isOpenUpdateModal = useSelector(
-    (state: RootState) => state.mainApi.isOpenUpdateModal
-  );
+  const isOpenUpdateModal = useSelector((state: RootState) => state.mainApi.isOpenUpdateModal);
 
-  const moveApidocs = () => {
+  const moveApidocs = (e: number) => {
+    dispatch(mainApiSlice.actions.setDocId({ docId: e }));
     navigate("/apidocs");
   };
   const list = apiList === 0 ? apiDocList : apiDocList;
@@ -42,7 +41,12 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
       {apiDocList?.map((it, idx) => (
         <div className="listContent" key={idx}>
           <p>{it.docId}</p>
-          <div className="content" onClick={moveApidocs}>
+          <div
+            className="content"
+            onClick={() => {
+              moveApidocs(it.docId);
+            }}
+          >
             <p>{it.docName}</p>
           </div>
           <div className="userSetting">
@@ -51,11 +55,8 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
                 <FontAwesomeIcon icon={faUser} />
                 {it.groupUser.name}
               </div>
-              <FontAwesomeIcon
-                className="DeatilIcon"
-                icon={faRightToBracket}
-                onClick={moveApidocs}
-              />
+              {/* <FontAwesomeIcon className="DeatilIcon" icon={faRightToBracket} onClick={moveApidocs} /> */}
+              <FontAwesomeIcon className="DeatilIcon" icon={faRightToBracket} />
               {apiList === 0 ? (
                 <>
                   <FontAwesomeIcon
@@ -67,16 +68,11 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
                           isOpenUpdateModal: true,
                         })
                       );
-                      dispatch(
-                        mainApiSlice.actions.setDocId({ docId: it.docId })
-                      );
+                      dispatch(mainApiSlice.actions.setDocId({ docId: it.docId }));
+                      console.log("ApiListDetail DocId => ", it.docId);
                     }}
                   />
-                  <FontAwesomeIcon
-                    className="DeatilIcon"
-                    icon={faTrash}
-                    onClick={() => dispatchDeleteDoc(it.docId)}
-                  />
+                  <FontAwesomeIcon className="DeatilIcon" icon={faTrash} onClick={() => dispatchDeleteDoc(it.docId)} />
                 </>
               ) : (
                 <div></div>
