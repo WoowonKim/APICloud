@@ -78,11 +78,7 @@ public class DocsServiceImpl implements DocsService {
 
     private void setServerInfoFromDoc(ServerVO server, Docs doc) {
         server.setBootVersion(doc.getSpringVersion());
-        if (doc.getBuildManagement() == 1) {
-            server.setType("maven-project");
-        } else if (doc.getBuildManagement() == 2) {
-            server.setType("gradle-project");
-        }
+        server.setType(doc.getBuildManagement());
         // TODO: 다른 언어 지원
         server.setLanguage("java");
         server.setBaseDir(doc.getDocsName());
@@ -91,11 +87,7 @@ public class DocsServiceImpl implements DocsService {
         server.setName(doc.getDocsName());
         server.setDescription(doc.getDescription() == null ? "" : doc.getDescription());
         server.setPackageName(doc.getPackageName());
-        if (doc.getPackaging() == 1) {
-            server.setPackaging("jar");
-        } else if (doc.getPackaging() == 2) {
-            server.setPackaging("war");
-        }
+        server.setPackaging(doc.getPackaging());
         server.setJavaVersion(doc.getJavaVersion());
         server.setContextUri(doc.getContextUri());
     }

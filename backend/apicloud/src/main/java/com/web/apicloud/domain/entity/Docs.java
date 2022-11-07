@@ -33,13 +33,13 @@ public class Docs {
 
     private String springVersion;
 
-    private Integer buildManagement;
+    private String buildManagement;
 
     private String groupPackage;
 
     private String packageName;
 
-    private Integer packaging;
+    private String packaging;
 
     private String encryptedUrl;
 
@@ -62,7 +62,7 @@ public class Docs {
     }
 
     @Builder
-    public Docs(Long id, String docsName, String serverUrl, String contextUri, String javaVersion, String springVersion, Integer buildManagement, String groupPackage, String packageName, Integer packaging, String encryptedUrl, Group group, String detail) {
+    public Docs(Long id, String docsName, String serverUrl, String contextUri, String javaVersion, String springVersion, String buildManagement, String groupPackage, String packageName, String packaging, String encryptedUrl, Group group, String detail) {
         this.id = id;
         this.docsName = docsName;
         this.serverUrl = serverUrl;
@@ -88,7 +88,7 @@ public class Docs {
                 .build();
     }
 
-    public UpdateDocDto toDto(Long docId, String docsName, String serverUrl, String contextUri, String javaVersion, String springVersion, Integer buildManagement, String groupPackage, String packageName, Integer packaging) {
+    public UpdateDocDto toDto(Long docId, String docsName, String serverUrl, String contextUri, String javaVersion, String springVersion, String buildManagement, String groupPackage, String packageName, String packaging) {
         return UpdateDocDto.builder()
                 .docId(docId)
                 .docsName(docsName)
