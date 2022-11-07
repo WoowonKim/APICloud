@@ -62,7 +62,7 @@ public class DocsServiceImpl implements DocsService {
     }
 
     private DocVO convertDocsToDocVO(Docs doc) {
-        if(doc.getDetail() == null) {
+        if (doc.getDetail() == null) {
             throw new NotFoundException(NOT_FOUND_DETAIL);
         }
         try {
@@ -140,7 +140,7 @@ public class DocsServiceImpl implements DocsService {
     @Override
     public UpdateDocDto getDoc(Long docId) {
         Docs doc = findByDocsId(docId);
-        UpdateDocDto updateDocDto = doc.toDto(doc.getId(), doc.getDocsName(), doc.getServerUrl(), doc.getContextUri(), doc.getJavaVersion(), doc.getSpringVersion(), doc.getBuildManagement(), doc.getGroupPackage(), doc.getPackageName(), doc.getPackaging());
+        UpdateDocDto updateDocDto = doc.toUpdateDocDto();
         return updateDocDto;
     }
 
