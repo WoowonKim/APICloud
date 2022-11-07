@@ -67,6 +67,7 @@ const CreateModal = () => {
     groupPackage: groupPackage,
     packageName: packageName,
     packaging: packaging,
+    userAuthorityVO: [],
   };
 
   useEffect(() => {

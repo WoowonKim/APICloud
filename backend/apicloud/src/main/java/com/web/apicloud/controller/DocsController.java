@@ -52,11 +52,9 @@ public class DocsController {
         log.info("DOC 생성 API 호출");
         Long docId = docsService.saveDocGetDocId(createDocRequest);
         String encryptedUrl = docsService.encryptUrl(docId);
-        if (createDocRequest.getUserAuthorityVO() != null) {
-            Group group = docsService.findByDocsId(docId).getGroup();
-            for (UserAuthorityVO userAuthorityVO : createDocRequest.getUserAuthorityVO()) {
-                groupUserService.registerUser(group, userAuthorityVO);
-            }
+        Group group = docsService.findByDocsId(docId).getGroup();
+        for (UserAuthorityVO userAuthorityVO : createDocRequest.getUserAuthorityVO()) {
+            groupUserService.registerUser(group, userAuthorityVO);
         }
         return ResponseEntity.ok().body(new CreateDocResponse(encryptedUrl));
     }
