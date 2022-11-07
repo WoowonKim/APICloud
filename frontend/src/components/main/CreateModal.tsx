@@ -27,10 +27,10 @@ const CreateModal = () => {
   const [contextUri, setContextUri] = useState("");
   const [javaVersion, setJavaVersion] = useState("");
   const [springVersion, setSpringVersion] = useState("");
-  const [buildManagement, setBuildManagement] = useState(0);
+  const [buildManagement, setBuildManagement] = useState("");
   const [groupPackage, setGroupPackage] = useState("");
   const [packageName, setPackageName] = useState("");
-  const [packaging, setPackaging] = useState(0);
+  const [packaging, setPackaging] = useState("");
   const [encryptedUrl, setEncryptedUrl] = useState("");
 
   const docId = useSelector((state: RootState) => state.mainApi.docId);
@@ -50,42 +50,6 @@ const CreateModal = () => {
     groupPackage &&
     packageName &&
     packaging;
-
-  const onChangeDocsName = (e: any) => {
-    setDocsName(e.target.value);
-  };
-
-  const onChangeServerUrl = (e: any) => {
-    setServerUrl(e.target.value);
-  };
-
-  const onChangeContextUri = (e: any) => {
-    setContextUri(e.target.value);
-  };
-
-  const onChangeJavaVersion = (e: any) => {
-    setJavaVersion(e.target.value);
-  };
-
-  const onChangeSpringVersion = (e: any) => {
-    setSpringVersion(e.target.value);
-  };
-
-  const onChangeBuildManagement = (e: any) => {
-    setBuildManagement(e.target.value);
-  };
-
-  const onChangeGroupPackage = (e: any) => {
-    setGroupPackage(e.target.value);
-  };
-
-  const onChangePackageName = (e: any) => {
-    setPackageName(e.target.value);
-  };
-
-  const onChangePackaging = (e: any) => {
-    setPackaging(e.target.value);
-  };
 
   const createDocRequest = {
     userId: 1,
@@ -128,55 +92,55 @@ const CreateModal = () => {
                 className="docsName"
                 type="text"
                 placeholder="생성할 API 명을 작성해주세요"
-                onChange={onChangeDocsName}
+                onChange={(e) => setDocsName(e.target.value)}
               />
               <input
                 className="serverUrl"
                 type="text"
                 placeholder="생성할 serverUrl을 작성해주세요"
-                onChange={onChangeServerUrl}
+                onChange={(e) => setServerUrl(e.target.value)}
               />
               <input
                 className="contextUrl"
                 type="text"
                 placeholder="생성할 contextUrl를 작성해주세요"
-                onChange={onChangeContextUri}
+                onChange={(e) => setContextUri(e.target.value)}
               />
               <input
                 className="javaVersion"
                 type="text"
                 placeholder="생성할 javaVersion을 작성해주세요"
-                onChange={onChangeJavaVersion}
+                onChange={(e) => setJavaVersion(e.target.value)}
               />
               <input
                 className="springVersion"
                 type="text"
                 placeholder="생성할 springVersion을 작성해주세요"
-                onChange={onChangeSpringVersion}
+                onChange={(e) => setSpringVersion(e.target.value)}
               />
               <input
                 className="buildManagement"
                 type="text"
                 placeholder="생성할 buildManagement을 작성해주세요"
-                onChange={onChangeBuildManagement}
+                onChange={(e) => setBuildManagement(e.target.value)}
               />
               <input
                 className="groupPackage"
                 type="text"
                 placeholder="생성할 groupPackage을 작성해주세요"
-                onChange={onChangeGroupPackage}
+                onChange={(e) => setGroupPackage(e.target.value)}
               />
               <input
                 className="packageName"
                 type="text"
                 placeholder="생성할 packageName을 작성해주세요"
-                onChange={onChangePackageName}
+                onChange={(e) => setPackageName(e.target.value)}
               />
               <input
                 className="packaging"
                 type="text"
                 placeholder="생성할 packaging을 작성해주세요"
-                onChange={onChangePackaging}
+                onChange={(e) => setPackaging(e.target.value)}
               />
               <p>초대하기</p>
               <input

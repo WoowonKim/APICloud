@@ -54,7 +54,7 @@ const Table = ({
     const newData = {
       dtoName: "",
       name: "",
-      type: "",
+      type: "String",
       collectionType: "",
       properties: [],
       required: true,
@@ -64,6 +64,11 @@ const Table = ({
       (commonPath.parameters[index].properties.length === 0 || flag)
     ) {
       commonPath.parameters[index].properties.push(newData);
+    } else if (
+      activeTab === 3 &&
+      (commonPath.queries[index].properties.length === 0 || flag)
+    ) {
+      commonPath.queries[index].properties.push(newData);
     } else if (
       activeTab === 4 &&
       (commonPath.requestBody.properties[index].properties.length === 0 || flag)
@@ -85,22 +90,21 @@ const Table = ({
   const deleteRow = (index: number, depth: number, propIndex?: number) => {
     if (activeTab === 1) {
       state.data[selectedController].apis[selectedApi].headers.splice(index, 1);
-    } else if (activeTab === 2) {
+    } else if (activeTab === 2 || activeTab === 3) {
+      const tab = activeTab === 3 ? "queries" : "parameters";
       let rootPath =
         depth === 2 && propIndex
-          ? state.data[selectedController].apis[selectedApi].parameters[
-              propIndex
-            ].properties
-          : state.data[selectedController].apis[selectedApi].parameters;
+          ? state.data[selectedController].apis[selectedApi][tab][propIndex]
+              .properties
+          : state.data[selectedController].apis[selectedApi][tab];
       rootPath.splice(index, 1);
-    } else if (activeTab === 3 || activeTab === 4) {
-      const tab = activeTab === 3 ? "query" : "requestBody";
+    } else if (activeTab === 4) {
       let rootPath =
         depth === 2 && propIndex
-          ? state.data[selectedController].apis[selectedApi][tab].properties[
-              propIndex
-            ].properties
-          : state.data[selectedController].apis[selectedApi][tab].properties;
+          ? state.data[selectedController].apis[selectedApi].requestBody
+              .properties[propIndex].properties
+          : state.data[selectedController].apis[selectedApi].requestBody
+              .properties;
 
       rootPath.splice(index, 1);
     } else if (
@@ -123,11 +127,12 @@ const Table = ({
     cell: function Cell({ getValue, row: { index }, column: { id }, table }) {
       const initialValue = getValue<string>();
       const [value, setValue] = useState<string>(initialValue);
+      const rootPath = state.data[selectedController].apis[selectedApi];
 
       const onBlur = (temp?: string) => {
         table.options.meta?.updateData(index, id, temp ? temp : value);
         if (temp) {
-          setValue(temp);
+          setValue(id === "type" && temp === "List" ? "String" : temp);
         }
       };
 
@@ -151,6 +156,43 @@ const Table = ({
         />
       ) : id === "type" ? (
         <div className="typeInfoContainer">
+          {activeTab === 2 &&
+          rootPath.parameters[index].collectionType === "List" ? (
+            <SelectTypes
+              onBlur={onBlur}
+              setValue={setValue}
+              value={"List"}
+              isCollection={true}
+            />
+          ) : activeTab === 3 &&
+            rootPath.queries[index].collectionType === "List" ? (
+            <SelectTypes
+              onBlur={onBlur}
+              setValue={setValue}
+              value={"List"}
+              isCollection={true}
+            />
+          ) : activeTab === 4 &&
+            rootPath.requestBody.properties[index].collectionType === "List" ? (
+            <SelectTypes
+              onBlur={onBlur}
+              setValue={setValue}
+              value={"List"}
+              isCollection={true}
+            />
+          ) : activeTab === 5 &&
+            (responseType === "fail" || responseType === "success") &&
+            rootPath.responses[responseType].responseBody.properties[index]
+              .collectionType === "List" ? (
+            <SelectTypes
+              onBlur={onBlur}
+              setValue={setValue}
+              value={"List"}
+              isCollection={true}
+            />
+          ) : (
+            <></>
+          )}
           <SelectTypes onBlur={onBlur} setValue={setValue} value={value} />
           {value === "Object" && (
             <FontAwesomeIcon
@@ -241,7 +283,8 @@ const Table = ({
     [activeTab]
   );
 
-  const [columnResizeMode, setColumnResizeMode] = useState<ColumnResizeMode>("onChange");
+  const [columnResizeMode, setColumnResizeMode] =
+    useState<ColumnResizeMode>("onChange");
 
   const table = useReactTable({
     data,
@@ -253,32 +296,79 @@ const Table = ({
       updateData: (rowIndex: string | number, columnId: any, value: any) => {
         if (!!value && state.data) {
           const newValue = value === "true" ? false : true;
-          const type = columnId === "name" ? "name" : columnId === "type" ? "type" : "required";
+          const type =
+            columnId === "name"
+              ? "name"
+              : columnId === "type"
+              ? "type"
+              : "required";
           if (activeTab === 1) {
-            state.data[selectedController].apis[selectedApi].headers.map((row, idx) => {
-              if (idx === rowIndex && state.data) {
-                const type = columnId === "key" ? "key" : "value";
-                state.data[selectedController].apis[selectedApi].headers[rowIndex][type] = value;
-              }
-            });
-          } else if (activeTab === 2) {
-            state.data[selectedController].apis[selectedApi].parameters.map((row, idx) => {
-              if (idx === rowIndex && state.data) {
-                if (type === "required") {
-                  state.data[selectedController].apis[selectedApi].parameters[rowIndex][type] = newValue;
-                } else {
-                  state.data[selectedController].apis[selectedApi].parameters[rowIndex][type] = value;
+            state.data[selectedController].apis[selectedApi].headers.map(
+              (row, idx) => {
+                if (idx === rowIndex && state.data) {
+                  const type = columnId === "key" ? "key" : "value";
+                  state.data[selectedController].apis[selectedApi].headers[
+                    rowIndex
+                  ][type] = value;
                 }
               }
-            });
-          } else if (activeTab === 3 || activeTab === 4) {
-            const tab = activeTab === 3 ? "query" : "requestBody";
-            state.data[selectedController].apis[selectedApi][tab].properties.map((row, idx) => {
+            );
+          } else if (activeTab === 2 || activeTab === 3) {
+            const tab = activeTab === 3 ? "queries" : "parameters";
+            state.data[selectedController].apis[selectedApi][tab].map(
+              (row, idx) => {
+                if (idx === rowIndex && state.data) {
+                  if (type === "required") {
+                    state.data[selectedController].apis[selectedApi][tab][
+                      rowIndex
+                    ][type] = newValue;
+                  } else {
+                    if (type === "type" && value === "List") {
+                      state.data[selectedController].apis[selectedApi][tab][
+                        rowIndex
+                      ].collectionType = value;
+                      state.data[selectedController].apis[selectedApi][tab][
+                        rowIndex
+                      ][type] = "String";
+                    } else if (type === "type" && value === "X") {
+                      state.data[selectedController].apis[selectedApi][tab][
+                        rowIndex
+                      ].collectionType = "";
+                    } else {
+                      state.data[selectedController].apis[selectedApi][tab][
+                        rowIndex
+                      ][type] = value;
+                    }
+                  }
+                }
+              }
+            );
+          } else if (activeTab === 4) {
+            state.data[selectedController].apis[
+              selectedApi
+            ].requestBody.properties.map((row, idx) => {
               if (idx === rowIndex && state.data) {
                 if (type === "required") {
-                  state.data[selectedController].apis[selectedApi][tab].properties[rowIndex][type] = newValue;
+                  state.data[selectedController].apis[
+                    selectedApi
+                  ].requestBody.properties[rowIndex][type] = newValue;
                 } else {
-                  state.data[selectedController].apis[selectedApi][tab].properties[rowIndex][type] = value;
+                  if (type === "type" && value === "List") {
+                    state.data[selectedController].apis[
+                      selectedApi
+                    ].requestBody.properties[rowIndex].collectionType = value;
+                    state.data[selectedController].apis[
+                      selectedApi
+                    ].requestBody.properties[rowIndex][type] = "String";
+                  } else if (type === "type" && value === "X") {
+                    state.data[selectedController].apis[
+                      selectedApi
+                    ].requestBody.properties[rowIndex].collectionType = "";
+                  } else {
+                    state.data[selectedController].apis[
+                      selectedApi
+                    ].requestBody.properties[rowIndex][type] = value;
+                  }
                 }
               }
             });
@@ -295,9 +385,22 @@ const Table = ({
                     responseType
                   ].responseBody.properties[rowIndex][type] = newValue;
                 } else {
-                  state.data[selectedController].apis[selectedApi].responses[
-                    responseType
-                  ].responseBody.properties[rowIndex][type] = value;
+                  if (type === "type" && value === "List") {
+                    state.data[selectedController].apis[selectedApi].responses[
+                      responseType
+                    ].responseBody.properties[rowIndex].collectionType = value;
+                    state.data[selectedController].apis[selectedApi].responses[
+                      responseType
+                    ].responseBody.properties[rowIndex][type] = "String";
+                  } else if (type === "type" && value === "X") {
+                    state.data[selectedController].apis[selectedApi].responses[
+                      responseType
+                    ].responseBody.properties[rowIndex].collectionType = "";
+                  } else {
+                    state.data[selectedController].apis[selectedApi].responses[
+                      responseType
+                    ].responseBody.properties[rowIndex][type] = value;
+                  }
                 }
               }
             });
@@ -322,20 +425,7 @@ const Table = ({
         : type === "dtoName"
         ? "dtoName"
         : "required";
-    if (activeTab === 3 && state.data) {
-      if (typeof e !== "string" && key === "required") {
-        state.data[selectedController].apis[selectedApi].query[key] =
-          e.target.checked;
-      } else if (
-        typeof e !== "string" &&
-        (key === "name" || key === "dtoName")
-      ) {
-        state.data[selectedController].apis[selectedApi].query[key] =
-          e.target.value;
-      } else if (typeof e === "string" && key === "type") {
-        state.data[selectedController].apis[selectedApi].query[key] = e;
-      }
-    } else if (activeTab === 4 && state.data) {
+    if (activeTab === 4 && state.data) {
       let rootPath =
         depth === 1
           ? state.data[selectedController].apis[selectedApi].requestBody
@@ -349,7 +439,14 @@ const Table = ({
       ) {
         rootPath[key] = e.target.value;
       } else if (typeof e === "string" && key === "type") {
-        rootPath[key] = e;
+        if (e === "List") {
+          rootPath.collectionType = "List";
+          rootPath[key] = "String";
+        } else if (e === "X") {
+          rootPath.collectionType = "";
+        } else {
+          rootPath[key] = e;
+        }
       }
     } else if (activeTab === 5 && state.data) {
       const response = responseType === "fail" ? "fail" : "success";
@@ -381,7 +478,14 @@ const Table = ({
           key2
         ] = Number(e.target.value);
       } else if (typeof e === "string" && key2 === "type") {
-        rootPath[key2] = e;
+        if (e === "List") {
+          rootPath.collectionType = "List";
+          rootPath[key2] = "String";
+        } else if (e === "X") {
+          rootPath.collectionType = "X";
+        } else {
+          rootPath[key2] = e;
+        }
       }
     }
   };
@@ -425,16 +529,26 @@ const Table = ({
                       },
                     }}
                   >
-                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                     <div
                       {...{
                         onMouseDown: header.getResizeHandler(),
                         onTouchStart: header.getResizeHandler(),
-                        className: `resizer ${header.column.getIsResizing() ? "isResizing" : ""}`,
+                        className: `resizer ${
+                          header.column.getIsResizing() ? "isResizing" : ""
+                        }`,
                         style: {
                           transform:
-                            columnResizeMode === "onEnd" && header.column.getIsResizing()
-                              ? `translateX(${table.getState().columnSizingInfo.deltaOffset}px)`
+                            columnResizeMode === "onEnd" &&
+                            header.column.getIsResizing()
+                              ? `translateX(${
+                                  table.getState().columnSizingInfo.deltaOffset
+                                }px)`
                               : "",
                         },
                       }}
@@ -450,7 +564,14 @@ const Table = ({
             return (
               <tr key={row.id}>
                 {row.getVisibleCells().map((cell) => {
-                  return <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>;
+                  return (
+                    <td key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </td>
+                  );
                 })}
               </tr>
             );
