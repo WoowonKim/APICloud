@@ -24,7 +24,7 @@ const SelectedItem = styled.button`
   cursor: pointer;
 `;
 interface word {
-  methodApiWord: string;
+  methodApiWord: string | undefined;
 }
 const MethodTest = ({ methodApiWord }: word) => {
   const dispatch = useAppDispatch();
@@ -37,7 +37,7 @@ const MethodTest = ({ methodApiWord }: word) => {
     setVisible(!visible);
   };
   useEffect(() => {
-    if (methodApiWord?.length > 0) {
+    if (methodApiWord) {
       setSelectedMethod(methodApiWord);
       dispatch(testApiSlice.actions.setMethod({ method: methodApiWord }));
     }
