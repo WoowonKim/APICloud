@@ -122,6 +122,7 @@ const mainApiSlice = createSlice({
     },
     [getApiDocList.fulfilled]: (state, action) => {
       if (action.payload.status === 200) {
+        console.log(action.payload);
       }
     },
     [getApiDocList.rejected]: (state, action) => {

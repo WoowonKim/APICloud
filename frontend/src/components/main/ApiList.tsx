@@ -34,7 +34,7 @@ const ApiList = () => {
 
   const dispatchGetDocList = () => {
     dispatch(getApiDocList()).then((res: any) => {
-      if (res.payload?.status === 200) {
+      if (res.meta?.requestStatus === 'fulfilled') {
         setApiDocList(res.payload);
       }
     });
