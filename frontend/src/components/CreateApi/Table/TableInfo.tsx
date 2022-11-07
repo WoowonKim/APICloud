@@ -1,5 +1,5 @@
 import { MappedTypeDescription } from "@syncedstore/core/types/doc";
-import React, { useState } from "react";
+import React from "react";
 import { ControllerType } from "../../../pages/CreateApi/ApisType";
 import SelectTypes from "../SelectTypes/SelectTypes";
 import "./Table.scss";
@@ -28,12 +28,11 @@ const TableInfo = ({
   state,
   responseType,
 }: Props) => {
-  const info = activeTab === 3 ? "query" : "requestBody";
   return (
     <div>
-      {activeTab === 3 || activeTab === 4 ? (
+      {activeTab === 4 ? (
         <div className="tableInfoGroup">
-          {state.data[selectedController].apis[selectedApi][info].type ===
+          {state.data[selectedController].apis[selectedApi].requestBody.type ===
             "Object" && (
             <div className="tableInfoInputGroup">
               <label htmlFor={`dtoName${activeTab}`} className="tableInfoLabel">
@@ -43,13 +42,10 @@ const TableInfo = ({
                 className="tableInfoInput"
                 type="text"
                 id={`dtoName${activeTab}`}
-                onChange={(e) => handleBasicInfo(e, "dtoName", 0)}
+                onChange={(e) => handleBasicInfo(e, "dtoName", 1)}
                 value={
-                  activeTab === 3
-                    ? state.data[selectedController].apis[selectedApi].query
-                        .dtoName
-                    : state.data[selectedController].apis[selectedApi]
-                        .requestBody.dtoName
+                  state.data[selectedController].apis[selectedApi].requestBody
+                    .dtoName
                 }
               />
             </div>
@@ -62,17 +58,23 @@ const TableInfo = ({
               className="tableInfoInput"
               type="text"
               id={`name${activeTab}`}
-              onChange={(e) => handleBasicInfo(e, "name", 0)}
+              onChange={(e) => handleBasicInfo(e, "name", 1)}
               value={
-                activeTab === 3
-                  ? state.data[selectedController].apis[selectedApi].query.name
-                  : state.data[selectedController].apis[selectedApi].requestBody
-                      .name
+                state.data[selectedController].apis[selectedApi].requestBody
+                  .name
               }
             />
           </div>
           <div className="typeInputContainer">
             <p className="typeInputLabel">type</p>
+            {state.data[selectedController].apis[selectedApi].requestBody
+              .collectionType === "List" && (
+              <SelectTypes
+                handleBasicInfo={handleBasicInfo}
+                depth={1}
+                isCollection={true}
+              />
+            )}
             <SelectTypes handleBasicInfo={handleBasicInfo} depth={1} />
           </div>
           <div className="tableInfoInputGroup">
@@ -83,15 +85,10 @@ const TableInfo = ({
               className="tableInfoInput"
               type="checkbox"
               id={`required${activeTab}`}
-              onChange={(e) => handleBasicInfo(e, "required", 0)}
+              onChange={(e) => handleBasicInfo(e, "required", 1)}
               checked={
-                activeTab === 3 && state.data
-                  ? state.data[selectedController].apis[selectedApi].query
-                      .required
-                    ? true
-                    : false
-                  : state.data[selectedController].apis[selectedApi].requestBody
-                      .required
+                state.data[selectedController].apis[selectedApi].requestBody
+                  .required
                   ? true
                   : false
               }
@@ -110,7 +107,7 @@ const TableInfo = ({
               className="tableInfoInput"
               type="number"
               id="successStatus"
-              onChange={(e) => handleBasicInfo(e, "status", 0, responseType)}
+              onChange={(e) => handleBasicInfo(e, "status", 1, responseType)}
               value={
                 state.data[selectedController].apis[selectedApi].responses[
                   responseType
@@ -131,7 +128,7 @@ const TableInfo = ({
                   type="text"
                   id="successDtoName"
                   onChange={(e) =>
-                    handleBasicInfo(e, "dtoName", 0, responseType)
+                    handleBasicInfo(e, "dtoName", 1, responseType)
                   }
                   value={
                     state.data[selectedController].apis[selectedApi].responses[
@@ -149,7 +146,7 @@ const TableInfo = ({
                 className="tableInfoInput"
                 type="text"
                 id="successName"
-                onChange={(e) => handleBasicInfo(e, "name", 0, responseType)}
+                onChange={(e) => handleBasicInfo(e, "name", 1, responseType)}
                 value={
                   state.data[selectedController].apis[selectedApi].responses[
                     responseType
@@ -159,6 +156,16 @@ const TableInfo = ({
             </div>
             <div className="typeInputContainer">
               <p className="typeInputLabel">type</p>
+              {state.data[selectedController].apis[selectedApi].responses[
+                responseType
+              ].responseBody.collectionType === "List" && (
+                <SelectTypes
+                  handleBasicInfo={handleBasicInfo}
+                  responseType={responseType}
+                  depth={1}
+                  isCollection={true}
+                />
+              )}
               <SelectTypes
                 handleBasicInfo={handleBasicInfo}
                 responseType={responseType}
@@ -173,7 +180,7 @@ const TableInfo = ({
                 type="checkbox"
                 id="successRequired"
                 onChange={(e) =>
-                  handleBasicInfo(e, "required", 0, responseType)
+                  handleBasicInfo(e, "required", 1, responseType)
                 }
                 checked={
                   state.data[selectedController].apis[selectedApi].responses[

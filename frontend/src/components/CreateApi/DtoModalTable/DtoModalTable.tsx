@@ -39,9 +39,13 @@ const DtoModalTable = ({
     cell: function Cell({ getValue, row: { index }, column: { id }, table }) {
       const initialValue = getValue<string>();
       const [value, setValue] = useState<string>(initialValue);
+      const rootPath = state.data[selectedController].apis[selectedApi];
 
       const onBlur = (temp?: string) => {
         table.options.meta?.updateData(index, id, temp ? temp : value);
+        if (temp) {
+          setValue(id === "type" && temp === "List" ? "String" : temp);
+        }
       };
 
       useEffect(() => {
@@ -64,6 +68,47 @@ const DtoModalTable = ({
         />
       ) : id === "type" ? (
         <div className="typeInfoContainer">
+          {activeTab === 2 &&
+          rootPath.parameters[propertiesIndex].properties[index]
+            .collectionType === "List" ? (
+            <SelectTypes
+              onBlur={onBlur}
+              setValue={setValue}
+              value={"List"}
+              isCollection={true}
+            />
+          ) : activeTab === 3 &&
+            rootPath.queries[propertiesIndex].properties[index]
+              .collectionType === "List" ? (
+            <SelectTypes
+              onBlur={onBlur}
+              setValue={setValue}
+              value={"List"}
+              isCollection={true}
+            />
+          ) : activeTab === 4 &&
+            rootPath.requestBody.properties[propertiesIndex].properties[index]
+              .collectionType === "List" ? (
+            <SelectTypes
+              onBlur={onBlur}
+              setValue={setValue}
+              value={"List"}
+              isCollection={true}
+            />
+          ) : activeTab === 5 &&
+            (responseType === "fail" || responseType === "success") &&
+            rootPath.responses[responseType].responseBody.properties[
+              propertiesIndex
+            ].properties[index].collectionType === "List" ? (
+            <SelectTypes
+              onBlur={onBlur}
+              setValue={setValue}
+              value={"List"}
+              isCollection={true}
+            />
+          ) : (
+            <></>
+          )}
           <SelectTypes onBlur={onBlur} setValue={setValue} value={value} />
           {value === "Object" && (
             <FontAwesomeIcon icon={faInfo} className="infoIcon" />
@@ -119,19 +164,30 @@ const DtoModalTable = ({
               : columnId === "type"
               ? "type"
               : "required";
-          if (activeTab === 2) {
-            rootPath.parameters[propertiesIndex].properties.map((row, idx) => {
+          if (activeTab === 2 || activeTab === 3) {
+            const tab = activeTab === 3 ? "queries" : "parameters";
+            rootPath[tab][propertiesIndex].properties.map((row, idx) => {
               if (idx === rowIndex && type === "required") {
-                rootPath.parameters[propertiesIndex].properties[rowIndex][
-                  type
-                ] = newValue;
+                rootPath[tab][propertiesIndex].properties[rowIndex][type] =
+                  newValue;
               } else if (
                 idx === rowIndex &&
                 (type === "name" || type === "type")
               ) {
-                rootPath.parameters[propertiesIndex].properties[rowIndex][
-                  type
-                ] = value;
+                if (type === "type" && value === "List") {
+                  rootPath[tab][propertiesIndex].properties[
+                    rowIndex
+                  ].collectionType = "List";
+                  rootPath[tab][propertiesIndex].properties[rowIndex][type] =
+                    "String";
+                } else if (type === "type" && value === "X") {
+                  rootPath[tab][propertiesIndex].properties[
+                    rowIndex
+                  ].collectionType = "";
+                } else {
+                  rootPath[tab][propertiesIndex].properties[rowIndex][type] =
+                    value;
+                }
               }
             });
           } else if (activeTab === 4) {
@@ -145,9 +201,22 @@ const DtoModalTable = ({
                   idx === rowIndex &&
                   (type === "name" || type === "type")
                 ) {
-                  rootPath.requestBody.properties[propertiesIndex].properties[
-                    rowIndex
-                  ][type] = value;
+                  if (type === "type" && value === "List") {
+                    rootPath.requestBody.properties[propertiesIndex].properties[
+                      rowIndex
+                    ].collectionType = "List";
+                    rootPath.requestBody.properties[propertiesIndex].properties[
+                      rowIndex
+                    ][type] = "String";
+                  } else if (type === "type" && value === "X") {
+                    rootPath.requestBody.properties[propertiesIndex].properties[
+                      rowIndex
+                    ].collectionType = "";
+                  } else {
+                    rootPath.requestBody.properties[propertiesIndex].properties[
+                      rowIndex
+                    ][type] = value;
+                  }
                 }
               }
             );
@@ -166,9 +235,22 @@ const DtoModalTable = ({
                 idx === rowIndex &&
                 (type === "name" || type === "type")
               ) {
-                rootPath.responses[responseType].responseBody.properties[
-                  propertiesIndex
-                ].properties[rowIndex][type] = value;
+                if (type === "type" && value === "List") {
+                  rootPath.responses[responseType].responseBody.properties[
+                    propertiesIndex
+                  ].properties[rowIndex].collectionType = "List";
+                  rootPath.responses[responseType].responseBody.properties[
+                    propertiesIndex
+                  ].properties[rowIndex][type] = "String";
+                } else if (type === "type" && value === "X") {
+                  rootPath.responses[responseType].responseBody.properties[
+                    propertiesIndex
+                  ].properties[rowIndex].collectionType = "";
+                } else {
+                  rootPath.responses[responseType].responseBody.properties[
+                    propertiesIndex
+                  ].properties[rowIndex][type] = value;
+                }
               }
             });
           }

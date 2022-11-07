@@ -77,6 +77,12 @@ const DtoInputModal = ({
                       rootPath.parameters[propertiesIndex]?.properties
                     )
                   )
+                : activeTab === 3
+                ? JSON.parse(
+                    JSON.stringify(
+                      rootPath.queries[propertiesIndex]?.properties
+                    )
+                  )
                 : activeTab === 4
                 ? JSON.parse(
                     JSON.stringify(
