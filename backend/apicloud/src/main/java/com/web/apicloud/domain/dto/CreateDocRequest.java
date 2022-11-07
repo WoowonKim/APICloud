@@ -22,13 +22,13 @@ public class CreateDocRequest {
 
     private String springVersion;
 
-    private Integer buildManagement;
+    private String buildManagement;
 
     private String groupPackage;
 
     private String packageName;
 
-    private Integer packaging;
+    private String packaging;
 
     private Group group;
 
