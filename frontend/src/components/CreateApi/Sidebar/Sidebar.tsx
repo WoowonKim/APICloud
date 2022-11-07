@@ -108,22 +108,22 @@ const Sidebar = ({
                   >
                     <SelectedItem
                       color={
-                        api.method === "GET"
+                        api.method === "get"
                           ? "#FDECC8"
-                          : api.method === "POST"
+                          : api.method === "post"
                           ? "#F5E0E9"
-                          : api.method === "PUT"
+                          : api.method === "put"
                           ? "#F1F0EF"
-                          : api.method === "DELETE"
+                          : api.method === "delete"
                           ? "#D3E5EF"
-                          : api.method === "PATCH"
+                          : api.method === "patch"
                           ? "#E8DEEE"
-                          : api.method === "OPTIONS"
+                          : api.method === "options"
                           ? "#FFE2DD"
                           : "#EEE0DA"
                       }
                     >
-                      {api.method}
+                      {api.method.toUpperCase()}
                     </SelectedItem>
                     <div className="sidebarApiItem">{api.uri}</div>
                   </div>

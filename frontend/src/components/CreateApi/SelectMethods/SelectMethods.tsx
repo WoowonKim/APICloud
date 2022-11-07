@@ -28,7 +28,7 @@ interface Props {
 
 const SelectMethods = ({ onBlur, setValue, value }: Props) => {
   const [visible, setVisible] = useState(false);
-  const [selectedMethod, setSelectedMethod] = useState(value ? value : "GET");
+  const [selectedMethod, setSelectedMethod] = useState(value ? value : "get");
 
   const handleSelect = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
     const eventTarget = e.target as HTMLElement;
