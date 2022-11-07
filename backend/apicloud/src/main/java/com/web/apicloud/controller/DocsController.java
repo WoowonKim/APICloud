@@ -1,8 +1,17 @@
 package com.web.apicloud.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.web.apicloud.domain.entity.Group;
+import com.web.apicloud.domain.entity.GroupUser;
+import com.web.apicloud.domain.entity.User;
 import com.web.apicloud.domain.dto.*;
 import com.web.apicloud.domain.vo.DocVO;
+import com.web.apicloud.domain.vo.UserAuthorityVO;
 import com.web.apicloud.model.DocsService;
+import com.web.apicloud.model.GroupUserService;
+import com.web.apicloud.model.UserService;
+import com.web.apicloud.security.CurrentUser;
+import com.web.apicloud.security.UserPrincipal;
 import com.web.apicloud.model.NotionService;
 import com.web.apicloud.util.FileUtils;
 import lombok.RequiredArgsConstructor;
@@ -19,17 +28,35 @@ import java.util.Map;
 @RestController
 @RequestMapping("/docs")
 public class DocsController {
+
     private final DocsService docsService;
 
     private final NotionService notionService;
 
     private final ProjectWithControllerGenerationController projectGenerationController;
 
+    private final GroupUserService groupUserService;
+
+    private final UserService userService;
+
+    @GetMapping("/authority/{docId}")
+    public ResponseEntity<Object> getAuthority(@CurrentUser UserPrincipal userPrincipal, @PathVariable Long docId) {
+        log.info("Doc 권한 조회 API 요청");
+        Group group = docsService.findByDocsId(docId).getGroup();
+        User user = userService.findUserById(userPrincipal.getId());
+        GroupUser groupUser = groupUserService.getGroupUserByGroupAndUser(group, user);
+        return ResponseEntity.ok().body(groupUser.getAuthority());
+    }
+
     @PostMapping()
     public ResponseEntity<Object> createDoc(@RequestBody CreateDocRequest createDocRequest) {
         log.info("DOC 생성 API 호출");
         Long docId = docsService.saveDocGetDocId(createDocRequest);
         String encryptedUrl = docsService.encryptUrl(docId);
+        Group group = docsService.findByDocsId(docId).getGroup();
+            for (UserAuthorityVO userAuthorityVO : createDocRequest.getUserAuthorityVO()) {
+                groupUserService.registerUser(group, userAuthorityVO);
+            }
         return ResponseEntity.ok().body(new CreateDocResponse(encryptedUrl));
     }
 
