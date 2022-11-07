@@ -114,14 +114,14 @@ const mainApiSlice = createSlice({
   },
   extraReducers: {
     [setApiDoc.fulfilled]: (state, action) => {
-      if (action.payload.status === 200) {
+      if (action.meta.requestStatus === "fulfilled") {
       }
     },
     [setApiDoc.rejected]: (state, action) => {
       console.log("setApiDoc rejected", action.payload);
     },
     [getApiDocList.fulfilled]: (state, action) => {
-      if (action.payload.status === 200) {
+      if (action.meta.requestStatus === "fulfilled") {
         console.log(action.payload);
       }
     },
@@ -129,7 +129,7 @@ const mainApiSlice = createSlice({
       console.log("getApiDocList rejected", action.payload);
     },
     [updateApiDoc.fulfilled]: (state, action) => {
-      if (action.payload.status === 200) {
+      if (action.meta.requestStatus === "fulfilled") {
         console.log("updateApiDoc fulfilled", action.payload);
       }
     },
@@ -137,7 +137,7 @@ const mainApiSlice = createSlice({
       console.log("updateApiDoc rejected", action.payload);
     },
     [getApiCreationInfo.fulfilled]: (state, action) => {
-      if (action.payload.status === 200) {
+      if (action.meta.requestStatus === "fulfilled") {
         console.log("getApiCreationInfo fulfilled", action.payload);
       }
     },

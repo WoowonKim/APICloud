@@ -30,7 +30,7 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
 
   const dispatchDeleteDoc: any = (docId: number) => {
     dispatch(deleteApiDoc({ docId: docId })).then((res: any) => {
-      if (res.payload?.status === 200) {
+      if (res.meta.requestStatus === "fulfilled") {
         dispatchGetDocList();
       }
     });

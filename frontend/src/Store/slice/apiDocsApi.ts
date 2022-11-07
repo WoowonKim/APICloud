@@ -23,7 +23,7 @@ const apiDocsApiSlice = createSlice({
   reducers: {},
   extraReducers: {
     [getApiDetail.fulfilled]: (state, action) => {
-      if (action.payload.status === 200) {
+      if (action.meta.requestStatus === "fulfilled") {
       }
     },
     [getApiDetail.rejected]: (state, action) => {
