@@ -11,6 +11,7 @@ import com.web.apicloud.model.parsing.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -34,6 +35,7 @@ public class SynchronizeServiceImpl implements SynchronizeService {
     private static final String NOT_FOUND_DOCS = "해당 API Doc을 찾을 수 없습니다.";
     private static final String NOT_FOUND_CONTROLLER = "해당 Controller를 찾을 수 없습니다.";
 
+    private final S3Service s3Service;
     private final ParsingService parsingService;
     private final ClassParsingService classParsingService;
     private final FileSearchService fileSearchService;
@@ -43,7 +45,15 @@ public class SynchronizeServiceImpl implements SynchronizeService {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public ControllerDTO getFile(Long docId, int controllerId, String root, String name) throws IOException {
+    public ControllerDTO getFile(Long docId, int controllerId, String root, String name, MultipartFile file) throws IOException {
+        // TODO: 새로 올라온 파일이 있는지 확인
+        // TODO: 있다면 업로드 후에 그거 탐색
+        // TODO: 없다면 이미 있는지 확인하고 없으면 에러 리턴, 있으면 그거 탐색
+        if (file == null) {
+
+        } else{
+            s3Service.uploadZip(file);
+        }
         rootPath = root;
 
         String path = fileSearchService.getControllerPath(rootPath, name);
