@@ -1,6 +1,6 @@
 import React from 'react'
 import { ApiDocsDummy} from '../../pages/ApiDocs';
-import './ApiDocTable.scss';
+import './ApiDocPaper.scss';
 
 
 interface Props {
@@ -8,7 +8,7 @@ interface Props {
 	ApiDocsDummy2: ApiDocsDummy[];
 }
 
-const ApiDocsTable = ({ApiDocsDummy1, ApiDocsDummy2}: Props) => {    
+const ApiDocPaper = ({ApiDocsDummy1, ApiDocsDummy2}: Props) => {    
   return (
 	<div className='apiDocTableWrapper'>
 		<h1 className='title'>Eco2 API DOC</h1>
@@ -44,4 +44,4 @@ const ApiDocsTable = ({ApiDocsDummy1, ApiDocsDummy2}: Props) => {
   )
 }
 
-export default ApiDocsTable
+export default ApiDocPaper
