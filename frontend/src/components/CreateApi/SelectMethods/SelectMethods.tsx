@@ -45,46 +45,46 @@ const SelectMethods = ({ onBlur, setValue, value }: Props) => {
     <div className="selectBox" onClick={() => setVisible(!visible)}>
       <SelectedItem
         color={
-          selectedMethod === "GET"
+          selectedMethod === "get"
             ? "#FDECC8"
-            : selectedMethod === "POST"
+            : selectedMethod === "post"
             ? "#F5E0E9"
-            : selectedMethod === "PUT"
+            : selectedMethod === "put"
             ? "#F1F0EF"
-            : selectedMethod === "DELETE"
+            : selectedMethod === "delete"
             ? "#D3E5EF"
-            : selectedMethod === "PATCH"
+            : selectedMethod === "patch"
             ? "#E8DEEE"
-            : selectedMethod === "OPTIONS"
+            : selectedMethod === "options"
             ? "#FFE2DD"
             : "#EEE0DA"
         }
       >
-        {selectedMethod}
+        {selectedMethod.toUpperCase()}
       </SelectedItem>
       {visible && (
         <div className="selectBoxContainer">
           <ul className="itemList">
             <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#fdecc8">GET</Item>
+              <Item color="#fdecc8">get</Item>
             </li>
             <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#F5E0E9">POST</Item>
+              <Item color="#F5E0E9">post</Item>
             </li>
             <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#F1F0EF">PUT</Item>
+              <Item color="#F1F0EF">put</Item>
             </li>
             <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#D3E5EF">DELETE</Item>
+              <Item color="#D3E5EF">delete</Item>
             </li>
             <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#E8DEEE">PATCH</Item>
+              <Item color="#E8DEEE">patch</Item>
             </li>
             <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#FFE2DD">OPTIONS</Item>
+              <Item color="#FFE2DD">options</Item>
             </li>
             <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#EEE0DA">HEAD</Item>
+              <Item color="#EEE0DA">head</Item>
             </li>
           </ul>
         </div>
