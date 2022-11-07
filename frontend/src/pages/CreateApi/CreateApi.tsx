@@ -13,7 +13,7 @@ const CreateApi = () => {
   const [apiData, setApiData] = useState<ApisType>({
     name: "",
     uri: "",
-    method: "GET",
+    method: "get",
     requestBody: {
       dtoName: "",
       name: "",
@@ -94,6 +94,11 @@ const CreateApi = () => {
   // 추가된 api, controller index를 저장할 state
   const [addedApiIndex, setAddedApiIndex] = useState(-1);
   const [addedControllerIndex, setAddedControllerIndex] = useState(-1);
+
+  const [propertiesIndexList, setPropertiesIndexList] = useState<number[]>([
+    -1, -1, -1, -1, -1, -1, -1, -1, -1,
+  ]);
+  const [depth, setDepth] = useState(2);
 
   // controller 추가/삭제 함수 -> 기존 데이터에 새 데이터 추가
   const handleController = (method: string, index?: number) => {
@@ -215,57 +220,56 @@ const CreateApi = () => {
               >
                 <FontAwesomeIcon icon={faPlus} className="plusIcon" />
               </button>
-              <Table
-                activeTab={activeTab}
-                selectedController={selectedController}
-                selectedApi={selectedApi}
-                data={
-                  activeTab === 1 &&
-                  state.data.length > 0 &&
-                  state.data[selectedController].apis.length > 0
-                    ? JSON.parse(
-                        JSON.stringify(
-                          state.data[selectedController].apis[selectedApi]
-                            .headers
-                        )
-                      )
-                    : activeTab === 2 &&
-                      state.data.length > 0 &&
-                      state.data[selectedController].apis.length > 0
-                    ? JSON.parse(
-                        JSON.stringify(
-                          state.data[selectedController].apis[selectedApi]
-                            .parameters
-                        )
-                      )
-                    : activeTab === 3 &&
-                      state.data.length > 0 &&
-                      state.data[selectedController].apis.length > 0
-                    ? JSON.parse(
-                        JSON.stringify(
-                          state.data[selectedController].apis[selectedApi]
-                            .queries
-                        )
-                      )
-                    : activeTab === 4 &&
-                      state.data.length > 0 &&
-                      state.data[selectedController].apis.length > 0
-                    ? JSON.parse(
-                        JSON.stringify(
-                          state.data[selectedController].apis[selectedApi]
-                            .requestBody?.properties
-                        )
-                      )
-                    : JSON.parse(
-                        JSON.stringify(
-                          state.data[selectedController].apis[selectedApi]
-                            .responses.success.responseBody?.properties
-                        )
-                      )
-                }
-                state={state}
-                responseType={"success"}
-              />
+              {state?.data.length > 0 &&
+                state.data[selectedController]?.apis.length > 0 && (
+                  <Table
+                    activeTab={activeTab}
+                    selectedController={selectedController}
+                    selectedApi={selectedApi}
+                    data={
+                      activeTab === 1
+                        ? JSON.parse(
+                            JSON.stringify(
+                              state.data[selectedController].apis[selectedApi]
+                                .headers
+                            )
+                          )
+                        : activeTab === 2
+                        ? JSON.parse(
+                            JSON.stringify(
+                              state.data[selectedController].apis[selectedApi]
+                                .parameters
+                            )
+                          )
+                        : activeTab === 3
+                        ? JSON.parse(
+                            JSON.stringify(
+                              state.data[selectedController].apis[selectedApi]
+                                .queries
+                            )
+                          )
+                        : activeTab === 4
+                        ? JSON.parse(
+                            JSON.stringify(
+                              state.data[selectedController].apis[selectedApi]
+                                .requestBody?.properties
+                            )
+                          )
+                        : JSON.parse(
+                            JSON.stringify(
+                              state.data[selectedController].apis[selectedApi]
+                                .responses.success.responseBody?.properties
+                            )
+                          )
+                    }
+                    state={state}
+                    responseType={"success"}
+                    setPropertiesIndexList={setPropertiesIndexList}
+                    propertiesIndexList={propertiesIndexList}
+                    setDepth={setDepth}
+                    depth={depth}
+                  />
+                )}
             </div>
           )}
           {selectedApi > -1 && selectedController > -1 && activeTab === 5 && (
@@ -288,6 +292,10 @@ const CreateApi = () => {
                 )}
                 state={state}
                 responseType={"fail"}
+                setPropertiesIndexList={setPropertiesIndexList}
+                propertiesIndexList={propertiesIndexList}
+                setDepth={setDepth}
+                depth={depth}
               />
             </div>
           )}

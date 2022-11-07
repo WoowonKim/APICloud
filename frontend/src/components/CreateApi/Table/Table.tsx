@@ -36,6 +36,10 @@ interface Props {
     data: ControllerType[];
   }>;
   responseType?: string;
+  setPropertiesIndexList: React.Dispatch<React.SetStateAction<number[]>>;
+  propertiesIndexList: number[];
+  setDepth: React.Dispatch<React.SetStateAction<number>>;
+  depth: number;
 }
 
 const Table = ({
@@ -45,12 +49,31 @@ const Table = ({
   data,
   state,
   responseType,
+  setPropertiesIndexList,
+  propertiesIndexList,
+  setDepth,
+  depth,
 }: Props) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [propertiesIndex, setPropertiesIndex] = useState(-1);
+  console.log("depppppppppppppppppppppth", depth);
 
   const addProperties = (index: number, flag?: boolean) => {
     const commonPath = state.data[selectedController].apis[selectedApi];
+    let firstIndex =
+      propertiesIndexList[0] === -1 ? index : propertiesIndexList[0];
+    let path =
+      activeTab === 2
+        ? commonPath.parameters[firstIndex]
+        : activeTab === 3
+        ? commonPath.queries[firstIndex]
+        : activeTab === 4
+        ? commonPath.requestBody.properties[firstIndex]
+        : activeTab === 5 &&
+          (responseType === "fail" || responseType === "success")
+        ? commonPath.responses[responseType].responseBody.properties[firstIndex]
+        : commonPath.parameters[firstIndex];
+
     const newData = {
       dtoName: "",
       name: "",
@@ -59,31 +82,25 @@ const Table = ({
       properties: [],
       required: true,
     };
-    if (
-      activeTab === 2 &&
-      (commonPath.parameters[index].properties.length === 0 || flag)
-    ) {
-      commonPath.parameters[index].properties.push(newData);
-    } else if (
-      activeTab === 3 &&
-      (commonPath.queries[index].properties.length === 0 || flag)
-    ) {
-      commonPath.queries[index].properties.push(newData);
-    } else if (
-      activeTab === 4 &&
-      (commonPath.requestBody.properties[index].properties.length === 0 || flag)
-    ) {
-      commonPath.requestBody.properties[index].properties.push(newData);
-    } else if (
-      activeTab === 5 &&
-      (responseType === "fail" || responseType === "success") &&
-      (commonPath.responses[responseType].responseBody.properties[index]
-        .properties.length === 0 ||
-        flag)
-    ) {
-      commonPath.responses[responseType].responseBody.properties[
-        index
-      ].properties.push(newData);
+    console.log(depth, index, "----------------------------", firstIndex);
+
+    if (depth > 2 || depth === 2) {
+      for (let i = 2; i < depth + 2; i++) {
+        if (propertiesIndexList[i - 2] !== -1) {
+          path = path?.properties[propertiesIndexList[i - 2]];
+        }
+      }
+      console.log(JSON.parse(JSON.stringify(path.properties)));
+
+      if (path?.properties[index]?.properties.length === 0 || flag) {
+        path.properties[index].properties.push(newData);
+      }
+    } else {
+      if (path?.properties.length === 0 || flag) {
+        console.log(JSON.parse(JSON.stringify(commonPath.queries[firstIndex])));
+
+        path.properties.push(newData);
+      }
     }
   };
 
@@ -199,6 +216,12 @@ const Table = ({
               icon={faInfo}
               className="infoIcon"
               onClick={() => {
+                setDepth(2);
+                setPropertiesIndexList((old) => {
+                  let copy = [...old];
+                  copy[depth - 2] = index;
+                  return copy;
+                });
                 addProperties(index);
                 setPropertiesIndex(index);
                 setIsModalVisible(!isModalVisible);
@@ -285,6 +308,11 @@ const Table = ({
 
   const [columnResizeMode, setColumnResizeMode] =
     useState<ColumnResizeMode>("onChange");
+
+  useEffect(() => {
+    setPropertiesIndexList([-1, -1, -1, -1, -1, -1, -1, -1, -1]);
+    setDepth(2);
+  }, [activeTab]);
 
   const table = useReactTable({
     data,
@@ -425,37 +453,54 @@ const Table = ({
         : type === "dtoName"
         ? "dtoName"
         : "required";
+    const rootPath = state.data[selectedController].apis[selectedApi];
+    let path =
+      activeTab === 2
+        ? rootPath.parameters[propertiesIndexList[0]]
+        : activeTab === 3
+        ? rootPath.queries[propertiesIndexList[0]]
+        : activeTab === 4
+        ? rootPath.requestBody
+        : activeTab === 5 &&
+          (responseType === "fail" || responseType === "success")
+        ? rootPath.responses[responseType].responseBody
+        : rootPath.parameters[propertiesIndexList[0]];
+    for (let i = 2; i < depth; i++) {
+      if (propertiesIndexList[i - 2] !== -1) {
+        path = path.properties[propertiesIndexList[i - 2]];
+      }
+    }
+    if (
+      (activeTab === 2 || activeTab === 3) &&
+      typeof e !== "string" &&
+      key === "dtoName"
+    ) {
+      for (let i = 2; i < depth - 1; i++) {
+        if (propertiesIndexList[i - 2] !== -1) {
+          path = path.properties[propertiesIndexList[i - 2]];
+        }
+      }
+      path[key] = e.target.value;
+    }
     if (activeTab === 4 && state.data) {
-      let rootPath =
-        depth === 1
-          ? state.data[selectedController].apis[selectedApi].requestBody
-          : state.data[selectedController].apis[selectedApi].requestBody
-              .properties[propertiesIndex];
       if (typeof e !== "string" && key === "required") {
-        rootPath[key] = e.target.checked;
+        path[key] = e.target.checked;
       } else if (
         typeof e !== "string" &&
         (key === "name" || key === "dtoName")
       ) {
-        rootPath[key] = e.target.value;
+        path[key] = e.target.value;
       } else if (typeof e === "string" && key === "type") {
         if (e === "List") {
-          rootPath.collectionType = "List";
-          rootPath[key] = "String";
+          path.collectionType = "List";
+          path[key] = "String";
         } else if (e === "X") {
-          rootPath.collectionType = "";
+          path.collectionType = "";
         } else {
-          rootPath[key] = e;
+          path[key] = e;
         }
       }
     } else if (activeTab === 5 && state.data) {
-      const response = responseType === "fail" ? "fail" : "success";
-      let rootPath =
-        depth === 1
-          ? state.data[selectedController].apis[selectedApi].responses[response]
-              .responseBody
-          : state.data[selectedController].apis[selectedApi].responses[response]
-              .responseBody.properties[propertiesIndex];
       const key2 =
         type === "name"
           ? "name"
@@ -467,24 +512,28 @@ const Table = ({
           ? "status"
           : "required";
       if (typeof e !== "string" && key2 === "required") {
-        rootPath[key2] = e.target.checked;
+        path[key2] = e.target.checked;
       } else if (
         typeof e !== "string" &&
         (key2 === "name" || key2 === "dtoName")
       ) {
-        rootPath[key2] = e.target.value;
-      } else if (typeof e !== "string" && key2 === "status") {
-        state.data[selectedController].apis[selectedApi].responses[response][
-          key2
-        ] = Number(e.target.value);
+        path[key2] = e.target.value;
+      } else if (
+        typeof e !== "string" &&
+        key2 === "status" &&
+        (responseType === "fail" || responseType === "success")
+      ) {
+        state.data[selectedController].apis[selectedApi].responses[
+          responseType
+        ][key2] = Number(e.target.value);
       } else if (typeof e === "string" && key2 === "type") {
         if (e === "List") {
-          rootPath.collectionType = "List";
-          rootPath[key2] = "String";
+          path.collectionType = "List";
+          path[key2] = "String";
         } else if (e === "X") {
-          rootPath.collectionType = "X";
+          path.collectionType = "X";
         } else {
-          rootPath[key2] = e;
+          path[key2] = e;
         }
       }
     }
@@ -504,6 +553,11 @@ const Table = ({
           handleBasicInfo={handleBasicInfo}
           addProperties={addProperties}
           deleteRow={deleteRow}
+          setPropertiesIndexList={setPropertiesIndexList}
+          propertiesIndexList={propertiesIndexList}
+          setDepth={setDepth}
+          depth={depth}
+          setPropertiesIndex={setPropertiesIndex}
         />
       )}
       <TableInfo

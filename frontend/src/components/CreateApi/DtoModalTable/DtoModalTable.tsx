@@ -24,6 +24,12 @@ interface Props {
   responseType?: string;
   activeTab: number;
   deleteRow: (index: number, depth: number, propIndex?: number) => void;
+  setPropertiesIndexList: React.Dispatch<React.SetStateAction<number[]>>;
+  propertiesIndexList: number[];
+  setDepth: React.Dispatch<React.SetStateAction<number>>;
+  depth: number;
+  addProperties: (index: number, flag?: boolean) => void;
+  setPropertiesIndex: React.Dispatch<React.SetStateAction<number>>;
 }
 const DtoModalTable = ({
   data,
@@ -34,6 +40,12 @@ const DtoModalTable = ({
   activeTab,
   responseType,
   deleteRow,
+  setPropertiesIndexList,
+  propertiesIndexList,
+  addProperties,
+  setDepth,
+  depth,
+  setPropertiesIndex,
 }: Props) => {
   const defaultColumn: Partial<ColumnDef<ApisType>> = {
     cell: function Cell({ getValue, row: { index }, column: { id }, table }) {
@@ -111,7 +123,20 @@ const DtoModalTable = ({
           )}
           <SelectTypes onBlur={onBlur} setValue={setValue} value={value} />
           {value === "Object" && (
-            <FontAwesomeIcon icon={faInfo} className="infoIcon" />
+            <FontAwesomeIcon
+              icon={faInfo}
+              className="infoIcon"
+              onClick={() => {
+                setDepth(depth++);
+                setPropertiesIndexList((old) => {
+                  let copy = [...old];
+                  copy[depth - 2] = index;
+                  return copy;
+                });
+                setPropertiesIndex(index);
+                addProperties(index);
+              }}
+            />
           )}
         </div>
       ) : (
