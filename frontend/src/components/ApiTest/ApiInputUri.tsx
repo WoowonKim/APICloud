@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { ApisType, ControllerType, RequestTypeInfo } from "../../pages/CreateApi/ApisType";
 import { useAppDispatch, useAppSelector } from "../../Store/hooks";
+import mainApiSlice, { getApiDoc, mainApi } from "../../Store/slice/mainApi";
 import sideApiSlice, { selectSideApi, SideApiProps } from "../../Store/slice/sideApi";
-import testApiSlice, { selectTestApi } from "../../Store/slice/testApi";
+import testApiSlice, { getApiRequestInfo, selectTestApi } from "../../Store/slice/testApi";
 import testApiTestSlice, { selectTestApiTest } from "../../Store/slice/testApiTest";
 import { RootState } from "../../Store/store";
 import MethodTest from "./MethodTest";
@@ -12,11 +14,17 @@ interface list {
 }
 
 const ApiInputUri = ({ sideApiList }: list) => {
+  const dispatch = useAppDispatch();
+
   const isInfo = useAppSelector(selectTestApi);
   const listInfo = useAppSelector(selectSideApi);
-  const dispatch = useAppDispatch();
+  const getDocsId = useAppSelector(mainApi);
+
   const [value, setValue] = useState(listInfo[sideApiList]?.infomethod.userAddress);
+  const [getUri, setUri] = useState("");
   const [defaultFlag, setDefaltFlag] = useState(false);
+  const [getRequestInfo, setGetRequestInfo] = useState<RequestTypeInfo>();
+
   useEffect(() => {
     setValue(listInfo[sideApiList]?.infomethod.userAddress);
     if (!defaultFlag) {
@@ -24,12 +32,39 @@ const ApiInputUri = ({ sideApiList }: list) => {
       setDefaltFlag(true);
     }
   }, [sideApiList]);
+
+  useEffect(() => {
+    dispatch(getApiDoc({ docId: getDocsId.docId })).then((res: any) => {
+      if (res.payload?.status === 200) {
+        // setUri(res.payload?.docInformation.contextUri);
+      }
+    });
+  }, [getDocsId.docId]);
+
+  useEffect(() => {
+    dispatch(getApiRequestInfo({ docId: getDocsId.docId })).then((res: any) => {
+      const json = res.payload.detail;
+      const obj = JSON.parse(json);
+      console.log("obj => ", obj);
+      setGetRequestInfo(obj);
+    });
+  }, [getDocsId.docId]);
+
+  useEffect(() => {
+    if (getRequestInfo) {
+      console.log("GetRequestInfoTest => ", getRequestInfo.controllers[0].apis[0].method);
+      setUri(getRequestInfo.controllers[0].apis[0].uri);
+    }
+  }, [getRequestInfo]);
+
   const testFunction = () => {
-    // 보내기 클릭 시 전송해야하는 객체이므로 임시로 log처리 추후 변경 예정
     console.log("isInfo ====> ", isInfo);
   };
 
-  const wordApi = listInfo[sideApiList]?.infomethod.method;
+  // const wordApi = listInfo[sideApiList]?.infomethod.method;
+  const wordApi = getRequestInfo?.controllers[0].apis[0].method;
+  // console.log("WordAPI ===> ", wordApie);
+
   const pushInfoUri = (e: SideApiProps) => {
     dispatch(sideApiSlice.actions.checkMethod(e));
   };
@@ -38,11 +73,12 @@ const ApiInputUri = ({ sideApiList }: list) => {
       <span className="apiChoice">
         <MethodTest methodApiWord={wordApi} />
       </span>
-      {sideApiList === 0 ? (
+      <input className="apiInput" type="text" defaultValue={getUri} />
+      {/* {sideApiList === 0 ? (
         <input
           className="apiInput"
           type="text"
-          defaultValue={isInfo.infomethod.userAddress}
+          defaultValue={getUri}
           onChange={(e) => {
             dispatch(testApiSlice.actions.setUserAddress({ userAddress: e.target.value }));
           }}
@@ -57,7 +93,7 @@ const ApiInputUri = ({ sideApiList }: list) => {
             setValue(e.target.value);
           }}
         />
-      )}
+      )} */}
       <button
         className="apiTestBtn"
         onClick={() => {
