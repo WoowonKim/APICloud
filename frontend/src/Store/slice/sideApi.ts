@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Action } from "@remix-run/router";
+import { RootState } from "../store";
 
 export type SideApiProps = {
   header: {
@@ -50,3 +51,4 @@ const sideApiSlice = createSlice({
 });
 
 export default sideApiSlice;
+export const selectSideApi = (state: RootState) => state.sideApi;
