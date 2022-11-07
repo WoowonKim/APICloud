@@ -56,9 +56,9 @@ const Table = ({
 }: Props) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [propertiesIndex, setPropertiesIndex] = useState(-1);
-  console.log("depppppppppppppppppppppth", depth);
+  const [modalPath, setModalPath] = useState<PropertiesType>();
 
-  const addProperties = (index: number, flag?: boolean) => {
+  const addProperties = (index: number, flag?: boolean, depth1?: number) => {
     const commonPath = state.data[selectedController].apis[selectedApi];
     let firstIndex =
       propertiesIndexList[0] === -1 ? index : propertiesIndexList[0];
@@ -82,24 +82,38 @@ const Table = ({
       properties: [],
       required: true,
     };
-    console.log(depth, index, "----------------------------", firstIndex);
-
-    if (depth > 2 || depth === 2) {
-      for (let i = 2; i < depth + 2; i++) {
-        if (propertiesIndexList[i - 2] !== -1) {
+    const count = propertiesIndexList.filter((item) => item > -1).length + 2;
+    console.log(
+      depth,
+      depth1,
+      index,
+      "----------------------------",
+      firstIndex,
+      propertiesIndexList,
+      count
+    );
+    if (count && count > 2) {
+      for (let i = 2; i < count; i++) {
+        if (propertiesIndexList[i - 1] !== -1) {
           path = path?.properties[propertiesIndexList[i - 2]];
         }
       }
-      console.log(JSON.parse(JSON.stringify(path.properties)));
+      console.log(JSON.parse(JSON.stringify(path)));
 
-      if (path?.properties[index]?.properties.length === 0 || flag) {
+      if (path?.properties[index].properties.length === 0 || flag) {
         path.properties[index].properties.push(newData);
+        console.log(
+          JSON.parse(JSON.stringify(path.properties[index].properties))
+        );
+
+        setModalPath(path.properties[index]);
       }
     } else {
       if (path?.properties.length === 0 || flag) {
-        console.log(JSON.parse(JSON.stringify(commonPath.queries[firstIndex])));
+        console.log(JSON.parse(JSON.stringify(path)));
 
         path.properties.push(newData);
+        setModalPath(path);
       }
     }
   };
@@ -558,6 +572,7 @@ const Table = ({
           setDepth={setDepth}
           depth={depth}
           setPropertiesIndex={setPropertiesIndex}
+          modalPath={modalPath}
         />
       )}
       <TableInfo

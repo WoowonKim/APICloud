@@ -28,8 +28,9 @@ interface Props {
   propertiesIndexList: number[];
   setDepth: React.Dispatch<React.SetStateAction<number>>;
   depth: number;
-  addProperties: (index: number, flag?: boolean) => void;
+  addProperties: (index: number, flag?: boolean, depth1?: number) => void;
   setPropertiesIndex: React.Dispatch<React.SetStateAction<number>>;
+  depth1: number;
 }
 const DtoModalTable = ({
   data,
@@ -46,6 +47,7 @@ const DtoModalTable = ({
   setDepth,
   depth,
   setPropertiesIndex,
+  depth1,
 }: Props) => {
   const defaultColumn: Partial<ColumnDef<ApisType>> = {
     cell: function Cell({ getValue, row: { index }, column: { id }, table }) {
@@ -62,7 +64,8 @@ const DtoModalTable = ({
 
       useEffect(() => {
         setValue(initialValue);
-      }, [initialValue]);
+      }, [initialValue, depth1]);
+      console.log("dsfljksdfj", depth1);
 
       return id === "required" ? (
         <input
@@ -134,7 +137,7 @@ const DtoModalTable = ({
                   return copy;
                 });
                 setPropertiesIndex(index);
-                addProperties(index);
+                addProperties(index, false, depth1);
               }}
             />
           )}

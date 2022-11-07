@@ -25,13 +25,14 @@ interface Props {
     depth: number,
     responseType?: string
   ) => void;
-  addProperties: (index: number, flag?: boolean) => void;
+  addProperties: (index: number, flag?: boolean, depth1?: number) => void;
   deleteRow: (index: number, depth: number, propIndex?: number) => void;
   setPropertiesIndexList: React.Dispatch<React.SetStateAction<number[]>>;
   propertiesIndexList: number[];
   setDepth: React.Dispatch<React.SetStateAction<number>>;
   depth: number;
   setPropertiesIndex: React.Dispatch<React.SetStateAction<number>>;
+  modalPath?: PropertiesType;
 }
 const DtoInputModal = ({
   setIsModalVisible,
@@ -49,9 +50,11 @@ const DtoInputModal = ({
   setDepth,
   depth,
   setPropertiesIndex,
+  modalPath,
 }: Props) => {
   const rootPath = state.data[selectedController].apis[selectedApi];
   const [path1, setPath] = useState<PropertiesType>();
+  const [test, setTest] = useState(2);
   const [nameList, setNameList] = useState<string[]>([
     "",
     "",
@@ -63,7 +66,6 @@ const DtoInputModal = ({
     "",
     "",
   ]);
-  console.log(propertiesIndexList);
   const index =
     propertiesIndexList[0] !== -1 ? propertiesIndexList[0] : propertiesIndex;
   let path =
@@ -77,23 +79,34 @@ const DtoInputModal = ({
         (responseType === "fail" || responseType === "success")
       ? rootPath.responses[responseType].responseBody.properties[index]
       : rootPath.parameters[index];
+  let depth1 = 2;
   useEffect(() => {
-    for (let i = 2; i < depth + 2; i++) {
-      if (propertiesIndexList[i - 2] !== -1) {
-        setNameList((old) => {
-          let copy = [...old];
-          copy[propertiesIndexList[i - 2]] = path?.name;
-          return copy;
-        });
-        path = path?.properties[propertiesIndexList[i - 2]];
-      }
+    let i = 2;
+    while (path?.properties.length > 0 && i < 11) {
+      setNameList((old) => {
+        let copy = [...old];
+        copy[propertiesIndexList[i - 2]] = path?.name;
+        return copy;
+      });
+      i++;
+      depth1 += 1;
+      setTest(depth1);
+      path = path?.properties[propertiesIndexList[i - 2]];
     }
-    setPath(path);
-    console.log(depth, "depth", nameList, propertiesIndexList[depth - 2]);
-  }, [activeTab]);
+    console.log(depth, depth1, test, "depth", nameList, propertiesIndexList);
+  }, [activeTab, test, path]);
+
+  useEffect(() => {
+    console.log("modalPath", JSON.parse(JSON.stringify(modalPath)));
+  }, [modalPath]);
   console.log(
     "==================================",
-    path && JSON.parse(JSON.stringify(path))
+    path && JSON.parse(JSON.stringify(path)),
+    depth1,
+    test,
+    propertiesIndex,
+    nameList,
+    JSON.parse(JSON.stringify(modalPath))
   );
 
   return (
@@ -110,22 +123,24 @@ const DtoInputModal = ({
             placeholder="DtoName"
             onChange={(e) => handleBasicInfo(e, "dtoName", depth)}
             autoFocus
-            value={path?.dtoName}
+            value={modalPath ? modalPath?.dtoName : path?.dtoName}
           />
         </div>
-        {path?.properties && (
+        {(!!modalPath ? modalPath?.properties : path?.properties) && (
           <div className="dtoModalTableContainer">
             <button
               className="apiPlusButton"
-              onClick={() =>
-                addProperties(propertiesIndexList[depth - 2], true)
-              }
+              onClick={() => addProperties(propertiesIndex, true, test)}
             >
               <FontAwesomeIcon icon={faPlus} className="plusIcon" />
             </button>
 
             <DtoModalTable
-              data={JSON.parse(JSON.stringify(path?.properties))}
+              data={JSON.parse(
+                JSON.stringify(
+                  modalPath ? modalPath?.properties : path?.properties
+                )
+              )}
               state={state}
               selectedController={selectedController}
               selectedApi={selectedApi}
@@ -138,6 +153,7 @@ const DtoInputModal = ({
               depth={depth}
               addProperties={addProperties}
               setPropertiesIndex={setPropertiesIndex}
+              depth1={test}
             />
           </div>
         )}

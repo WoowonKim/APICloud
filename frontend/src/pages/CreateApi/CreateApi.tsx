@@ -147,6 +147,7 @@ const CreateApi = () => {
   };
   // 데이터 확인 용 로그
   console.log(JSON.parse(JSON.stringify(state.data)));
+  console.log("=============depth", depth, "==============depth");
 
   return (
     <div className="apiDocscontainer">
