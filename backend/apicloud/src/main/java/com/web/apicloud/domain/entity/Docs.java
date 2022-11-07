@@ -78,13 +78,14 @@ public class Docs {
         this.detail = detail;
     }
 
-    public DocListResponse toDto(Long docId, String docName, Long groupId, User groupUser, Integer authority) {
+    public DocListResponse toDto(Long docId, String docName, Long groupId, User groupUser, Integer authority, String encryptedUrl) {
         return DocListResponse.builder()
                 .docId(docId)
                 .docName(docName)
                 .groupId(groupId)
                 .groupUser(groupUser)
                 .authority(authority)
+                .encryptedUrl(encryptedUrl)
                 .build();
     }
 

@@ -17,6 +17,7 @@ export type ApiDocType = {
     imageUrl: string;
   };
   authority: number;
+  encryptedUrl: string;
 };
 
 const ApiList = () => {
