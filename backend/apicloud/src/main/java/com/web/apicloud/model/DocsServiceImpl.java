@@ -21,11 +21,13 @@ import com.web.apicloud.util.SHA256;
 import com.web.apicloud.util.TextUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -94,7 +96,13 @@ public class DocsServiceImpl implements DocsService {
 
     @Override
     public Long saveDocGetDocId(CreateDocRequest createDocRequest) {
-        Group group = Group.builder().build();
+        String secretKey;
+        while (true) {
+            secretKey = RandomStringUtils.randomAlphanumeric(6);
+            Optional<Group> secretKeyGroup = groupRepository.findByGroupSecretKey(secretKey);
+            if(!secretKeyGroup.isPresent()) break;
+        }
+        Group group = Group.builder().groupSecretKey(secretKey).build();
         groupRepository.save(group);
         GroupUser groupUser = GroupUser.builder().authority(1).user(findByUserId(createDocRequest.getUserId())).group(group).build();
         groupUserRepository.save(groupUser);
