@@ -52,7 +52,7 @@ public class S3ServiceImpl implements S3Service {
 
     @Override
     public List<String> getFile(String name, MultipartFile file, String groupSecretKey) throws IOException {
-        String fileName = name + "Controller.java";
+        String fileName = name + ".java";
         if (file == null) {
             if (!findPath(groupSecretKey)) return null;
         }

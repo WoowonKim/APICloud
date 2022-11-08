@@ -1,13 +1,16 @@
 package com.web.apicloud.model;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.web.apicloud.domain.dto.SynchronizeRequest;
+import com.web.apicloud.domain.dto.SynchronizeUpdateRequest;
 import com.web.apicloud.domain.dto.synchronize.ControllerDTO;
 import com.web.apicloud.domain.entity.Docs;
 import com.web.apicloud.domain.entity.Group;
 import com.web.apicloud.domain.vo.*;
 import com.web.apicloud.exception.NotFoundException;
 import com.web.apicloud.model.parsing.*;
+import com.web.apicloud.util.Message;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -43,8 +46,8 @@ public class SynchronizeServiceImpl implements SynchronizeService {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public ControllerDTO getFile(SynchronizeRequest synchronizeRequest, MultipartFile file) throws IOException {
-        Docs doc = docsService.findByDocsId(synchronizeRequest.getDocId());
+    public ControllerDTO getFile(Long docId, SynchronizeRequest synchronizeRequest, MultipartFile file) throws IOException {
+        Docs doc = docsService.findByDocsId(docId);
         Group group = groupService.findById(doc.getGroup().getId());
 
         groupSecretKey = group.getGroupSecretKey();
@@ -127,6 +130,7 @@ public class SynchronizeServiceImpl implements SynchronizeService {
             return apiVO;
         }
         ApiVO apiVO = ApiVO.builder()
+                .name(apiDetail.getName())
                 .uri(uri)
                 .method(method)
                 .parameters(apiDetail.getParameters())
@@ -188,14 +192,18 @@ public class SynchronizeServiceImpl implements SynchronizeService {
         Stack<Character> stack = new Stack<>();
         boolean responseFlag = false;
         boolean requestFlag = false;
+        boolean methodNameFlag = false;
         String response = "";
         String request = "";
+        String methodName = "";
 
         ApiDetailVO apiDetail = new ApiDetailVO();
 
         while (i < api.size()) {
             for (int j = 0; j < api.get(i).length(); j++) {
                 if (requestFlag) request += api.get(i).charAt(j);
+                if (methodNameFlag) methodName += api.get(i).charAt(j);
+
                 switch (api.get(i).charAt(j)) {
                     case '<':
                         stack.push('<');
@@ -203,6 +211,11 @@ public class SynchronizeServiceImpl implements SynchronizeService {
                         break;
                     case '(':
                         stack.push('(');
+                        if (methodNameFlag) {
+                            methodNameFlag = false;
+                            methodName = methodName.replaceAll(" ", "");
+                            apiDetail.setName(methodName.substring(0, methodName.length() - 1));
+                        }
                         break;
                     case '{':
                         stack.push('{');
@@ -216,6 +229,7 @@ public class SynchronizeServiceImpl implements SynchronizeService {
                             if (stack.isEmpty()) {
                                 responseFlag = false;
                                 getResponseDetail(apiDetail, response);
+                                methodNameFlag = true;
                             }
                         }
                         break;
@@ -249,5 +263,17 @@ public class SynchronizeServiceImpl implements SynchronizeService {
             i++;
         }
         return apiDetail;
+    }
+
+    @Override
+    public Message updateDetail(Long docId, SynchronizeUpdateRequest synchronizeUpdateRequest) throws JsonProcessingException {
+        Docs doc = docsService.findByDocsId(docId);
+        DocVO detailVO = objectMapper.readValue(doc.getDetail(), DocVO.class);
+        ControllerVO controllerVO = ControllerMapper.INSTANCE.ControllerDTOToControllerVO(synchronizeUpdateRequest.getControllerDTO());
+        controllerVO.setName(detailVO.getControllers().get(synchronizeUpdateRequest.getControllerId()).getName());
+        detailVO.getControllers().set(synchronizeUpdateRequest.getControllerId(), controllerVO);
+        doc.setDetail(objectMapper.writeValueAsString(detailVO));
+        docsService.save(doc);
+        return new Message("변경사항 저장에 성공하였습니다.");
     }
 }

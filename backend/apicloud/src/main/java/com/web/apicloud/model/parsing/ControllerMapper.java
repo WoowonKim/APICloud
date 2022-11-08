@@ -20,4 +20,6 @@ public interface ControllerMapper {
             @Mapping(source = "apis", target = "apis"),
     })
     ControllerDTO ControllerVOToControllerDTO(ControllerVO controllerVO);
+
+    ControllerVO ControllerDTOToControllerVO(ControllerDTO controllerDTO);
 }

@@ -16,6 +16,8 @@ import java.util.Map;
 @Data
 public class ApiDetailVO {
 
+    private String name;
+
     private PropertyVO requestBody;
 
     private List<PropertyVO> parameters;

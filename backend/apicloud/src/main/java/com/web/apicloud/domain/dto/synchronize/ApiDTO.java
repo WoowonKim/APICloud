@@ -28,6 +28,8 @@ public class ApiDTO {
 
     private Map<String, ResponseDTO> responses;
 
+    private boolean nameFlag;
+
     private boolean uriFlag;
 
     private boolean methodFlag;

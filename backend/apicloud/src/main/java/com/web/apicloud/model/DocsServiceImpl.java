@@ -63,6 +63,11 @@ public class DocsServiceImpl implements DocsService {
         return convertDocsToDocVO(doc);
     }
 
+    @Override
+    public void save(Docs doc) {
+        docsRepository.save(doc);
+    }
+
     private DocVO convertDocsToDocVO(Docs doc) {
         if (doc.getDetail() == null) {
             throw new NotFoundException(NOT_FOUND_DETAIL);
