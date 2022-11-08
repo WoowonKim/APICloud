@@ -107,7 +107,7 @@ public class DocsServiceImpl implements DocsService {
         GroupUser groupUser = GroupUser.builder().authority(1).user(findByUserId(createDocRequest.getUserId())).group(group).build();
         groupUserRepository.save(groupUser);
         createDocRequest.setGroup(group);
-        return docsRepository.save(createDocRequest.toEntity()).getId();
+        return docsRepository.save(createDocRequest.toValidEntity()).getId();
     }
 
     // 암호화된 Url DB에 저장
@@ -155,14 +155,18 @@ public class DocsServiceImpl implements DocsService {
     @Override
     public UpdateDocDto updateDoc(Long docId, UpdateDocDto updateDocDto) {
         Docs doc = findByDocsId(docId);
-        doc.setDocsName(updateDocDto.getDocsName());
+        String docsName = TextUtils.getValidDocsName(updateDocDto.getDocsName());
+        String contextUri = TextUtils.getValidUri(updateDocDto.getContextUri());
+        String groupPackage = TextUtils.getValidGroupPackage(updateDocDto.getGroupPackage());
+        String packageName = TextUtils.getValidPackageName(docsName, groupPackage, updateDocDto.getPackageName());
+        doc.setDocsName(docsName);
         doc.setServerUrl(updateDocDto.getServerUrl());
-        doc.setContextUri(updateDocDto.getContextUri());
+        doc.setContextUri(contextUri);
         doc.setJavaVersion(updateDocDto.getJavaVersion());
         doc.setSpringVersion(updateDocDto.getSpringVersion());
         doc.setBuildManagement(updateDocDto.getBuildManagement());
-        doc.setGroupPackage(updateDocDto.getGroupPackage());
-        doc.setPackageName(updateDocDto.getPackageName());
+        doc.setGroupPackage(groupPackage);
+        doc.setPackageName(packageName);
         doc.setPackaging(updateDocDto.getPackaging());
         docsRepository.save(doc);
         updateDocDto.setGroupId(doc.getGroup().getId());
