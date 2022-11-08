@@ -12,7 +12,6 @@ import { getApiRequestInfo } from "../Store/slice/testApi";
 import { RequestTypeInfo } from "./CreateApi/ApisType";
 
 const TestApi = () => {
-  const [sideApiList, setSidApiList] = useState<number>(0);
   const [getInfo, setGetInfo] = useState<RequestTypeInfo>();
   const dispatch = useAppDispatch();
   const getDocsId = useAppSelector(mainApi);
@@ -22,6 +21,7 @@ const TestApi = () => {
     dispatch(getApiRequestInfo({ docId: getDocsId.docId })).then((res: any) => {
       const json = res.payload.detail;
       const obj = JSON.parse(json);
+      console.log("OBJ => ", obj);
       setGetInfo(obj);
     });
   }, [getDocsId.docId]);
@@ -39,8 +39,8 @@ const TestApi = () => {
           </div>
           <div className="testInfo">
             <div className="testSetting">
-              <ApiHeader getInfo={getInfo} sideApiList={sideApiList} />
-              <ApiBody sideApiList={sideApiList} />
+              <ApiHeader getInfo={getInfo} />
+              <ApiBody getInfo={getInfo} />
             </div>
             <ApiResponse />
           </div>

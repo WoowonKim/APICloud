@@ -72,3 +72,12 @@ export type ResponsesType = {
 export type DataType = {
   controllers: ControllerType[];
 };
+
+export type RequestBodyType = {
+  collectionType: string;
+  dtoName: string;
+  name: string;
+  properties: PropertiesType[];
+  type: string;
+  required: boolean;
+};
