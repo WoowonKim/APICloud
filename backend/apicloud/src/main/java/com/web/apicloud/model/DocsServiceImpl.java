@@ -13,68 +13,74 @@ import com.web.apicloud.domain.repository.DocsRepository;
 import com.web.apicloud.domain.repository.GroupRepository;
 import com.web.apicloud.domain.repository.GroupUserRepository;
 import com.web.apicloud.domain.repository.UserRepository;
-import com.web.apicloud.domain.vo.*;
-import com.web.apicloud.exception.InternalServerErrorException;
+import com.web.apicloud.domain.vo.ControllerVO;
+import com.web.apicloud.domain.vo.DocVO;
+import com.web.apicloud.domain.vo.ServerVO;
+import com.web.apicloud.exception.NotFoundException;
 import com.web.apicloud.util.SHA256;
 import com.web.apicloud.util.TextUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.sql.Update;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
+
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class DocsServiceImpl implements DocsService{
+public class DocsServiceImpl implements DocsService {
     private final DocsRepository docsRepository;
-
     private final UserRepository userRepository;
-
     private final GroupRepository groupRepository;
-
     private final GroupUserRepository groupUserRepository;
 
     private final SHA256 sha256;
-
     private final TextUtils textUtils;
-
     private final ObjectMapper objectMapper;
+
+    private static final String NOT_FOUND_DOCS = "해당 API Doc을 찾을 수 없습니다.";
+    private static final String NOT_FOUND_USER = "해당 유저를 찾을 수 없습니다.";
+    private static final String NOT_FOUND_CONTROLLER_FOR_EXTRACT = "추출할 컨트롤러 정보가 존재하지 않습니다.";
+    private static final String NOT_FOUND_DETAIL = "API Doc의 내용이 존재하지 않습니다.";
 
     @Override
     public Docs findByDocsId(Long docsId) {
-        return docsRepository.findById(docsId).orElse(null);
+        return docsRepository.findById(docsId).orElseThrow(() -> new NotFoundException(NOT_FOUND_DOCS));
     }
 
     @Override
     public User findByUserId(Long userId) {
-        return userRepository.findById(userId).orElse(null);
+        return userRepository.findById(userId).orElseThrow(() -> new NotFoundException(NOT_FOUND_USER));
     }
 
     @Override
-    public DocVO getDocVOByDocsId(Long docId) throws JsonProcessingException {
+    public DocVO getDocVOByDocsId(Long docId) {
         Docs doc = findByDocsId(docId);
-        if(doc == null) {
-            return null;
-        }
         return convertDocsToDocVO(doc);
     }
 
-    private DocVO convertDocsToDocVO(Docs doc) throws JsonProcessingException {
-        DocVO docVO = objectMapper.readValue(doc.getDetail(), DocVO.class);
-        setServerInfoFromDoc(docVO.getServer(), doc);
-        return docVO;
+    private DocVO convertDocsToDocVO(Docs doc) {
+        if (doc.getDetail() == null) {
+            throw new NotFoundException(NOT_FOUND_DETAIL);
+        }
+        try {
+            DocVO docVO = objectMapper.readValue(doc.getDetail(), DocVO.class);
+            if (docVO.getServer() != null) {
+                setServerInfoFromDoc(docVO.getServer(), doc);
+            }
+            return docVO;
+        } catch (JsonProcessingException ex) {
+            throw new RuntimeException(ex.getMessage());
+        }
     }
 
     private void setServerInfoFromDoc(ServerVO server, Docs doc) {
         server.setBootVersion(doc.getSpringVersion());
-        if(doc.getBuildManagement() == 1) {
-            server.setType("maven-project");
-        } else if(doc.getBuildManagement() == 2) {
-            server.setType("gradle-project");
-        }
+        server.setType(doc.getBuildManagement());
         // TODO: 다른 언어 지원
         server.setLanguage("java");
         server.setBaseDir(doc.getDocsName());
@@ -83,18 +89,20 @@ public class DocsServiceImpl implements DocsService{
         server.setName(doc.getDocsName());
         server.setDescription(doc.getDescription() == null ? "" : doc.getDescription());
         server.setPackageName(doc.getPackageName());
-        if(doc.getPackaging() == 1) {
-            server.setPackaging("jar");
-        } else if (doc.getPackaging() == 2) {
-            server.setPackaging("war");
-        }
+        server.setPackaging(doc.getPackaging());
         server.setJavaVersion(doc.getJavaVersion());
         server.setContextUri(doc.getContextUri());
     }
 
     @Override
     public Long saveDocGetDocId(CreateDocRequest createDocRequest) {
-        Group group = Group.builder().build();
+        String secretKey;
+        while (true) {
+            secretKey = RandomStringUtils.randomAlphanumeric(6);
+            Optional<Group> secretKeyGroup = groupRepository.findByGroupSecretKey(secretKey);
+            if(!secretKeyGroup.isPresent()) break;
+        }
+        Group group = Group.builder().groupSecretKey(secretKey).build();
         groupRepository.save(group);
         GroupUser groupUser = GroupUser.builder().authority(1).user(findByUserId(createDocRequest.getUserId())).group(group).build();
         groupUserRepository.save(groupUser);
@@ -111,22 +119,26 @@ public class DocsServiceImpl implements DocsService{
     }
 
     @Override
-    public String encryptUrl(Long docId) throws NoSuchAlgorithmException {
-        String encryptedDocId = sha256.encrypt(docId.toString());
-        String encryptedUrl = encryptedDocId;
-        saveEncryptedUrl(docId, encryptedUrl);
-        return encryptedUrl;
+    public String encryptUrl(Long docId) {
+        try {
+            String encryptedDocId = sha256.encrypt(docId.toString());
+            String encryptedUrl = encryptedDocId;
+            saveEncryptedUrl(docId, encryptedUrl);
+            return encryptedUrl;
+        } catch (NoSuchAlgorithmException ex) {
+            throw new RuntimeException(ex.getMessage());
+        }
     }
 
     @Override
     public List<DocListResponse> getDocs(Long userId) {
         ArrayList<DocListResponse> docListResponses = new ArrayList<>();
         User user = findByUserId(userId);
-        List<GroupUser> groupUsers =  groupUserRepository.findByUser(user);
+        List<GroupUser> groupUsers = groupUserRepository.findByUser(user);
         for (GroupUser groupUser : groupUsers) {
             List<Docs> docs = docsRepository.findByGroup(groupUser.getGroup());
             for (Docs doc : docs) {
-                DocListResponse docListResponse = doc.toDto(doc.getId(), doc.getDocsName(), doc.getGroup().getId(), groupUser.getUser(), groupUser.getAuthority());
+                DocListResponse docListResponse = doc.toDto(doc.getId(), doc.getDocsName(), doc.getGroup().getId(), groupUser.getUser(), groupUser.getAuthority(), doc.getEncryptedUrl());
                 docListResponses.add(docListResponse);
             }
         }
@@ -136,7 +148,7 @@ public class DocsServiceImpl implements DocsService{
     @Override
     public UpdateDocDto getDoc(Long docId) {
         Docs doc = findByDocsId(docId);
-        UpdateDocDto updateDocDto = doc.toDto(doc.getId(), doc.getDocsName(), doc.getServerUrl(), doc.getContextUri(), doc.getJavaVersion(), doc.getSpringVersion(), doc.getBuildManagement(), doc.getGroupPackage(), doc.getPackageName(), doc.getPackaging());
+        UpdateDocDto updateDocDto = doc.toUpdateDocDto();
         return updateDocDto;
     }
 
@@ -166,7 +178,9 @@ public class DocsServiceImpl implements DocsService{
     @Override
     public byte[] getCsvFile(List<ControllerVO> controllers) {
         StringBuffer csvContent = new StringBuffer();
-
+        if (controllers == null) {
+            throw new NotFoundException(NOT_FOUND_CONTROLLER_FOR_EXTRACT);
+        }
         controllers.forEach(controller -> {
             csvContent.append("controller name,common uri\n");
             csvContent.append(controller.getName()).append(",").append(controller.getCommonUri()).append("\n");

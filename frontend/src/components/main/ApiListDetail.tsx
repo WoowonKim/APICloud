@@ -21,15 +21,16 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
   const dispatch = useDispatch();
   const isOpenUpdateModal = useSelector((state: RootState) => state.mainApi.isOpenUpdateModal);
 
-  const moveApidocs = (e: number) => {
-    dispatch(mainApiSlice.actions.setDocId({ docId: e }));
-    navigate("/apidocs");
+  const moveApidocs: any = (docId: number) => {
+    dispatch(mainApiSlice.actions.setDocId({ docId: docId }));
+    navigate(`/apiDocs/${docId}`);
+
   };
   const list = apiList === 0 ? apiDocList : apiDocList;
 
   const dispatchDeleteDoc: any = (docId: number) => {
     dispatch(deleteApiDoc({ docId: docId })).then((res: any) => {
-      if (res.payload?.status === 200) {
+      if (res.meta.requestStatus === "fulfilled") {
         dispatchGetDocList();
       }
     });
@@ -44,7 +45,8 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
           <div
             className="content"
             onClick={() => {
-              moveApidocs(it.docId);
+              moveApidocs(it.encryptedUrl);
+              dispatch(mainApiSlice.actions.setDocId({ docId: it.docId }));
             }}
           >
             <p>{it.docName}</p>

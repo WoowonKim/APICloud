@@ -1,6 +1,7 @@
 package com.web.apicloud.model;
 
 import com.web.apicloud.domain.dto.UserResponse;
+import com.web.apicloud.domain.entity.User;
 import com.web.apicloud.domain.repository.UserRepository;
 import com.web.apicloud.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -15,13 +16,13 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public UserResponse findUserById(Long id) {
-        return new UserResponse(userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("user", "id", id)));
+    public User findUserById(Long id) {
+        return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("user", "id", id));
     }
 
     @Override
-    public UserResponse findUserByEmail(String email) {
-        return new UserResponse(userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("user", "id", email)));
+    public User findUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("user", "id", email));
     }
 
 }

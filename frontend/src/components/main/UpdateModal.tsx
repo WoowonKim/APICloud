@@ -75,7 +75,7 @@ const UpdateModal = () => {
       dispatch(
         updateApiDoc({ docId: docId, updateDocRequest: updateDocRequest })
       ).then((res: any) => {
-        if (res.payload?.status === 200) {
+        if (res.meta.requestStatus === "fulfilled") {
           dispatch(mainApiSlice.actions.setDocId({ docId: 0 }));
           dispatch(
             mainApiSlice.actions.setIsOpenUpdateModal({ isOpenModal: false })
@@ -93,16 +93,16 @@ const UpdateModal = () => {
   useEffect(() => {
     if (docId > 0) {
       dispatch(getApiDoc({ docId: docId })).then((res: any) => {
-        if (res.payload?.status === 200) {
-          setDocsName(res.payload.docInformation.docsName);
-          setServerUrl(res.payload.docInformation.serverUrl);
-          setContextUri(res.payload.docInformation.contextUri);
-          setJavaVersion(res.payload.docInformation.javaVersion);
-          setSpringVersion(res.payload.docInformation.springVersion);
-          setBuildManagement(res.payload.docInformation.buildManagement);
-          setGroupPackage(res.payload.docInformation.groupPackage);
-          setPackageName(res.payload.docInformation.packageName);
-          setPackaging(res.payload.docInformation.packaging);
+        if (res.meta.requestStatus === "fulfilled") {
+          setDocsName(res.payload.docsName);
+          setServerUrl(res.payload.serverUrl);
+          setContextUri(res.payload.contextUri);
+          setJavaVersion(res.payload.javaVersion);
+          setSpringVersion(res.payload.springVersion);
+          setBuildManagement(res.payload.buildManagement);
+          setGroupPackage(res.payload.groupPackage);
+          setPackageName(res.payload.packageName);
+          setPackaging(res.payload.packaging);
         }
       });
     }

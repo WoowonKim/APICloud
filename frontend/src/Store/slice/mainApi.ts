@@ -13,13 +13,15 @@ const initialState = {
 };
 
 // API DOC 생성하기
-export const setApiDoc: any = createAsyncThunk("mainApi/setApiDoc", async (args: any, { rejectWithValue }) => {
-  console.log(args);
-  try {
-    const response = await axiosPost("docs", args);
-    return response.data;
-  } catch (err: any) {
-    return rejectWithValue(err.response);
+export const setApiDoc: any = createAsyncThunk(
+  "mainApi/setApiDoc",
+  async (args: any, { rejectWithValue }) => {
+    try {
+      const response = await axiosPost("docs", args);
+      return response.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response);
+    }
   }
 });
 
@@ -64,6 +66,19 @@ export const deleteApiDoc: any = createAsyncThunk("mainApi/deleteApiDoc", async 
   }
 });
 
+// API DOC 생성 정보 조회하기
+export const getApiCreationInfo: any = createAsyncThunk(
+  "mainApi/getApiCreationInfo",
+  async (args: any, { rejectWithValue }) => {
+    try {
+      const response = await axiosGet(`metadata/client`);
+      return response.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response);
+    }
+  }
+);
+
 const mainApiSlice = createSlice({
   name: "mainApi",
   initialState,
@@ -86,26 +101,35 @@ const mainApiSlice = createSlice({
   },
   extraReducers: {
     [setApiDoc.fulfilled]: (state, action) => {
-      if (action.payload.status === 200) {
+      if (action.meta.requestStatus === "fulfilled") {
       }
     },
     [setApiDoc.rejected]: (state, action) => {
       console.log("setApiDoc rejected", action.payload);
     },
     [getApiDocList.fulfilled]: (state, action) => {
-      if (action.payload.status === 200) {
+      if (action.meta.requestStatus === "fulfilled") {
+        console.log(action.payload);
       }
     },
     [getApiDocList.rejected]: (state, action) => {
       console.log("getApiDocList rejected", action.payload);
     },
     [updateApiDoc.fulfilled]: (state, action) => {
-      if (action.payload.status === 200) {
+      if (action.meta.requestStatus === "fulfilled") {
         console.log("updateApiDoc fulfilled", action.payload);
       }
     },
     [updateApiDoc.rejected]: (state, action) => {
       console.log("updateApiDoc rejected", action.payload);
+    },
+    [getApiCreationInfo.fulfilled]: (state, action) => {
+      if (action.meta.requestStatus === "fulfilled") {
+        console.log("getApiCreationInfo fulfilled", action.payload);
+      }
+    },
+    [getApiCreationInfo.rejected]: (state, action) => {
+      console.log("getApiCreationInfo rejected", action.payload);
     },
   },
 });

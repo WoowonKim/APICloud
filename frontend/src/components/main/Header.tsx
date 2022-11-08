@@ -10,7 +10,7 @@ const Header = () => {
   const [userImg, setUserImg] = useState("");
   const user = useAppSelector(selectUser);
   useEffect(() => {
-    setUserImg(user?.imageUrl);
+    setUserImg(user?.imgUrl);
   }, [user]);
   return (
     <div className="ApiMainHeader">

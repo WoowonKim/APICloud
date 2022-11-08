@@ -17,7 +17,7 @@ const App = () => {
         <Route path="/" element={<Main />} />
         <Route path="/welcome" element={<Welcome />} />
         <Route path="/createApi" element={<CreateApi />} />
-        <Route path="/apiDocs" element={<ApiDocs />} />
+        <Route path="/apiDocs/:encryptedUrl" element={<ApiDocs />} />
         <Route path="/testApi" element={<TestApi />} />
         <Route path="/*" element={<ErrorPage />} />
         {/* <Route path="/" element={<TestApi />} /> 작업할 때 사용하는 공간입니다. */}

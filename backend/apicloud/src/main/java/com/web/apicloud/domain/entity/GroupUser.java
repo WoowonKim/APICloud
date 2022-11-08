@@ -1,15 +1,13 @@
 package com.web.apicloud.domain.entity;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Getter
+@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "tb_group_user")
 @Entity
@@ -32,6 +30,10 @@ public class GroupUser {
     @JoinColumn(name = "group_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Group group;
+
+    public void changeAuthority(Integer authority) {
+        this.authority = authority;
+    }
 
     @Builder
     public GroupUser(Long id, Integer authority, User user, Group group) {

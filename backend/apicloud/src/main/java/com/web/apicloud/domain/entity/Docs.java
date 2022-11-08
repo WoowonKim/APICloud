@@ -5,6 +5,7 @@ import com.web.apicloud.domain.dto.UpdateDocDto;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -33,13 +34,13 @@ public class Docs {
 
     private String springVersion;
 
-    private Integer buildManagement;
+    private String buildManagement;
 
     private String groupPackage;
 
     private String packageName;
 
-    private Integer packaging;
+    private String packaging;
 
     private String encryptedUrl;
 
@@ -62,7 +63,7 @@ public class Docs {
     }
 
     @Builder
-    public Docs(Long id, String docsName, String serverUrl, String contextUri, String javaVersion, String springVersion, Integer buildManagement, String groupPackage, String packageName, Integer packaging, String encryptedUrl, Group group, String detail) {
+    public Docs(Long id, String docsName, String serverUrl, String contextUri, String javaVersion, String springVersion, String buildManagement, String groupPackage, String packageName, String packaging, String encryptedUrl, Group group, String detail) {
         this.id = id;
         this.docsName = docsName;
         this.serverUrl = serverUrl;
@@ -78,19 +79,20 @@ public class Docs {
         this.detail = detail;
     }
 
-    public DocListResponse toDto(Long docId, String docName, Long groupId, User groupUser, Integer authority) {
+    public DocListResponse toDto(Long docId, String docName, Long groupId, User groupUser, Integer authority, String encryptedUrl) {
         return DocListResponse.builder()
                 .docId(docId)
                 .docName(docName)
                 .groupId(groupId)
                 .groupUser(groupUser)
                 .authority(authority)
+                .encryptedUrl(encryptedUrl)
                 .build();
     }
 
-    public UpdateDocDto toDto(Long docId, String docsName, String serverUrl, String contextUri, String javaVersion, String springVersion, Integer buildManagement, String groupPackage, String packageName, Integer packaging) {
+    public UpdateDocDto toUpdateDocDto() {
         return UpdateDocDto.builder()
-                .docId(docId)
+                .docId(id)
                 .docsName(docsName)
                 .serverUrl(serverUrl)
                 .contextUri(contextUri)
@@ -100,6 +102,7 @@ public class Docs {
                 .groupPackage(groupPackage)
                 .packageName(packageName)
                 .packaging(packaging)
+                .detail(detail)
                 .build();
     }
 }

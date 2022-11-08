@@ -17,6 +17,7 @@ export type ApiDocType = {
     imageUrl: string;
   };
   authority: number;
+  encryptedUrl: string;
 };
 
 const ApiList = () => {
@@ -33,8 +34,8 @@ const ApiList = () => {
 
   const dispatchGetDocList = () => {
     dispatch(getApiDocList()).then((res: any) => {
-      if (res.payload?.status === 200) {
-        setApiDocList(res.payload.docList);
+      if (res.meta?.requestStatus === 'fulfilled') {
+        setApiDocList(res.payload);
       }
     });
   };
