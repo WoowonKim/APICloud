@@ -58,21 +58,65 @@ const Table = ({
   const [propertiesIndex, setPropertiesIndex] = useState(-1);
   const [modalPath, setModalPath] = useState<PropertiesType>();
 
-  const addProperties = (index: number, flag?: boolean, depth1?: number) => {
-    const commonPath = state.data[selectedController].apis[selectedApi];
-    let firstIndex =
-      propertiesIndexList[0] === -1 ? index : propertiesIndexList[0];
+  const getDepth: (idx: number, datas?: any) => number = (
+    idx: number,
+    datas?: any
+  ) => {
     let path =
       activeTab === 2
-        ? commonPath.parameters[firstIndex]
+        ? state.data[selectedController].apis[selectedApi].parameters
         : activeTab === 3
-        ? commonPath.queries[firstIndex]
+        ? state.data[selectedController].apis[selectedApi].queries
         : activeTab === 4
-        ? commonPath.requestBody.properties[firstIndex]
+        ? state.data[selectedController].apis[selectedApi].requestBody
+            .properties
         : activeTab === 5 &&
           (responseType === "fail" || responseType === "success")
-        ? commonPath.responses[responseType].responseBody.properties[firstIndex]
-        : commonPath.parameters[firstIndex];
+        ? state.data[selectedController].apis[selectedApi].responses[
+            responseType
+          ].responseBody.properties
+        : state.data[selectedController].apis[selectedApi].parameters;
+
+    let i = 2;
+    let depth = 2;
+    while (path?.length > 0 && i < 11) {
+      if (typeof datas !== undefined && data.length > idx) {
+        const isDepth = path.find((item: any) => {
+          return (
+            item.dtoName === datas[idx]?.dtoName &&
+            item.name === datas[idx].name
+          );
+        });
+        if (!!isDepth) {
+          depth = i;
+          break;
+        }
+      }
+      if (propertiesIndexList[i - 2] > -1) {
+        path = path[propertiesIndexList[i - 2]]?.properties;
+      }
+      i++;
+      console.log(i, depth, JSON.parse(JSON.stringify(path)));
+    }
+    console.log(JSON.parse(JSON.stringify(path)));
+    return depth;
+  };
+
+  const addProperties = (index: number, flag?: boolean, depth1?: number) => {
+    let path =
+      activeTab === 2
+        ? state.data[selectedController].apis[selectedApi].parameters
+        : activeTab === 3
+        ? state.data[selectedController].apis[selectedApi].queries
+        : activeTab === 4
+        ? state.data[selectedController].apis[selectedApi].requestBody
+            .properties
+        : activeTab === 5 &&
+          (responseType === "fail" || responseType === "success")
+        ? state.data[selectedController].apis[selectedApi].responses[
+            responseType
+          ].responseBody.properties
+        : state.data[selectedController].apis[selectedApi].parameters;
 
     const newData = {
       dtoName: "",
@@ -82,38 +126,22 @@ const Table = ({
       properties: [],
       required: true,
     };
-    const count = propertiesIndexList.filter((item) => item > -1).length + 2;
-    console.log(
-      depth,
-      depth1,
-      index,
-      "----------------------------",
-      firstIndex,
-      propertiesIndexList,
-      count
-    );
-    if (count && count > 2) {
-      for (let i = 2; i < count; i++) {
-        if (propertiesIndexList[i - 1] !== -1) {
-          path = path?.properties[propertiesIndexList[i - 2]];
+    if (depth1 && (depth1 > 3 || depth1 === 3)) {
+      for (let i = 0; i < depth1 - 1; i++) {
+        if (propertiesIndexList[i] > -1) {
+          path = path[propertiesIndexList[i]].properties;
         }
       }
-      console.log(JSON.parse(JSON.stringify(path)));
+      console.log("next for path", JSON.parse(JSON.stringify(path)));
 
-      if (path?.properties[index].properties.length === 0 || flag) {
-        path.properties[index].properties.push(newData);
-        console.log(
-          JSON.parse(JSON.stringify(path.properties[index].properties))
-        );
-
-        setModalPath(path.properties[index]);
+      if (path[index]?.properties.length === 0 || flag) {
+        console.log("over three path", JSON.parse(JSON.stringify(path)));
+        path[index].properties.push(newData);
       }
     } else {
-      if (path?.properties.length === 0 || flag) {
-        console.log(JSON.parse(JSON.stringify(path)));
-
-        path.properties.push(newData);
-        setModalPath(path);
+      if (path[index]?.properties.length === 0 || flag) {
+        console.log("under three path", JSON.parse(JSON.stringify(path)));
+        path[index].properties.push(newData);
       }
     }
   };
@@ -233,10 +261,10 @@ const Table = ({
                 setDepth(2);
                 setPropertiesIndexList((old) => {
                   let copy = [...old];
-                  copy[depth - 2] = index;
+                  copy[getDepth(index, data[index]) - 2] = index;
                   return copy;
                 });
-                addProperties(index);
+                addProperties(index, false, getDepth(index, data[index]));
                 setPropertiesIndex(index);
                 setIsModalVisible(!isModalVisible);
               }}
@@ -479,21 +507,21 @@ const Table = ({
           (responseType === "fail" || responseType === "success")
         ? rootPath.responses[responseType].responseBody
         : rootPath.parameters[propertiesIndexList[0]];
-    for (let i = 2; i < depth; i++) {
-      if (propertiesIndexList[i - 2] !== -1) {
-        path = path.properties[propertiesIndexList[i - 2]];
+    for (let i = 0; i < depth - 2; i++) {
+      if (propertiesIndexList[i] !== -1) {
+        path = path.properties[propertiesIndexList[i]];
       }
+      console.log(i);
     }
+    console.log(JSON.parse(JSON.stringify(path)));
+
     if (
       (activeTab === 2 || activeTab === 3) &&
       typeof e !== "string" &&
       key === "dtoName"
     ) {
-      for (let i = 2; i < depth - 1; i++) {
-        if (propertiesIndexList[i - 2] !== -1) {
-          path = path.properties[propertiesIndexList[i - 2]];
-        }
-      }
+      console.log(JSON.parse(JSON.stringify(path)), e.target.value);
+
       path[key] = e.target.value;
     }
     if (activeTab === 4 && state.data) {
@@ -573,6 +601,7 @@ const Table = ({
           depth={depth}
           setPropertiesIndex={setPropertiesIndex}
           modalPath={modalPath}
+          getDepth={getDepth}
         />
       )}
       <TableInfo

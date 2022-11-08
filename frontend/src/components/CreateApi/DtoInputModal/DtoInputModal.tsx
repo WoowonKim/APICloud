@@ -33,6 +33,7 @@ interface Props {
   depth: number;
   setPropertiesIndex: React.Dispatch<React.SetStateAction<number>>;
   modalPath?: PropertiesType;
+  getDepth: (idx: number, datas: PropertiesType) => number;
 }
 const DtoInputModal = ({
   setIsModalVisible,
@@ -51,10 +52,12 @@ const DtoInputModal = ({
   depth,
   setPropertiesIndex,
   modalPath,
+  getDepth,
 }: Props) => {
   const rootPath = state.data[selectedController].apis[selectedApi];
-  const [path1, setPath] = useState<PropertiesType>();
+  const [modalDepth, setModalDepth] = useState(2);
   const [test, setTest] = useState(2);
+  const [final, setFinal] = useState<PropertiesType>();
   const [nameList, setNameList] = useState<string[]>([
     "",
     "",
@@ -79,34 +82,23 @@ const DtoInputModal = ({
         (responseType === "fail" || responseType === "success")
       ? rootPath.responses[responseType].responseBody.properties[index]
       : rootPath.parameters[index];
-  let depth1 = 2;
-  useEffect(() => {
-    let i = 2;
-    while (path?.properties.length > 0 && i < 11) {
-      setNameList((old) => {
-        let copy = [...old];
-        copy[propertiesIndexList[i - 2]] = path?.name;
-        return copy;
-      });
-      i++;
-      depth1 += 1;
-      setTest(depth1);
-      path = path?.properties[propertiesIndexList[i - 2]];
-    }
-    console.log(depth, depth1, test, "depth", nameList, propertiesIndexList);
-  }, [activeTab, test, path]);
 
   useEffect(() => {
-    console.log("modalPath", JSON.parse(JSON.stringify(modalPath)));
-  }, [modalPath]);
+    console.log(modalDepth);
+    if (modalDepth > 3 || modalDepth === 3) {
+      for (let i = 0; i < modalDepth - 2; i++) {
+        if (propertiesIndexList[i] > -1) {
+          path = path.properties[propertiesIndexList[i]];
+        }
+        console.log(i, JSON.parse(JSON.stringify(path)));
+      }
+    }
+    setFinal(path);
+  }, [modalDepth, path, final]);
   console.log(
-    "==================================",
-    path && JSON.parse(JSON.stringify(path)),
-    depth1,
-    test,
-    propertiesIndex,
-    nameList,
-    JSON.parse(JSON.stringify(modalPath))
+    modalDepth,
+    final && JSON.parse(JSON.stringify(final)),
+    propertiesIndexList
   );
 
   return (
@@ -117,30 +109,28 @@ const DtoInputModal = ({
             {nameList.length > 0 &&
               nameList.map((name, index) => <span key={index}>{name}/</span>)}
           </div>
-          <input
-            type="text"
-            id="dtoModalDtoName"
-            placeholder="DtoName"
-            onChange={(e) => handleBasicInfo(e, "dtoName", depth)}
-            autoFocus
-            value={modalPath ? modalPath?.dtoName : path?.dtoName}
-          />
+          {final && (
+            <input
+              type="text"
+              id="dtoModalDtoName"
+              placeholder="DtoName"
+              onChange={(e) => handleBasicInfo(e, "dtoName", modalDepth)}
+              autoFocus
+              value={final?.dtoName}
+            />
+          )}
         </div>
-        {(!!modalPath ? modalPath?.properties : path?.properties) && (
+        {final?.properties && (
           <div className="dtoModalTableContainer">
             <button
               className="apiPlusButton"
-              onClick={() => addProperties(propertiesIndex, true, test)}
+              onClick={() => addProperties(propertiesIndex, true, modalDepth)}
             >
               <FontAwesomeIcon icon={faPlus} className="plusIcon" />
             </button>
 
             <DtoModalTable
-              data={JSON.parse(
-                JSON.stringify(
-                  modalPath ? modalPath?.properties : path?.properties
-                )
-              )}
+              data={JSON.parse(JSON.stringify(final.properties))}
               state={state}
               selectedController={selectedController}
               selectedApi={selectedApi}
@@ -154,13 +144,16 @@ const DtoInputModal = ({
               addProperties={addProperties}
               setPropertiesIndex={setPropertiesIndex}
               depth1={test}
+              getDepth={getDepth}
+              setModalDepth={setModalDepth}
+              modalDepth={modalDepth}
             />
           </div>
         )}
       </div>
       <button
         className="dtoInputModalCloseButton"
-        onClick={() => setIsModalVisible((curr) => !curr)}
+        onClick={() => setIsModalVisible(false)}
       ></button>
     </div>
   );

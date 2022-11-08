@@ -5,7 +5,11 @@ import {
   flexRender,
 } from "@tanstack/react-table";
 import React, { useEffect, useMemo, useState } from "react";
-import { ApisType, ControllerType } from "../../../pages/CreateApi/ApisType";
+import {
+  ApisType,
+  ControllerType,
+  PropertiesType,
+} from "../../../pages/CreateApi/ApisType";
 import "../ControllerAddModal/ControllerAddModal.scss";
 import { faInfo, faRemove } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -14,7 +18,7 @@ import { MappedTypeDescription } from "@syncedstore/core/types/doc";
 
 // ControllerAddModal에서 받아오는 props의 type 설정
 interface Props {
-  data: ApisType[];
+  data: PropertiesType[];
   state: MappedTypeDescription<{
     data: ControllerType[];
   }>;
@@ -31,6 +35,9 @@ interface Props {
   addProperties: (index: number, flag?: boolean, depth1?: number) => void;
   setPropertiesIndex: React.Dispatch<React.SetStateAction<number>>;
   depth1: number;
+  getDepth: (idx: number, datas: PropertiesType) => number;
+  setModalDepth: React.Dispatch<React.SetStateAction<number>>;
+  modalDepth: number;
 }
 const DtoModalTable = ({
   data,
@@ -48,8 +55,11 @@ const DtoModalTable = ({
   depth,
   setPropertiesIndex,
   depth1,
+  getDepth,
+  setModalDepth,
+  modalDepth,
 }: Props) => {
-  const defaultColumn: Partial<ColumnDef<ApisType>> = {
+  const defaultColumn: Partial<ColumnDef<PropertiesType>> = {
     cell: function Cell({ getValue, row: { index }, column: { id }, table }) {
       const initialValue = getValue<string>();
       const [value, setValue] = useState<string>(initialValue);
@@ -64,8 +74,7 @@ const DtoModalTable = ({
 
       useEffect(() => {
         setValue(initialValue);
-      }, [initialValue, depth1]);
-      console.log("dsfljksdfj", depth1);
+      }, [initialValue, modalDepth]);
 
       return id === "required" ? (
         <input
@@ -130,14 +139,15 @@ const DtoModalTable = ({
               icon={faInfo}
               className="infoIcon"
               onClick={() => {
-                setDepth(depth++);
+                console.log(getDepth(index, data[index]));
+
+                setModalDepth(getDepth(index, data[index]) + 1);
                 setPropertiesIndexList((old) => {
                   let copy = [...old];
-                  copy[depth - 2] = index;
+                  copy[getDepth(index, data[index]) - 1] = index;
                   return copy;
                 });
-                setPropertiesIndex(index);
-                addProperties(index, false, depth1);
+                addProperties(index, false, getDepth(index, data[index]) + 1);
               }}
             />
           )}
@@ -153,7 +163,7 @@ const DtoModalTable = ({
     },
   };
 
-  const columns = useMemo<ColumnDef<ApisType>[]>(
+  const columns = useMemo<ColumnDef<PropertiesType>[]>(
     () => [
       {
         accessorKey: "name",
@@ -192,29 +202,40 @@ const DtoModalTable = ({
               : columnId === "type"
               ? "type"
               : "required";
+          let path =
+            activeTab === 2
+              ? rootPath.parameters[propertiesIndexList[0]]
+              : activeTab === 3
+              ? rootPath.queries[propertiesIndexList[0]]
+              : activeTab === 4
+              ? rootPath.requestBody.properties[propertiesIndexList[0]]
+              : activeTab === 5 &&
+                (responseType === "fail" || responseType === "success")
+              ? rootPath.responses[responseType].responseBody.properties[
+                  propertiesIndexList[0]
+                ]
+              : rootPath.parameters[propertiesIndexList[0]];
+          for (let i = 0; i < modalDepth - 2; i++) {
+            if (propertiesIndexList[i] !== -1) {
+              path = path?.properties[propertiesIndexList[i]];
+            }
+          }
+
           if (activeTab === 2 || activeTab === 3) {
-            const tab = activeTab === 3 ? "queries" : "parameters";
-            rootPath[tab][propertiesIndex].properties.map((row, idx) => {
+            path?.properties.map((row, idx) => {
               if (idx === rowIndex && type === "required") {
-                rootPath[tab][propertiesIndex].properties[rowIndex][type] =
-                  newValue;
+                path.properties[rowIndex][type] = newValue;
               } else if (
                 idx === rowIndex &&
                 (type === "name" || type === "type")
               ) {
                 if (type === "type" && value === "List") {
-                  rootPath[tab][propertiesIndex].properties[
-                    rowIndex
-                  ].collectionType = "List";
-                  rootPath[tab][propertiesIndex].properties[rowIndex][type] =
-                    "String";
+                  path.properties[rowIndex].collectionType = "List";
+                  path.properties[rowIndex][type] = "String";
                 } else if (type === "type" && value === "X") {
-                  rootPath[tab][propertiesIndex].properties[
-                    rowIndex
-                  ].collectionType = "";
+                  path.properties[rowIndex].collectionType = "";
                 } else {
-                  rootPath[tab][propertiesIndex].properties[rowIndex][type] =
-                    value;
+                  path.properties[rowIndex][type] = value;
                 }
               }
             });
