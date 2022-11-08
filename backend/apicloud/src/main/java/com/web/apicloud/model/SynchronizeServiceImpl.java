@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.web.apicloud.domain.dto.synchronize.ControllerDTO;
 import com.web.apicloud.domain.entity.Docs;
+import com.web.apicloud.domain.entity.Group;
 import com.web.apicloud.domain.repository.DocsRepository;
 import com.web.apicloud.domain.vo.*;
 import com.web.apicloud.exception.NotFoundException;
@@ -40,14 +41,17 @@ public class SynchronizeServiceImpl implements SynchronizeService {
     private final ParsingService parsingService;
     private final ClassParsingService classParsingService;
     private final CompareService compareService;
-    private final DocsRepository docsRepository;
+    private final DocsService docsService;
+    private final GroupService groupService;
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public ControllerDTO getFile(Long docId, int controllerId, String name, MultipartFile file) throws IOException {
-        // TODO: 그룹 시크릿 키 조회해오기
-        groupSecretKey = "1";
+        Docs doc = docsService.findByDocsId(docId);
+        Group group = groupService.findById(doc.getGroup().getId());
+
+        groupSecretKey = group.getGroupSecretKey();
         List<String> lines = s3Service.getFile(name, file, groupSecretKey);
         if (lines == null) return null;
 
@@ -92,16 +96,20 @@ public class SynchronizeServiceImpl implements SynchronizeService {
                 .apis(apis)
                 .build();
         System.out.println("controllerVO => " + controllerVO);
-        return compareVO(docId, controllerId, controllerVO);
-    }
 
-    private ControllerDTO compareVO(Long docId, int controllerId, ControllerVO controllerVO) throws JsonProcessingException {
-        Docs doc = docsRepository.findById(docId).orElseThrow(() -> new NotFoundException(NOT_FOUND_DOCS));
         DocVO detailVO = objectMapper.readValue(doc.getDetail(), DocVO.class);
         if (detailVO.getControllers().size() <= controllerId) new NotFoundException(NOT_FOUND_CONTROLLER);
         ControllerVO original = detailVO.getControllers().get(controllerId);
         return compareService.compareControllerVO(original, controllerVO);
     }
+
+//    private ControllerDTO compareVO(Long docId, int controllerId, ControllerVO controllerVO) throws JsonProcessingException {
+//        Docs doc = docsRepository.findById(docId).orElseThrow(() -> new NotFoundException(NOT_FOUND_DOCS));
+//        DocVO detailVO = objectMapper.readValue(doc.getDetail(), DocVO.class);
+//        if (detailVO.getControllers().size() <= controllerId) new NotFoundException(NOT_FOUND_CONTROLLER);
+//        ControllerVO original = detailVO.getControllers().get(controllerId);
+//        return compareService.compareControllerVO(original, controllerVO);
+//    }
 
     private ApiVO apiParsing(List<String> api) throws IOException {
         if (api.size() == 0) return null;

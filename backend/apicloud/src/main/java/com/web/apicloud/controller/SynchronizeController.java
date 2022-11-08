@@ -32,13 +32,9 @@ public class SynchronizeController {
 
     @PostMapping
     public ResponseEntity<ControllerDTO> getFile(@RequestPart(value = "file", required = false) MultipartFile multipartFile) throws IOException {
-        String root = "C:/bilow";
-//        String root = "/Users/bbb381/S07P22B309/";
         String name = "Program";
         System.out.println(multipartFile);
         ControllerDTO response = synchronizeService.getFile(1L, 0, name, multipartFile);
-//        String prefix = getPrefix(request.getRequestURI(), "/s3/upload/zip/");
-//        s3Service.uploadZip(prefix, multipartFile);
         return ResponseEntity.ok()
                 .body(response);
     }

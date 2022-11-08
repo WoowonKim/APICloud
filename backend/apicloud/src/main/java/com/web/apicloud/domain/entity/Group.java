@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 
 @Getter
@@ -18,8 +19,12 @@ public class Group {
     @Column(name = "group_id")
     private Long id;
 
+    @NotNull
+    private String groupSecretKey;
+
     @Builder
-    public Group(Long id) {
+    public Group(Long id, String groupSecretKey) {
         this.id = id;
+        this.groupSecretKey = groupSecretKey;
     }
 }
