@@ -25,6 +25,7 @@ export type DocInformationType = {
   groupPackage: string;
   packageName: string;
   packaging: number;
+  detail?: string;
 };
 
 const CreateModal = () => {

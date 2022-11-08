@@ -11,19 +11,6 @@ import mainApiSlice, {
 } from "../../Store/slice/mainApi";
 import { RootState } from "../../Store/store";
 
-export type DocInformationType = {
-  docId: number;
-  docsName: string;
-  serverUrl: string;
-  contextUri: string;
-  javaVersion: string;
-  springVersion: string;
-  buildManagement: number;
-  groupPackage: string;
-  packageName: string;
-  packaging: number;
-};
-
 const UpdateModal = () => {
   const [docsName, setDocsName] = useState("");
   const [serverUrl, setServerUrl] = useState("");

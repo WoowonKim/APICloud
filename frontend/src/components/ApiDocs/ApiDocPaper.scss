@@ -1,41 +1,39 @@
 .apiDocTableWrapper {
 	width: 100%;
-	.title {
-		text-align: center;
-		padding: 7%;
-	}
-	.innerWrapper1 {
-		display: flex;
-	  justify-content: space-between;
-		.tableColumn1 {
-			justify-content: flex-start;
-			margin: 2% 15% 2% 15%;
-			.tableRow1 {
-				height: 5vh;
-				margin: 5%, 2%, 5%, 2%;
-			}
-			.tableRowContent1 {
-				height: 5vh;
-				margin: 5%, 2%, 5%, 2%;
-			}
-		}
-	}
-	.innerWrapper2 {
-		display: flex;
-	  justify-content: space-between;
-		margin-top: 2%;
-		.tableColumn2 {
-			display: flex;
-			justify-content: center;
-			margin: 5% 15% 5% 15%;
-			.tableRow2 {
-				height: 5vh;
-			}
-			.tableRowContent2 {
-				padding: 20px;
-				background-color: yellow;
-				border-radius: 10px;
+	height: 50%;
+	display: flex;
+	justify-content: center;
+	.apiDocTable {
+		border: none;
+		.apiDocHead {
+			.apiDocHeadRow {
+				background-color: skyblue;
+				.apiDocHeadTitle {
+					border-radius: 5px;
+					width: 40%;
+					padding: 0px;
+				}
+				.apiDocHeadContent {
+					border-radius: 5px;
+					width: 60%;
+					padding: 0px;
+				}
 			}
 		}
+		.apiDocBody {
+			.apiDocBodyRow {
+				.apiDocBodyTitle {
+					border-radius: 5px;
+					padding: 0px;
+					height: 50%;
+				}
+				.apiDocBodyContent {
+					border-radius: 5px;
+					padding: 0px;
+					height: 50%;
+				}
+			}
+		}
+
 	}
 }
