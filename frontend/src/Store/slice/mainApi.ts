@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
 import { axiosDel, axiosGet, axiosPost, axiosPut } from "../../util/axiosUtil";
+import { RootState } from "../store";
 
 const initialState = {
   userId: 1,
@@ -22,62 +23,48 @@ export const setApiDoc: any = createAsyncThunk(
       return rejectWithValue(err.response);
     }
   }
-);
+});
 
 // API DOC LIST 조회하기
-export const getApiDocList: any = createAsyncThunk(
-  "mainApi/getApiDocList",
-  async (args: any, { rejectWithValue }) => {
-    try {
-      const response = await axiosGet("docs");
-      return response.data;
-    } catch (err: any) {
-      return rejectWithValue(err.respone);
-    }
+export const getApiDocList: any = createAsyncThunk("mainApi/getApiDocList", async (args: any, { rejectWithValue }) => {
+  try {
+    const response = await axiosGet("docs");
+    return response.data;
+  } catch (err: any) {
+    return rejectWithValue(err.respone);
   }
-);
+});
 
 // 특정 API DOC 조회하기
-export const getApiDoc: any = createAsyncThunk(
-  "mainApi/getApiDoc",
-  async (args: any, { rejectWithValue }) => {
-    try {
-      const response = await axiosGet(`docs/${args.docId}`);
-      return response.data;
-    } catch (err: any) {
-      return rejectWithValue(err.response);
-    }
+export const getApiDoc: any = createAsyncThunk("mainApi/getApiDoc", async (args: any, { rejectWithValue }) => {
+  try {
+    const response = await axiosGet(`docs/${args.docId}`);
+
+    return response.data;
+  } catch (err: any) {
+    return rejectWithValue(err.response);
   }
-);
+});
 
 // API DOC 수정하기
-export const updateApiDoc: any = createAsyncThunk(
-  "mainApi/updateApiDoc",
-  async (args: any, { rejectWithValue }) => {
-    try {
-      const response = await axiosPut(
-        `docs/${args.docId}`,
-        args.updateDocRequest
-      );
-      return response.data;
-    } catch (err: any) {
-      return rejectWithValue(err.response);
-    }
+export const updateApiDoc: any = createAsyncThunk("mainApi/updateApiDoc", async (args: any, { rejectWithValue }) => {
+  try {
+    const response = await axiosPut(`docs/${args.docId}`, args.updateDocRequest);
+    return response.data;
+  } catch (err: any) {
+    return rejectWithValue(err.response);
   }
-);
+});
 
 // API DOC 삭제하기
-export const deleteApiDoc: any = createAsyncThunk(
-  "mainApi/deleteApiDoc",
-  async (args: any, { rejectWithValue }) => {
-    try {
-      const response = await axiosDel(`docs/${args.docId}`);
-      return response.data;
-    } catch (err: any) {
-      return rejectWithValue(err.response);
-    }
+export const deleteApiDoc: any = createAsyncThunk("mainApi/deleteApiDoc", async (args: any, { rejectWithValue }) => {
+  try {
+    const response = await axiosDel(`docs/${args.docId}`);
+    return response.data;
+  } catch (err: any) {
+    return rejectWithValue(err.response);
   }
-);
+});
 
 // API DOC 생성 정보 조회하기
 export const getApiCreationInfo: any = createAsyncThunk(
@@ -148,3 +135,4 @@ const mainApiSlice = createSlice({
 });
 
 export default mainApiSlice;
+export const mainApi = (state: RootState) => state.mainApi;

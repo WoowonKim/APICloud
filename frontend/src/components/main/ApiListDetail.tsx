@@ -19,12 +19,12 @@ interface Props {
 const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const isOpenUpdateModal = useSelector(
-    (state: RootState) => state.mainApi.isOpenUpdateModal
-  );
+  const isOpenUpdateModal = useSelector((state: RootState) => state.mainApi.isOpenUpdateModal);
 
   const moveApidocs: any = (docId: number) => {
+    dispatch(mainApiSlice.actions.setDocId({ docId: docId }));
     navigate(`/apiDocs/${docId}`);
+
   };
   const list = apiList === 0 ? apiDocList : apiDocList;
 
@@ -57,11 +57,7 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
                 <FontAwesomeIcon icon={faUser} />
                 {it.groupUser.name}
               </div>
-              <FontAwesomeIcon
-                className="DeatilIcon"
-                icon={faRightToBracket}
-                onClick={moveApidocs}
-              />
+              <FontAwesomeIcon className="DeatilIcon" icon={faRightToBracket} />
               {apiList === 0 ? (
                 <>
                   <FontAwesomeIcon
@@ -73,16 +69,11 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
                           isOpenUpdateModal: true,
                         })
                       );
-                      dispatch(
-                        mainApiSlice.actions.setDocId({ docId: it.docId })
-                      );
+                      dispatch(mainApiSlice.actions.setDocId({ docId: it.docId }));
+                      console.log("ApiListDetail DocId => ", it.docId);
                     }}
                   />
-                  <FontAwesomeIcon
-                    className="DeatilIcon"
-                    icon={faTrash}
-                    onClick={() => dispatchDeleteDoc(it.docId)}
-                  />
+                  <FontAwesomeIcon className="DeatilIcon" icon={faTrash} onClick={() => dispatchDeleteDoc(it.docId)} />
                 </>
               ) : (
                 <div></div>

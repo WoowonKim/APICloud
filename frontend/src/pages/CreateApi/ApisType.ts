@@ -13,6 +13,11 @@ export type ServerInfoType = {
   dependencies: [];
 };
 
+export type RequestTypeInfo = {
+  controllers: ControllerType[];
+  server: {};
+};
+
 export type ControllerType = {
   name: string;
   commonUri: string;
