@@ -1,10 +1,9 @@
 package com.web.apicloud.model;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.web.apicloud.domain.dto.synchronize.ControllerDTO;
 import com.web.apicloud.domain.entity.Docs;
-import com.web.apicloud.domain.repository.DocsRepository;
+import com.web.apicloud.domain.entity.Group;
 import com.web.apicloud.domain.vo.*;
 import com.web.apicloud.exception.NotFoundException;
 import com.web.apicloud.model.parsing.*;
@@ -14,8 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 
 @Slf4j
@@ -30,7 +27,8 @@ public class SynchronizeServiceImpl implements SynchronizeService {
     private static final String PATH_VARIABLE = "PathVariable";
     private static final String REQUEST_BODY = "RequestBody";
     private static final String VALUE = "value";
-    private static String rootPath = "";
+
+    private static String groupSecretKey = "";
 
     private static final String NOT_FOUND_DOCS = "해당 API Doc을 찾을 수 없습니다.";
     private static final String NOT_FOUND_CONTROLLER = "해당 Controller를 찾을 수 없습니다.";
@@ -38,25 +36,21 @@ public class SynchronizeServiceImpl implements SynchronizeService {
     private final S3Service s3Service;
     private final ParsingService parsingService;
     private final ClassParsingService classParsingService;
-    private final FileSearchService fileSearchService;
     private final CompareService compareService;
-    private final DocsRepository docsRepository;
+    private final DocsService docsService;
+    private final GroupService groupService;
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public ControllerDTO getFile(Long docId, int controllerId, String root, String name, MultipartFile file) throws IOException {
-        // TODO: 새로 올라온 파일이 있는지 확인
-        // TODO: 있다면 업로드 후에 그거 탐색
-        // TODO: 없다면 이미 있는지 확인하고 없으면 에러 리턴, 있으면 그거 탐색
+    public ControllerDTO getFile(Long docId, int controllerId, String name, MultipartFile file) throws IOException {
+        Docs doc = docsService.findByDocsId(docId);
+        Group group = groupService.findById(doc.getGroup().getId());
 
-        // TODO: 그룹 시크릿 키 조회해오기
-        List<String> lines = s3Service.getFile(name, file, "1");
-//        rootPath = root;
+        groupSecretKey = group.getGroupSecretKey();
+        List<String> lines = s3Service.getFile(name, file, groupSecretKey);
+        if (lines == null) return null;
 
-        String path = fileSearchService.getControllerPath(rootPath, name);
-//        if (path == null) return null;
-//        List<String> lines = Files.readAllLines(Paths.get(path));
         String value = null;
         int i = 0;
         while (i < lines.size()) {
@@ -97,12 +91,8 @@ public class SynchronizeServiceImpl implements SynchronizeService {
                 .commonUri(value)
                 .apis(apis)
                 .build();
-        System.out.println(controllerVO);
-        return compareVO(docId, controllerId, controllerVO);
-    }
+        System.out.println("controllerVO => " + controllerVO);
 
-    private ControllerDTO compareVO(Long docId, int controllerId, ControllerVO controllerVO) throws JsonProcessingException {
-        Docs doc = docsRepository.findById(docId).orElseThrow(() -> new NotFoundException(NOT_FOUND_DOCS));
         DocVO detailVO = objectMapper.readValue(doc.getDetail(), DocVO.class);
         if (detailVO.getControllers().size() <= controllerId) new NotFoundException(NOT_FOUND_CONTROLLER);
         ControllerVO original = detailVO.getControllers().get(controllerId);
@@ -165,7 +155,9 @@ public class SynchronizeServiceImpl implements SynchronizeService {
                 String value = parsingService.getValue(str);
                 if (value == null) value = parsingService.getName(str);
                 String type = parsingService.getParamType(request);
-                PropertyVO query = classParsingService.getBody(rootPath, type, "query");
+                PropertyVO query = classParsingService.getBody(groupSecretKey, type, "query");
+                System.out.println("쿼리==>");
+                System.out.println(query);
                 apiDetail.getQueries().add(PropertyVO.builder()
                         .dtoName(query.getDtoName())
                         .collectionType(query.getCollectionType())
@@ -178,7 +170,7 @@ public class SynchronizeServiceImpl implements SynchronizeService {
                 int requestBody = parsingService.KMP(request, REQUEST_BODY);
                 if (requestBody != -1) {
                     String[] tokens = request.split(" ");
-                    apiDetail.setRequestBody(classParsingService.getBody(rootPath, tokens[tokens.length - 2], "request"));
+                    apiDetail.setRequestBody(classParsingService.getBody(groupSecretKey, tokens[tokens.length - 2], "request"));
                     apiDetail.getRequestBody().setRequired(parsingService.getRequired(request));
                     apiDetail.getRequestBody().setName(tokens[tokens.length - 1].substring(0, tokens[tokens.length - 1].length() - 1));
                 }
@@ -189,7 +181,7 @@ public class SynchronizeServiceImpl implements SynchronizeService {
     private void getResponseDetail(ApiDetailVO apiDetail, String response) throws IOException {
         if (response.equals("")) return;
         Map<String, ResponseVO> getResponseMap = new HashMap<>();
-        ResponseVO getResponse = ResponseVO.builder().responseBody(classParsingService.getBody(rootPath, response, "response")).build();
+        ResponseVO getResponse = ResponseVO.builder().responseBody(classParsingService.getBody(groupSecretKey, response, "response")).build();
         getResponseMap.put("success", getResponse);
         apiDetail.setResponses(getResponseMap);
     }

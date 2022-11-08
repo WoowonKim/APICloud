@@ -9,4 +9,6 @@ public interface S3Service {
     void uploadZip(MultipartFile file, String groupSecretKey) throws IOException;
 
     List<String> getFile(String name, MultipartFile file, String s) throws IOException;
+
+    List<String> findFile(String name, String groupSecretKey) throws IOException;
 }

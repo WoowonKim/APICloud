@@ -6,8 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,22 +18,21 @@ public class ClassParsingServiceImpl implements ClassParsingService {
     private static final String[] accessModifier = {"public", "protected", "private", "default", "static"};
     private static final String[] type = {"String", "Long", "long", "Integer", "int", "float", "Float"};
 
-    private static String rootPath = "";
+    private static String groupSecretKey = "";
     public static ArrayList<String> useQuery = new ArrayList<>();
     public static ArrayList<String> useRequest = new ArrayList<>();
     public static ArrayList<String> useResponse = new ArrayList<>();
 
-    private final FileSearchService fileSearchService;
+    private final S3Service s3Service;
     private final ParsingService parsingService;
 
     @Override
-    public PropertyVO getBody(String root, String name, String category) throws IOException {
+    public PropertyVO getBody(String secretKey, String name, String category) throws IOException {
         PropertyVO requestBody = new PropertyVO();
 
         if (parsingService.KMP(name, LIST) != -1) {
             name = name.substring(5, name.length() - 1);
             requestBody.setCollectionType(LIST);
-            System.out.println(name);
         }
 
         for (String type : type) {
@@ -59,13 +56,12 @@ public class ClassParsingServiceImpl implements ClassParsingService {
             useResponse.add(name);
         }
 
-        rootPath = root;
-        if (rootPath.equals("") || rootPath == null) return null;
+        groupSecretKey = secretKey;
+        if (groupSecretKey.equals("") || groupSecretKey == null) return null;
+        name += ".java";
 
-        String path = fileSearchService.getClassPath(rootPath, name);
-        if (path == null) return null;
-        List<String> lines = Files.readAllLines(Paths.get(path));
-
+        List<String> lines = s3Service.findFile(name, groupSecretKey);
+        if (lines == null) return null;
         int i = 0;
         while (i < lines.size()) {
             if (parsingService.KMP(lines.get(i++), name) != -1) break;
@@ -104,7 +100,7 @@ public class ClassParsingServiceImpl implements ClassParsingService {
         }
 
         if ((j + 1) >= tokens.length) return null;
-        PropertyVO getPropertyVO = getBody(rootPath, tokens[j], category);
+        PropertyVO getPropertyVO = getBody(groupSecretKey, tokens[j], category);
         if (getPropertyVO == null) return null;
         return PropertyVO.builder()
                 .dtoName(getPropertyVO.getDtoName())
