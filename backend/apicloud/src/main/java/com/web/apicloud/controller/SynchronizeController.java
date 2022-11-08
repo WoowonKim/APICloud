@@ -25,7 +25,7 @@ public class SynchronizeController {
         String root = "C:/bilow";
 //        String root = "/Users/bbb381/S07P22B309/";
         String name = "Program";
-        ControllerDTO response = synchronizeService.getFile(1L, 0, root, name, null);
+        ControllerDTO response = synchronizeService.getFile(1L, 0, root, null);
         return ResponseEntity.ok()
                 .body(response);
     }
@@ -36,7 +36,7 @@ public class SynchronizeController {
 //        String root = "/Users/bbb381/S07P22B309/";
         String name = "Program";
         System.out.println(multipartFile);
-        ControllerDTO response = synchronizeService.getFile(1L, 0, root, name, multipartFile);
+        ControllerDTO response = synchronizeService.getFile(1L, 0, name, multipartFile);
 //        String prefix = getPrefix(request.getRequestURI(), "/s3/upload/zip/");
 //        s3Service.uploadZip(prefix, multipartFile);
         return ResponseEntity.ok()

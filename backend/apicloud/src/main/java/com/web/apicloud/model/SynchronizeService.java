@@ -7,5 +7,5 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 public interface SynchronizeService {
-    ControllerDTO getFile(Long docId, int controllerId, String root, String name, MultipartFile multipartFile) throws IOException;
+    ControllerDTO getFile(Long docId, int controllerId, String name, MultipartFile multipartFile) throws IOException;
 }
