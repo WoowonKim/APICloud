@@ -60,9 +60,9 @@ public class DocsController {
     }
 
     @GetMapping()
-    public ResponseEntity<Object> getDocListByUser() {
+    public ResponseEntity<Object> getDocListByUser(@CurrentUser UserPrincipal userPrincipal) {
         log.info("사용자별 DOC 리스트 조회 API 호출");
-        List<DocListResponse> docListResponses = docsService.getDocs(1L);
+        List<DocListResponse> docListResponses = docsService.getDocs(userPrincipal.getId());
         return ResponseEntity.ok().body(docListResponses);
     }
 
