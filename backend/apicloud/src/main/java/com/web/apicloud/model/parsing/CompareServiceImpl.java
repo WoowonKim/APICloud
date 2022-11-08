@@ -39,6 +39,10 @@ public class CompareServiceImpl implements CompareService {
     }
 
     private void compareApiVO(ApiDTO apiDTO, ApiVO original, ApiVO apiVO) {
+        if (equals(original.getName(), apiVO.getName())) {
+            apiDTO.setNameFlag(true);
+        }
+
         if (equals(original.getMethod(), apiVO.getMethod())) {
             apiDTO.setMethodFlag(true);
         }

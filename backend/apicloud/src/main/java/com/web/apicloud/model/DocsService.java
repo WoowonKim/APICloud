@@ -30,4 +30,6 @@ public interface DocsService {
     void deleteDoc(Long docId);
 
     byte[] getCsvFile(List<ControllerVO> docVOByDocsId);
+
+    void save(Docs doc);
 }

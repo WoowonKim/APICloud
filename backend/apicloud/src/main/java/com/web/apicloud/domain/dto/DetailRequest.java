@@ -15,5 +15,4 @@ public class DetailRequest {
     public DetailRequest(String detail) {
         this.detail = detail;
     }
-
 }
