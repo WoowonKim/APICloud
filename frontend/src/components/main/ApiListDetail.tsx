@@ -55,7 +55,6 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
                 <FontAwesomeIcon icon={faUser} />
                 {it.groupUser.name}
               </div>
-              {/* <FontAwesomeIcon className="DeatilIcon" icon={faRightToBracket} onClick={moveApidocs} /> */}
               <FontAwesomeIcon className="DeatilIcon" icon={faRightToBracket} />
               {apiList === 0 ? (
                 <>
