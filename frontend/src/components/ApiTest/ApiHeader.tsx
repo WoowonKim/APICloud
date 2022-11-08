@@ -4,11 +4,10 @@ import Headerheader from "./Headerheader";
 import HeaderToken from "./HeaderToken";
 
 interface type {
-  sideApiList: number;
   getInfo: RequestTypeInfo | undefined;
 }
 
-const ApiHeader = ({ sideApiList, getInfo }: type) => {
+const ApiHeader = ({ getInfo }: type) => {
   const [headerTokenFlag, setHeaderTokenFlag] = useState<number | null>(0);
   return (
     <div className="apiHeaderContainer">
@@ -21,7 +20,7 @@ const ApiHeader = ({ sideApiList, getInfo }: type) => {
       >
         Header
       </span>
-      <div className="headerList">{headerTokenFlag === 0 ? <Headerheader getInfo={getInfo} /> : <HeaderToken sideApiList={sideApiList} />}</div>
+      <div className="headerList">{headerTokenFlag === 0 ? <Headerheader getInfo={getInfo} /> : <HeaderToken />}</div>
     </div>
   );
 };

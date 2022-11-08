@@ -17,7 +17,7 @@ const Headerheader = ({ getInfo }: type) => {
       setGetDtoName(getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].requestBody.dtoName);
       setGetType(getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].requestBody.type);
     }
-  }, []);
+  }, [getInfo, info.getControllerInfomation, info.getApisInfomation]);
   return (
     <>
       <div className="headerListTitle">
