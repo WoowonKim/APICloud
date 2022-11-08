@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
-interface type {
-  sideApiList: number;
-}
-const HeaderToken = ({ sideApiList }: type) => {
+
+const HeaderToken = () => {
   return (
     <>
       <div className="headerListTitle">

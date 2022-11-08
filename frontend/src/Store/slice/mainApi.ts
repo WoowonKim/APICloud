@@ -13,15 +13,12 @@ const initialState = {
 };
 
 // API DOC 생성하기
-export const setApiDoc: any = createAsyncThunk(
-  "mainApi/setApiDoc",
-  async (args: any, { rejectWithValue }) => {
-    try {
-      const response = await axiosPost("docs", args);
-      return response.data;
-    } catch (err: any) {
-      return rejectWithValue(err.response);
-    }
+export const setApiDoc: any = createAsyncThunk("mainApi/setApiDoc", async (args: any, { rejectWithValue }) => {
+  try {
+    const response = await axiosPost("docs", args);
+    return response.data;
+  } catch (err: any) {
+    return rejectWithValue(err.response);
   }
 });
 
@@ -67,17 +64,14 @@ export const deleteApiDoc: any = createAsyncThunk("mainApi/deleteApiDoc", async 
 });
 
 // API DOC 생성 정보 조회하기
-export const getApiCreationInfo: any = createAsyncThunk(
-  "mainApi/getApiCreationInfo",
-  async (args: any, { rejectWithValue }) => {
-    try {
-      const response = await axiosGet(`metadata/client`);
-      return response.data;
-    } catch (err: any) {
-      return rejectWithValue(err.response);
-    }
+export const getApiCreationInfo: any = createAsyncThunk("mainApi/getApiCreationInfo", async (args: any, { rejectWithValue }) => {
+  try {
+    const response = await axiosGet(`metadata/client`);
+    return response.data;
+  } catch (err: any) {
+    return rejectWithValue(err.response);
   }
-);
+});
 
 const mainApiSlice = createSlice({
   name: "mainApi",
