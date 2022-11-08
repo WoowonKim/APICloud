@@ -66,7 +66,7 @@ public class ControllerContributor implements ProjectContributor {
                     .returning("ResponseEntity<" + api.getReturning() + ">");
             addApiParameters(builder, api);
             CustomJavaMethodDeclaration jmd = builder.body(new JavaReturnStatement(
-                    new JavaClassCreation("org.framework.http.RequestEntity", api.getReturning(),
+                    new JavaClassCreation("org.framework.http.ResponseEntity", api.getReturning(),
                             List.of(new JavaClassCreation(api.getReturning(), null, List.of()),
                                     new JavaEnum("org.framework.http.HttpStatus", "OK")))
             ));
