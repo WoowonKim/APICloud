@@ -64,18 +64,6 @@ const ApiDocs = () => {
   }, [docInform]);
 
   useEffect(() => {
-    if (docInformArray) {
-      console.log("docInformArray", docInformArray);
-    }
-  }, [docInformArray]);
-
-  useEffect(() => {
-    if (detailArray) {
-      console.log("detailArray", detailArray)
-    }
-  }, [detailArray]);
-
-  useEffect(() => {
     if (detail) {
       setDetailArray(Object.entries(detail));
     }
