@@ -1,5 +1,6 @@
 package com.web.apicloud.domain.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,16 +32,20 @@ public class ApiVO {
 
     private Map<String, ResponseVO> responses;
 
-    // TODO: ResponseEntity로 묶을지
-    public String getReturning() {
+    @JsonIgnore
+    public String getReturning(boolean isCreation) {
         if(responses == null || responses.get("success") == null
             || responses.get("success").getResponseBody() == null) {
-            return "void";
+            return "Void";
         } else {
+            if(isCreation) {
+                return responses.get("success").getResponseBody().getImplementedTypeForCode();
+            }
             return responses.get("success").getResponseBody().getTypeForCode();
         }
     }
 
+    @JsonIgnore
      public Map<String, PropertyVO> getAvailableDTO(Map<String, PropertyVO> dtos) {
          if(requestBody != null) {
              requestBody.getDtos(dtos);

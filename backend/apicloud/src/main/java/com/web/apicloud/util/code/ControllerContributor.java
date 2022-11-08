@@ -24,10 +24,11 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class ControllerContributor implements ProjectContributor {
+    private static final String PATH_VARIABLE = "org.springframework.web.bind.annotation.PathVariable";
+    private static final String REQUEST_BODY = "org.springframework.web.bind.annotation.RequestBody";
+
     private final Supplier<CustomJavaSourceCode> sourceFactory;
-
     private final SourceCodeWriter<CustomJavaSourceCode> sourceWriter;
-
     private final DocVO doc;
 
     @Override
@@ -63,11 +64,11 @@ public class ControllerContributor implements ProjectContributor {
             CustomJavaMethodDeclaration.Builder builder = CustomJavaMethodDeclaration
                     .method(api.getName())
                     .modifiers(Modifier.PUBLIC)
-                    .returning("ResponseEntity<" + api.getReturning() + ">");
+                    .returning("ResponseEntity<" + api.getReturning(false) + ">");
             addApiParameters(builder, api);
             CustomJavaMethodDeclaration jmd = builder.body(new JavaReturnStatement(
-                    new JavaClassCreation("org.framework.http.ResponseEntity", api.getReturning(),
-                            List.of(new JavaClassCreation(api.getReturning(), null, List.of()),
+                    new JavaClassCreation("org.framework.http.ResponseEntity", api.getReturning(false),
+                            List.of(new JavaClassCreation(api.getReturning(true), null, List.of()),
                                     new JavaEnum("org.framework.http.HttpStatus", "OK")))
             ));
 
@@ -88,7 +89,7 @@ public class ControllerContributor implements ProjectContributor {
         makeParameters(api.getQueries()).ifPresent(parameters::addAll);
 
         // requestBody에서 파라미터 추가
-        makeParameter(api.getRequestBody(), "org.springframework.web.bind.annotation.RequestBody").ifPresent(parameters::add);
+        makeParameter(api.getRequestBody(), REQUEST_BODY).ifPresent(parameters::add);
         builder.parameters(parameters.toArray(AnnotatableParameter[]::new));
     }
 
@@ -110,7 +111,9 @@ public class ControllerContributor implements ProjectContributor {
         AnnotatableParameter parameter = new AnnotatableParameter(property.getTypeForCode(), property.getName());
         if (annotationName != null) {
             parameter.annotate(Annotation.name(annotationName, builder -> {
-                builder.attribute("value", String.class, property.getName());
+                if(PATH_VARIABLE.equals(annotationName)) {
+                    builder.attribute("value", String.class, property.getName());
+                }
                 if (!property.isRequired()) {
                     builder.attribute("required", Boolean.class, "false");
                 }

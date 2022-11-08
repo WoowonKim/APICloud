@@ -20,6 +20,8 @@ public class PropertyVO {
     static final String DTO_CREATE_TYPE = "Object";
 
     static final String LIST = "List";
+    static final String JAVA_UTIL = "java.util.";
+    private static final String ARRAY_LIST = "ArrayList";
 
     private String dtoName;
 
@@ -61,7 +63,23 @@ public class PropertyVO {
         }
 
         if (LIST.equals(collectionType)) {
-            return LIST + "<" + type + ">";
+            return JAVA_UTIL + LIST + "<" + type + ">";
+        } else {
+            return type;
+        }
+    }
+
+    @JsonIgnore
+    public String getImplementedTypeForCode() {
+        String type;
+        if (isDtoCreationRequired()) {
+            type = dtoName;
+        } else {
+            type = this.type;
+        }
+
+        if (LIST.equals(collectionType)) {
+            return JAVA_UTIL + ARRAY_LIST + "<" + type + ">";
         } else {
             return type;
         }
