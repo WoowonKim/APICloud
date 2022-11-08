@@ -1,13 +1,9 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { useAppDispatch, useAppSelector } from "../../Store/hooks";
-import sideApiSlice, { selectSideApi } from "../../Store/slice/sideApi";
+import React from "react";
+import { useAppDispatch } from "../../Store/hooks";
 import "./ApiTest.scss";
 import styled from "styled-components";
-import { mainApi } from "../../Store/slice/mainApi";
-import { getApiRequestInfo } from "../../Store/slice/testApi";
+import testApiSlice from "../../Store/slice/testApi";
 import { RequestTypeInfo } from "../../pages/CreateApi/ApisType";
-
 const Item = styled.p`
   border: none;
   border-radius: 10px;
@@ -15,34 +11,26 @@ const Item = styled.p`
   background-color: ${(props) => props.color};
 `;
 
-interface sideApi {
-  setSidApiList: Dispatch<SetStateAction<number>>;
+interface type {
+  getInfo: RequestTypeInfo | undefined;
 }
 
-const ApiSide = ({ setSidApiList }: sideApi) => {
+const ApiSide = ({ getInfo }: type) => {
   const dispatch = useAppDispatch();
-  const [getRequestInfo, setGetRequestInfo] = useState<RequestTypeInfo>();
-  const isTestApiList = useAppSelector(selectSideApi);
-  const getDocsId = useAppSelector(mainApi);
-  const right = ">";
-
-  useEffect(() => {
-    dispatch(getApiRequestInfo({ docId: getDocsId.docId })).then((res: any) => {
-      const json = res.payload.detail;
-      const obj = JSON.parse(json);
-      console.log("obj => ", obj);
-      setGetRequestInfo(obj);
-    });
-  }, [getDocsId.docId]);
-  const arrControllers = getRequestInfo?.controllers[0];
   return (
     <div className="">
-      <p className="titleSideMenu">{right} API List</p>
-      {getRequestInfo?.controllers.map((it, index) => (
+      {getInfo?.controllers.map((it, index) => (
         <div key={index}>
           <p>{it.name}</p>
           {it.apis.map((item, idx) => (
-            <div key={idx} className="sideMenuList">
+            <div
+              key={idx}
+              className="sideMenuList"
+              onClick={() => {
+                dispatch(testApiSlice.actions.addController(index));
+                dispatch(testApiSlice.actions.addApis(idx));
+              }}
+            >
               <Item
                 color={
                   item.method === "GET"
@@ -62,89 +50,11 @@ const ApiSide = ({ setSidApiList }: sideApi) => {
               >
                 {item.method}
               </Item>
-
               <p>{item.uri}</p>
             </div>
           ))}
         </div>
       ))}
-      {/* {arrControllers?.apis.map((it, idx) => (
-        <div key={idx} className="sideMenuList">
-          <Item
-            color={
-              it.method === "GET"
-                ? "#FDECC8"
-                : it.method === "POST"
-                ? "#F5E0E9"
-                : it.method === "PUT"
-                ? "#F1F0EF"
-                : it.method === "DELETE"
-                ? "#D3E5EF"
-                : it.method === "PATCH"
-                ? "#E8DEEE"
-                : it.method === "OPTIONS"
-                ? "#FFE2DD"
-                : "#EEE0DA"
-            }
-          >
-            {it.method}
-          </Item>
-          <p
-            onClick={() => {
-              setSidApiList(idx);
-            }}
-          >
-            {it.uri}
-          </p>
-          <p
-            onClick={() => {
-              dispatch(sideApiSlice.actions.removeMethoUri(idx));
-            }}
-            className="clearSideMenu"
-          >
-            {"X"}
-          </p>
-        </div>
-      ))} */}
-
-      {/* {isTestApiList.map((it, idx) => (
-        <div key={idx} className="sideMenuList">
-          <Item
-            color={
-              it.infomethod.method === "GET"
-                ? "#FDECC8"
-                : it.infomethod.method === "POST"
-                ? "#F5E0E9"
-                : it.infomethod.method === "PUT"
-                ? "#F1F0EF"
-                : it.infomethod.method === "DELETE"
-                ? "#D3E5EF"
-                : it.infomethod.method === "PATCH"
-                ? "#E8DEEE"
-                : it.infomethod.method === "OPTIONS"
-                ? "#FFE2DD"
-                : "#EEE0DA"
-            }
-          >
-            {it.infomethod.method}
-          </Item>
-          <p
-            onClick={() => {
-              setSidApiList(idx);
-            }}
-          >
-            {it.infomethod.userAddress}
-          </p>
-          <p
-            onClick={() => {
-              dispatch(sideApiSlice.actions.removeMethoUri(idx));
-            }}
-            className="clearSideMenu"
-          >
-            {"X"}
-          </p>
-        </div>
-      ))} */}
     </div>
   );
 };
