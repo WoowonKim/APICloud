@@ -1,11 +1,9 @@
 package com.web.apicloud.model;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.web.apicloud.domain.dto.synchronize.ControllerDTO;
 import com.web.apicloud.domain.entity.Docs;
 import com.web.apicloud.domain.entity.Group;
-import com.web.apicloud.domain.repository.DocsRepository;
 import com.web.apicloud.domain.vo.*;
 import com.web.apicloud.exception.NotFoundException;
 import com.web.apicloud.model.parsing.*;
@@ -15,8 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 
 @Slf4j
@@ -102,14 +98,6 @@ public class SynchronizeServiceImpl implements SynchronizeService {
         ControllerVO original = detailVO.getControllers().get(controllerId);
         return compareService.compareControllerVO(original, controllerVO);
     }
-
-//    private ControllerDTO compareVO(Long docId, int controllerId, ControllerVO controllerVO) throws JsonProcessingException {
-//        Docs doc = docsRepository.findById(docId).orElseThrow(() -> new NotFoundException(NOT_FOUND_DOCS));
-//        DocVO detailVO = objectMapper.readValue(doc.getDetail(), DocVO.class);
-//        if (detailVO.getControllers().size() <= controllerId) new NotFoundException(NOT_FOUND_CONTROLLER);
-//        ControllerVO original = detailVO.getControllers().get(controllerId);
-//        return compareService.compareControllerVO(original, controllerVO);
-//    }
 
     private ApiVO apiParsing(List<String> api) throws IOException {
         if (api.size() == 0) return null;

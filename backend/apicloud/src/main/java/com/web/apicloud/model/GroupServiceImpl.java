@@ -15,6 +15,7 @@ public class GroupServiceImpl implements GroupService {
     private static final String NOT_FOUND_GROUP = "해당 Group을 찾을 수 없습니다.";
 
     private final GroupRepository groupRepository;
+
     @Override
     public Group findById(Long groupId) {
         return groupRepository.findById(groupId).orElseThrow(() -> new NotFoundException(NOT_FOUND_GROUP));

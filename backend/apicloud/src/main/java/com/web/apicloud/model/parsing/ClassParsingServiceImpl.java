@@ -6,8 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,7 +61,7 @@ public class ClassParsingServiceImpl implements ClassParsingService {
         name += ".java";
 
         List<String> lines = s3Service.findFile(name, groupSecretKey);
-        if(lines == null) return null;
+        if (lines == null) return null;
         int i = 0;
         while (i < lines.size()) {
             if (parsingService.KMP(lines.get(i++), name) != -1) break;

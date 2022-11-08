@@ -1,17 +1,14 @@
 package com.web.apicloud.model;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.web.apicloud.domain.dto.CreateDocRequest;
 import com.web.apicloud.domain.dto.DocListResponse;
 import com.web.apicloud.domain.dto.UpdateDocDto;
 import com.web.apicloud.domain.entity.Docs;
-import java.security.NoSuchAlgorithmException;
-import java.util.List;
-import java.util.Optional;
-
 import com.web.apicloud.domain.entity.User;
 import com.web.apicloud.domain.vo.ControllerVO;
 import com.web.apicloud.domain.vo.DocVO;
+
+import java.util.List;
 
 public interface DocsService {
     Docs findByDocsId(Long docsId);
@@ -27,7 +24,7 @@ public interface DocsService {
     UpdateDocDto getDoc(Long docId);
 
     DocVO getDocVOByDocsId(Long docId);
-    
+
     UpdateDocDto updateDoc(Long docId, UpdateDocDto updateDocDto);
 
     void deleteDoc(Long docId);
