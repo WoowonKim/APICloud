@@ -20,6 +20,7 @@ public class Group {
     private Long id;
 
     @NotNull
+    @Column(unique = true)
     private String groupSecretKey;
 
     @Builder
