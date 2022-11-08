@@ -21,14 +21,6 @@ const ApiHeader = ({ sideApiList, getInfo }: type) => {
       >
         Header
       </span>
-      {/* <span
-        className={headerTokenFlag === 1 ? "headerClickList" : "headerNoClicklist"}
-        onClick={() => {
-          setHeaderTokenFlag(1);
-        }}
-      >
-        Token
-      </span> */}
       <div className="headerList">{headerTokenFlag === 0 ? <Headerheader getInfo={getInfo} /> : <HeaderToken sideApiList={sideApiList} />}</div>
     </div>
   );
