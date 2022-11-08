@@ -27,19 +27,16 @@ interface word {
   methodApiWord: string | undefined;
 }
 const MethodTest = ({ methodApiWord }: word) => {
-  const dispatch = useAppDispatch();
   const [visible, setVisible] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState("GET");
   const handleSelect = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
     const eventTarget = e.target as HTMLElement;
     setSelectedMethod(eventTarget.innerText);
-    dispatch(testApiSlice.actions.setMethod({ method: eventTarget.innerText }));
     setVisible(!visible);
   };
   useEffect(() => {
     if (methodApiWord) {
       setSelectedMethod(methodApiWord);
-      dispatch(testApiSlice.actions.setMethod({ method: methodApiWord }));
     }
   }, [methodApiWord]);
   return (
