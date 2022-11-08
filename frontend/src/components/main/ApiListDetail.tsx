@@ -47,6 +47,7 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
             onClick={() => {
               moveApidocs(it.encryptedUrl);
               dispatch(mainApiSlice.actions.setDocId({ docId: it.docId }));
+              localStorage.setItem("docId", it.docId.toString());
             }}
           >
             <p>{it.docName}</p>

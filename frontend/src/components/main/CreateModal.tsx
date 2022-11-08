@@ -25,6 +25,7 @@ export type DocInformationType = {
   groupPackage: string;
   packageName: string;
   packaging: number;
+  detail?: string;
 };
 
 const CreateModal = () => {
@@ -64,7 +65,7 @@ const CreateModal = () => {
     packaging;
 
   const createDocRequest = {
-    userId: 1,
+    userId: currentUser.id,
     docsName: docsName,
     serverUrl: serverUrl,
     contextUri: contextUri,
