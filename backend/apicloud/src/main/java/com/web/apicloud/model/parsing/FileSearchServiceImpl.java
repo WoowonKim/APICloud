@@ -1,5 +1,6 @@
 package com.web.apicloud.model.parsing;
 
+import com.web.apicloud.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,9 @@ public class FileSearchServiceImpl implements FileSearchService {
 
     private boolean state = false;
     private String searchPath;
+
+    private static final String NOT_FOUND_FILE = "해당 파일 경로를 찾을 수 없습니다.";
+
 
     @Override
     public String getControllerPath(String root, String name) {
@@ -45,7 +49,9 @@ public class FileSearchServiceImpl implements FileSearchService {
         File[] fileList = file.listFiles();
 
         try {
+            if (fileList == null) return;
             for (File tmpFile : fileList) {
+//                if(tmpFile == null) new NotFoundException(NOT_FOUND_FILE);
                 if (tmpFile.isFile()) {
 //                    System.out.println("\t 파일 = " + filePath + "/" + tmpFile.getName());
                     if (tmpFile.getName().equals(fileName)) {
