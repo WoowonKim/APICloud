@@ -62,11 +62,27 @@ public class S3ServiceImpl implements S3Service {
     public List<String> getFile(String name, MultipartFile file, String groupSecretKey) throws IOException {
         String fileName = name + "Controller.java";
         if (file == null) {
-            findFile(fileName, groupSecretKey);
+            if (findPath(groupSecretKey)) {
+                System.out.println("패스 존재함");
+                findFile(fileName, groupSecretKey);
+            } else {
+                System.out.println("파일도 없고 패스도 없다.");
+                return null;
+            }
         } else {
-            uploadZip(file, groupSecretKey);
+            System.out.println("zip 파일 업로드");
+//            uploadZip(file, groupSecretKey);
         }
         return null;
+    }
+
+    private boolean findPath(String groupSecretKey) {
+        ListObjectsRequest listObjectsRequest = new ListObjectsRequest();
+        listObjectsRequest.setBucketName(bucket);
+        listObjectsRequest.setPrefix(groupSecretKey);
+        ObjectListing s3Objects = amazonS3.listObjects(listObjectsRequest);
+        if (s3Objects.getObjectSummaries().size() == 0) return false;
+        return true;
     }
 
     public void findFile(String name, String groupSecretKey) {
@@ -80,7 +96,6 @@ public class S3ServiceImpl implements S3Service {
             for (S3ObjectSummary s3ObjectSummary : s3Objects.getObjectSummaries()) {
                 String[] tokens = s3ObjectSummary.getKey().split("/");
                 if (tokens[tokens.length - 1].equals(name)) {
-                    System.out.println("찾았다!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                     System.out.println(tokens[tokens.length - 1]);
                     System.out.println(amazonS3.getUrl(bucket, s3ObjectSummary.getKey()).toString());
                 }
