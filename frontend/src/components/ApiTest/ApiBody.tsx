@@ -17,7 +17,6 @@ const ApiBody = ({ sideApiList }: type) => {
   }, [sideApiList]);
   const handleSetValue = (e: { target: { value: React.SetStateAction<string> } }) => {
     setTextValue(e.target.value);
-    dispatch(testApiSlice.actions.setBody({ body: e.target.value }));
   };
 
   const handleSetTab = (e: { keyCode?: any; preventDefault?: any; target: any }) => {
