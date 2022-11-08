@@ -34,6 +34,8 @@ interface Props {
   setPropertiesIndex: React.Dispatch<React.SetStateAction<number>>;
   modalPath?: PropertiesType;
   getDepth: (idx: number, datas: PropertiesType) => number;
+  setNameList: React.Dispatch<React.SetStateAction<string[]>>;
+  nameList: string[];
 }
 const DtoInputModal = ({
   setIsModalVisible,
@@ -53,22 +55,14 @@ const DtoInputModal = ({
   setPropertiesIndex,
   modalPath,
   getDepth,
+  setNameList,
+  nameList,
 }: Props) => {
   const rootPath = state.data[selectedController].apis[selectedApi];
   const [modalDepth, setModalDepth] = useState(2);
   const [test, setTest] = useState(2);
   const [final, setFinal] = useState<PropertiesType>();
-  const [nameList, setNameList] = useState<string[]>([
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-  ]);
+
   const index =
     propertiesIndexList[0] !== -1 ? propertiesIndexList[0] : propertiesIndex;
   let path =
@@ -84,30 +78,42 @@ const DtoInputModal = ({
       : rootPath.parameters[index];
 
   useEffect(() => {
-    console.log(modalDepth);
+    let copy = path;
     if (modalDepth > 3 || modalDepth === 3) {
-      for (let i = 0; i < modalDepth - 2; i++) {
-        if (propertiesIndexList[i] > -1) {
-          path = path.properties[propertiesIndexList[i]];
+      for (let i = 1; i < modalDepth - 1; i++) {
+        if (propertiesIndexList[i] !== -1) {
+          setNameList((old) => {
+            let newNameList = [...old];
+            newNameList[i] = copy.name;
+            return newNameList;
+          });
+          copy = copy.properties[propertiesIndexList[i]];
         }
-        console.log(i, JSON.parse(JSON.stringify(path)));
+        console.log(modalDepth, i, JSON.parse(JSON.stringify(copy)));
       }
     }
-    setFinal(path);
+    setFinal(copy);
   }, [modalDepth, path, final]);
+
+  useEffect(() => {
+    console.log("change final");
+  }, [final]);
   console.log(
+    "=====0=0=0=======",
     modalDepth,
     final && JSON.parse(JSON.stringify(final)),
     propertiesIndexList
   );
-
+  useEffect(() => {}, [modalDepth]);
   return (
     <div className="dtoInputModal">
       <div className="dtoModalContainer">
         <div className="dtoModalTitleContainer">
           <div>
             {nameList.length > 0 &&
-              nameList.map((name, index) => <span key={index}>{name}/</span>)}
+              nameList.map(
+                (name, index) => !!name && <span key={index}>{name}/</span>
+              )}
           </div>
           {final && (
             <input
@@ -124,7 +130,13 @@ const DtoInputModal = ({
           <div className="dtoModalTableContainer">
             <button
               className="apiPlusButton"
-              onClick={() => addProperties(propertiesIndex, true, modalDepth)}
+              onClick={() =>
+                addProperties(
+                  propertiesIndexList[modalDepth - 2],
+                  true,
+                  modalDepth
+                )
+              }
             >
               <FontAwesomeIcon icon={faPlus} className="plusIcon" />
             </button>
@@ -147,6 +159,7 @@ const DtoInputModal = ({
               getDepth={getDepth}
               setModalDepth={setModalDepth}
               modalDepth={modalDepth}
+              path={path}
             />
           </div>
         )}

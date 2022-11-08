@@ -57,66 +57,72 @@ const Table = ({
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [propertiesIndex, setPropertiesIndex] = useState(-1);
   const [modalPath, setModalPath] = useState<PropertiesType>();
+  const [nameList, setNameList] = useState<string[]>([
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+  ]);
 
-  const getDepth: (idx: number, datas?: any) => number = (
+  const path =
+    activeTab === 2
+      ? state.data[selectedController].apis[selectedApi].parameters
+      : activeTab === 3
+      ? state.data[selectedController].apis[selectedApi].queries
+      : activeTab === 4
+      ? state.data[selectedController].apis[selectedApi].requestBody.properties
+      : activeTab === 5 &&
+        (responseType === "fail" || responseType === "success")
+      ? state.data[selectedController].apis[selectedApi].responses[responseType]
+          .responseBody.properties
+      : state.data[selectedController].apis[selectedApi].parameters;
+
+  const getDepth: (idx: number, datas: any) => number = (
     idx: number,
-    datas?: any
+    datas: any
   ) => {
-    let path =
-      activeTab === 2
-        ? state.data[selectedController].apis[selectedApi].parameters
-        : activeTab === 3
-        ? state.data[selectedController].apis[selectedApi].queries
-        : activeTab === 4
-        ? state.data[selectedController].apis[selectedApi].requestBody
-            .properties
-        : activeTab === 5 &&
-          (responseType === "fail" || responseType === "success")
-        ? state.data[selectedController].apis[selectedApi].responses[
-            responseType
-          ].responseBody.properties
-        : state.data[selectedController].apis[selectedApi].parameters;
+    console.log(
+      idx,
+      datas && JSON.parse(JSON.stringify(datas)),
+      JSON.parse(JSON.stringify(path))
+    );
 
+    let copy = path;
     let i = 2;
-    let depth = 2;
-    while (path?.length > 0 && i < 11) {
-      if (typeof datas !== undefined && data.length > idx) {
-        const isDepth = path.find((item: any) => {
-          return (
-            item.dtoName === datas[idx]?.dtoName &&
-            item.name === datas[idx].name
-          );
-        });
-        if (!!isDepth) {
-          depth = i;
-          break;
-        }
+    let depth = 1;
+    while (copy?.length > 0 && i < 11) {
+      if (
+        copy.some((item: any) => {
+          return JSON.stringify(item) === JSON.stringify(datas);
+        })
+      ) {
+        depth++;
+        break;
       }
-      if (propertiesIndexList[i - 2] > -1) {
-        path = path[propertiesIndexList[i - 2]]?.properties;
+      if (propertiesIndexList[i - 2] !== -1) {
+        console.log(
+          JSON.parse(
+            JSON.stringify(copy[propertiesIndexList[i - 2]]?.properties)
+          )
+        );
+        copy = copy[propertiesIndexList[i - 2]]?.properties;
+        depth++;
       }
       i++;
-      console.log(i, depth, JSON.parse(JSON.stringify(path)));
+      console.log(i, depth, JSON.parse(JSON.stringify(copy)));
     }
-    console.log(JSON.parse(JSON.stringify(path)));
+    console.log("lasssssssssst", depth);
+
     return depth;
   };
 
   const addProperties = (index: number, flag?: boolean, depth1?: number) => {
-    let path =
-      activeTab === 2
-        ? state.data[selectedController].apis[selectedApi].parameters
-        : activeTab === 3
-        ? state.data[selectedController].apis[selectedApi].queries
-        : activeTab === 4
-        ? state.data[selectedController].apis[selectedApi].requestBody
-            .properties
-        : activeTab === 5 &&
-          (responseType === "fail" || responseType === "success")
-        ? state.data[selectedController].apis[selectedApi].responses[
-            responseType
-          ].responseBody.properties
-        : state.data[selectedController].apis[selectedApi].parameters;
+    console.log(index, flag, depth1);
 
     const newData = {
       dtoName: "",
@@ -126,22 +132,21 @@ const Table = ({
       properties: [],
       required: true,
     };
+    let copy = path;
     if (depth1 && (depth1 > 3 || depth1 === 3)) {
-      for (let i = 0; i < depth1 - 1; i++) {
+      for (let i = 0; i < depth1 - 2; i++) {
         if (propertiesIndexList[i] > -1) {
-          path = path[propertiesIndexList[i]].properties;
+          copy = copy[propertiesIndexList[i]].properties;
         }
       }
-      console.log("next for path", JSON.parse(JSON.stringify(path)));
-
-      if (path[index]?.properties.length === 0 || flag) {
-        console.log("over three path", JSON.parse(JSON.stringify(path)));
-        path[index].properties.push(newData);
+      if ((copy.length > 0 && copy[index]?.properties.length === 0) || flag) {
+        console.log("over three copy", JSON.parse(JSON.stringify(copy)));
+        copy[index].properties.push(newData);
       }
     } else {
-      if (path[index]?.properties.length === 0 || flag) {
-        console.log("under three path", JSON.parse(JSON.stringify(path)));
-        path[index].properties.push(newData);
+      if ((copy.length > 0 && copy[index]?.properties.length === 0) || flag) {
+        console.log("under three copy", JSON.parse(JSON.stringify(copy)));
+        copy[index].properties.push(newData);
       }
     }
   };
@@ -197,7 +202,22 @@ const Table = ({
 
       useEffect(() => {
         setValue(initialValue);
-      }, [initialValue]);
+      }, [initialValue, data]);
+
+      let path =
+        activeTab === 2
+          ? state.data[selectedController].apis[selectedApi].parameters
+          : activeTab === 3
+          ? state.data[selectedController].apis[selectedApi].queries
+          : activeTab === 4
+          ? state.data[selectedController].apis[selectedApi].requestBody
+              .properties
+          : activeTab === 5 &&
+            (responseType === "fail" || responseType === "success")
+          ? state.data[selectedController].apis[selectedApi].responses[
+              responseType
+            ].responseBody.properties
+          : state.data[selectedController].apis[selectedApi].parameters;
 
       return id === "required" ? (
         <input
@@ -261,10 +281,10 @@ const Table = ({
                 setDepth(2);
                 setPropertiesIndexList((old) => {
                   let copy = [...old];
-                  copy[getDepth(index, data[index]) - 2] = index;
+                  copy[getDepth(index, path[index]) - 2] = index;
                   return copy;
                 });
-                addProperties(index, false, getDepth(index, data[index]));
+                addProperties(index, false, getDepth(index, path[index]));
                 setPropertiesIndex(index);
                 setIsModalVisible(!isModalVisible);
               }}
@@ -496,6 +516,9 @@ const Table = ({
         ? "dtoName"
         : "required";
     const rootPath = state.data[selectedController].apis[selectedApi];
+    if (propertiesIndexList[0] === -1 && depth > 1) {
+      window.location.reload();
+    }
     let path =
       activeTab === 2
         ? rootPath.parameters[propertiesIndexList[0]]
@@ -507,20 +530,24 @@ const Table = ({
           (responseType === "fail" || responseType === "success")
         ? rootPath.responses[responseType].responseBody
         : rootPath.parameters[propertiesIndexList[0]];
-    for (let i = 0; i < depth - 2; i++) {
+    for (let i = 1; i < depth - 1; i++) {
       if (propertiesIndexList[i] !== -1) {
+        console.log(i, JSON.parse(JSON.stringify(path)));
         path = path.properties[propertiesIndexList[i]];
       }
-      console.log(i);
     }
-    console.log(JSON.parse(JSON.stringify(path)));
-
     if (
       (activeTab === 2 || activeTab === 3) &&
       typeof e !== "string" &&
       key === "dtoName"
     ) {
-      console.log(JSON.parse(JSON.stringify(path)), e.target.value);
+      console.log(
+        depth,
+        JSON.parse(JSON.stringify(path)),
+        path[key],
+        e.target.value,
+        path[key]
+      );
 
       path[key] = e.target.value;
     }
@@ -602,6 +629,8 @@ const Table = ({
           setPropertiesIndex={setPropertiesIndex}
           modalPath={modalPath}
           getDepth={getDepth}
+          setNameList={setNameList}
+          nameList={nameList}
         />
       )}
       <TableInfo

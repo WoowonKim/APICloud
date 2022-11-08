@@ -4,7 +4,7 @@ import {
   getCoreRowModel,
   flexRender,
 } from "@tanstack/react-table";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ApisType,
   ControllerType,
@@ -38,6 +38,7 @@ interface Props {
   getDepth: (idx: number, datas: PropertiesType) => number;
   setModalDepth: React.Dispatch<React.SetStateAction<number>>;
   modalDepth: number;
+  path: PropertiesType;
 }
 const DtoModalTable = ({
   data,
@@ -58,11 +59,13 @@ const DtoModalTable = ({
   getDepth,
   setModalDepth,
   modalDepth,
+  path,
 }: Props) => {
   const defaultColumn: Partial<ColumnDef<PropertiesType>> = {
     cell: function Cell({ getValue, row: { index }, column: { id }, table }) {
       const initialValue = getValue<string>();
       const [value, setValue] = useState<string>(initialValue);
+      const [datas, setDatas] = useState<PropertiesType>();
       const rootPath = state.data[selectedController].apis[selectedApi];
 
       const onBlur = (temp?: string) => {
@@ -72,9 +75,46 @@ const DtoModalTable = ({
         }
       };
 
+      const handleObject = useCallback(() => {
+        let copyPath = path;
+        console.log(
+          modalDepth,
+          JSON.parse(JSON.stringify(copyPath)),
+          JSON.parse(JSON.stringify(data[index]))
+        );
+        const getDepth2 = getDepth(index, data[index]);
+        console.log(getDepth2);
+
+        if (getDepth2 > 3 || getDepth2 === 3) {
+          for (let i = 1; i < getDepth2 - 1; i++) {
+            if (propertiesIndexList[i] !== -1) {
+              console.log(1, JSON.parse(JSON.stringify(copyPath)));
+              copyPath = copyPath.properties[propertiesIndexList[i]];
+            }
+            console.log(modalDepth, i, JSON.parse(JSON.stringify(copyPath)));
+          }
+        }
+        if (
+          copyPath.properties.length > index ||
+          copyPath.properties.length === index
+        ) {
+          setModalDepth(getDepth(index, copyPath.properties[index]));
+          setPropertiesIndexList((old) => {
+            let copy = [...old];
+            copy[getDepth(index, copyPath.properties[index]) - 2] = index;
+            return copy;
+          });
+          addProperties(
+            index,
+            false,
+            getDepth(index, copyPath.properties[index])
+          );
+        }
+      }, [modalDepth, setModalDepth]);
+
       useEffect(() => {
         setValue(initialValue);
-      }, [initialValue, modalDepth]);
+      }, [initialValue, modalDepth, data, index]);
 
       return id === "required" ? (
         <input
@@ -92,7 +132,7 @@ const DtoModalTable = ({
         />
       ) : id === "type" ? (
         <div className="typeInfoContainer">
-          {activeTab === 2 &&
+          {/* {activeTab === 2 &&
           rootPath.parameters[propertiesIndex].properties[index]
             .collectionType === "List" ? (
             <SelectTypes
@@ -132,22 +172,14 @@ const DtoModalTable = ({
             />
           ) : (
             <></>
-          )}
+          )} */}
           <SelectTypes onBlur={onBlur} setValue={setValue} value={value} />
           {value === "Object" && (
             <FontAwesomeIcon
               icon={faInfo}
               className="infoIcon"
               onClick={() => {
-                console.log(getDepth(index, data[index]));
-
-                setModalDepth(getDepth(index, data[index]) + 1);
-                setPropertiesIndexList((old) => {
-                  let copy = [...old];
-                  copy[getDepth(index, data[index]) - 1] = index;
-                  return copy;
-                });
-                addProperties(index, false, getDepth(index, data[index]) + 1);
+                handleObject();
               }}
             />
           )}
@@ -202,40 +234,35 @@ const DtoModalTable = ({
               : columnId === "type"
               ? "type"
               : "required";
-          let path =
-            activeTab === 2
-              ? rootPath.parameters[propertiesIndexList[0]]
-              : activeTab === 3
-              ? rootPath.queries[propertiesIndexList[0]]
-              : activeTab === 4
-              ? rootPath.requestBody.properties[propertiesIndexList[0]]
-              : activeTab === 5 &&
-                (responseType === "fail" || responseType === "success")
-              ? rootPath.responses[responseType].responseBody.properties[
-                  propertiesIndexList[0]
-                ]
-              : rootPath.parameters[propertiesIndexList[0]];
-          for (let i = 0; i < modalDepth - 2; i++) {
-            if (propertiesIndexList[i] !== -1) {
-              path = path?.properties[propertiesIndexList[i]];
+          let copyPath = path;
+          if (modalDepth > 3 || modalDepth === 3) {
+            for (let i = 1; i < modalDepth - 1; i++) {
+              if (propertiesIndexList[i] !== -1) {
+                copyPath = copyPath.properties[propertiesIndexList[i]];
+              }
             }
           }
+          // for (let i = 0; i < modalDepth - 2; i++) {
+          //   if (propertiesIndexList[i] !== -1) {
+          //     path = path?.properties[propertiesIndexList[i]];
+          //   }
+          // }
 
           if (activeTab === 2 || activeTab === 3) {
-            path?.properties.map((row, idx) => {
+            copyPath?.properties.map((row, idx) => {
               if (idx === rowIndex && type === "required") {
-                path.properties[rowIndex][type] = newValue;
+                copyPath.properties[rowIndex][type] = newValue;
               } else if (
                 idx === rowIndex &&
                 (type === "name" || type === "type")
               ) {
                 if (type === "type" && value === "List") {
-                  path.properties[rowIndex].collectionType = "List";
-                  path.properties[rowIndex][type] = "String";
+                  copyPath.properties[rowIndex].collectionType = "List";
+                  copyPath.properties[rowIndex][type] = "String";
                 } else if (type === "type" && value === "X") {
-                  path.properties[rowIndex].collectionType = "";
+                  copyPath.properties[rowIndex].collectionType = "";
                 } else {
-                  path.properties[rowIndex][type] = value;
+                  copyPath.properties[rowIndex][type] = value;
                 }
               }
             });
