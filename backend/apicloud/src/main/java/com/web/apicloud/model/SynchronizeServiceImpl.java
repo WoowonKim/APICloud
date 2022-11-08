@@ -1,6 +1,7 @@
 package com.web.apicloud.model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.web.apicloud.domain.dto.SynchronizeRequest;
 import com.web.apicloud.domain.dto.synchronize.ControllerDTO;
 import com.web.apicloud.domain.entity.Docs;
 import com.web.apicloud.domain.entity.Group;
@@ -30,7 +31,6 @@ public class SynchronizeServiceImpl implements SynchronizeService {
 
     private static String groupSecretKey = "";
 
-    private static final String NOT_FOUND_DOCS = "해당 API Doc을 찾을 수 없습니다.";
     private static final String NOT_FOUND_CONTROLLER = "해당 Controller를 찾을 수 없습니다.";
 
     private final S3Service s3Service;
@@ -43,12 +43,12 @@ public class SynchronizeServiceImpl implements SynchronizeService {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public ControllerDTO getFile(Long docId, int controllerId, String name, MultipartFile file) throws IOException {
-        Docs doc = docsService.findByDocsId(docId);
+    public ControllerDTO getFile(SynchronizeRequest synchronizeRequest, MultipartFile file) throws IOException {
+        Docs doc = docsService.findByDocsId(synchronizeRequest.getDocId());
         Group group = groupService.findById(doc.getGroup().getId());
 
         groupSecretKey = group.getGroupSecretKey();
-        List<String> lines = s3Service.getFile(name, file, groupSecretKey);
+        List<String> lines = s3Service.getFile(synchronizeRequest.getName(), file, groupSecretKey);
         if (lines == null) return null;
 
         String value = null;
@@ -94,8 +94,9 @@ public class SynchronizeServiceImpl implements SynchronizeService {
         System.out.println("controllerVO => " + controllerVO);
 
         DocVO detailVO = objectMapper.readValue(doc.getDetail(), DocVO.class);
-        if (detailVO.getControllers().size() <= controllerId) new NotFoundException(NOT_FOUND_CONTROLLER);
-        ControllerVO original = detailVO.getControllers().get(controllerId);
+        if (detailVO.getControllers().size() <= synchronizeRequest.getControllerId())
+            new NotFoundException(NOT_FOUND_CONTROLLER);
+        ControllerVO original = detailVO.getControllers().get(synchronizeRequest.getControllerId());
         return compareService.compareControllerVO(original, controllerVO);
     }
 
@@ -138,7 +139,6 @@ public class SynchronizeServiceImpl implements SynchronizeService {
     }
 
     private void getRequestDetail(ApiDetailVO apiDetail, String request) throws IOException {
-        System.out.println(request);
         if (request.equals("")) return;
 
         int pathVariable = parsingService.KMP(request, PATH_VARIABLE);
@@ -156,8 +156,6 @@ public class SynchronizeServiceImpl implements SynchronizeService {
                 if (value == null) value = parsingService.getName(str);
                 String type = parsingService.getParamType(request);
                 PropertyVO query = classParsingService.getBody(groupSecretKey, type, "query");
-                System.out.println("쿼리==>");
-                System.out.println(query);
                 apiDetail.getQueries().add(PropertyVO.builder()
                         .dtoName(query.getDtoName())
                         .collectionType(query.getCollectionType())

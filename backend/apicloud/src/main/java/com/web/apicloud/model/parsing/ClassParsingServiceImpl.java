@@ -58,9 +58,8 @@ public class ClassParsingServiceImpl implements ClassParsingService {
 
         groupSecretKey = secretKey;
         if (groupSecretKey.equals("") || groupSecretKey == null) return null;
-        name += ".java";
 
-        List<String> lines = s3Service.findFile(name, groupSecretKey);
+        List<String> lines = s3Service.findFile(name + ".java", groupSecretKey);
         if (lines == null) return null;
         int i = 0;
         while (i < lines.size()) {
@@ -76,7 +75,6 @@ public class ClassParsingServiceImpl implements ClassParsingService {
             }
             i++;
         }
-        System.out.println(requestBody);
         return requestBody;
     }
 
