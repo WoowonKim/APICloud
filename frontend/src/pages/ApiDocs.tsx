@@ -16,7 +16,6 @@ const ApiDocs = () => {
   const [detail, setDetail] = useState(); // Doc Detail 정보
   const [docInformArray, setDocInformArray] =
     useState<[string, string | number][]>(); // docInform object를 array로 바꾸고 저장할 state
-  const [detailArray, setDetailArray] = useState<[string, [string, never]][]>(); // detail object를 array로 바꾸고 저장할 state
   const localStorageDocId = localStorage.getItem("docId");
   const [isOpen, setIsOpen] = useState(false);
   const toggleSide = () => {
@@ -64,12 +63,6 @@ const ApiDocs = () => {
   }, [docInform]);
 
   useEffect(() => {
-    if (detail) {
-      setDetailArray(Object.entries(detail));
-    }
-  }, [detail]);
-
-  useEffect(() => {
     return () => {
       localStorage.removeItem("docId");
     };
@@ -94,7 +87,7 @@ const ApiDocs = () => {
           </div>
           <br></br>
           <div className="doc">
-            <ApiDocPaper2 detailArray={detailArray} />
+            <ApiDocPaper2 detail={detail} />
           </div>
           <button onClick={onClick}>pdf로 변환</button>
         </div>
