@@ -89,12 +89,6 @@ const Table = ({
     isNew: boolean,
     isDelete: boolean
   ) => {
-    console.log(
-      idx,
-      datas && JSON.parse(JSON.stringify(datas)),
-      JSON.parse(JSON.stringify(path))
-    );
-
     const newData = {
       dtoName: "",
       name: "",
@@ -109,34 +103,17 @@ const Table = ({
 
     while (queue.length !== 1) {
       const current = queue.shift();
-      console.log(JSON.parse(JSON.stringify(current)));
-
       if (JSON.stringify(current) === JSON.stringify(datas)) {
-        console.log("?????????????????????????????????????????");
-        console.log(
-          JSON.parse(JSON.stringify(current)),
-          typeof current !== "string",
-          isAdd,
-          isNew
-        );
         if (current && typeof current !== "string" && isDelete) {
           current.splice(idx, 1);
         } else if (current && typeof current !== "string" && isAdd && isNew) {
-          console.log("new object ", JSON.parse(JSON.stringify(current)));
-
           if (
             current.length > idx + 1 &&
             current[idx].properties.length === 0
           ) {
-            console.log(
-              "new object added",
-              JSON.parse(JSON.stringify(current[idx].properties))
-            );
             current[idx].properties.push(newData);
           }
         } else if (current && typeof current !== "string" && isAdd) {
-          console.log("new row added");
-
           current.push(newData);
         }
         break;
@@ -154,7 +131,6 @@ const Table = ({
         }
       }
     }
-    console.log(levels.length);
     return levels.length + 1;
   };
 
@@ -438,7 +414,6 @@ const Table = ({
     let i = activeTab === 2 || activeTab === 3 ? 1 : 0;
     for (i; i < depth - 1; i++) {
       if (propertiesIndexList[i] !== -1) {
-        console.log(i, JSON.parse(JSON.stringify(infoPath)));
         infoPath = infoPath.properties[propertiesIndexList[i]];
       }
     }

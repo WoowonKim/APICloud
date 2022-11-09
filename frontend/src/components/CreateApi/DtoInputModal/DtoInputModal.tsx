@@ -92,12 +92,10 @@ const DtoInputModal = ({
           });
           copy = copy.properties[propertiesIndexList[i]];
         }
-        console.log(modalDepth, i, JSON.parse(JSON.stringify(copy)));
       }
     } else if (activeTab === 4 || activeTab === 5) {
       copy = copy.properties[propertiesIndex];
     }
-    console.log(modalDepth, JSON.parse(JSON.stringify(copy)));
     setFinal(copy);
   }, [modalDepth, path, final]);
 

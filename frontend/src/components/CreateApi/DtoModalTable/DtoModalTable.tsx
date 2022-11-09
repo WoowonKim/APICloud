@@ -150,14 +150,6 @@ const DtoModalTable = ({
   };
 
   const handleObject = (index: number) => {
-    console.log(
-      modalDepth,
-      JSON.parse(JSON.stringify(data)),
-      index,
-      JSON.parse(JSON.stringify(plz)),
-      final && JSON.parse(JSON.stringify(final?.properties)),
-      dtoName
-    );
     let copyPath = path;
     const getDepth2 =
       final && getDepth(index, final.properties, false, false, false);
@@ -170,11 +162,9 @@ const DtoModalTable = ({
       }
     }
     const newDepth = getDepth(index, copyPath.properties, true, true, false);
-    console.log(newDepth, propertiesIndexList);
     setModalDepth(newDepth);
     let properties = [...propertiesIndexList];
     properties[newDepth - 2] = index;
-    console.log(properties);
     setPropertiesIndexList(properties);
   };
   const columns = useMemo<ColumnDef<PropertiesType>[]>(
@@ -226,8 +216,6 @@ const DtoModalTable = ({
           } else if (activeTab === 4 || activeTab === 5) {
             copyPath = copyPath.properties[propertiesIndex];
           }
-          console.log(JSON.parse(JSON.stringify(copyPath)));
-
           copyPath?.properties.map((row, idx) => {
             if (idx === rowIndex && type === "required") {
               copyPath.properties[rowIndex][type] = requiredValue;
