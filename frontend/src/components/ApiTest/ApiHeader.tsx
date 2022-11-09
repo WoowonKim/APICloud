@@ -28,7 +28,7 @@ const ApiHeader = ({ getInfo }: type) => {
       >
         Token
       </span>
-      <div className="">{headerTokenFlag === 0 ? <Headerheader getInfo={getInfo} /> : <></>}</div>
+      <div className="">{headerTokenFlag === 0 && <Headerheader getInfo={getInfo} />}</div>
     </div>
   );
 };
