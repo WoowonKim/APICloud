@@ -5,6 +5,7 @@ import com.web.apicloud.domain.dto.CodeResponse;
 import com.web.apicloud.domain.dto.DetailRequest;
 import com.web.apicloud.domain.entity.Docs;
 import com.web.apicloud.domain.entity.Group;
+import com.web.apicloud.domain.vo.ApiDetailVO;
 import com.web.apicloud.domain.vo.ControllerVO;
 import com.web.apicloud.exception.NotFoundException;
 import com.web.apicloud.model.parsing.ParsingService;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -25,6 +27,7 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
     private static final String REQUEST_MAPPING = "@RequestMapping";
     private static final String VALUE = "value";
     private static final String METHOD = "Mapping";
+    private static final String RESPONSE_ENTITY = "ResponseEntity";
 
     private static final String NOT_FOUND_FILE = "해당 파일을 찾을 수 없습니다.";
 
@@ -79,13 +82,98 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
             }
             i++;
         }
-
     }
 
     private void apiParsing(ControllerVO detailVO, int start, int end) {
         if (detailVO.getApis().size() <= count) return;
         updateMethodAndUri(detailVO, start);
+
+        while (++start <= end) {
+            if (parsingService.KMP(codeList.get(0).getCode().get(start), RESPONSE_ENTITY) != -1) {
+                // TODO : makeUri 해서 replace 하기
+                updateApi(detailVO, start, end);
+                break;
+            }
+        }
         count++;
+    }
+
+    private void updateApi(ControllerVO detailVO, int start, int end) {
+        Stack<Character> stack = new Stack<>();
+        boolean responseFlag = false;
+        boolean requestFlag = false;
+        boolean methodNameFlag = false;
+        String response = "";
+        String request = "";
+        String methodName = "";
+
+        ApiDetailVO apiDetail = new ApiDetailVO();
+
+        while (start <= end) {
+            String line = codeList.get(0).getCode().get(start);
+            for (int j = 0; j < line.length(); j++) {
+                if (requestFlag) request += line.charAt(j);
+                if (methodNameFlag) methodName += line.charAt(j);
+
+                switch (line.charAt(j)) {
+                    case '<':
+                        stack.push('<');
+                        if (!requestFlag) responseFlag = true;
+                        break;
+                    case '(':
+                        stack.push('(');
+                        if (methodNameFlag) {
+                            methodNameFlag = false;
+                            methodName = methodName.replaceAll(" ", "");
+//                            apiDetail.setName(methodName.substring(0, methodName.length() - 1));
+                        }
+                        break;
+                    case '{':
+                        stack.push('{');
+                        break;
+                    case '[':
+                        stack.push('[');
+                        break;
+                    case '>':
+                        if (stack.peek() == '<') stack.pop();
+                        if (!requestFlag) {
+                            if (stack.isEmpty()) {
+                                responseFlag = false;
+//                                getResponseDetail(apiDetail, response);
+                                methodNameFlag = true;
+                            }
+                        }
+                        break;
+                    case ')':
+                        if (stack.peek() == '(') stack.pop();
+                        if (stack.isEmpty()) {
+//                            getRequestDetail(apiDetail, request);
+//                            return apiDetail;
+                        }
+                        break;
+                    case '}':
+                        if (stack.peek() == '}') stack.pop();
+                        break;
+                    case ']':
+                        if (stack.peek() == ']') stack.pop();
+                        break;
+                    case '@':
+                        requestFlag = true;
+                        request += line.charAt(j);
+                        break;
+                    case ',':
+                        if (stack.size() != 1) break;
+//                        getRequestDetail(apiDetail, request);
+                        request = "";
+                        requestFlag = false;
+                        break;
+                    default:
+                        if (responseFlag) response += line.charAt(j);
+                }
+            }
+            start++;
+        }
+//        return apiDetail;
     }
 
     private void updateMethodAndUri(ControllerVO detailVO, int start) {
