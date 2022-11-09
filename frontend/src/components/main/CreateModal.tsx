@@ -160,10 +160,10 @@ const CreateModal = () => {
                   placeholder="생성할 contextUri를 작성해주세요"
                   onChange={(e) => setContextUri(e.target.value)}
                 />
-                <div>
+                <div className="inputWrapper">
                   <label>Java Version</label>
-                  {creationInfo.javaVersion.values.map((version: any) => (
-                    <>
+                  {creationInfo.javaVersion.values.map((version: any, idx: number) => (
+                    <div key={idx}>
                       <input
                         type="radio"
                         name="javaVersion"
@@ -174,13 +174,13 @@ const CreateModal = () => {
                         key={version.id}
                       />
                       <label htmlFor={version.id}>{version.name}</label>
-                    </>
+                    </div>
                   ))}
                 </div>
-                <div>
+                <div className="inputWrapper">
                   <label>Spring Boot</label>
-                  {creationInfo.bootVersion.values.map((version: any) => (
-                    <>
+                  {creationInfo.bootVersion.values.map((version: any, idx: number) => (
+                    <div key={idx} className="inputWrapper">
                       <input
                         type="radio"
                         name="springVersion"
@@ -191,13 +191,13 @@ const CreateModal = () => {
                         key={version.id}
                       />
                       <label htmlFor={version.id}>{version.id}</label>
-                    </>
+                    </div>
                   ))}
                 </div>
                 <div>
                   <label>Build Management</label>
-                  {creationInfo.type.values.map((type: any) => (
-                    <>
+                  {creationInfo.type.values.map((type: any, idx: number) => (
+                    <div key={idx}>
                       <input
                         type="radio"
                         name="buildManagement"
@@ -208,7 +208,7 @@ const CreateModal = () => {
                         key={type.id}
                       />
                       <label htmlFor={type.id}>{type.name}</label>
-                    </>
+                    </div>
                   ))}
                 </div>
                 <input
@@ -227,8 +227,8 @@ const CreateModal = () => {
                 />
                 <div>
                   <label>Packaging</label>
-                  {creationInfo.packaging.values.map((p: any) => (
-                    <>
+                  {creationInfo.packaging.values.map((p: any, idx: number) => (
+                    <div key={idx} className="inputWrapper">
                       <input
                         type="radio"
                         name="packaging"
@@ -239,7 +239,7 @@ const CreateModal = () => {
                         key={p.id}
                       />
                       <label htmlFor={p.id}>{p.name}</label>
-                    </>
+                    </div>
                   ))}
                 </div>
                 <p>초대하기</p>
@@ -350,12 +350,12 @@ const ModalContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  position: fixed;
+  position: absolute;
 `;
 
 const DialogBox = styled.dialog`
   width: 600px;
-  height: 600px;
+  height: 800px;
   display: flex;
   flex-direction: column;
   align-items: center;
