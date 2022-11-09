@@ -1,4 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { RequestTypeInfo } from "../../pages/CreateApi/ApisType";
+import { useAppDispatch, useAppSelector } from "../../Store/hooks";
+import { mainApi } from "../../Store/slice/mainApi";
+import { getApiRequestInfo, selectTestApi } from "../../Store/slice/testApi";
 
 const dummy = {
   status: 200,
@@ -18,8 +23,21 @@ const dummy = {
     token: 1234,
   },
 };
-
-const ApiResponse = () => {
+interface type {
+  getInfo: RequestTypeInfo | undefined;
+}
+const ApiResponse = ({ getInfo }: type) => {
+  const info = useSelector(selectTestApi);
+  const [getSuccess, setGetSuccess] = useState(0);
+  const [responseStatus, setResponseStatus] = useState(0);
+  useEffect(() => {
+    if (getInfo) {
+      setResponseStatus(info.getRequest);
+      info.getRequest === 0
+        ? setGetSuccess(getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].responses.success.status)
+        : setGetSuccess(getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].responses.fail.status);
+    }
+  }, [getInfo, info.getControllerInfomation, info.getApisInfomation, info.getRequest]);
   const [responseFlag, setResponseFlag] = useState<number | null>(1);
   const flag = (e: React.SetStateAction<number | null>) => {
     setResponseFlag(e);
@@ -30,7 +48,6 @@ const ApiResponse = () => {
   const end = "}";
   return (
     <div className="apiResponseContainer">
-      <p className="apiHeaderMainTitle">Response</p>
       <span
         onClick={() => {
           flag(0);
@@ -55,41 +72,50 @@ const ApiResponse = () => {
       >
         Cookie
       </span>
+      <div className="apiResponseResultCommonState">
+        <p>Status : {getSuccess}</p>
+      </div>
       <div className="apiResponseResult">
-        <div className="apiResponseResultCommonState">
-          <p className="apiResponseResultStatus">Status : {dummy.status}</p>
-          <p className="apiResponseResultMessage">Message : {dummy.message}</p>
-        </div>
-        {responseFlag === 0 && (
-          <div>
-            {testHeaderObj.map((it, idx) => (
-              <div className="resltResponseHeaderContainer" key={idx}>
-                <div className="resultResponseTitleContainer">
-                  <span className="resultResponseHeaderTitle">{it[0]} : </span>
+        {responseFlag === 0 &&
+          (responseStatus === 0 ? (
+            <div>
+              {testHeaderObj.map((it, idx) => (
+                <div className="resltResponseHeaderContainer" key={idx}>
+                  <div className="resultResponseTitleContainer">
+                    <span className="resultResponseHeaderTitle">{it[0]} : </span>
+                  </div>
+                  <div>
+                    <span className="resultResponseHeaderContent"> {it[1]}</span>
+                  </div>
                 </div>
-                <div>
-                  <span className="resultResponseHeaderContent"> {it[1]}</span>
+              ))}
+            </div>
+          ) : (
+            <div>
+              <p> 400Error...</p>
+            </div>
+          ))}
+        {responseFlag === 1 &&
+          (responseStatus === 0 ? (
+            <div>
+              <p>{start}</p>
+              {testObj.map((it, idx) => (
+                <div className="resultResponseContainer" key={idx}>
+                  <span className="resultResponseBody">"{it[0]}" : </span>
+                  {typeof it[1] === "number" ? (
+                    <span className="resultResponseBodySubNum"> {it[1]}</span>
+                  ) : (
+                    <span className="resultResponseBodySub"> "{it[1]}"</span>
+                  )}
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
-        {responseFlag === 1 && (
-          <div>
-            <p>{start}</p>
-            {testObj.map((it, idx) => (
-              <div className="resultResponseContainer" key={idx}>
-                <span className="resultResponseBody">"{it[0]}" : </span>
-                {typeof it[1] === "number" ? (
-                  <span className="resultResponseBodySubNum"> {it[1]}</span>
-                ) : (
-                  <span className="resultResponseBodySub"> "{it[1]}"</span>
-                )}
-              </div>
-            ))}
-            <p>{end}</p>
-          </div>
-        )}
+              ))}
+              <p>{end}</p>
+            </div>
+          ) : (
+            <div>
+              <p>400Error...</p>
+            </div>
+          ))}
       </div>
     </div>
   );

@@ -16,20 +16,29 @@ const ApiBody = ({ getInfo }: type) => {
       setRequestBody(getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].requestBody);
     }
   }, [getInfo, info.getControllerInfomation, info.getApisInfomation]);
+
   return (
-    <div className="apiBodyContainer">
-      <span>Body</span>
-      {requestBody?.properties.map((it, idx) => (
-        <div key={idx}>
-          <p>{it.name}</p>
-          <input
-            type="text"
-            onChange={(e) => {
-              setAddObject(`${it.name} = ${e.target.value}`);
-            }}
-          />
-        </div>
-      ))}
+    <div className="apiHeaderContainer">
+      <span className="headerClickList">Body</span>
+      <div>
+        {requestBody?.properties.map((it, idx) => (
+          <div key={idx} className="headerContainerList">
+            <div className="headerListTitle">
+              <p>{it.name}</p>
+            </div>
+            <div className="headerListContent">
+              <p>
+                <input
+                  type="text"
+                  onChange={(e) => {
+                    setAddObject(`${it.name} = ${e.target.value}`);
+                  }}
+                />
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

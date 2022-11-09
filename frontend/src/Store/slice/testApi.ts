@@ -3,13 +3,10 @@ import { Action } from "@remix-run/router";
 import { axiosGet } from "../../util/axiosUtil";
 import { RootState } from "../store";
 
-/**
- * header.contentType => controllers.headers.value
- */
-
 const initialState = {
   getControllerInfomation: 0,
   getApisInfomation: 0,
+  getRequest: 0,
 };
 
 // API 조회 하기.
@@ -31,6 +28,9 @@ const testApiSlice = createSlice({
     },
     addApis(state, action) {
       state.getApisInfomation = action.payload;
+    },
+    addRequest(state, action) {
+      state.getRequest = action.payload;
     },
   },
   extraReducers: {

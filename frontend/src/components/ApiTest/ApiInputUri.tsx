@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RequestTypeInfo } from "../../pages/CreateApi/ApisType";
-import { selectTestApi } from "../../Store/slice/testApi";
+import { useAppDispatch } from "../../Store/hooks";
+import testApiSlice, { selectTestApi } from "../../Store/slice/testApi";
 import MethodTest from "./MethodTest";
 
 export type list = {
@@ -11,6 +12,7 @@ export type list = {
 const ApiInputUri = ({ getInfo }: list) => {
   const [getUri, setUri] = useState("");
   const [getMethodApi, setMethodApi] = useState("");
+  const dispatch = useAppDispatch();
   const info = useSelector(selectTestApi);
 
   useEffect(() => {
@@ -19,6 +21,9 @@ const ApiInputUri = ({ getInfo }: list) => {
       setMethodApi(getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].method);
     }
   }, [getInfo, info.getControllerInfomation, info.getApisInfomation]);
+  const addRequestFun = (e: number) => {
+    dispatch(testApiSlice.actions.addRequest(e));
+  };
 
   return (
     <div className="apiInputContainer">
@@ -26,8 +31,23 @@ const ApiInputUri = ({ getInfo }: list) => {
         <MethodTest methodApiWord={getMethodApi} />
       </span>
       <input className="apiInput" type="text" defaultValue={getUri} />
-      <button className="apiTestBtn">보내기</button>
-      <button className="apiTestBtn">저장하기</button>
+      <button
+        className="apiTestBtn"
+        onClick={() => {
+          addRequestFun(0);
+        }}
+      >
+        성공
+      </button>
+      <button
+        className="apiTestBtn"
+        onClick={() => {
+          addRequestFun(1);
+        }}
+      >
+        실패
+      </button>
+      {/* <button className="apiTestBtn">저장하기</button> */}
     </div>
   );
 };

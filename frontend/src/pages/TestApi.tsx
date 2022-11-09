@@ -21,8 +21,7 @@ const TestApi = () => {
     dispatch(getApiRequestInfo({ docId: getDocsId.docId })).then((res: any) => {
       const json = res.payload.detail;
       const obj = JSON.parse(json);
-      console.log("OBJ => ", obj);
-      setGetInfo(obj);
+      setGetInfo(JSON.parse(obj.detail));
     });
   }, [getDocsId.docId]);
 
@@ -37,13 +36,17 @@ const TestApi = () => {
           <div className="testInfomation">
             <ApiInputUri getInfo={getInfo} />
           </div>
-          <div className="testInfo">
-            <div className="testSetting">
+          <p className="apiHeaderMainTitle">Request</p>
+          <div className="testSetting">
+            <div className="testInfo">
               <ApiHeader getInfo={getInfo} />
+            </div>
+            <div className="testBodyInfo">
               <ApiBody getInfo={getInfo} />
             </div>
-            <ApiResponse />
           </div>
+          <p className="apiHeaderMainTitle">Response</p>
+          <ApiResponse getInfo={getInfo} />
         </div>
       </div>
     </div>
