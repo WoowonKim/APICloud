@@ -8,3 +8,13 @@
 		}
 	}
 }
+
+
+.titleContentWrapper {
+	display: flex;
+	justify-content: space-between;
+	.iconTitleWrppaer {
+		display: flex;
+		justify-content: space-between;
+	}
+}
