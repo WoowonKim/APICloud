@@ -263,7 +263,6 @@ const CreateApi = () => {
                         )
                       )
                 }
-                state={state}
                 responseType={"success"}
               />
             </div>
@@ -286,7 +285,6 @@ const CreateApi = () => {
                       .fail.responseBody?.properties
                   )
                 )}
-                state={state}
                 responseType={"fail"}
               />
             </div>

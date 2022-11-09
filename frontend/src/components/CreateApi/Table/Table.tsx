@@ -14,11 +14,12 @@ import {
   PropertiesType,
 } from "../../../pages/CreateApi/ApisType";
 import TableInfo from "./TableInfo";
-import { MappedTypeDescription } from "@syncedstore/core/types/doc";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfo, faRemove } from "@fortawesome/free-solid-svg-icons";
 import SelectTypes from "../SelectTypes/SelectTypes";
 import DtoInputModal from "../DtoInputModal/DtoInputModal";
+import { useSyncedStore } from "@syncedstore/react";
+import { store } from "../store";
 
 declare module "@tanstack/react-table" {
   interface TableMeta<TData extends RowData> {
@@ -32,9 +33,6 @@ interface Props {
   selectedController: number;
   selectedApi: number;
   data: PropertiesType[] | HeadersType[];
-  state: MappedTypeDescription<{
-    data: ControllerType[];
-  }>;
   responseType?: string;
 }
 
@@ -43,12 +41,12 @@ const Table = ({
   selectedController,
   selectedApi,
   data,
-  state,
   responseType,
 }: Props) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [propertiesIndex, setPropertiesIndex] = useState(-1);
-
+  const state = useSyncedStore(store);
+  const [test, settest] = useState("test1");
   const addProperties = (index: number, flag?: boolean) => {
     const commonPath = state.data[selectedController].apis[selectedApi];
     const newData = {
@@ -137,8 +135,8 @@ const Table = ({
       };
 
       useEffect(() => {
-        setValue(initialValue);
-      }, [initialValue]);
+        setValue(test);
+      }, [test]);
 
       return id === "required" ? (
         <input
@@ -208,8 +206,8 @@ const Table = ({
         </div>
       ) : (
         <input
-          value={value as string}
-          onChange={(e) => setValue(e.target.value)}
+          value={test}
+          onChange={(e) => settest(e.target.value)}
           onBlur={() => onBlur()}
           className="tableInput"
         />
@@ -492,11 +490,16 @@ const Table = ({
 
   return (
     <div>
+      <input
+        type="text"
+        onChange={(e) => {
+          settest(e.target.value);
+        }}
+      />
       {isModalVisible && (
         <DtoInputModal
           setIsModalVisible={setIsModalVisible}
           activeTab={activeTab}
-          state={state}
           selectedController={selectedController}
           selectedApi={selectedApi}
           propertiesIndex={propertiesIndex}
@@ -511,7 +514,6 @@ const Table = ({
         handleBasicInfo={handleBasicInfo}
         selectedApi={selectedApi}
         selectedController={selectedController}
-        state={state}
         responseType={responseType}
       />
       <table>

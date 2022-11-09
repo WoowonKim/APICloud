@@ -1,7 +1,9 @@
 import { MappedTypeDescription } from "@syncedstore/core/types/doc";
+import { useSyncedStore } from "@syncedstore/react";
 import React from "react";
 import { ControllerType } from "../../../pages/CreateApi/ApisType";
 import SelectTypes from "../SelectTypes/SelectTypes";
+import { store } from "../store";
 import "./Table.scss";
 
 interface Props {
@@ -14,9 +16,6 @@ interface Props {
   ) => void;
   selectedController: number;
   selectedApi: number;
-  state: MappedTypeDescription<{
-    data: ControllerType[];
-  }>;
   responseType?: string;
 }
 
@@ -25,9 +24,9 @@ const TableInfo = ({
   handleBasicInfo,
   selectedApi,
   selectedController,
-  state,
   responseType,
 }: Props) => {
+  const state = useSyncedStore(store);
   return (
     <div>
       {activeTab === 4 ? (
