@@ -3,10 +3,6 @@ import { Action } from "@remix-run/router";
 import { axiosGet } from "../../util/axiosUtil";
 import { RootState } from "../store";
 
-/**
- * header.contentType => controllers.headers.value
- */
-
 const initialState = {
   getControllerInfomation: 0,
   getApisInfomation: 0,

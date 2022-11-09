@@ -32,7 +32,6 @@ const ApiResponse = ({ getInfo }: type) => {
   const [responseStatus, setResponseStatus] = useState(0);
   useEffect(() => {
     if (getInfo) {
-      // console.log("TEST =>", getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].responses.+ { result });
       setResponseStatus(info.getRequest);
       info.getRequest === 0
         ? setGetSuccess(getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].responses.success.status)
