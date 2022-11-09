@@ -21,6 +21,9 @@ const ApiInputUri = ({ getInfo }: list) => {
       setMethodApi(getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].method);
     }
   }, [getInfo, info.getControllerInfomation, info.getApisInfomation]);
+  const addRequestFun = (e: number) => {
+    dispatch(testApiSlice.actions.addRequest(e));
+  };
 
   return (
     <div className="apiInputContainer">
@@ -31,7 +34,7 @@ const ApiInputUri = ({ getInfo }: list) => {
       <button
         className="apiTestBtn"
         onClick={() => {
-          dispatch(testApiSlice.actions.addRequest(0));
+          addRequestFun(0);
         }}
       >
         성공
@@ -39,7 +42,7 @@ const ApiInputUri = ({ getInfo }: list) => {
       <button
         className="apiTestBtn"
         onClick={() => {
-          dispatch(testApiSlice.actions.addRequest(1));
+          addRequestFun(1);
         }}
       >
         실패
