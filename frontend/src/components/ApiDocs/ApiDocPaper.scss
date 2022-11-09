@@ -1,0 +1,39 @@
+.apiDocTableWrapper {
+	width: 100%;
+	height: 50%;
+	display: flex;
+	justify-content: center;
+	.apiDocTable {
+		border: none;
+		.apiDocHead {
+			.apiDocHeadRow {
+				background-color: skyblue;
+				.apiDocHeadTitle {
+					border-radius: 5px;
+					width: 40%;
+					padding: 0px;
+				}
+				.apiDocHeadContent {
+					border-radius: 5px;
+					width: 60%;
+					padding: 0px;
+				}
+			}
+		}
+		.apiDocBody {
+			.apiDocBodyRow {
+				.apiDocBodyTitle {
+					border-radius: 5px;
+					padding: 0px;
+					height: 50%;
+				}
+				.apiDocBodyContent {
+					border-radius: 5px;
+					padding: 0px;
+					height: 50%;
+				}
+			}
+		}
+
+	}
+}

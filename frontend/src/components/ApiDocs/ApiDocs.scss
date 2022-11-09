@@ -1,9 +1,9 @@
 .apiDocContainer {
   background-color: #F7F5FF;
   height: 100vh;
-  padding-bottom: 10svh;
+  width: 100%;
+  padding-bottom: 10vh;
   .sidebarDocWrapper {
-    justify-content: space-around;
     background-color: #F7F5FF;
     .sidebarBox {
       position: fixed;
@@ -15,16 +15,24 @@
       margin: auto;
       background-color: #F7F5FF;
       width: 60vw;
-      height: 200vh;
       padding-top: 10vh;
       .title {
         margin: auto;
         font-size: 40px;
       }
       .doc {
-        width: 60vw;
-        height: 150vh;
+        padding: 0px;
+        width: 595px;
+        height: 842px;
         background-color: white;
+        word-break: break-all;
+        .docTitleWrapper {
+          display: flex;
+          justify-content: center;
+          .docTitle {
+            align-items: center;
+          }
+        }
       }
     }
   }

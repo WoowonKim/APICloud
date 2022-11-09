@@ -83,7 +83,9 @@ const Welcome = () => {
       <WelcomeHeader />
       <Dots scrollIndex={scrollIndex} />
       <section className="section1">
-        <h1 className="title">A&nbsp;&nbsp;P&nbsp;&nbsp;I&nbsp;&nbsp;&nbsp;&nbsp;C&nbsp;&nbsp;l&nbsp;&nbsp;o&nbsp;&nbsp;u&nbsp;&nbsp;d</h1>
+        <h1 className="title">
+          A&nbsp;&nbsp;P&nbsp;&nbsp;I&nbsp;&nbsp;&nbsp;&nbsp;C&nbsp;&nbsp;l&nbsp;&nbsp;o&nbsp;&nbsp;u&nbsp;&nbsp;d
+        </h1>
         <div className="subTitleWrapper">
           <p>"Of the Developer</p>
           <p>&nbsp;&nbsp;&nbsp;For the Developer</p>

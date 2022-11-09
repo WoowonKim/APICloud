@@ -1,16 +1,18 @@
 package com.web.apicloud.domain.entity;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.web.apicloud.domain.dto.DocListResponse;
+import com.web.apicloud.domain.dto.UpdateDocDto;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+
+@ToString
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "tb_docs")
 @Entity
@@ -28,19 +30,24 @@ public class Docs {
 
     private String contextUri;
 
-    private Integer javaVersion;
+    private String javaVersion;
 
     private String springVersion;
 
-    private Integer buildManagement;
+    private String buildManagement;
 
     private String groupPackage;
 
     private String packageName;
 
-    private Integer packaging;
+    private String packaging;
 
     private String encryptedUrl;
+
+    @Lob
+    private String detail;
+
+    private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id")
@@ -51,8 +58,12 @@ public class Docs {
         this.encryptedUrl = encryptedUrl;
     }
 
+    public void updateDetail(String detail) {
+        this.detail = detail;
+    }
+
     @Builder
-    public Docs(Long id, String docsName, String serverUrl, String contextUri, Integer javaVersion, String springVersion, Integer buildManagement, String groupPackage, String packageName, Integer packaging, String encryptedUrl, Group group) {
+    public Docs(Long id, String docsName, String serverUrl, String contextUri, String javaVersion, String springVersion, String buildManagement, String groupPackage, String packageName, String packaging, String encryptedUrl, Group group, String detail) {
         this.id = id;
         this.docsName = docsName;
         this.serverUrl = serverUrl;
@@ -65,5 +76,33 @@ public class Docs {
         this.packaging = packaging;
         this.encryptedUrl = encryptedUrl;
         this.group = group;
+        this.detail = detail;
+    }
+
+    public DocListResponse toDto(Long docId, String docName, Long groupId, User groupUser, Integer authority, String encryptedUrl) {
+        return DocListResponse.builder()
+                .docId(docId)
+                .docName(docName)
+                .groupId(groupId)
+                .groupUser(groupUser)
+                .authority(authority)
+                .encryptedUrl(encryptedUrl)
+                .build();
+    }
+
+    public UpdateDocDto toUpdateDocDto() {
+        return UpdateDocDto.builder()
+                .docId(id)
+                .docsName(docsName)
+                .serverUrl(serverUrl)
+                .contextUri(contextUri)
+                .javaVersion(javaVersion)
+                .springVersion(springVersion)
+                .buildManagement(buildManagement)
+                .groupPackage(groupPackage)
+                .packageName(packageName)
+                .packaging(packaging)
+                .detail(detail)
+                .build();
     }
 }

@@ -1,19 +1,29 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
-import { faCircleUser } from "@fortawesome/free-solid-svg-icons";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import "./main.scss";
-const Header = () => {
-  return (
-    <div className="header">
-      {/* 메뉴바*/}
-      <div className="side">
-        <FontAwesomeIcon className="barsIcon" icon={faBars} />
-      </div>
+import { useAppSelector } from "../../Store/hooks";
+import { selectUser } from "../../Store/slice/userSlice";
+import { useNavigate } from "react-router-dom";
 
+const Header = () => {
+  const navigate = useNavigate();
+  const [userImg, setUserImg] = useState("");
+  const user = useAppSelector(selectUser);
+  useEffect(() => {
+    setUserImg(user?.imgUrl);
+  }, [user]);
+  return (
+    <div className="ApiMainHeader">
       {/* 로고 */}
-      <img className="logoImg" src={require("../../assets/cloud.png")} />
+      <img
+        className="logoImg"
+        src={require("../../assets/cloud.png")}
+        onClick={() => {
+          navigate("/");
+        }}
+      />
 
       {/* 검색창  */}
       <div className="search">
@@ -25,7 +35,7 @@ const Header = () => {
 
       {/* 사용자 프로필 */}
       <div className="user">
-        <FontAwesomeIcon className="userIcon" icon={faCircleUser} />
+        <img className="userImg" src={userImg} referrerPolicy="no-referrer" />
       </div>
     </div>
   );

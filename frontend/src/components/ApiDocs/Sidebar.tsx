@@ -1,36 +1,49 @@
-import React, { useEffect, useRef } from 'react'
-import './Sidebar.scss'
+import React, { useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import "./Sidebar.scss";
 
-const Sidebar = ({isOpen, setIsOpen}: {isOpen: boolean; setIsOpen: any}) => {
-	const outside = useRef<any>();
+const Sidebar = ({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: any }) => {
+  const navigate = useNavigate();
+  const outside = useRef<any>();
 
-	useEffect(() => {
-		document.addEventListener('mousedown', handlerOutside);
-		return () => {
-			document.removeEventListener('mousedown', handlerOutside);
-		};
-	});
+  useEffect(() => {
+    document.addEventListener("mousedown", handlerOutside);
+    return () => {
+      document.removeEventListener("mousedown", handlerOutside);
+    };
+  });
 
-	const handlerOutside = (e: any) => {
-		if (!outside.current.contains(e.target)) {
-			toggleSide();
-		}
-	};
+  const handlerOutside = (e: any) => {
+    if (!outside.current.contains(e.target)) {
+      toggleSide();
+    }
+  };
 
-	const toggleSide = () => {
-		setIsOpen(false);
-	}
+  const toggleSide = () => {
+    setIsOpen(false);
+  };
 
-	return (
-		<div id='sidebar' ref={outside} className={isOpen ? 'openSidebar' : 'closeSidebar'}>
-			<div className='closeButtonWrapper'>
-				<div onClick={toggleSide} onKeyDown={toggleSide} className='closeButton'>X</div>
-			</div>
-			<ul className='ul'>
-				<li>메뉴1</li>
-			</ul>
-		</div>
-	)
-}
+  return (
+    <div id="sidebar" ref={outside} className={isOpen ? "openSidebar" : "closeSidebar"}>
+      <div className="closeButtonWrapper">
+        <div onClick={toggleSide} onKeyDown={toggleSide} className="closeButton">
+          X
+        </div>
+      </div>
+      <ul className="ul">
+        <li>API DOC 수정하기</li>
+        <li>API DOC 생성하기</li>
+        <li
+          onClick={() => {
+            navigate("/testApi");
+          }}
+        >
+          API TEST 페이지
+        </li>
+        <li>마이 페이지</li>
+      </ul>
+    </div>
+  );
+};
 
-export default Sidebar
+export default Sidebar;

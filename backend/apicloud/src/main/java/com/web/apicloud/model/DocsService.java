@@ -1,16 +1,35 @@
 package com.web.apicloud.model;
 
-import com.web.apicloud.domain.dto.CreateDocDto;
+import com.web.apicloud.domain.dto.CreateDocRequest;
+import com.web.apicloud.domain.dto.DocListResponse;
+import com.web.apicloud.domain.dto.UpdateDocDto;
 import com.web.apicloud.domain.entity.Docs;
-import java.security.NoSuchAlgorithmException;
-import io.spring.initializr.web.project.ProjectRequest;
+import com.web.apicloud.domain.entity.User;
+import com.web.apicloud.domain.vo.ControllerVO;
+import com.web.apicloud.domain.vo.DocVO;
+
+import java.util.List;
 
 public interface DocsService {
     Docs findByDocsId(Long docsId);
 
-    Long saveDocs(CreateDocDto createDocDto);
+    User findByUserId(Long userId);
 
-    String encryptUrl(Long docId) throws NoSuchAlgorithmException;
+    Long saveDocGetDocId(CreateDocRequest createDocDto);
 
-    ProjectRequest getProjectRequestByDocsId(Long docId);
+    String encryptUrl(Long docId);
+
+    List<DocListResponse> getDocs(Long userId);
+
+    UpdateDocDto getDoc(Long docId);
+
+    DocVO getDocVOByDocsId(Long docId);
+
+    UpdateDocDto updateDoc(Long docId, UpdateDocDto updateDocDto);
+
+    void deleteDoc(Long docId);
+
+    byte[] getCsvFile(List<ControllerVO> docVOByDocsId);
+
+    void save(Docs doc);
 }

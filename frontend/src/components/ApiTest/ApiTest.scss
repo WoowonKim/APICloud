@@ -5,56 +5,63 @@
 }
 .testSide {
   width: 20%;
-  height: 100vh;
+  height: 91vh;
   background-color: #e7f7fe;
 }
-
 .testMain {
   width: 80%;
-  margin-left: 9px;
 }
 .testInfo {
   display: flex;
 }
 .testSetting {
-  width: 40%;
+  width: 50%;
 }
 
 // ApiSide
-.ApiSide {
-  margin-top: 70px;
+.apiSide {
   display: flex;
   padding: 5px;
+}
+.apiSideAddress {
+  font-size: 13px;
+  margin: 0px;
 }
 .sideText {
   width: 25%;
   font-weight: bold;
-  font-size: 13px;
+  font-size: 12px;
   height: 5px;
 }
 
 // ApiInput
-.ApiInputContainer {
-  display: flex;
-  justify-self: start;
+.selectBoxTESTApi {
+  width: 100%;
+  height: 30px;
+  cursor: pointer;
 }
-.ApiInputContainer > input:focus {
+.apiInputContainer {
+  margin-top: 5px;
+  display: flex;
+  justify-content: center;
+}
+.apiInputContainer > input:focus {
   outline: none;
 }
-.ApiInput {
+.apiInput {
   width: 50%;
   border: none;
   border-bottom: 1px solid #000000;
   border-right: 1px solid #000000;
   border-top: 1px solid #000000;
-  border-top-right-radius: 30px;
-  border-bottom-right-radius: 30px;
-  padding: 5px;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
+  padding: 1px 50px 1px 10px;
   outline: none;
   font-weight: 500;
-  font-size: 16px;
+  font-size: 14px;
 }
-.ApiChoice {
+.apiChoice {
   border: none;
   width: 8%;
   font-size: 13px;
@@ -63,12 +70,12 @@
   padding-left: 10px;
   padding-top: 4px;
   padding-bottom: 5px;
-  border-top-left-radius: 30px;
-  border-bottom-left-radius: 30px;
+  border-top-left-radius: 15px;
+  border-bottom-left-radius: 15px;
   border: 1px solid #000000;
 }
-.ApiTestBtn {
-  width: 145px;
+.apiTestBtn {
+  width: 85px;
   height: 45px;
   margin-left: 7px;
   border-radius: 15px;
@@ -79,34 +86,171 @@
   cursor: pointer;
 }
 // ApiHeader
-.ApiHeaderContainer > p {
-  height: 7px;
-}
-.HeaderList {
-  display: flex;
-  background-color: #f4f4f4;
-}
-.HeaderListTitle {
-  width: 30%;
-  text-align: center;
+.apiHeaderContainer {
+  padding: 5px;
 }
 
-.HeaderListContent {
+.headerClickList {
+  margin-right: 5px;
+  font-size: 13px;
+  font-weight: bold;
+  color: #000000;
+  border-bottom: 2px solid #000000;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+.headerNoClicklist {
+  margin-right: 5px;
+  font-size: 11px;
+  color: #727070;
+  cursor: pointer;
+}
+.headerList {
+  margin-top: 10px;
+  width: 100%;
+  height: 220px;
+  display: flex;
+}
+.headerListTitle {
+  width: 33%;
+  text-align: left;
+  background-color: #e7f7fe;
+}
+.headerListTitle > p {
+  font-weight: bold;
+  margin-left: 5px;
+  color: #767273;
+  font-size: 13px;
+  margin: 13px 0px 18px 5px;
+}
+
+.headerListContent {
   margin-left: 3px;
-  text-align: center;
+  text-align: left;
+}
+.headerListContent > p {
+  font-weight: 400;
+  margin-left: 5px;
+  margin: 13px 0px 3px 5px;
+}
+.headerListContent > p > input {
+  width: 300px;
+  border: none;
+  font-size: 12px;
+  padding: 1px;
+}
+.headerListContent > p > input:focus {
+  outline: none;
+}
+.headerListContent > input:focus {
+  outline: none;
 }
 
 //ApiBody
-.ApiBodyContainer > textarea:focus {
+.apiBodyContainer {
+  margin-top: 10px;
+  margin-left: 5px;
+}
+.apiBodyContainer > textarea:focus {
   outline: none;
 }
-.ApiBodyContainer > p {
-  height: 9px;
+.apiBodyContainer > span {
+  padding-bottom: 5px;
+  background-color: #e7f7fe;
+  font-size: 13px;
+  font-weight: bold;
+  padding-left: 4px;
+  padding-right: 5px;
+  padding: 3px 15px 10px 15px;
+  border-top-right-radius: 15px;
+  border-top-left-radius: 15px;
 }
 .bodyArea {
-  width: 100%;
-  height: 200px;
-  border: 1px solid #000000;
-  border-radius: 10px;
+  width: 91%;
+  height: 230px;
+  border: 3px solid #e7f7fe;
   resize: none;
+  padding: 20px;
+}
+
+// ApiRespose
+.apiHeaderMainTitle {
+  margin: 0px;
+  font-size: 20px;
+  border-bottom: 1px solid #000000;
+}
+.apiResponseContainer {
+  padding: 5px;
+}
+
+.apiResponseContainer > span {
+  padding-right: 5px;
+
+  cursor: pointer;
+}
+.apiResponseResult {
+  margin-top: 11px;
+  background-color: #ffffff;
+  border: none;
+  width: 600px;
+  height: 460px;
+}
+.apiResponseResultCommonState {
+  text-align: end;
+  height: 23px;
+}
+.apiResponseResultStatus {
+  font-size: 12px;
+  font-weight: bold;
+}
+.apiResponseResultMessage {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.apiResponseResult > div {
+  padding: 25px;
+  padding-top: 10px;
+  font-size: 15px;
+  font-weight: 400;
+  color: black;
+}
+
+.resultResponseBody {
+  margin-left: 25px;
+  color: #c56d6d;
+}
+.resultResponseBodySub {
+  color: #4880be;
+}
+.resultResponseBodySubNum {
+  color: green;
+}
+.resultResponseContainer {
+  padding: 2px;
+}
+.resltResponseHeaderContainer {
+  margin: 10px;
+  display: flex;
+}
+.resultResponseTitleContainer {
+  width: 150px;
+  margin-bottom: 23px;
+}
+
+// ApiSide
+.sideMenuList {
+  padding: 0px 7px 0px 7px;
+  display: flex;
+  font-size: 12px;
+  font-weight: bold;
+  justify-content: space-between;
+}
+
+.titleSideMenu {
+  font-weight: bold;
+}
+
+.clearSideMenu {
+  cursor: pointer;
 }

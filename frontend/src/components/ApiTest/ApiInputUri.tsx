@@ -1,37 +1,33 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
-import { SiteAddressType, subMethod } from "../../pages/TestApi";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { RequestTypeInfo } from "../../pages/CreateApi/ApisType";
+import { selectTestApi } from "../../Store/slice/testApi";
 import MethodTest from "./MethodTest";
-interface Props {
-  siteAddress: SiteAddressType;
-  setSubmitMethod: Dispatch<SetStateAction<subMethod | null>>;
-}
-const ApiInputUri = ({ siteAddress, setSubmitMethod }: Props) => {
-  const [getMethod, setGetMethod] = useState<string>("GET");
-  const [uriAddress, setUriAddress] = useState<string>("");
-  const Link = {
-    method: getMethod,
-    uri: uriAddress,
-  };
-  const subMitWord = () => {
-    setSubmitMethod(Link);
-  };
+
+export type list = {
+  getInfo: RequestTypeInfo | undefined;
+};
+
+const ApiInputUri = ({ getInfo }: list) => {
+  const [getUri, setUri] = useState("");
+  const [getMethodApi, setMethodApi] = useState("");
+  const info = useSelector(selectTestApi);
+
+  useEffect(() => {
+    if (getInfo) {
+      setUri(getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].uri);
+      setMethodApi(getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].method);
+    }
+  }, [getInfo, info.getControllerInfomation, info.getApisInfomation]);
+
   return (
-    <div className="ApiInputContainer">
-      <span className="ApiChoice">
-        <MethodTest setGetMethod={setGetMethod} />
+    <div className="apiInputContainer">
+      <span className="apiChoice">
+        <MethodTest methodApiWord={getMethodApi} />
       </span>
-      <input
-        className="ApiInput"
-        type="text"
-        placeholder="URI를 입력"
-        defaultValue={siteAddress.Address + siteAddress.commonUri + "/"}
-        onChange={(e) => {
-          setUriAddress(e.target.value);
-        }}
-      />
-      <button className="ApiTestBtn" onClick={subMitWord}>
-        보내기
-      </button>
+      <input className="apiInput" type="text" defaultValue={getUri} />
+      <button className="apiTestBtn">보내기</button>
+      <button className="apiTestBtn">저장하기</button>
     </div>
   );
 };

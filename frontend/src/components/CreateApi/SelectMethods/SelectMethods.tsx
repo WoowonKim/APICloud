@@ -7,27 +7,38 @@ const Item = styled.div`
   border-radius: 10px;
   padding: 5px 10px;
   margin-top: 5px;
-  font-weight: bold;
+  font-size: 1em;
   background-color: ${(props) => props.color};
 `;
 
-const SelectedItem = styled.button`
+export const SelectedItem = styled.button`
   border: none;
   border-radius: 10px;
   padding: 5px 10px;
   margin-top: 5px;
-  font-weight: bold;
+  font-size: 1em;
   background-color: ${(props) => props.color};
 `;
 
-const SelectMethods = () => {
+interface Props {
+  onBlur?: (temp?: string) => void;
+  setValue?: React.Dispatch<React.SetStateAction<string>>;
+  value?: string;
+}
+
+const SelectMethods = ({ onBlur, setValue, value }: Props) => {
   const [visible, setVisible] = useState(false);
-  const [selectedMethod, setSelectedMethod] = useState("GET");
+  const [selectedMethod, setSelectedMethod] = useState(value ? value : "GET");
 
   const handleSelect = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
     const eventTarget = e.target as HTMLElement;
     setSelectedMethod(eventTarget.innerText);
     setVisible(!visible);
+    // Props에 해당 값이 있을 경우 함수 호출
+    if (setValue && onBlur) {
+      setValue(eventTarget.innerText);
+      onBlur(eventTarget.innerText);
+    }
   };
 
   return (

@@ -1,34 +1,35 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { RequestBodyType, RequestTypeInfo } from "../../pages/CreateApi/ApisType";
+import testApiSlice, { selectTestApi } from "../../Store/slice/testApi";
 
-const ApiBody = () => {
-  const [textValue, setTextValue] = useState("");
+interface type {
+  getInfo: RequestTypeInfo | undefined;
+}
+const ApiBody = ({ getInfo }: type) => {
+  const [requestBody, setRequestBody] = useState<RequestBodyType>();
+  const [Addobject, setAddObject] = useState({});
+  const info = useSelector(selectTestApi);
 
-  const handleSetValue = (e: { target: { value: React.SetStateAction<string> } }) => {
-    setTextValue(e.target.value);
-  };
-
-  const handleSetTab = (e: { keyCode?: any; preventDefault?: any; target: any }) => {
-    if (e.keyCode === 9) {
-      e.preventDefault();
-      let val = e.target.value;
-      let start = e.target.selectionStart;
-      let end = e.target.selectionEnd;
-      e.target.value = val.substring(0, start) + "\t" + val.substring(end);
-      e.target.selectionStart = e.target.selectionEnd = start + 1;
-      handleSetValue(e);
-      return false; //  prevent focus
+  useEffect(() => {
+    if (getInfo) {
+      setRequestBody(getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].requestBody);
     }
-  };
+  }, [getInfo, info.getControllerInfomation, info.getApisInfomation]);
   return (
-    <div className="ApiBodyContainer">
-      <p>Body</p>
-      <textarea
-        className="bodyArea"
-        placeholder="값을 입력해 주세요"
-        value={textValue}
-        onChange={(e) => handleSetValue(e)}
-        onKeyDown={(e) => handleSetTab(e)}
-      ></textarea>
+    <div className="apiBodyContainer">
+      <span>Body</span>
+      {requestBody?.properties.map((it, idx) => (
+        <div key={idx}>
+          <p>{it.name}</p>
+          <input
+            type="text"
+            onChange={(e) => {
+              setAddObject(`${it.name} = ${e.target.value}`);
+            }}
+          />
+        </div>
+      ))}
     </div>
   );
 };

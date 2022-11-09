@@ -1,0 +1,10 @@
+.docPaper2Wrapper {
+	width: 100%;
+	.rowWrapper {
+		display: flex;
+		justify-content: space-between;
+		.titleWrapper {
+			display: flex;
+		}
+	}
+}

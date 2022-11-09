@@ -4,8 +4,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -22,17 +20,12 @@ public class Group {
     private Long id;
 
     @NotNull
-    private Integer authority;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private User user;
+    @Column(unique = true)
+    private String groupSecretKey;
 
     @Builder
-    public Group(Long id, Integer authority, User user) {
+    public Group(Long id, String groupSecretKey) {
         this.id = id;
-        this.authority = authority;
-        this.user = user;
+        this.groupSecretKey = groupSecretKey;
     }
 }

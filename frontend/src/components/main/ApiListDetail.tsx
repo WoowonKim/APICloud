@@ -1,39 +1,84 @@
 import React from "react";
-import { GuestDummy, ManagerDummy } from "./ApiList";
+import { ApiDocType } from "./ApiList";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { faPenToSquare, faUser } from "@fortawesome/free-solid-svg-icons";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import mainApiSlice, { deleteApiDoc } from "../../Store/slice/mainApi";
+import UpdateModal from "./UpdateModal";
+import { RootState } from "../../Store/store";
 
 interface Props {
-  ManagerDummy: ManagerDummy[];
-  GuestDummy: GuestDummy[];
-  ApiList: number;
+  apiList: number;
+  apiDocList: ApiDocType[];
+  dispatchGetDocList: any;
 }
 
-const ApiListDetail = ({ ManagerDummy, GuestDummy, ApiList }: Props) => {
+const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
   const navigate = useNavigate();
-  const moveApidocs = () => {
-    navigate("/welcome");
+  const dispatch = useDispatch();
+  const isOpenUpdateModal = useSelector((state: RootState) => state.mainApi.isOpenUpdateModal);
+
+  const moveApidocs: any = (docId: number) => {
+    dispatch(mainApiSlice.actions.setDocId({ docId: docId }));
+    navigate(`/apiDocs/${docId}`);
+
   };
-  const list = ApiList === 0 ? ManagerDummy : GuestDummy;
+  const list = apiList === 0 ? apiDocList : apiDocList;
+
+  const dispatchDeleteDoc: any = (docId: number) => {
+    dispatch(deleteApiDoc({ docId: docId })).then((res: any) => {
+      if (res.meta.requestStatus === "fulfilled") {
+        dispatchGetDocList();
+      }
+    });
+  };
+
   return (
     <div className="ApiListDetail">
-      {list?.map((it, idx) => (
+      {isOpenUpdateModal && <UpdateModal></UpdateModal>}
+      {apiDocList?.map((it, idx) => (
         <div className="listContent" key={idx}>
-          <p>{it.apiTitle}</p>
-          <div className="content" onClick={moveApidocs}>
-            <p>{it.apiContent}</p>
+          <p>{it.docId}</p>
+          <div
+            className="content"
+            onClick={() => {
+              moveApidocs(it.encryptedUrl);
+              dispatch(mainApiSlice.actions.setDocId({ docId: it.docId }));
+              localStorage.setItem("docId", it.docId.toString());
+            }}
+          >
+            <p>{it.docName}</p>
           </div>
           <div className="userSetting">
             <div className="userSettingSub">
               <div className="member">
                 <FontAwesomeIcon icon={faUser} />
-                {it.member}
+                {it.groupUser.name}
               </div>
-              <FontAwesomeIcon className="DeatilIcon" icon={faRightToBracket} onClick={moveApidocs} />
-              {ApiList == 0 ? <FontAwesomeIcon className="DeatilIcon" icon={faTrash} /> : <div></div>}
+              <FontAwesomeIcon className="DeatilIcon" icon={faRightToBracket} />
+              {apiList === 0 ? (
+                <>
+                  <FontAwesomeIcon
+                    className="DeatilIcon"
+                    icon={faPenToSquare}
+                    onClick={() => {
+                      dispatch(
+                        mainApiSlice.actions.setIsOpenUpdateModal({
+                          isOpenUpdateModal: true,
+                        })
+                      );
+                      dispatch(mainApiSlice.actions.setDocId({ docId: it.docId }));
+                      console.log("ApiListDetail DocId => ", it.docId);
+                    }}
+                  />
+                  <FontAwesomeIcon className="DeatilIcon" icon={faTrash} onClick={() => dispatchDeleteDoc(it.docId)} />
+                </>
+              ) : (
+                <div></div>
+              )}
             </div>
           </div>
         </div>
