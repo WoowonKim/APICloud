@@ -63,12 +63,6 @@ const ApiDocs = () => {
   }, [docInform]);
 
   useEffect(() => {
-    if (detail) {
-      console.log('detail', detail)
-    }
-  }, [detail]);
-
-  useEffect(() => {
     return () => {
       localStorage.removeItem("docId");
     };
@@ -93,7 +87,7 @@ const ApiDocs = () => {
           </div>
           <br></br>
           <div className="doc">
-            <ApiDocPaper2 detail={detail}/>
+            <ApiDocPaper2 detail={detail} />
           </div>
           <button onClick={onClick}>pdf로 변환</button>
         </div>
