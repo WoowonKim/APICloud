@@ -95,9 +95,6 @@ const CreateApi = () => {
   const [addedApiIndex, setAddedApiIndex] = useState(-1);
   const [addedControllerIndex, setAddedControllerIndex] = useState(-1);
 
-  const [propertiesIndexList, setPropertiesIndexList] = useState<number[]>([
-    -1, -1, -1, -1, -1, -1, -1, -1, -1,
-  ]);
   const [depth, setDepth] = useState(2);
 
   // controller 추가/삭제 함수 -> 기존 데이터에 새 데이터 추가
@@ -264,8 +261,6 @@ const CreateApi = () => {
                     }
                     state={state}
                     responseType={"success"}
-                    setPropertiesIndexList={setPropertiesIndexList}
-                    propertiesIndexList={propertiesIndexList}
                     setDepth={setDepth}
                     depth={depth}
                   />
@@ -292,8 +287,6 @@ const CreateApi = () => {
                 )}
                 state={state}
                 responseType={"fail"}
-                setPropertiesIndexList={setPropertiesIndexList}
-                propertiesIndexList={propertiesIndexList}
                 setDepth={setDepth}
                 depth={depth}
               />

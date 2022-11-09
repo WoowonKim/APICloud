@@ -32,13 +32,21 @@ interface Props {
   propertiesIndexList: number[];
   setDepth: React.Dispatch<React.SetStateAction<number>>;
   depth: number;
-  addProperties: (index: number, flag?: boolean, depth1?: number) => void;
   setPropertiesIndex: React.Dispatch<React.SetStateAction<number>>;
-  depth1: number;
-  getDepth: (idx: number, datas: PropertiesType) => number;
+  test: number;
+  getDepth: (
+    idx: number,
+    datas: PropertiesType[],
+    isAdd: boolean,
+    isNew: boolean,
+    isDelete: boolean
+  ) => number;
   setModalDepth: React.Dispatch<React.SetStateAction<number>>;
+  setTest: React.Dispatch<React.SetStateAction<number>>;
   modalDepth: number;
   path: PropertiesType;
+  dtoName: string;
+  final: PropertiesType | undefined;
 }
 const DtoModalTable = ({
   data,
@@ -51,21 +59,26 @@ const DtoModalTable = ({
   deleteRow,
   setPropertiesIndexList,
   propertiesIndexList,
-  addProperties,
   setDepth,
   depth,
   setPropertiesIndex,
-  depth1,
+  test,
   getDepth,
   setModalDepth,
   modalDepth,
   path,
+  setTest,
+  dtoName,
+  final,
 }: Props) => {
+  const [plz, setPlz] = useState(data);
+  useEffect(() => {
+    setPlz(data);
+  }, [data, activeTab, final]);
   const defaultColumn: Partial<ColumnDef<PropertiesType>> = {
     cell: function Cell({ getValue, row: { index }, column: { id }, table }) {
       const initialValue = getValue<string>();
       const [value, setValue] = useState<string>(initialValue);
-      const [datas, setDatas] = useState<PropertiesType>();
       const rootPath = state.data[selectedController].apis[selectedApi];
 
       const onBlur = (temp?: string) => {
@@ -75,47 +88,21 @@ const DtoModalTable = ({
         }
       };
 
-      const handleObject = useCallback(() => {
-        let copyPath = path;
-        console.log(
-          modalDepth,
-          JSON.parse(JSON.stringify(copyPath)),
-          JSON.parse(JSON.stringify(data[index]))
-        );
-        const getDepth2 = getDepth(index, data[index]);
-        console.log(getDepth2);
-
-        if (getDepth2 > 3 || getDepth2 === 3) {
-          for (let i = 1; i < getDepth2 - 1; i++) {
-            if (propertiesIndexList[i] !== -1) {
-              console.log(1, JSON.parse(JSON.stringify(copyPath)));
-              copyPath = copyPath.properties[propertiesIndexList[i]];
-            }
-            console.log(modalDepth, i, JSON.parse(JSON.stringify(copyPath)));
-          }
-        }
-        if (
-          copyPath.properties.length > index ||
-          copyPath.properties.length === index
-        ) {
-          setModalDepth(getDepth(index, copyPath.properties[index]));
-          setPropertiesIndexList((old) => {
-            let copy = [...old];
-            copy[getDepth(index, copyPath.properties[index]) - 2] = index;
-            return copy;
-          });
-          addProperties(
-            index,
-            false,
-            getDepth(index, copyPath.properties[index])
-          );
-        }
-      }, [modalDepth, setModalDepth]);
-
       useEffect(() => {
         setValue(initialValue);
       }, [initialValue, modalDepth, data, index]);
 
+      let copyPath = path;
+      if (modalDepth > 3 || modalDepth === 3) {
+        let i = activeTab === 2 || activeTab === 3 ? 1 : 0;
+        for (i; i < modalDepth - 1; i++) {
+          if (propertiesIndexList[i] !== -1) {
+            copyPath = copyPath.properties[propertiesIndexList[i]];
+          }
+        }
+      } else if (activeTab === 4 || activeTab === 5) {
+        copyPath = copyPath.properties[propertiesIndex];
+      }
       return id === "required" ? (
         <input
           value={value as string}
@@ -128,59 +115,26 @@ const DtoModalTable = ({
         <FontAwesomeIcon
           icon={faRemove}
           className="removeIcon"
-          onClick={() => deleteRow(index, 2, propertiesIndex)}
+          onClick={() =>
+            final && getDepth(index, final.properties, false, false, true)
+          }
         />
       ) : id === "type" ? (
         <div className="typeInfoContainer">
-          {/* {activeTab === 2 &&
-          rootPath.parameters[propertiesIndex].properties[index]
-            .collectionType === "List" ? (
+          {copyPath && copyPath.properties[index].collectionType === "List" && (
             <SelectTypes
               onBlur={onBlur}
               setValue={setValue}
               value={"List"}
               isCollection={true}
             />
-          ) : activeTab === 3 &&
-            rootPath.queries[propertiesIndex].properties[index]
-              .collectionType === "List" ? (
-            <SelectTypes
-              onBlur={onBlur}
-              setValue={setValue}
-              value={"List"}
-              isCollection={true}
-            />
-          ) : activeTab === 4 &&
-            rootPath.requestBody.properties[propertiesIndex].properties[index]
-              .collectionType === "List" ? (
-            <SelectTypes
-              onBlur={onBlur}
-              setValue={setValue}
-              value={"List"}
-              isCollection={true}
-            />
-          ) : activeTab === 5 &&
-            (responseType === "fail" || responseType === "success") &&
-            rootPath.responses[responseType].responseBody.properties[
-              propertiesIndex
-            ].properties[index].collectionType === "List" ? (
-            <SelectTypes
-              onBlur={onBlur}
-              setValue={setValue}
-              value={"List"}
-              isCollection={true}
-            />
-          ) : (
-            <></>
-          )} */}
+          )}
           <SelectTypes onBlur={onBlur} setValue={setValue} value={value} />
           {value === "Object" && (
             <FontAwesomeIcon
               icon={faInfo}
               className="infoIcon"
-              onClick={() => {
-                handleObject();
-              }}
+              onClick={() => handleObject(index)}
             />
           )}
         </div>
@@ -195,6 +149,34 @@ const DtoModalTable = ({
     },
   };
 
+  const handleObject = (index: number) => {
+    console.log(
+      modalDepth,
+      JSON.parse(JSON.stringify(data)),
+      index,
+      JSON.parse(JSON.stringify(plz)),
+      final && JSON.parse(JSON.stringify(final?.properties)),
+      dtoName
+    );
+    let copyPath = path;
+    const getDepth2 =
+      final && getDepth(index, final.properties, false, false, false);
+
+    if ((getDepth2 && getDepth2 > 3) || getDepth2 === 3) {
+      for (let i = 1; i < getDepth2 - 2; i++) {
+        if (propertiesIndexList[i] !== -1) {
+          copyPath = copyPath.properties[propertiesIndexList[i]];
+        }
+      }
+    }
+    const newDepth = getDepth(index, copyPath.properties, true, true, false);
+    console.log(newDepth, propertiesIndexList);
+    setModalDepth(newDepth);
+    let properties = [...propertiesIndexList];
+    properties[newDepth - 2] = index;
+    console.log(properties);
+    setPropertiesIndexList(properties);
+  };
   const columns = useMemo<ColumnDef<PropertiesType>[]>(
     () => [
       {
@@ -226,8 +208,7 @@ const DtoModalTable = ({
     meta: {
       updateData: (rowIndex: string | number, columnId: any, value: any) => {
         if (!!value) {
-          const rootPath = state.data[selectedController].apis[selectedApi];
-          const newValue = value === "true" ? false : true;
+          const requiredValue = value === "true" ? false : true;
           const type =
             columnId === "name"
               ? "name"
@@ -236,100 +217,34 @@ const DtoModalTable = ({
               : "required";
           let copyPath = path;
           if (modalDepth > 3 || modalDepth === 3) {
-            for (let i = 1; i < modalDepth - 1; i++) {
+            let i = activeTab === 2 || activeTab === 3 ? 1 : 0;
+            for (i; i < modalDepth - 1; i++) {
               if (propertiesIndexList[i] !== -1) {
                 copyPath = copyPath.properties[propertiesIndexList[i]];
               }
             }
+          } else if (activeTab === 4 || activeTab === 5) {
+            copyPath = copyPath.properties[propertiesIndex];
           }
-          // for (let i = 0; i < modalDepth - 2; i++) {
-          //   if (propertiesIndexList[i] !== -1) {
-          //     path = path?.properties[propertiesIndexList[i]];
-          //   }
-          // }
+          console.log(JSON.parse(JSON.stringify(copyPath)));
 
-          if (activeTab === 2 || activeTab === 3) {
-            copyPath?.properties.map((row, idx) => {
-              if (idx === rowIndex && type === "required") {
-                copyPath.properties[rowIndex][type] = newValue;
-              } else if (
-                idx === rowIndex &&
-                (type === "name" || type === "type")
-              ) {
-                if (type === "type" && value === "List") {
-                  copyPath.properties[rowIndex].collectionType = "List";
-                  copyPath.properties[rowIndex][type] = "String";
-                } else if (type === "type" && value === "X") {
-                  copyPath.properties[rowIndex].collectionType = "";
-                } else {
-                  copyPath.properties[rowIndex][type] = value;
-                }
+          copyPath?.properties.map((row, idx) => {
+            if (idx === rowIndex && type === "required") {
+              copyPath.properties[rowIndex][type] = requiredValue;
+            } else if (
+              idx === rowIndex &&
+              (type === "name" || type === "type")
+            ) {
+              if (type === "type" && value === "List") {
+                copyPath.properties[rowIndex].collectionType = "List";
+                copyPath.properties[rowIndex][type] = "String";
+              } else if (type === "type" && value === "X") {
+                copyPath.properties[rowIndex].collectionType = "";
+              } else {
+                copyPath.properties[rowIndex][type] = value;
               }
-            });
-          } else if (activeTab === 4) {
-            rootPath.requestBody.properties[propertiesIndex].properties.map(
-              (row, idx) => {
-                if (idx === rowIndex && type === "required") {
-                  rootPath.requestBody.properties[propertiesIndex].properties[
-                    rowIndex
-                  ][type] = newValue;
-                } else if (
-                  idx === rowIndex &&
-                  (type === "name" || type === "type")
-                ) {
-                  if (type === "type" && value === "List") {
-                    rootPath.requestBody.properties[propertiesIndex].properties[
-                      rowIndex
-                    ].collectionType = "List";
-                    rootPath.requestBody.properties[propertiesIndex].properties[
-                      rowIndex
-                    ][type] = "String";
-                  } else if (type === "type" && value === "X") {
-                    rootPath.requestBody.properties[propertiesIndex].properties[
-                      rowIndex
-                    ].collectionType = "";
-                  } else {
-                    rootPath.requestBody.properties[propertiesIndex].properties[
-                      rowIndex
-                    ][type] = value;
-                  }
-                }
-              }
-            );
-          } else if (
-            activeTab === 5 &&
-            (responseType === "fail" || responseType === "success")
-          ) {
-            rootPath.responses[responseType].responseBody.properties[
-              propertiesIndex
-            ].properties.map((row, idx) => {
-              if (idx === rowIndex && type === "required") {
-                rootPath.responses[responseType].responseBody.properties[
-                  propertiesIndex
-                ].properties[rowIndex][type] = newValue;
-              } else if (
-                idx === rowIndex &&
-                (type === "name" || type === "type")
-              ) {
-                if (type === "type" && value === "List") {
-                  rootPath.responses[responseType].responseBody.properties[
-                    propertiesIndex
-                  ].properties[rowIndex].collectionType = "List";
-                  rootPath.responses[responseType].responseBody.properties[
-                    propertiesIndex
-                  ].properties[rowIndex][type] = "String";
-                } else if (type === "type" && value === "X") {
-                  rootPath.responses[responseType].responseBody.properties[
-                    propertiesIndex
-                  ].properties[rowIndex].collectionType = "";
-                } else {
-                  rootPath.responses[responseType].responseBody.properties[
-                    propertiesIndex
-                  ].properties[rowIndex][type] = value;
-                }
-              }
-            });
-          }
+            }
+          });
         }
       },
     },

@@ -23,17 +23,23 @@ interface Props {
     e: React.ChangeEvent<HTMLInputElement> | string,
     type: string,
     depth: number,
-    responseType?: string
+    responseType: string
   ) => void;
-  addProperties: (index: number, flag?: boolean, depth1?: number) => void;
   deleteRow: (index: number, depth: number, propIndex?: number) => void;
   setPropertiesIndexList: React.Dispatch<React.SetStateAction<number[]>>;
   propertiesIndexList: number[];
   setDepth: React.Dispatch<React.SetStateAction<number>>;
   depth: number;
   setPropertiesIndex: React.Dispatch<React.SetStateAction<number>>;
-  modalPath?: PropertiesType;
-  getDepth: (idx: number, datas: PropertiesType) => number;
+  setFinal: React.Dispatch<React.SetStateAction<PropertiesType | undefined>>;
+  final: PropertiesType | undefined;
+  getDepth: (
+    idx: number,
+    datas: PropertiesType[],
+    isAdd: boolean,
+    isNew: boolean,
+    isDelete: boolean
+  ) => number;
   setNameList: React.Dispatch<React.SetStateAction<string[]>>;
   nameList: string[];
 }
@@ -46,65 +52,55 @@ const DtoInputModal = ({
   propertiesIndex,
   responseType,
   handleBasicInfo,
-  addProperties,
   deleteRow,
   setPropertiesIndexList,
   propertiesIndexList,
   setDepth,
   depth,
   setPropertiesIndex,
-  modalPath,
+  setFinal,
+  final,
   getDepth,
   setNameList,
   nameList,
 }: Props) => {
   const rootPath = state.data[selectedController].apis[selectedApi];
   const [modalDepth, setModalDepth] = useState(2);
-  const [test, setTest] = useState(2);
-  const [final, setFinal] = useState<PropertiesType>();
+  const [test, setTest] = useState(-1);
 
   const index =
     propertiesIndexList[0] !== -1 ? propertiesIndexList[0] : propertiesIndex;
   let path =
-    activeTab === 2
-      ? rootPath.parameters[index]
+    activeTab === 5 && (responseType === "fail" || responseType === "success")
+      ? rootPath.responses[responseType].responseBody
       : activeTab === 3
       ? rootPath.queries[index]
       : activeTab === 4
-      ? rootPath.requestBody.properties[index]
-      : activeTab === 5 &&
-        (responseType === "fail" || responseType === "success")
-      ? rootPath.responses[responseType].responseBody.properties[index]
+      ? rootPath.requestBody
       : rootPath.parameters[index];
 
   useEffect(() => {
     let copy = path;
     if (modalDepth > 3 || modalDepth === 3) {
-      for (let i = 1; i < modalDepth - 1; i++) {
+      let i = activeTab === 2 || activeTab === 3 ? 1 : 0;
+      for (i; i < modalDepth - 1; i++) {
         if (propertiesIndexList[i] !== -1) {
           setNameList((old) => {
             let newNameList = [...old];
-            newNameList[i] = copy.name;
+            newNameList[i] = copy.dtoName;
             return newNameList;
           });
           copy = copy.properties[propertiesIndexList[i]];
         }
         console.log(modalDepth, i, JSON.parse(JSON.stringify(copy)));
       }
+    } else if (activeTab === 4 || activeTab === 5) {
+      copy = copy.properties[propertiesIndex];
     }
+    console.log(modalDepth, JSON.parse(JSON.stringify(copy)));
     setFinal(copy);
   }, [modalDepth, path, final]);
 
-  useEffect(() => {
-    console.log("change final");
-  }, [final]);
-  console.log(
-    "=====0=0=0=======",
-    modalDepth,
-    final && JSON.parse(JSON.stringify(final)),
-    propertiesIndexList
-  );
-  useEffect(() => {}, [modalDepth]);
   return (
     <div className="dtoInputModal">
       <div className="dtoModalContainer">
@@ -120,7 +116,10 @@ const DtoInputModal = ({
               type="text"
               id="dtoModalDtoName"
               placeholder="DtoName"
-              onChange={(e) => handleBasicInfo(e, "dtoName", modalDepth)}
+              onChange={(e) => {
+                const type = responseType ? responseType : "";
+                handleBasicInfo(e, "dtoName", 0, type);
+              }}
               autoFocus
               value={final?.dtoName}
             />
@@ -130,13 +129,7 @@ const DtoInputModal = ({
           <div className="dtoModalTableContainer">
             <button
               className="apiPlusButton"
-              onClick={() =>
-                addProperties(
-                  propertiesIndexList[modalDepth - 2],
-                  true,
-                  modalDepth
-                )
-              }
+              onClick={() => getDepth(0, final.properties, true, false, false)}
             >
               <FontAwesomeIcon icon={faPlus} className="plusIcon" />
             </button>
@@ -153,13 +146,15 @@ const DtoInputModal = ({
               propertiesIndexList={propertiesIndexList}
               setDepth={setDepth}
               depth={depth}
-              addProperties={addProperties}
               setPropertiesIndex={setPropertiesIndex}
-              depth1={test}
+              test={test}
               getDepth={getDepth}
               setModalDepth={setModalDepth}
               modalDepth={modalDepth}
               path={path}
+              setTest={setTest}
+              dtoName={final?.dtoName}
+              final={final}
             />
           </div>
         )}
