@@ -64,12 +64,12 @@ public class ControllerContributor implements ProjectContributor {
             CustomJavaMethodDeclaration.Builder builder = CustomJavaMethodDeclaration
                     .method(api.getName())
                     .modifiers(Modifier.PUBLIC)
-                    .returning("ResponseEntity<" + api.getReturning(false) + ">");
-            addApiParameters(builder, api);
+                    .returning(JavaType.builder().type("ResponseEntity").genericType(api.getReturnJavaType(false, makeDtoPackageName(controllerType.getName()))).build());
+            addApiParameters(builder, api, controllerType.getName());
             CustomJavaMethodDeclaration jmd = builder.body(new JavaReturnStatement(
-                    new JavaClassCreation("org.framework.http.ResponseEntity", api.getReturning(false),
-                            List.of(new JavaClassCreation(api.getReturning(true), null, List.of()),
-                                    new JavaEnum("org.framework.http.HttpStatus", "OK")))
+                    new JavaClassCreation(JavaType.builder().type("org.springframework.http.ResponseEntity").genericType(api.getReturnJavaType(false, makeDtoPackageName(controllerType.getName()))).build(),
+                            List.of(new JavaClassCreation(api.getReturnJavaType(true, makeDtoPackageName(controllerType.getName())), List.of()),
+                                    new JavaEnum("org.springframework.http.HttpStatus", "OK")))
             ));
 
             String methodMappingName = "org.springframework.web.bind.annotation."
@@ -80,38 +80,44 @@ public class ControllerContributor implements ProjectContributor {
         };
     }
 
-    private void addApiParameters(CustomJavaMethodDeclaration.Builder builder, ApiVO api) {
+    private void addApiParameters(CustomJavaMethodDeclaration.Builder builder, ApiVO api, String controllerName) {
         List<AnnotatableParameter> parameters = new ArrayList<>();
         // path에서 파라미터 추가
-        makeParameters(api.getParameters()).ifPresent(parameters::addAll);
+        makeParameters(api.getParameters(), PATH_VARIABLE, controllerName).ifPresent(parameters::addAll);
 
         // query에서 파라미터 추가
-        makeParameters(api.getQueries()).ifPresent(parameters::addAll);
+        makeParameters(api.getQueries(), null, controllerName).ifPresent(parameters::addAll);
 
         // requestBody에서 파라미터 추가
-        makeParameter(api.getRequestBody(), REQUEST_BODY).ifPresent(parameters::add);
+        makeParameter(api.getRequestBody(), REQUEST_BODY, controllerName).ifPresent(parameters::add);
         builder.parameters(parameters.toArray(AnnotatableParameter[]::new));
     }
 
-    private Optional<List<AnnotatableParameter>> makeParameters(List<PropertyVO> properties) {
+    private Optional<List<AnnotatableParameter>> makeParameters(List<PropertyVO> properties, String annotationName, String controllerName) {
         if (properties == null) {
             return Optional.empty();
         }
         return Optional.of(properties.stream()
-                .map(p -> makeParameter(p, "org.springframework.web.bind.annotation.PathVariable").orElse(null))
+                .map(p -> {
+                    if (annotationName == null) {
+                        return makeParameter(p, null, controllerName).orElse(null);
+                    } else {
+                        return makeParameter(p, annotationName, controllerName).orElse(null);
+                    }
+                })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList())
         );
     }
 
-    private Optional<AnnotatableParameter> makeParameter(PropertyVO property, String annotationName) {
+    private Optional<AnnotatableParameter> makeParameter(PropertyVO property, String annotationName, String controllerName) {
         if (property == null) {
             return Optional.empty();
         }
-        AnnotatableParameter parameter = new AnnotatableParameter(property.getTypeForCode(), property.getName());
+        AnnotatableParameter parameter = new AnnotatableParameter(property.getJavaType(makeDtoPackageName(controllerName), false), property.getName());
         if (annotationName != null) {
             parameter.annotate(Annotation.name(annotationName, builder -> {
-                if(PATH_VARIABLE.equals(annotationName)) {
+                if (PATH_VARIABLE.equals(annotationName)) {
                     builder.attribute("value", String.class, property.getName());
                 }
                 if (!property.isRequired()) {
@@ -125,12 +131,12 @@ public class ControllerContributor implements ProjectContributor {
     private void addDto(CustomJavaSourceCode sourceCode, Map<String, PropertyVO> dtos, String controllerName) {
         for (String dtoKey : dtos.keySet()) {
             PropertyVO dto = dtos.get(dtoKey);
-            CustomJavaTypeDeclaration dtoType = sourceCode.createCompilationUnit(doc.getServer().getPackageName() + ".dto." + controllerName.toLowerCase(), dto.getDtoName()).createTypeDeclaration(dto.getDtoName());
+            CustomJavaTypeDeclaration dtoType = sourceCode.createCompilationUnit(makeDtoPackageName(controllerName), dto.getDtoName()).createTypeDeclaration(dto.getDtoName());
             dtoType.modifiers(Modifier.PUBLIC);
             if (dto.getProperties() != null) {
                 for (PropertyVO property : dto.getProperties()) {
                     dtoType.addFieldDeclaration(CustomJavaFieldDeclaration.field(property.getName()).modifiers(Modifier.PRIVATE)
-                            .returning(property.getTypeForCode()));
+                            .returning(property.getJavaType(makeDtoPackageName(controllerName), false)));
                     dtoType.addMethodDeclaration(makeGetter(property));
                     dtoType.addMethodDeclaration(makeSetter(property));
                 }
@@ -138,20 +144,27 @@ public class ControllerContributor implements ProjectContributor {
         }
     }
 
+    private String makeDtoPackageName(String controllerName) {
+        if (controllerName == null) {
+            return null;
+        }
+        return doc.getServer().getPackageName() + ".dto." + controllerName.toLowerCase();
+    }
+
     private CustomJavaMethodDeclaration makeSetter(PropertyVO property) {
         return CustomJavaMethodDeclaration
                 .method("set" + camelToPascal(property.getName()))
                 .modifiers(Modifier.PUBLIC)
-                .parameters(makeParameter(property, null).get())
-                .body(new JavaExpressionStatement(new PlainJavaCode("this." + property.getName() + " = " + property.getName())));
+                .parameters(makeParameter(property, null, null).orElse(null))
+                .body(new JavaExpressionStatement(new PlainJavaCode("this." + property.getName() + " = " + property.getName(), null)));
     }
 
     private CustomJavaMethodDeclaration makeGetter(PropertyVO property) {
         return CustomJavaMethodDeclaration
                 .method("get" + camelToPascal(property.getName()))
                 .modifiers(Modifier.PUBLIC)
-                .returning(property.getTypeForCode())
-                .body(new JavaExpressionStatement(new PlainJavaCode("return this." + property.getName())));
+                .returning(property.getJavaType(null, false))
+                .body(new JavaExpressionStatement(new PlainJavaCode("return this." + property.getName(), null)));
     }
 
     private String camelToPascal(String name) {
