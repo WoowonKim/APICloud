@@ -1,12 +1,14 @@
 package com.web.apicloud.domain.vo;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.web.apicloud.util.code.java.JavaType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 @Builder
 @AllArgsConstructor
@@ -31,32 +33,32 @@ public class ApiVO {
 
     private Map<String, ResponseVO> responses;
 
-    // TODO: ResponseEntity로 묶을지
-    public String getReturning() {
-        if(responses == null || responses.get("success") == null
-            || responses.get("success").getResponseBody() == null) {
-            return "void";
+    @JsonIgnore
+    public JavaType getReturnJavaType(boolean isCreation, String packageName) {
+        if (responses == null || responses.get("success") == null
+                || responses.get("success").getResponseBody() == null) {
+            return JavaType.builder().type("Void").build();
         } else {
-            return responses.get("success").getResponseBody().getTypeForCode();
+            return responses.get("success").getResponseBody().getJavaType(packageName, isCreation);
         }
     }
 
-     public Map<String, PropertyVO> getAvailableDTO(Map<String, PropertyVO> dtos) {
-         if(requestBody != null) {
-             requestBody.getDtos(dtos);
-         }
-         if(queries != null) {
-             for(PropertyVO query : queries) {
-                 query.getDtos(dtos);
-             }
-         }
-         if(responses != null) {
-             for(ResponseVO response : responses.values()) {
-                 if(response.getResponseBody() != null) {
-                     response.getResponseBody().getDtos(dtos);
-                 }
-             }
-         }
-         return dtos;
-     }
+    @JsonIgnore
+    public void getAvailableDTO(Map<String, PropertyVO> dtos) {
+        if (requestBody != null) {
+            requestBody.getDtos(dtos);
+        }
+        if (queries != null) {
+            for (PropertyVO query : queries) {
+                query.getDtos(dtos);
+            }
+        }
+        if (responses != null) {
+            for (ResponseVO response : responses.values()) {
+                if (response.getResponseBody() != null) {
+                    response.getResponseBody().getDtos(dtos);
+                }
+            }
+        }
+    }
 }

@@ -132,6 +132,7 @@ public class ProjectWithControllerGenerationController {
         setIfNotEmpty(request::setPackageName, server.getPackageName());
         setIfNotEmpty(request::setPackaging, server.getPackaging());
         setIfNotEmpty(request::setJavaVersion, server.getJavaVersion());
+        request.setDependencies(server.getDependencies());
     }
 
     private void setIfNotEmpty(Consumer<String> setter, String str) {

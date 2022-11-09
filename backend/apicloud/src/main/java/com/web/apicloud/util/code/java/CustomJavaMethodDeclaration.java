@@ -18,111 +18,110 @@
 
 package com.web.apicloud.util.code.java;
 
+import com.web.apicloud.util.code.AnnotatableParameter;
+import io.spring.initializr.generator.language.Annotatable;
+import io.spring.initializr.generator.language.Annotation;
+import io.spring.initializr.generator.language.java.JavaStatement;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import com.web.apicloud.util.code.AnnotatableParameter;
-import io.spring.initializr.generator.language.Annotatable;
-import io.spring.initializr.generator.language.Annotation;
-import io.spring.initializr.generator.language.Parameter;
-import io.spring.initializr.generator.language.java.JavaStatement;
-
 public final class CustomJavaMethodDeclaration implements Annotatable {
 
-	private final List<Annotation> annotations = new ArrayList<>();
+    private final List<Annotation> annotations = new ArrayList<>();
 
-	private final String name;
+    private final String name;
 
-	private final String returnType;
+    private final JavaType returnType;
 
-	private final int modifiers;
+    private final int modifiers;
 
-	private final List<AnnotatableParameter> parameters;
+    private final List<AnnotatableParameter> parameters;
 
-	private final List<JavaStatement> statements;
+    private final List<JavaStatement> statements;
 
-	private CustomJavaMethodDeclaration(String name, String returnType, int modifiers, List<AnnotatableParameter> parameters,
-										List<JavaStatement> statements) {
-		this.name = name;
-		this.returnType = returnType;
-		this.modifiers = modifiers;
-		this.parameters = parameters;
-		this.statements = statements;
-	}
+    private CustomJavaMethodDeclaration(String name, JavaType returnType, int modifiers, List<AnnotatableParameter> parameters,
+                                        List<JavaStatement> statements) {
+        this.name = name;
+        this.returnType = returnType;
+        this.modifiers = modifiers;
+        this.parameters = parameters;
+        this.statements = statements;
+    }
 
-	public static Builder method(String name) {
-		return new Builder(name);
-	}
+    public static Builder method(String name) {
+        return new Builder(name);
+    }
 
-	String getName() {
-		return this.name;
-	}
+    String getName() {
+        return this.name;
+    }
 
-	String getReturnType() {
-		return this.returnType;
-	}
+    JavaType getReturnType() {
+        return this.returnType;
+    }
 
-	List<AnnotatableParameter> getParameters() {
-		return this.parameters;
-	}
+    List<AnnotatableParameter> getParameters() {
+        return this.parameters;
+    }
 
-	int getModifiers() {
-		return this.modifiers;
-	}
+    int getModifiers() {
+        return this.modifiers;
+    }
 
-	public List<JavaStatement> getStatements() {
-		return this.statements;
-	}
+    public List<JavaStatement> getStatements() {
+        return this.statements;
+    }
 
-	@Override
-	public void annotate(Annotation annotation) {
-		this.annotations.add(annotation);
-	}
+    @Override
+    public void annotate(Annotation annotation) {
+        this.annotations.add(annotation);
+    }
 
-	@Override
-	public List<Annotation> getAnnotations() {
-		return Collections.unmodifiableList(this.annotations);
-	}
+    @Override
+    public List<Annotation> getAnnotations() {
+        return Collections.unmodifiableList(this.annotations);
+    }
 
-	/**
-	 * Builder for creating a {@link CustomJavaMethodDeclaration}.
-	 */
-	public static final class Builder {
+    /**
+     * Builder for creating a {@link CustomJavaMethodDeclaration}.
+     */
+    public static final class Builder {
 
-		private final String name;
+        private final String name;
 
-		private List<AnnotatableParameter> parameters = new ArrayList<>();
+        private List<AnnotatableParameter> parameters = new ArrayList<>();
 
-		private String returnType = "void";
+        private JavaType returnType = JavaType.builder().type("void").build();
 
-		private int modifiers;
+        private int modifiers;
 
-		private Builder(String name) {
-			this.name = name;
-		}
+        private Builder(String name) {
+            this.name = name;
+        }
 
-		public Builder modifiers(int modifiers) {
-			this.modifiers = modifiers;
-			return this;
-		}
+        public Builder modifiers(int modifiers) {
+            this.modifiers = modifiers;
+            return this;
+        }
 
-		public Builder returning(String returnType) {
-			this.returnType = returnType;
-			return this;
-		}
+        public Builder returning(JavaType returnType) {
+            this.returnType = returnType;
+            return this;
+        }
 
-		public Builder parameters(AnnotatableParameter... parameters) {
-			this.parameters = Arrays.asList(parameters);
-			return this;
-		}
+        public Builder parameters(AnnotatableParameter... parameters) {
+            this.parameters = Arrays.asList(parameters);
+            return this;
+        }
 
-		public CustomJavaMethodDeclaration body(JavaStatement... statements) {
-			return new CustomJavaMethodDeclaration(this.name, this.returnType, this.modifiers, this.parameters,
-					Arrays.asList(statements));
-		}
+        public CustomJavaMethodDeclaration body(JavaStatement... statements) {
+            return new CustomJavaMethodDeclaration(this.name, this.returnType, this.modifiers, this.parameters,
+                    Arrays.asList(statements));
+        }
 
-	}
+    }
 
 }
