@@ -47,8 +47,6 @@ const Table = ({
   data,
   state,
   responseType,
-  setDepth,
-  depth,
 }: Props) => {
   const rootPath = state.data[selectedController].apis[selectedApi];
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -132,42 +130,6 @@ const Table = ({
       }
     }
     return levels.length + 1;
-  };
-
-  const deleteRow = (index: number, depth: number, propIndex?: number) => {
-    if (activeTab === 1) {
-      state.data[selectedController].apis[selectedApi].headers.splice(index, 1);
-    } else if (activeTab === 2 || activeTab === 3) {
-      const tab = activeTab === 3 ? "queries" : "parameters";
-      let rootPath =
-        depth === 2 && propIndex
-          ? state.data[selectedController].apis[selectedApi][tab][propIndex]
-              .properties
-          : state.data[selectedController].apis[selectedApi][tab];
-      rootPath.splice(index, 1);
-    } else if (activeTab === 4) {
-      let rootPath =
-        depth === 2 && propIndex
-          ? state.data[selectedController].apis[selectedApi].requestBody
-              .properties[propIndex].properties
-          : state.data[selectedController].apis[selectedApi].requestBody
-              .properties;
-
-      rootPath.splice(index, 1);
-    } else if (
-      activeTab === 5 &&
-      (responseType === "fail" || responseType === "success")
-    ) {
-      let rootPath =
-        depth === 2 && propIndex
-          ? state.data[selectedController].apis[selectedApi].responses[
-              responseType
-            ].responseBody.properties[propIndex].properties
-          : state.data[selectedController].apis[selectedApi].responses[
-              responseType
-            ].responseBody.properties;
-      rootPath.splice(index, 1);
-    }
   };
 
   const defaultColumn: Partial<ColumnDef<PropertiesType | HeadersType>> = {
@@ -467,12 +429,8 @@ const Table = ({
           propertiesIndex={propertiesIndex}
           responseType={responseType}
           handleBasicInfo={handleBasicInfo}
-          deleteRow={deleteRow}
           setPropertiesIndexList={setPropertiesIndexList}
           propertiesIndexList={propertiesIndexList}
-          setDepth={setDepth}
-          depth={depth}
-          setPropertiesIndex={setPropertiesIndex}
           setFinal={setFinal}
           final={final}
           getDepth={getDepth}

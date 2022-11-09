@@ -4,36 +4,20 @@ import {
   getCoreRowModel,
   flexRender,
 } from "@tanstack/react-table";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  ApisType,
-  ControllerType,
-  PropertiesType,
-} from "../../../pages/CreateApi/ApisType";
+import React, { useEffect, useMemo, useState } from "react";
+import { PropertiesType } from "../../../pages/CreateApi/ApisType";
 import "../ControllerAddModal/ControllerAddModal.scss";
 import { faInfo, faRemove } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SelectTypes from "../SelectTypes/SelectTypes";
-import { MappedTypeDescription } from "@syncedstore/core/types/doc";
 
 // ControllerAddModal에서 받아오는 props의 type 설정
 interface Props {
   data: PropertiesType[];
-  state: MappedTypeDescription<{
-    data: ControllerType[];
-  }>;
-  selectedController: number;
-  selectedApi: number;
   propertiesIndex: number;
-  responseType?: string;
   activeTab: number;
-  deleteRow: (index: number, depth: number, propIndex?: number) => void;
   setPropertiesIndexList: React.Dispatch<React.SetStateAction<number[]>>;
   propertiesIndexList: number[];
-  setDepth: React.Dispatch<React.SetStateAction<number>>;
-  depth: number;
-  setPropertiesIndex: React.Dispatch<React.SetStateAction<number>>;
-  test: number;
   getDepth: (
     idx: number,
     datas: PropertiesType[],
@@ -42,33 +26,20 @@ interface Props {
     isDelete: boolean
   ) => number;
   setModalDepth: React.Dispatch<React.SetStateAction<number>>;
-  setTest: React.Dispatch<React.SetStateAction<number>>;
   modalDepth: number;
   path: PropertiesType;
-  dtoName: string;
   final: PropertiesType | undefined;
 }
 const DtoModalTable = ({
   data,
-  state,
-  selectedApi,
-  selectedController,
   propertiesIndex,
   activeTab,
-  responseType,
-  deleteRow,
   setPropertiesIndexList,
   propertiesIndexList,
-  setDepth,
-  depth,
-  setPropertiesIndex,
-  test,
   getDepth,
   setModalDepth,
   modalDepth,
   path,
-  setTest,
-  dtoName,
   final,
 }: Props) => {
   const [plz, setPlz] = useState(data);
@@ -79,7 +50,6 @@ const DtoModalTable = ({
     cell: function Cell({ getValue, row: { index }, column: { id }, table }) {
       const initialValue = getValue<string>();
       const [value, setValue] = useState<string>(initialValue);
-      const rootPath = state.data[selectedController].apis[selectedApi];
 
       const onBlur = (temp?: string) => {
         table.options.meta?.updateData(index, id, temp ? temp : value);
@@ -103,6 +73,7 @@ const DtoModalTable = ({
       } else if (activeTab === 4 || activeTab === 5) {
         copyPath = copyPath.properties[propertiesIndex];
       }
+
       return id === "required" ? (
         <input
           value={value as string}

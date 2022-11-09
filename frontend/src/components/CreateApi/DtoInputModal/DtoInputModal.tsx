@@ -25,12 +25,8 @@ interface Props {
     depth: number,
     responseType: string
   ) => void;
-  deleteRow: (index: number, depth: number, propIndex?: number) => void;
   setPropertiesIndexList: React.Dispatch<React.SetStateAction<number[]>>;
   propertiesIndexList: number[];
-  setDepth: React.Dispatch<React.SetStateAction<number>>;
-  depth: number;
-  setPropertiesIndex: React.Dispatch<React.SetStateAction<number>>;
   setFinal: React.Dispatch<React.SetStateAction<PropertiesType | undefined>>;
   final: PropertiesType | undefined;
   getDepth: (
@@ -52,12 +48,8 @@ const DtoInputModal = ({
   propertiesIndex,
   responseType,
   handleBasicInfo,
-  deleteRow,
   setPropertiesIndexList,
   propertiesIndexList,
-  setDepth,
-  depth,
-  setPropertiesIndex,
   setFinal,
   final,
   getDepth,
@@ -66,7 +58,6 @@ const DtoInputModal = ({
 }: Props) => {
   const rootPath = state.data[selectedController].apis[selectedApi];
   const [modalDepth, setModalDepth] = useState(2);
-  const [test, setTest] = useState(-1);
 
   const index =
     propertiesIndexList[0] !== -1 ? propertiesIndexList[0] : propertiesIndex;
@@ -131,27 +122,16 @@ const DtoInputModal = ({
             >
               <FontAwesomeIcon icon={faPlus} className="plusIcon" />
             </button>
-
             <DtoModalTable
               data={JSON.parse(JSON.stringify(final.properties))}
-              state={state}
-              selectedController={selectedController}
-              selectedApi={selectedApi}
               propertiesIndex={propertiesIndex}
               activeTab={activeTab}
-              deleteRow={deleteRow}
               setPropertiesIndexList={setPropertiesIndexList}
               propertiesIndexList={propertiesIndexList}
-              setDepth={setDepth}
-              depth={depth}
-              setPropertiesIndex={setPropertiesIndex}
-              test={test}
               getDepth={getDepth}
               setModalDepth={setModalDepth}
               modalDepth={modalDepth}
               path={path}
-              setTest={setTest}
-              dtoName={final?.dtoName}
               final={final}
             />
           </div>
