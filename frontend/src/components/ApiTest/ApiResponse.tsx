@@ -30,7 +30,7 @@ const ApiResponse = () => {
   const end = "}";
   return (
     <div className="apiResponseContainer">
-      <p className="apiHeaderMainTitle">Response</p>
+      {/* <p className="apiHeaderMainTitle">Response</p> */}
       <span
         onClick={() => {
           flag(0);

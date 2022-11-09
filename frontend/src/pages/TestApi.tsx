@@ -37,13 +37,17 @@ const TestApi = () => {
           <div className="testInfomation">
             <ApiInputUri getInfo={getInfo} />
           </div>
-          <div className="testInfo">
-            <div className="testSetting">
+          <p className="apiHeaderMainTitle">Request</p>
+          <div className="testSetting">
+            <div className="testInfo">
               <ApiHeader getInfo={getInfo} />
+            </div>
+            <div className="testBodyInfo">
               <ApiBody getInfo={getInfo} />
             </div>
-            <ApiResponse />
           </div>
+          <p className="apiHeaderMainTitle">Response</p>
+          <ApiResponse />
         </div>
       </div>
     </div>
