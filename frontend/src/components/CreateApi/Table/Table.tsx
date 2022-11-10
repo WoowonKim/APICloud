@@ -32,7 +32,7 @@ interface Props {
   activeTab: number;
   selectedController: number;
   selectedApi: number;
-  data: PropertiesType[] | HeadersType[];
+  data: any;
   responseType?: string;
 }
 
@@ -133,11 +133,6 @@ const Table = ({
           setValue(id === "type" && temp === "List" ? "String" : temp);
         }
       };
-
-      useEffect(() => {
-        setValue(test);
-      }, [test]);
-
       return id === "required" ? (
         <input
           value={value as string}
@@ -206,8 +201,13 @@ const Table = ({
         </div>
       ) : (
         <input
-          value={test}
-          onChange={(e) => settest(e.target.value)}
+          type="text"
+          value={value}
+          onChange={(e) => {
+            settest(e.target.value);
+            setValue(e.target.value);
+            console.log(data[0].key);
+          }}
           onBlur={() => onBlur()}
           className="tableInput"
         />
@@ -492,6 +492,14 @@ const Table = ({
     <div>
       <input
         type="text"
+        value={test}
+        onChange={(e) => {
+          settest(e.target.value);
+        }}
+      />
+      <input
+        type="text"
+        value={test}
         onChange={(e) => {
           settest(e.target.value);
         }}

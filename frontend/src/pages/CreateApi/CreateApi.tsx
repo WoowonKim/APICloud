@@ -223,45 +223,23 @@ const CreateApi = () => {
                   activeTab === 1 &&
                   state.data.length > 0 &&
                   state.data[selectedController].apis.length > 0
-                    ? JSON.parse(
-                        JSON.stringify(
-                          state.data[selectedController].apis[selectedApi]
-                            .headers
-                        )
-                      )
+                    ? state.data[selectedController].apis[selectedApi].headers
                     : activeTab === 2 &&
                       state.data.length > 0 &&
                       state.data[selectedController].apis.length > 0
-                    ? JSON.parse(
-                        JSON.stringify(
-                          state.data[selectedController].apis[selectedApi]
-                            .parameters
-                        )
-                      )
+                    ? state.data[selectedController].apis[selectedApi]
+                        .parameters
                     : activeTab === 3 &&
                       state.data.length > 0 &&
                       state.data[selectedController].apis.length > 0
-                    ? JSON.parse(
-                        JSON.stringify(
-                          state.data[selectedController].apis[selectedApi]
-                            .queries
-                        )
-                      )
+                    ? state.data[selectedController].apis[selectedApi].queries
                     : activeTab === 4 &&
                       state.data.length > 0 &&
                       state.data[selectedController].apis.length > 0
-                    ? JSON.parse(
-                        JSON.stringify(
-                          state.data[selectedController].apis[selectedApi]
-                            .requestBody?.properties
-                        )
-                      )
-                    : JSON.parse(
-                        JSON.stringify(
-                          state.data[selectedController].apis[selectedApi]
-                            .responses.success.responseBody?.properties
-                        )
-                      )
+                    ? state.data[selectedController].apis[selectedApi]
+                        .requestBody?.properties
+                    : state.data[selectedController].apis[selectedApi].responses
+                        .success.responseBody?.properties
                 }
                 responseType={"success"}
               />
@@ -279,12 +257,10 @@ const CreateApi = () => {
                 activeTab={activeTab}
                 selectedController={selectedController}
                 selectedApi={selectedApi}
-                data={JSON.parse(
-                  JSON.stringify(
-                    state.data[selectedController].apis[selectedApi].responses
-                      .fail.responseBody?.properties
-                  )
-                )}
+                data={
+                  state.data[selectedController].apis[selectedApi].responses
+                    .fail.responseBody?.properties
+                }
                 responseType={"fail"}
               />
             </div>
