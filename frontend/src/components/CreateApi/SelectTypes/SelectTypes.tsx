@@ -1,6 +1,6 @@
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./SelectTypes.scss";
 
 interface Props {
@@ -11,7 +11,7 @@ interface Props {
     e: React.ChangeEvent<HTMLInputElement> | string,
     type: string,
     depth: number,
-    responseType?: string
+    responseType: string
   ) => void;
   responseType?: string;
   depth?: number;
@@ -32,12 +32,19 @@ const SelectTypes = ({
     value ? value : "String"
   );
 
+  useEffect(() => {
+    if (value) {
+      setSelectedMethod(value);
+    }
+  }, [value, selectedMethod]);
+
   const handleSelect = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
     const eventTarget = e.target as HTMLElement;
     setSelectedMethod(eventTarget.innerText);
     setVisible(!visible);
     if (handleBasicInfo && depth) {
-      handleBasicInfo(eventTarget.innerText, "type", depth, responseType);
+      const type = responseType ? responseType : "";
+      handleBasicInfo(eventTarget.innerText, "type", depth, type);
     }
     // Props에 해당 값이 있을 경우 함수 호출
     if (setValue && onBlur) {

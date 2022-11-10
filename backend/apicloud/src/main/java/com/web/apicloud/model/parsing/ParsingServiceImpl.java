@@ -24,14 +24,11 @@ public class ParsingServiceImpl implements ParsingService {
 
         int[] table = new int[patternLength];
 
-        int idx = 0; // 현재 대응되는 글자 수
+        int idx = 0;
         for (int i = 0; i < parentLength; i++) {
-            // idx번 글자와 짚더미의 해당 글자가 불일치할 경우,
-            // 현재 대응된 글자의 수를 table[idx-1]번으로 줄인다.
             while (idx > 0 && parent.charAt(i) != pattern.charAt(idx)) {
                 idx = table[idx - 1];
             }
-            // 글자가 대응될 경우
             if (parent.charAt(i) == pattern.charAt(idx)) {
                 if (idx == patternLength - 1) {
                     idx = table[idx];
@@ -53,7 +50,7 @@ public class ParsingServiceImpl implements ParsingService {
 
         if (targetIdx1 == -1 || targetIdx2 == -1) return null;
         String method = str.substring(targetIdx1 + 1, targetIdx2 - METHOD.length() + 1);
-        getMethod.add(method.toUpperCase());
+        getMethod.add(method);
 
         String uri = getValue(str);
         if (uri != null) getMethod.add(uri);

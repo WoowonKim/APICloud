@@ -9,12 +9,25 @@ import { useDispatch, useSelector } from "react-redux";
 import mainApiSlice, { deleteApiDoc } from "../../Store/slice/mainApi";
 import UpdateModal from "./UpdateModal";
 import { RootState } from "../../Store/store";
+import styled from "styled-components";
 
 interface Props {
   apiList: number;
   apiDocList: ApiDocType[];
   dispatchGetDocList: any;
 }
+const ListContent = styled.div`
+  display: flex;
+  justify-content: space-between;
+  background-color: ${(props) => props.theme.listBgColor};
+  color: black;
+  margin: 5px;
+  border-radius: 10px;
+  padding-left: 23px;
+  padding-right: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+`;
 
 const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
   const navigate = useNavigate();
@@ -24,7 +37,6 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
   const moveApidocs: any = (docId: number) => {
     dispatch(mainApiSlice.actions.setDocId({ docId: docId }));
     navigate(`/apiDocs/${docId}`);
-
   };
   const list = apiList === 0 ? apiDocList : apiDocList;
 
@@ -35,12 +47,13 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
       }
     });
   };
+  const nBB = `&nbsp &nbsp`;
 
   return (
     <div className="ApiListDetail">
       {isOpenUpdateModal && <UpdateModal></UpdateModal>}
       {apiDocList?.map((it, idx) => (
-        <div className="listContent" key={idx}>
+        <ListContent key={idx}>
           <p>{it.docId}</p>
           <div
             className="content"
@@ -81,7 +94,7 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
               )}
             </div>
           </div>
-        </div>
+        </ListContent>
       ))}
     </div>
   );

@@ -10,8 +10,21 @@ import { useAppDispatch, useAppSelector } from "../Store/hooks";
 import { mainApi } from "../Store/slice/mainApi";
 import { getApiRequestInfo } from "../Store/slice/testApi";
 import { RequestTypeInfo } from "./CreateApi/ApisType";
+import styled from "styled-components";
 
-const TestApi = () => {
+interface IHome {
+  isDarkMode: boolean;
+  toggleDarkMode: () => void;
+}
+
+const TestSide = styled.div`
+  width: 20%;
+  height: 91vh;
+  background-color: ${(props) => props.theme.sideBgClodr};
+  border-top: 1px solid ${(props) => props.theme.border};
+  border-right: 2px solid ${(props) => props.theme.border};
+`;
+const TestApi = ({ isDarkMode, toggleDarkMode }: IHome) => {
   const [getInfo, setGetInfo] = useState<RequestTypeInfo>();
   const dispatch = useAppDispatch();
   const getDocsId = useAppSelector(mainApi);
@@ -21,7 +34,6 @@ const TestApi = () => {
     dispatch(getApiRequestInfo({ docId: getDocsId.docId })).then((res: any) => {
       const json = res.payload.detail;
       const obj = JSON.parse(json);
-      console.log("OBJ => ", obj);
       setGetInfo(obj);
     });
   }, [getDocsId.docId]);
@@ -30,20 +42,24 @@ const TestApi = () => {
     <div>
       <Header />
       <div className="testContainer">
-        <div className="testSide">
+        <TestSide>
           <ApiSide getInfo={getInfo} />
-        </div>
+        </TestSide>
         <div className="testMain">
           <div className="testInfomation">
             <ApiInputUri getInfo={getInfo} />
           </div>
-          <div className="testInfo">
-            <div className="testSetting">
+          <p className="apiHeaderMainTitle">Request</p>
+          <div className="testSetting">
+            <div className="testInfo">
               <ApiHeader getInfo={getInfo} />
+            </div>
+            <div className="testBodyInfo">
               <ApiBody getInfo={getInfo} />
             </div>
-            <ApiResponse />
           </div>
+          <p className="apiHeaderMainTitle">Response</p>
+          <ApiResponse getInfo={getInfo} />
         </div>
       </div>
     </div>
