@@ -42,10 +42,7 @@ const DtoModalTable = ({
   path,
   final,
 }: Props) => {
-  const [plz, setPlz] = useState(data);
-  useEffect(() => {
-    setPlz(data);
-  }, [data, activeTab, final]);
+  useEffect(() => {}, [data, activeTab, final]);
   const defaultColumn: Partial<ColumnDef<PropertiesType>> = {
     cell: function Cell({ getValue, row: { index }, column: { id }, table }) {
       const initialValue = getValue<string>();

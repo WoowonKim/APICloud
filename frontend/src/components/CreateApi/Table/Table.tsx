@@ -153,12 +153,12 @@ const Table = ({
           ? activeTab === 5 &&
             (responseType === "fail" || responseType === "success") &&
             rootPath.responses[responseType].responseBody.properties[index]
-              .collectionType === "List"
+              ?.collectionType === "List"
           : activeTab === 3
-          ? rootPath.queries[index].collectionType === "List"
+          ? rootPath.queries[index]?.collectionType === "List"
           : activeTab === 4
-          ? rootPath.requestBody.properties[index].collectionType
-          : rootPath.parameters[index].collectionType;
+          ? rootPath.requestBody.properties[index]?.collectionType
+          : rootPath.parameters[index]?.collectionType;
 
       return id === "required" ? (
         <input
@@ -374,13 +374,13 @@ const Table = ({
         ? rootPath.requestBody
         : rootPath.parameters[index];
     let i = activeTab === 2 || activeTab === 3 ? 1 : 0;
+    if (depth !== 1 && (activeTab === 4 || activeTab === 5)) {
+      infoPath = infoPath.properties[index];
+    }
     for (i; i < depth - 1; i++) {
       if (propertiesIndexList[i] !== -1) {
         infoPath = infoPath.properties[propertiesIndexList[i]];
       }
-    }
-    if (i === 0 && (activeTab === 4 || activeTab === 5)) {
-      infoPath = infoPath.properties[index];
     }
     if (depth === 1) {
       if (typeof e !== "string" && key === "required") {
