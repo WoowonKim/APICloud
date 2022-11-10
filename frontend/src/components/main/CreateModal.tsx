@@ -13,6 +13,7 @@ import { useAppSelector } from "../../Store/hooks";
 import { selectUser } from "../../Store/slice/userSlice";
 import { axiosGet } from "../../util/axiosUtil";
 import { AnyArray } from "immer/dist/internal";
+import "./CreateModal.scss";
 
 export type DocInformationType = {
   docId: number;
@@ -139,108 +140,134 @@ const CreateModal = () => {
         <div className="modalContainer">
           <div className="modalMain">
             {isDefaultAvailable && (
-              <form onSubmit={onSubmit}>
+              <form className="modalForm" onSubmit={onSubmit}>
                 <p>생성하기</p>
-                <input
-                  className="docsName"
-                  type="text"
-                  placeholder="생성할 Docs 명을 작성해주세요"
-                  defaultValue={docsName}
-                  onChange={(e) => setDocsName(e.target.value)}
-                />
-                <input
-                  className="serverUrl"
-                  type="text"
-                  placeholder="생성할 serverUrl을 작성해주세요"
-                  onChange={(e) => setServerUrl(e.target.value)}
-                />
-                <input
-                  className="contextUrl"
-                  type="text"
-                  placeholder="생성할 contextUri를 작성해주세요"
-                  onChange={(e) => setContextUri(e.target.value)}
-                />
-                <div>
+                <div className="inputWrapper">
+                  <label htmlFor="docsName">Doc 이름</label>
+                  <input
+                    id="docsName"
+                    className="docsName"
+                    type="text"
+                    placeholder="생성할 Doc 이름을 작성해주세요"
+                    defaultValue={docsName}
+                    onChange={(e) => setDocsName(e.target.value)}
+                  />
+                </div>
+                <div className="inputWrapper">
+                  <label htmlFor="serverUrl">서버 URL</label>
+                  <input
+                    id="serverUrl"
+                    className="serverUrl"
+                    type="text"
+                    placeholder="생성할 서버 URL을 작성해주세요"
+                    onChange={(e) => setServerUrl(e.target.value)}
+                  />
+                </div>
+                <div className="inputWrapper">
+                  <label htmlFor="contextUri">Context URI</label>
+                  <input
+                    id="contextUri"
+                    className="contextUri"
+                    type="text"
+                    placeholder="생성할 context URI를 작성해주세요"
+                    onChange={(e) => setContextUri(e.target.value)}
+                  />
+                </div>
+                <div className="inputWrapper">
                   <label>Java Version</label>
-                  {creationInfo.javaVersion.values.map((version: any) => (
-                    <>
-                      <input
-                        type="radio"
-                        name="javaVersion"
-                        id={version.id}
-                        value={version.id}
-                        checked={javaVersion === version.id}
-                        onChange={(e) => setJavaVersion(e.target.value)}
-                        key={version.id}
-                      />
-                      <label htmlFor={version.id}>{version.name}</label>
-                    </>
-                  ))}
+                  <div className="radioWrapper">
+                    {creationInfo.javaVersion.values.map((version: any) => (
+                      <div key={version.id} className="radioBtnWrapper">
+                        <input
+                          type="radio"
+                          name="javaVersion"
+                          id={"java" + version.id}
+                          value={version.id}
+                          checked={javaVersion === version.id}
+                          onChange={(e) => setJavaVersion(e.target.value)}
+                        />
+                        <label htmlFor={"java" + version.id}>
+                          {version.name}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <div>
+                <div className="inputWrapper">
                   <label>Spring Boot</label>
-                  {creationInfo.bootVersion.values.map((version: any) => (
-                    <>
-                      <input
-                        type="radio"
-                        name="springVersion"
-                        id={version.id}
-                        value={version.id}
-                        checked={springVersion === version.id}
-                        onChange={(e) => setSpringVersion(e.target.value)}
-                        key={version.id}
-                      />
-                      <label htmlFor={version.id}>{version.id}</label>
-                    </>
-                  ))}
+                  <div className="radioWrapper">
+                    {creationInfo.bootVersion.values.map((version: any) => (
+                      <div key={version.id} className="radioBtnWrapper">
+                        <input
+                          type="radio"
+                          name="springVersion"
+                          id={version.id}
+                          value={version.id}
+                          checked={springVersion === version.id}
+                          onChange={(e) => setSpringVersion(e.target.value)}
+                        />
+                        <label htmlFor={version.id}>{version.name}</label>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <div>
+                <div className="inputWrapper">
                   <label>Build Management</label>
-                  {creationInfo.type.values.map((type: any) => (
-                    <>
-                      <input
-                        type="radio"
-                        name="buildManagement"
-                        id={type.id}
-                        value={type.id}
-                        checked={buildManagement === type.id}
-                        onChange={(e) => setBuildManagement(e.target.value)}
-                        key={type.id}
-                      />
-                      <label htmlFor={type.id}>{type.name}</label>
-                    </>
-                  ))}
+                  <div className="radioWrapper">
+                    {creationInfo.type.values.map((type: any) => (
+                      <div key={type.id} className="radioBtnWrapper">
+                        <input
+                          type="radio"
+                          name="buildManagement"
+                          id={type.id}
+                          value={type.id}
+                          checked={buildManagement === type.id}
+                          onChange={(e) => setBuildManagement(e.target.value)}
+                        />
+                        <label htmlFor={type.id}>{type.name}</label>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <input
-                  className="groupPackage"
-                  type="text"
-                  placeholder="생성할 groupPackage을 작성해주세요"
-                  defaultValue={groupPackage}
-                  onChange={(e) => setGroupPackage(e.target.value)}
-                />
-                <input
-                  className="packageName"
-                  type="text"
-                  placeholder="생성할 packageName을 작성해주세요"
-                  defaultValue={packageName}
-                  onChange={(e) => setPackageName(e.target.value)}
-                />
-                <div>
+                <div className="inputWrapper">
+                  <label htmlFor="groupPackage">Group Package</label>
+                  <input
+                    id="groupPackage"
+                    className="groupPackage"
+                    type="text"
+                    placeholder="생성할 group package를 작성해주세요"
+                    defaultValue={groupPackage}
+                    onChange={(e) => setGroupPackage(e.target.value)}
+                  />
+                </div>
+                <div className="inputWrapper">
+                  <label htmlFor="packageName">Package</label>
+                  <input
+                    id="packageName"
+                    className="packageName"
+                    type="text"
+                    placeholder="생성할 package를 작성해주세요"
+                    defaultValue={packageName}
+                    onChange={(e) => setPackageName(e.target.value)}
+                  />
+                </div>
+                <div className="inputWrapper">
                   <label>Packaging</label>
-                  {creationInfo.packaging.values.map((p: any) => (
-                    <>
-                      <input
-                        type="radio"
-                        name="packaging"
-                        id={p.id}
-                        value={p.id}
-                        checked={packaging === p.id}
-                        onChange={(e) => setPackaging(e.target.value)}
-                        key={p.id}
-                      />
-                      <label htmlFor={p.id}>{p.name}</label>
-                    </>
-                  ))}
+                  <div className="radioWrapper">
+                    {creationInfo.packaging.values.map((p: any) => (
+                      <div key={p.id} className="radioBtnWrapper">
+                        <input
+                          type="radio"
+                          name="packaging"
+                          id={p.id}
+                          value={p.id}
+                          checked={packaging === p.id}
+                          onChange={(e) => setPackaging(e.target.value)}
+                        />
+                        <label htmlFor={p.id}>{p.name}</label>
+                      </div>
+                    ))}
+                  </div>
                 </div>
                 <p>초대하기</p>
                 <input

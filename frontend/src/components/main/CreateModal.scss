@@ -1,0 +1,87 @@
+.modalForm {
+  margin-left: 10px;
+  font-size: 10px;
+}
+
+.modalForm p {
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.inputWrapper {
+  width: 90%;
+  margin-bottom: 20px;
+  height: 2rem;
+  display: inline-block;
+}
+
+.radioBtnWrapper {
+  padding: 3px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.inputWrapper > radioWrapper {
+  display: inline-block;
+}
+
+.radioBtnWrapper > label,
+.radioBtnWrapper > input {
+  cursor: pointer;
+}
+
+.inputWrapper > label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: bold;
+  width: 40%;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.inputWrapper > input {
+  display: inline-block;
+  border: none;
+  width: 100%;
+  font-size: 10px;
+  border-bottom: 1px solid #000000;
+}
+
+.inputWrapper > input:focus {
+  outline: none;
+  border-bottom: 2px solid #3a00e5;
+  transition: 200ms ease-in-out;
+}
+
+input[type="radio"],
+input[type="radio"]:checked {
+  appearance: none;
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 100%;
+  margin-right: 0.2rem;
+}
+
+input[type="radio"] {
+  background-color: #fff;
+  border: 1px solid #000;
+}
+input[type="radio"]:checked {
+  border: 1px solid #3a00e5;
+  background-color: #3a00e5;
+}
+input[type="radio"]:hover {
+  border: 1px solid #3a00e5;
+}
+
+.modalContainer {
+  overflow-y: scroll;
+}
+
+.modalContainer::-webkit-scrollbar {
+  width: 5px; /* 스크롤바의 너비 */
+}
+
+.modalContainer::-webkit-scrollbar-track {
+  background: #ffffff; /*스크롤바 뒷 배경 색상*/
+}
