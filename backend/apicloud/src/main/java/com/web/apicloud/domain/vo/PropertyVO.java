@@ -2,7 +2,7 @@ package com.web.apicloud.domain.vo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.web.apicloud.util.Message;
+import com.web.apicloud.util.code.java.JavaType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,6 +20,8 @@ public class PropertyVO {
     static final String DTO_CREATE_TYPE = "Object";
 
     static final String LIST = "List";
+    static final String JAVA_UTIL = "java.util.";
+    private static final String ARRAY_LIST = "ArrayList";
 
     private String dtoName;
 
@@ -52,19 +54,27 @@ public class PropertyVO {
     }
 
     @JsonIgnore
-    public String getTypeForCode() {
-        String type;
-        if (isDtoCreationRequired()) {
-            type = dtoName;
-        } else {
-            type = this.type;
-        }
-
+    public JavaType getJavaType(String packageName, boolean isImplemented) {
+        JavaType type = JavaType.builder().type(makeTypeWithPackage(packageName)).build();
         if (LIST.equals(collectionType)) {
-            return LIST + "<" + type + ">";
+            return JavaType.builder().type(JAVA_UTIL + (isImplemented ? ARRAY_LIST : LIST))
+                    .genericType(type).build();
         } else {
             return type;
         }
+    }
+
+    private String makeTypeWithPackage(String packageName) {
+        String type = "";
+        if (isDtoCreationRequired()) {
+            if (packageName != null) {
+                type = packageName + ".";
+            }
+            type += dtoName;
+        } else {
+            type = this.type;
+        }
+        return type;
     }
 
     @JsonIgnore

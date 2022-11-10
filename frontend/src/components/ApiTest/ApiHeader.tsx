@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { RequestTypeInfo } from "../../pages/CreateApi/ApisType";
+import ApiBody from "./ApiBody";
 import Headerheader from "./Headerheader";
 import HeaderToken from "./HeaderToken";
 
@@ -11,7 +12,6 @@ const ApiHeader = ({ getInfo }: type) => {
   const [headerTokenFlag, setHeaderTokenFlag] = useState<number | null>(0);
   return (
     <div className="apiHeaderContainer">
-      <p className="apiHeaderMainTitle">Request</p>
       <span
         className={headerTokenFlag === 0 ? "headerClickList" : "headerNoClicklist"}
         onClick={() => {
@@ -20,7 +20,15 @@ const ApiHeader = ({ getInfo }: type) => {
       >
         Header
       </span>
-      <div className="headerList">{headerTokenFlag === 0 ? <Headerheader getInfo={getInfo} /> : <HeaderToken />}</div>
+      <span
+        className={headerTokenFlag === 1 ? "headerClickList" : "headerNoClicklist"}
+        onClick={() => {
+          setHeaderTokenFlag(1);
+        }}
+      >
+        Token
+      </span>
+      <div className="">{headerTokenFlag === 0 && <Headerheader getInfo={getInfo} />}</div>
     </div>
   );
 };

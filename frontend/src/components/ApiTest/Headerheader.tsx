@@ -19,13 +19,13 @@ const Headerheader = ({ getInfo }: type) => {
     }
   }, [getInfo, info.getControllerInfomation, info.getApisInfomation]);
   return (
-    <>
+    <div className="headerContainerList">
       <div className="headerListTitle">
-        <p>CollectionType :</p>
-        <p>DtoName :</p>
-        <p>Type :</p>
-        <p>Token :</p>
-        <p>Cookie :</p>
+        <p>CollectionType </p>
+        <p>DtoName </p>
+        <p>Type </p>
+        <p>Token </p>
+        <p>Cookie </p>
       </div>
       <div className="headerListContent">
         <p>
@@ -55,8 +55,26 @@ const Headerheader = ({ getInfo }: type) => {
             }}
           />
         </p>
+        <p>
+          <input
+            type="text"
+            value={getType}
+            onChange={(e) => {
+              setGetType(e.target.value);
+            }}
+          />
+        </p>
+        <p>
+          <input
+            type="text"
+            value={getType}
+            onChange={(e) => {
+              setGetType(e.target.value);
+            }}
+          />
+        </p>
       </div>
-    </>
+    </div>
   );
 };
 

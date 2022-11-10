@@ -32,95 +32,95 @@ import java.util.List;
  */
 public final class CustomJavaFieldDeclaration implements Annotatable {
 
-	private final List<Annotation> annotations = new ArrayList<>();
+    private final List<Annotation> annotations = new ArrayList<>();
 
-	private final int modifiers;
+    private final int modifiers;
 
-	private final String name;
+    private final String name;
 
-	private final String returnType;
+    private final JavaType returnType;
 
-	private final Object value;
+    private final Object value;
 
-	private final boolean initialized;
+    private final boolean initialized;
 
-	private CustomJavaFieldDeclaration(Builder builder) {
-		this.modifiers = builder.modifiers;
-		this.name = builder.name;
-		this.returnType = builder.returnType;
-		this.value = builder.value;
-		this.initialized = builder.initialized;
-	}
+    private CustomJavaFieldDeclaration(Builder builder) {
+        this.modifiers = builder.modifiers;
+        this.name = builder.name;
+        this.returnType = builder.returnType;
+        this.value = builder.value;
+        this.initialized = builder.initialized;
+    }
 
-	public static Builder field(String name) {
-		return new Builder(name);
-	}
+    public static Builder field(String name) {
+        return new Builder(name);
+    }
 
-	@Override
-	public void annotate(Annotation annotation) {
-		this.annotations.add(annotation);
-	}
+    @Override
+    public void annotate(Annotation annotation) {
+        this.annotations.add(annotation);
+    }
 
-	@Override
-	public List<Annotation> getAnnotations() {
-		return Collections.unmodifiableList(this.annotations);
-	}
+    @Override
+    public List<Annotation> getAnnotations() {
+        return Collections.unmodifiableList(this.annotations);
+    }
 
-	public int getModifiers() {
-		return this.modifiers;
-	}
+    public int getModifiers() {
+        return this.modifiers;
+    }
 
-	public String getName() {
-		return this.name;
-	}
+    public String getName() {
+        return this.name;
+    }
 
-	public String getReturnType() {
-		return this.returnType;
-	}
+    public JavaType getReturnType() {
+        return this.returnType;
+    }
 
-	public Object getValue() {
-		return this.value;
-	}
+    public Object getValue() {
+        return this.value;
+    }
 
-	public boolean isInitialized() {
-		return this.initialized;
-	}
+    public boolean isInitialized() {
+        return this.initialized;
+    }
 
-	/**
-	 * Builder for creating a {@link CustomJavaFieldDeclaration}.
-	 */
-	public static final class Builder {
+    /**
+     * Builder for creating a {@link CustomJavaFieldDeclaration}.
+     */
+    public static final class Builder {
 
-		private final String name;
+        private final String name;
 
-		private String returnType;
+        private JavaType returnType;
 
-		private int modifiers;
+        private int modifiers;
 
-		private Object value;
+        private Object value;
 
-		private boolean initialized;
+        private boolean initialized;
 
-		private Builder(String name) {
-			this.name = name;
-		}
+        private Builder(String name) {
+            this.name = name;
+        }
 
-		public Builder modifiers(int modifiers) {
-			this.modifiers = modifiers;
-			return this;
-		}
+        public Builder modifiers(int modifiers) {
+            this.modifiers = modifiers;
+            return this;
+        }
 
-		public Builder value(Object value) {
-			this.value = value;
-			this.initialized = true;
-			return this;
-		}
+        public Builder value(Object value) {
+            this.value = value;
+            this.initialized = true;
+            return this;
+        }
 
-		public CustomJavaFieldDeclaration returning(String returnType) {
-			this.returnType = returnType;
-			return new CustomJavaFieldDeclaration(this);
-		}
+        public CustomJavaFieldDeclaration returning(JavaType returnType) {
+            this.returnType = returnType;
+            return new CustomJavaFieldDeclaration(this);
+        }
 
-	}
+    }
 
 }

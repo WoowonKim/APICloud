@@ -10,7 +10,7 @@ interface Props {
     e: React.ChangeEvent<HTMLInputElement> | string,
     type: string,
     depth: number,
-    responseType?: string
+    responseType: string
   ) => void;
   selectedController: number;
   selectedApi: number;
@@ -42,7 +42,7 @@ const TableInfo = ({
                 className="tableInfoInput"
                 type="text"
                 id={`dtoName${activeTab}`}
-                onChange={(e) => handleBasicInfo(e, "dtoName", 1)}
+                onChange={(e) => handleBasicInfo(e, "dtoName", 1, "")}
                 value={
                   state.data[selectedController].apis[selectedApi].requestBody
                     .dtoName
@@ -58,7 +58,7 @@ const TableInfo = ({
               className="tableInfoInput"
               type="text"
               id={`name${activeTab}`}
-              onChange={(e) => handleBasicInfo(e, "name", 1)}
+              onChange={(e) => handleBasicInfo(e, "name", 1, "")}
               value={
                 state.data[selectedController].apis[selectedApi].requestBody
                   .name
@@ -85,7 +85,7 @@ const TableInfo = ({
               className="tableInfoInput"
               type="checkbox"
               id={`required${activeTab}`}
-              onChange={(e) => handleBasicInfo(e, "required", 1)}
+              onChange={(e) => handleBasicInfo(e, "required", 1, "")}
               checked={
                 state.data[selectedController].apis[selectedApi].requestBody
                   .required

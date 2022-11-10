@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useAppDispatch } from "../../Store/hooks";
 import "./ApiTest.scss";
 import styled from "styled-components";

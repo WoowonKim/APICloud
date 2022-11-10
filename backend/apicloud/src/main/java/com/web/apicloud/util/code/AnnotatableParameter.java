@@ -1,19 +1,25 @@
 package com.web.apicloud.util.code;
 
+import com.web.apicloud.util.code.java.JavaType;
 import io.spring.initializr.generator.language.Annotatable;
 import io.spring.initializr.generator.language.Annotation;
-import io.spring.initializr.generator.language.Parameter;
+import lombok.Builder;
+import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class AnnotatableParameter extends Parameter implements Annotatable {
-
+@Data
+@Builder
+public class AnnotatableParameter implements Annotatable {
+    private JavaType type;
+    private String name;
     private final List<Annotation> annotations = new ArrayList<>();
 
-    public AnnotatableParameter(String type, String name) {
-        super(type, name);
+    public AnnotatableParameter(JavaType type, String name) {
+        this.type = type;
+        this.name = name;
     }
 
     @Override
