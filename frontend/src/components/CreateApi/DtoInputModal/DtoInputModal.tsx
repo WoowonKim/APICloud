@@ -1,4 +1,4 @@
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { MappedTypeDescription } from "@syncedstore/core/types/doc";
 import React, { useEffect, useState } from "react";
@@ -7,6 +7,7 @@ import {
   PropertiesType,
 } from "../../../pages/CreateApi/ApisType";
 import DtoModalTable from "../DtoModalTable/DtoModalTable";
+import { handleDtoProperties } from "../validationCheck";
 import "./DtoInputModal.scss";
 
 interface Props {
@@ -38,6 +39,9 @@ interface Props {
   ) => number;
   setNameList: React.Dispatch<React.SetStateAction<string[]>>;
   nameList: string[];
+  dtoData: any;
+  dtoExists: boolean;
+  currentDtoData: any;
 }
 const DtoInputModal = ({
   setIsModalVisible,
@@ -55,9 +59,13 @@ const DtoInputModal = ({
   getDepth,
   setNameList,
   nameList,
+  dtoData,
+  dtoExists,
+  currentDtoData,
 }: Props) => {
   const rootPath = state.data[selectedController].apis[selectedApi];
   const [modalDepth, setModalDepth] = useState(2);
+  const [visible, setVisible] = useState(false);
 
   const index =
     propertiesIndexList[0] !== -1 ? propertiesIndexList[0] : propertiesIndex;
@@ -101,17 +109,53 @@ const DtoInputModal = ({
               )}
           </div>
           {final && (
-            <input
-              type="text"
-              id="dtoModalDtoName"
-              placeholder="DtoName"
-              onChange={(e) => {
-                const type = responseType ? responseType : "";
-                handleBasicInfo(e, "dtoName", 0, type);
-              }}
-              autoFocus
-              value={final?.dtoName}
-            />
+            <div className="dtoModalInputGroup">
+              <input
+                type="text"
+                id="dtoModalDtoName"
+                placeholder="DtoName"
+                onChange={(e) => {
+                  const type = responseType ? responseType : "";
+                  handleBasicInfo(e, "dtoName", 0, type);
+                }}
+                autoFocus
+                value={final?.dtoName}
+              />
+              {dtoExists && dtoData && dtoData.dtoName === final.dtoName && (
+                <FontAwesomeIcon
+                  icon={faCheck}
+                  className="dtoCheckIcon"
+                  onClick={() => setVisible(!visible)}
+                />
+              )}
+            </div>
+          )}
+          {visible && dtoExists && dtoData && (
+            <div className="tableInfoDtoContainer">
+              {dtoData.dtoName}
+              {dtoData.properties.length > 0 &&
+                dtoData.properties.map((item: any, index: number) => (
+                  <div key={index} className="tableInfoDtoPropertiesContainer">
+                    <span>{item.name}</span>
+                    {item.collectionType === "List" ? (
+                      <span>{`<List>${item.type}`}</span>
+                    ) : (
+                      <span>{item.type}</span>
+                    )}
+                    <span>{item.required}</span>
+                  </div>
+                ))}
+              {final && (
+                <button
+                  className="tableInfoUseCurrentDtoButton"
+                  onClick={() => {
+                    handleDtoProperties(currentDtoData);
+                  }}
+                >
+                  {dtoData.dtoName} 사용하기
+                </button>
+              )}
+            </div>
           )}
         </div>
         {final?.properties && (

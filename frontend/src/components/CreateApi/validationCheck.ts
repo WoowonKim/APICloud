@@ -99,7 +99,5 @@ export function checkDtoNameValidation(
 }
 
 export function handleDtoProperties(path: any) {
-  console.log(JSON.parse(JSON.stringify(path)));
-
   path.properties = [];
 }

@@ -89,14 +89,15 @@ const DtoModalTable = ({
         />
       ) : id === "type" ? (
         <div className="typeInfoContainer">
-          {copyPath && copyPath.properties[index].collectionType === "List" && (
-            <SelectTypes
-              onBlur={onBlur}
-              setValue={setValue}
-              value={"List"}
-              isCollection={true}
-            />
-          )}
+          {copyPath?.properties.length > index &&
+            copyPath.properties[index].collectionType === "List" && (
+              <SelectTypes
+                onBlur={onBlur}
+                setValue={setValue}
+                value={"List"}
+                isCollection={true}
+              />
+            )}
           <SelectTypes onBlur={onBlur} setValue={setValue} value={value} />
           {value === "Object" && (
             <FontAwesomeIcon
