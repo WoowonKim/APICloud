@@ -2,7 +2,9 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
 import { axiosGet } from "../../util/axiosUtil";
 
-const initialState = {};
+const initialState = {
+  isOpenExtractModal: false,
+};
 
 // 특정 API DOC Detail 조회하기
 export const getApiDetail: any = createAsyncThunk(
@@ -20,7 +22,11 @@ export const getApiDetail: any = createAsyncThunk(
 const apiDocsApiSlice = createSlice({
   name: "mainApi",
   initialState,
-  reducers: {},
+  reducers: {
+    setIsOpenExtractModal(state, action) {
+      state.isOpenExtractModal = action.payload.isOpenExtractModal;
+    },
+  },
   extraReducers: {
     [getApiDetail.fulfilled]: (state, action) => {
       if (action.meta.requestStatus === "fulfilled") {

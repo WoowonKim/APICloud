@@ -7,8 +7,17 @@ import { useSyncedStore } from "@syncedstore/react";
 import { store } from "../../components/CreateApi/store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../Store/store";
+import apiDocsApiSlice from "../../Store/slice/apiDocsApi";
+import ExtractModal from "./ExtractModal";
 
 const CreateApi = () => {
+  const dispatch = useDispatch();
+
+  const isOpenExtractModal = useSelector(
+    (state: RootState) => state.apiDocsApi.isOpenExtractModal
+  );
   // api 정보를 저장할 state
   const [apiData, setApiData] = useState<ApisType>({
     name: "",
@@ -161,7 +170,19 @@ const CreateApi = () => {
           <div className="buttonContainer">
             <button>공유</button>
             <button>동기화</button>
-            <button>추출</button>
+            <button
+              type="button"
+              onClick={() =>
+                dispatch(
+                  apiDocsApiSlice.actions.setIsOpenExtractModal({
+                    isOpenExtractModal: true,
+                  })
+                )
+              }
+            >
+              추출
+            </button>
+            {isOpenExtractModal && <ExtractModal></ExtractModal>}
           </div>
         </div>
         <div className="infoContainer">
