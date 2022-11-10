@@ -3,13 +3,11 @@ import { Action } from "@remix-run/router";
 import { axiosGet } from "../../util/axiosUtil";
 import { RootState } from "../store";
 
-/**
- * header.contentType => controllers.headers.value
- */
-
 const initialState = {
   getControllerInfomation: 0,
   getApisInfomation: 0,
+  getRequest: 0,
+  getIsDarkMode: false,
 };
 
 // API 조회 하기.
@@ -26,11 +24,19 @@ const testApiSlice = createSlice({
   name: "testApi",
   initialState,
   reducers: {
+    setGlobalDarkMode(state, action) {
+      console.log("ACTION ->", action.payload);
+
+      state = action.payload;
+    },
     addController(state, action) {
       state.getControllerInfomation = action.payload;
     },
     addApis(state, action) {
       state.getApisInfomation = action.payload;
+    },
+    addRequest(state, action) {
+      state.getRequest = action.payload;
     },
   },
   extraReducers: {

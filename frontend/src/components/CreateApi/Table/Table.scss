@@ -91,7 +91,7 @@ td,
 }
 
 .tableInfoGroup {
-  margin: 10px 0 2rem 0;
+  margin: 10px 0 1rem 0;
   display: flex;
   .tableInfoInputGroup {
     display: flex;
@@ -156,5 +156,66 @@ td,
     padding: 3px;
     width: 15px;
     height: 15px;
+  }
+}
+
+.dtoInputGroup {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-bottom: 1px solid black;
+  margin: 1rem 1rem 0 0;
+  .dtoInput {
+    outline: none;
+    border: none;
+    font-size: 1.1em;
+  }
+  .dtoCheckIcon {
+    color: tomato;
+    padding: 2px;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
+
+.tableInfoDtoContainer {
+  position: absolute;
+  top: 24rem;
+  background-color: white;
+  z-index: 5;
+  width: auto;
+  height: auto;
+  padding: 20px 20px;
+  margin: 10px 10px 10px 300px;
+  border-radius: 10px;
+  box-shadow: 1px 1px 25px -15px rgba(0, 0, 0, 0.92);
+  .tableInfoDtoPropertiesContainer {
+    margin: 0 0 0 20px;
+  }
+}
+
+.tableInfoWarningText {
+  color: tomato;
+  font-size: 0.7em;
+  font-weight: bold;
+}
+
+.tableInfoUseCurrentDtoButton {
+  width: 100%;
+  word-break: keep-all;
+  border: none;
+  outline: none;
+  background-color: #f7f5ff;
+  color: #3a00e5;
+  padding: 10px 15px;
+  border-radius: 15px;
+  text-align: center;
+  margin: 10px 0;
+  font-size: 0.8em;
+  font-family: "twayair";
+  &:hover {
+    opacity: 0.7;
+    transition: all 300ms ease-in;
   }
 }

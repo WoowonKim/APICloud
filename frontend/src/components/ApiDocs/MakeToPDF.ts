@@ -6,7 +6,7 @@ const MakeToPDF = () => {
     // html to imageFile
     const paper: any = document.querySelector(".doc");
     const canvas: any = await html2canvas(paper);
-    const imageFile = canvas.toDataURL("image/png", 4.0);
+    const imageFile = canvas.toDataURL("image/png", 6.0);
     return imageFile
   }
 

@@ -14,16 +14,30 @@
     .docBox {
       margin: auto;
       background-color: #F7F5FF;
-      width: 60vw;
+      width: 595px;
       padding-top: 10vh;
       .title {
         margin: auto;
         font-size: 40px;
       }
-      .doc {
+      .doc1 {
         padding: 0px;
         width: 595px;
-        height: 842px;
+        background-color: white;
+        word-break: break-all;
+        .docTitleWrapper {
+          display: flex;
+          justify-content: center;
+          .docTitle {
+            align-items: center;
+          }
+        }
+      }
+      .doc2 {
+        display: flex;
+        justify-content: center;
+        padding: 0px;
+        width: 595px;
         background-color: white;
         word-break: break-all;
         .docTitleWrapper {

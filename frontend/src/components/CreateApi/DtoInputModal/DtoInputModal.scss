@@ -30,16 +30,25 @@
   margin: 1rem 0 1rem 50px;
 }
 
-#dtoModalName,
-#dtoModalDtoName {
-  border: none;
-  outline: none;
-  font-size: 2em;
-}
-
-#dtoModalName {
-  border-bottom: 1px solid black;
-  font-size: 1em;
+.dtoModalInputGroup {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-bottom: 1px solid #dadada;
+  padding: 0 5px 0 0;
+  #dtoModalDtoName {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 2em;
+  }
+  .dtoCheckIcon {
+    color: tomato;
+    padding: 2px;
+    &:hover {
+      cursor: pointer;
+    }
+  }
 }
 
 .dtoModalInputGroup {
@@ -54,4 +63,20 @@
 .dtoModalTableContainer {
   display: flex;
   align-items: flex-end;
+}
+
+.tableInfoDtoContainer {
+  position: absolute;
+  top: 4rem;
+  background-color: white;
+  z-index: 5;
+  width: auto;
+  height: auto;
+  padding: 20px 20px;
+  margin: 10px 10px 10px 300px;
+  border-radius: 10px;
+  box-shadow: 1px 1px 25px -15px rgba(0, 0, 0, 0.92);
+  .tableInfoDtoPropertiesContainer {
+    margin: 0 0 0 20px;
+  }
 }
