@@ -24,6 +24,7 @@ import java.util.*;
 @Service
 public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
 
+    private static final String IMPORT = "import";
     private static final String REQUEST_MAPPING = "@RequestMapping";
     private static final String VALUE = "value";
     private static final String METHOD = "Mapping";
@@ -31,6 +32,12 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
     private static final String REQUEST_PARAM = "RequestParam";
     private static final String PATH_VARIABLE = "PathVariable";
     private static final String REQUEST_BODY = "RequestBody";
+
+    private static final String IMPORT_PATH_VARIABLE = "org.springframework.web.bind.annotation.PathVariable";
+    private static final String IMPORT_REQUEST_PARAM = "org.springframework.web.bind.annotation.RequestParam";
+    private static final String IMPORT_REQUEST_BODY = "org.springframework.web.bind.annotation.RequestBody";
+    private static final String IMPORT_ANNOTATION = "org.springframework.web.bind.annotation.*";
+    private static final String IMPORT_LIST = "java.util.List";
 
     private static final String NOT_FOUND_FILE = "해당 파일을 찾을 수 없습니다.";
 
@@ -41,6 +48,9 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private static List<CodeResponse> codeList = new ArrayList<>();
+    private Map<String, String> importList = new HashMap<>();
+    private List<String> updateImport = new ArrayList<>();
+
     private StringBuffer sb = new StringBuffer();
 
     private int count = 0;
@@ -51,6 +61,8 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
         codeList = new ArrayList<>();
         count = 0;
         etcFlag = false;
+        importList = new HashMap<>();
+        updateImport = new ArrayList<>();
 
         ControllerVO detailVO = objectMapper.readValue(detailRequest.getDetail(), ControllerVO.class);
         Docs doc = docsService.findByDocsId(docId);
@@ -61,12 +73,34 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
 
         codeList.add(CodeResponse.builder().name(detailVO.getName()).code(lines).build());
         getUpdateCode(detailVO);
+        getUpdateImport();
         return codeList;
+    }
+
+    private void getUpdateImport() {
+        if (updateImport.size() == 0) return;
+        int i = 0;
+        while (i < codeList.get(0).getCode().size()) {
+            if (parsingService.KMP(codeList.get(0).getCode().get(i++), "package") != -1) break;
+        }
+        if (!codeList.get(0).getCode().get(i).equals("")) codeList.get(0).getCode().add(i, "");
+        i++;
+        updateImport.add(0, "//추가된 import");
+        updateImport.add("");
+
+        System.out.println(updateImport);
+        codeList.get(0).getCode().addAll(i, updateImport);
     }
 
     private void getUpdateCode(ControllerVO detailVO) {
         int i = 0;
+
         while (i < codeList.get(0).getCode().size()) {
+            if (parsingService.KMP(codeList.get(0).getCode().get(i), IMPORT) != -1) {
+                String importStr = codeList.get(0).getCode().get(i).replace(IMPORT, "");
+                importStr = importStr.replaceFirst(" ", "");
+                importList.put(StringUtils.removeEnd(importStr, ";"), IMPORT);
+            }
             if (parsingService.KMP(codeList.get(0).getCode().get(i), REQUEST_MAPPING) != -1) {
                 int target = parsingService.KMP(codeList.get(0).getCode().get(i), VALUE);
                 String value = null;
@@ -85,6 +119,7 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
             }
             i++;
         }
+        System.out.println(importList);
 
         int start = i;
         while (i < codeList.get(0).getCode().size()) {
@@ -161,7 +196,7 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
                                 } else {
                                     codeList.get(0).getCode().set(start, codeList.get(0).getCode().get(start).replace(response, responseBody.getDtoName()));
                                 }
-                                // TODO : response CLass 바꾸러 가기
+                                // TODO : response CLass 바꾸러 가기,  import 추가
                                 methodNameFlag = true;
                             }
                         }
@@ -253,6 +288,12 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
         String api = "";
 
         if (detailApiVO.getParameters() != null) {
+            if (detailApiVO.getParameters().size() != 0) {
+                if (importList.get(IMPORT_ANNOTATION) == null && importList.get(IMPORT_PATH_VARIABLE) == null) {
+                    importList.put(IMPORT_PATH_VARIABLE, IMPORT);
+                    updateImport.add(IMPORT + " " + IMPORT_PATH_VARIABLE + ";");
+                }
+            }
             for (int p = 0; p < detailApiVO.getParameters().size(); p++) {
                 PropertyVO path = detailApiVO.getParameters().get(p);
                 String pathStr = "";
@@ -263,6 +304,12 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
             }
         }
         if (detailApiVO.getQueries() != null) {
+            if (detailApiVO.getQueries().size() != 0) {
+                if (importList.get(IMPORT_ANNOTATION) == null && importList.get(IMPORT_REQUEST_PARAM) == null) {
+                    importList.put(IMPORT_REQUEST_PARAM, IMPORT);
+                    updateImport.add(IMPORT + " " + IMPORT_REQUEST_PARAM + ";");
+                }
+            }
             for (int p = 0; p < detailApiVO.getQueries().size(); p++) {
                 PropertyVO query = detailApiVO.getQueries().get(p);
                 String queryStr = "";
@@ -271,11 +318,11 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
 
                 String type;
                 if (query.getType().equals("Object")) {
-                    // TODO: property 업데이트 하러 가기
+                    // TODO: property 업데이트 하러 가기, import 추가
                     type = query.getDtoName();
                 } else type = query.getType();
                 if (query.getCollectionType() != null) {
-                    // TODO: import 추가
+                    if (importList.get(IMPORT_LIST) == null) updateImport.add(IMPORT + " " + IMPORT_LIST + ";");
                     queryStr += query.getCollectionType() + "<" + type + ">";
                 } else queryStr += type;
                 queryStr += " " + query.getName() + ", ";
@@ -283,15 +330,18 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
             }
         }
         if (detailApiVO.getRequestBody() != null && detailApiVO.getRequestBody().getName() != null) {
+            if (importList.get(IMPORT_ANNOTATION) == null && importList.get(IMPORT_REQUEST_BODY) == null) {
+                importList.put(IMPORT_REQUEST_BODY, IMPORT);
+                updateImport.add(IMPORT + " " + IMPORT_REQUEST_BODY + ";");
+            }
             String requestStr = "";
             requestStr += "@" + REQUEST_BODY + "(required = " + detailApiVO.getRequestBody().isRequired() + ") ";
             if (detailApiVO.getRequestBody().getCollectionType() != null) {
-                // TODO: import 추가
+                if (importList.get(IMPORT_LIST) == null) updateImport.add(IMPORT + " " + IMPORT_LIST + ";");
                 requestStr += detailApiVO.getRequestBody().getCollectionType() + "<" + detailApiVO.getRequestBody().getDtoName() + ">";
             } else requestStr += detailApiVO.getRequestBody().getDtoName();
             requestStr += " " + detailApiVO.getRequestBody().getName() + ", ";
             // TODO : 리퀘스트 바디 업데이트 하러가기
-            // TODO: 어노테이션 import 없으면 추가
             api += requestStr;
         }
         return api;
