@@ -21,7 +21,7 @@ const TestApi = () => {
     dispatch(getApiRequestInfo({ docId: getDocsId.docId })).then((res: any) => {
       const json = res.payload.detail;
       const obj = JSON.parse(json);
-      setGetInfo(JSON.parse(obj.detail));
+      setGetInfo(obj);
     });
   }, [getDocsId.docId]);
 
