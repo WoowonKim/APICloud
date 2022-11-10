@@ -72,7 +72,7 @@ const DtoInputModal = ({
 
   useEffect(() => {
     let copy = path;
-    if (modalDepth > 3 || modalDepth === 3) {
+    if (modalDepth >= 3) {
       let i = activeTab === 2 || activeTab === 3 ? 1 : 0;
       for (i; i < modalDepth - 1; i++) {
         if (propertiesIndexList[i] !== -1) {
