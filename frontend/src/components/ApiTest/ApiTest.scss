@@ -116,21 +116,8 @@
   height: 200px;
   display: flex;
 }
-.headerContainerList {
-  display: flex;
-  width: 100%;
-}
-.headerListTitle {
-  width: 30%;
-  text-align: left;
-}
+
 .bodyInputTitle {
-  font-weight: bold;
-  color: #767273;
-  font-size: 13px;
-  margin: 13px 0px 18px 5px;
-}
-.headerListTitle > p {
   font-weight: bold;
   color: #767273;
   font-size: 13px;
@@ -143,7 +130,7 @@
 .headerListContent > p {
   font-weight: 400;
   margin-left: 5px;
-  margin: 13px 0px 3px 5px;
+  margin: 13px 0px 1px 5px;
 }
 .headerListContent > p > input {
   width: 300px;
@@ -287,4 +274,15 @@
 
 .clearSideMenu {
   cursor: pointer;
+}
+
+.sideContollerName {
+  padding: 10px 5px 3px 5px;
+  border-bottom: 2px solid #000000;
+  width: 80px;
+  color: #000000;
+}
+
+.apiSideUriAddress {
+  padding: 10px;
 }

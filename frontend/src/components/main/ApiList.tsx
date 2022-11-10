@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import styled from "styled-components";
 import mainApiSlice, { getApiDocList } from "../../Store/slice/mainApi";
 import { RootState } from "../../Store/store";
 import ApiListDetail from "./ApiListDetail";
@@ -20,21 +21,35 @@ export type ApiDocType = {
   encryptedUrl: string;
 };
 
+export const ChoiceText = styled.span`
+  font-size: 13px;
+  color: ${(props) => props.theme.color};
+  border-bottom: 2px solid ${(props) => props.theme.color};
+`;
+
+export const NoChoiceText = styled.span`
+  font-size: 10px;
+  color: ${(props) => props.theme.color};
+  border-bottom: 2px solid ${(props) => props.theme.color};
+`;
+
+const ApiListContent = styled.div`
+  margin-top: 10px;
+  padding: 10px;
+  background-color: ${(props) => props.theme.startBgColor};
+  margin-bottom: 30px;
+`;
 const ApiList = () => {
   const [apiList, setApiList] = useState(0);
   const [apiDocList, setApiDocList] = useState<ApiDocType[] | []>([]);
-  const isDocCreated = useSelector(
-    (state: RootState) => state.mainApi.isDocCreated
-  );
-  const isDocUpdated = useSelector(
-    (state: RootState) => state.mainApi.isDocUpdated
-  );
+  const isDocCreated = useSelector((state: RootState) => state.mainApi.isDocCreated);
+  const isDocUpdated = useSelector((state: RootState) => state.mainApi.isDocUpdated);
 
   const dispatch = useDispatch();
 
   const dispatchGetDocList = () => {
     dispatch(getApiDocList()).then((res: any) => {
-      if (res.meta?.requestStatus === 'fulfilled') {
+      if (res.meta?.requestStatus === "fulfilled") {
         setApiDocList(res.payload);
       }
     });
@@ -58,30 +73,45 @@ const ApiList = () => {
   return (
     <div className="ApiList">
       <div className="ApiListTitle">
-        <span
-          className={apiList === 0 ? "ClickList" : "noClicklist"}
-          onClick={() => {
-            setApiList(0);
-          }}
-        >
-          관리자로 진행중인 API
-        </span>
-        <span
-          className={apiList === 1 ? "ClickList" : "noClicklist"}
-          onClick={() => {
-            setApiList(1);
-          }}
-        >
-          참여자로 진행중인 API
-        </span>
+        {apiList === 0 ? (
+          <>
+            <ChoiceText
+              onClick={() => {
+                setApiList(0);
+              }}
+            >
+              관리자로 진행중인 API
+            </ChoiceText>
+            <NoChoiceText
+              onClick={() => {
+                setApiList(1);
+              }}
+            >
+              참여자로 진행중인 API
+            </NoChoiceText>
+          </>
+        ) : (
+          <>
+            <NoChoiceText
+              onClick={() => {
+                setApiList(0);
+              }}
+            >
+              관리자로 진행중인 API
+            </NoChoiceText>
+            <ChoiceText
+              onClick={() => {
+                setApiList(1);
+              }}
+            >
+              참여자로 진행중인 API
+            </ChoiceText>
+          </>
+        )}
       </div>
-      <div className="ApiListContent">
-        <ApiListDetail
-          apiList={apiList}
-          apiDocList={apiDocList}
-          dispatchGetDocList={dispatchGetDocList}
-        />
-      </div>
+      <ApiListContent>
+        <ApiListDetail apiList={apiList} apiDocList={apiDocList} dispatchGetDocList={dispatchGetDocList} />
+      </ApiListContent>
     </div>
   );
 };

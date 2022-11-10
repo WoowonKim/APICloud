@@ -6,7 +6,15 @@ import "./main.scss";
 import { useAppSelector } from "../../Store/hooks";
 import { selectUser } from "../../Store/slice/userSlice";
 import { useNavigate } from "react-router-dom";
+import styled from "styled-components";
 
+const ApiMainHeader = styled.div`
+  background-color: ${(props) => props.theme.bgColor};
+  padding: 15px;
+  padding-bottom: 0px;
+  display: flex;
+  justify-content: space-between;
+`;
 const Header = () => {
   const navigate = useNavigate();
   const [userImg, setUserImg] = useState("");
@@ -15,11 +23,11 @@ const Header = () => {
     setUserImg(user?.imgUrl);
   }, [user]);
   return (
-    <div className="ApiMainHeader">
+    <ApiMainHeader>
       {/* 로고 */}
       <img
         className="logoImg"
-        src={require("../../assets/cloud.png")}
+        src={require("../../assets/realCloudLogo.png")}
         onClick={() => {
           navigate("/");
         }}
@@ -37,7 +45,7 @@ const Header = () => {
       <div className="user">
         <img className="userImg" src={userImg} referrerPolicy="no-referrer" />
       </div>
-    </div>
+    </ApiMainHeader>
   );
 };
 
