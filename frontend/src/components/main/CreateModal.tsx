@@ -150,8 +150,12 @@ const CreateModal = () => {
                       className="docsName"
                       type="text"
                       placeholder="생성할 Doc 이름을 작성해주세요"
-                      defaultValue={docsName}
-                      onChange={(e) => setDocsName(e.target.value)}
+                      value={docsName}
+                      onChange={(e) => {
+                        setDocsName(e.target.value);
+                        setPackageName(groupPackage + "." + docsName);
+                        console.log(packageName);
+                      }}
                     />
                   </div>
                   <div className="inputWrapper">
@@ -237,8 +241,11 @@ const CreateModal = () => {
                       className="groupPackage"
                       type="text"
                       placeholder="생성할 group package를 작성해주세요"
-                      defaultValue={groupPackage}
-                      onChange={(e) => setGroupPackage(e.target.value)}
+                      value={groupPackage}
+                      onChange={(e) => {
+                        setGroupPackage(e.target.value);
+                        setPackageName(groupPackage + "." + docsName);
+                      }}
                     />
                   </div>
                   <div className="inputWrapper">
@@ -248,7 +255,7 @@ const CreateModal = () => {
                       className="packageName"
                       type="text"
                       placeholder="생성할 package를 작성해주세요"
-                      defaultValue={packageName}
+                      value={packageName}
                       onChange={(e) => setPackageName(e.target.value)}
                     />
                   </div>
