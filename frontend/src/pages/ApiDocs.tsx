@@ -68,6 +68,12 @@ const ApiDocs = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (detail) {
+      console.log("detail", detail);
+    }
+  }, [detail]);
+
   return (
     <div className="apiDocContainer">
       <div className="sidebarDocWrapper">
@@ -79,14 +85,13 @@ const ApiDocs = () => {
         </div>
         <div className="docBox">
           <div className="title">API DOC 페이지</div>
-          <div className="doc">
+          <div className="doc1">
             <div className="docTitleWrapper">
               <h1 className="docTitle">Server정보</h1>
             </div>
             <ApiDocPaper docInformArray={docInformArray} />
           </div>
-          <br></br>
-          <div className="doc">
+          <div className="doc2">
             <ApiDocPaper2 detail={detail} />
           </div>
           <button onClick={onClick}>pdf로 변환</button>
