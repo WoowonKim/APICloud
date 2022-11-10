@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { ApisType, ControllerType, PropertiesType } from "./ApisType";
 import "./CreateApi.scss";
 import Sidebar from "../../components/CreateApi/Sidebar/Sidebar";
@@ -85,6 +85,9 @@ const CreateApi = () => {
   };
 
   const state = useSyncedStore(store);
+  useEffect(() => {
+    console.log(JSON.parse(JSON.stringify(state.data)));
+  }, [state.data]);
   // 테이블의 탭 전환을 위한 state
   const [activeTab, setActiveTab] = useState(1);
   // 선택된 api,controller 저장 state
@@ -134,6 +137,14 @@ const CreateApi = () => {
     }
   };
 
+  const getData = (selectedController: number, selectedApi: number) => {
+    return state.data[selectedController].apis[selectedApi].headers;
+  };
+  const data = useMemo(() => {
+    if (state.data[selectedController])
+      return getData(selectedController, selectedApi);
+    else return [];
+  }, [state.data]);
   // 사이드바의 api 정보 가져오는 함수
   const handleSidebarApi = (index: number, idx: number) => {
     setSelectedController(index);
@@ -141,8 +152,6 @@ const CreateApi = () => {
     setActiveTab(1);
   };
   // 데이터 확인 용 로그
-  console.log(JSON.parse(JSON.stringify(state.data)));
-
   return (
     <div className="apiDocscontainer">
       <Sidebar
@@ -223,7 +232,8 @@ const CreateApi = () => {
                   activeTab === 1 &&
                   state.data.length > 0 &&
                   state.data[selectedController].apis.length > 0
-                    ? state.data[selectedController].apis[selectedApi].headers
+                    ? // ? state.data[selectedController].apis[selectedApi].headers
+                      data
                     : activeTab === 2 &&
                       state.data.length > 0 &&
                       state.data[selectedController].apis.length > 0
