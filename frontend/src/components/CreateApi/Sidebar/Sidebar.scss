@@ -101,3 +101,26 @@
     font-size: 1.1em;
   }
 }
+
+.sidebarDtoInfoContainer {
+  margin: 30px 0;
+  .sidebarDtoInfoTitle {
+    font-weight: bold;
+    font-size: 1.2em;
+  }
+  .sidebarDtoContainer {
+    margin: 10px 0;
+    .sidebarDtoName {
+      font-weight: bold;
+    }
+    .sidebarPropertiesContainer {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      margin: 5px 0 5px 15px;
+      .sidebarPropertiesItem {
+        margin: 0 5px;
+      }
+    }
+  }
+}

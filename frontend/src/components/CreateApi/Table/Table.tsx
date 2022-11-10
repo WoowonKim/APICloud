@@ -392,7 +392,8 @@ const Table = ({
           e.target.value,
           state.data[selectedController].apis,
           state.data[selectedController].apis.length,
-          infoPath
+          infoPath,
+          false
         );
       } else if (typeof e === "string" && key === "type") {
         if (e === "List") {
@@ -422,7 +423,8 @@ const Table = ({
           e.target.value,
           state.data[selectedController].apis,
           state.data[selectedController].apis.length,
-          infoPath
+          infoPath,
+          false
         );
       }
     }
