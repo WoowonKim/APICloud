@@ -13,6 +13,7 @@ import { useAppSelector } from "../../Store/hooks";
 import { selectUser } from "../../Store/slice/userSlice";
 import { axiosGet } from "../../util/axiosUtil";
 import { AnyArray } from "immer/dist/internal";
+import "./CreateModal.scss";
 
 export type DocInformationType = {
   docId: number;
@@ -43,7 +44,7 @@ const CreateModal = () => {
   const [searchUserRes, setSearchUserRes] = useState<any>();
   const [invitedUsers, setInvitedUsers] = useState<AnyArray>([]);
   const [encryptedUrl, setEncryptedUrl] = useState("");
-  const [isDefaultAvailable, setIsDefaultAvailable] = useState(false);
+  const [isDefaultAvailable, setIsCreationInfoAvailable] = useState(false);
   const [creationInfo, setCreationInfo] = useState({} as any);
 
   const docId = useSelector((state: RootState) => state.mainApi.docId);
@@ -88,7 +89,7 @@ const CreateModal = () => {
       setPackaging(res.payload.packaging.default);
       setGroupPackage(res.payload.groupId.default);
       setPackageName(res.payload.packageName.default);
-      setIsDefaultAvailable(true);
+      setIsCreationInfoAvailable(true);
     });
   }, []);
 
@@ -138,196 +139,226 @@ const CreateModal = () => {
       <DialogBox>
         <div className="modalContainer">
           <div className="modalMain">
-            {isDefaultAvailable && (
-              <form onSubmit={onSubmit}>
-                <p>생성하기</p>
-                <input
-                  className="docsName"
-                  type="text"
-                  placeholder="생성할 Docs 명을 작성해주세요"
-                  defaultValue={docsName}
-                  onChange={(e) => setDocsName(e.target.value)}
-                />
-                <input
-                  className="serverUrl"
-                  type="text"
-                  placeholder="생성할 serverUrl을 작성해주세요"
-                  onChange={(e) => setServerUrl(e.target.value)}
-                />
-                <input
-                  className="contextUrl"
-                  type="text"
-                  placeholder="생성할 contextUri를 작성해주세요"
-                  onChange={(e) => setContextUri(e.target.value)}
-                />
-                <div>
-                  <label>Java Version</label>
-                  {creationInfo.javaVersion.values.map((version: any) => (
-                    <>
-                      <input
-                        type="radio"
-                        name="javaVersion"
-                        id={version.id}
-                        value={version.id}
-                        checked={javaVersion === version.id}
-                        onChange={(e) => setJavaVersion(e.target.value)}
-                        key={version.id}
-                      />
-                      <label htmlFor={version.id}>{version.name}</label>
-                    </>
-                  ))}
-                </div>
-                <div>
-                  <label>Spring Boot</label>
-                  {creationInfo.bootVersion.values.map((version: any) => (
-                    <>
-                      <input
-                        type="radio"
-                        name="springVersion"
-                        id={version.id}
-                        value={version.id}
-                        checked={springVersion === version.id}
-                        onChange={(e) => setSpringVersion(e.target.value)}
-                        key={version.id}
-                      />
-                      <label htmlFor={version.id}>{version.id}</label>
-                    </>
-                  ))}
-                </div>
-                <div>
-                  <label>Build Management</label>
-                  {creationInfo.type.values.map((type: any) => (
-                    <>
-                      <input
-                        type="radio"
-                        name="buildManagement"
-                        id={type.id}
-                        value={type.id}
-                        checked={buildManagement === type.id}
-                        onChange={(e) => setBuildManagement(e.target.value)}
-                        key={type.id}
-                      />
-                      <label htmlFor={type.id}>{type.name}</label>
-                    </>
-                  ))}
-                </div>
-                <input
-                  className="groupPackage"
-                  type="text"
-                  placeholder="생성할 groupPackage을 작성해주세요"
-                  defaultValue={groupPackage}
-                  onChange={(e) => setGroupPackage(e.target.value)}
-                />
-                <input
-                  className="packageName"
-                  type="text"
-                  placeholder="생성할 packageName을 작성해주세요"
-                  defaultValue={packageName}
-                  onChange={(e) => setPackageName(e.target.value)}
-                />
-                <div>
-                  <label>Packaging</label>
-                  {creationInfo.packaging.values.map((p: any) => (
-                    <>
-                      <input
-                        type="radio"
-                        name="packaging"
-                        id={p.id}
-                        value={p.id}
-                        checked={packaging === p.id}
-                        onChange={(e) => setPackaging(e.target.value)}
-                        key={p.id}
-                      />
-                      <label htmlFor={p.id}>{p.name}</label>
-                    </>
-                  ))}
-                </div>
-                <p>초대하기</p>
-                <input
-                  className="groupMember"
-                  type="text"
-                  placeholder="추가할 사용자의 이메일을 작성해주세요"
-                  onChange={(e) => {
-                    setSerchUser(e.target.value);
-                  }}
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    search(searcUser);
-                  }}
-                >
-                  검색하기
-                </button>
-                {searchUserRes && (
-                  <div>
-                    <span>{searchUserRes.name}</span>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        let copy = [...invitedUsers];
-                        const isIncluded = copy.find((ele) => {
-                          if (ele.userId === searchUserRes.id) {
-                            return true;
-                          }
-                        });
-                        if (isIncluded) {
-                          alert("이미 추가된 유저입니다.");
-                          return;
-                        }
-                        copy.push({
-                          userId: searchUserRes.id,
-                          name: searchUserRes.name,
-                          email: searchUserRes.email,
-                          authority: 3,
-                        });
-                        setInvitedUsers(copy);
+            <form className="modalForm" onSubmit={onSubmit}>
+              <p>생성하기</p>
+              {isDefaultAvailable && (
+                <>
+                  <div className="inputWrapper">
+                    <label htmlFor="docsName">Doc 이름</label>
+                    <input
+                      id="docsName"
+                      className="docsName"
+                      type="text"
+                      placeholder="생성할 Doc 이름을 작성해주세요"
+                      value={docsName}
+                      onChange={(e) => {
+                        setDocsName(e.target.value);
+                        setPackageName(groupPackage + "." + docsName);
                       }}
-                    >
-                      추가하기
-                    </button>
+                    />
                   </div>
-                )}
-                {searchUserRes === null && <p>존재하지 않는 사용자 입니다.</p>}
-                <p>그룹목록</p>
-                <div className="apiUser">
-                  {invitedUsers.map((it, idx) => (
-                    <div className="apiUserList" key={idx}>
-                      <FontAwesomeIcon
-                        className="apiUserIcon"
-                        icon={faCircleUser}
-                      />
-                      <div className="apiUserTitle">
-                        <p>{it.name}</p>
-                        <p>{it.email}</p>
-                      </div>
-                      <select
-                        onChange={(e) => {
-                          handleAuthortyChange(e, idx);
-                        }}
-                        value={it.authority}
-                      >
-                        <option value="2">editor</option>
-                        <option value="3">viewer</option>
-                      </select>
+                  <div className="inputWrapper">
+                    <label htmlFor="serverUrl">서버 URL</label>
+                    <input
+                      id="serverUrl"
+                      className="serverUrl"
+                      type="text"
+                      placeholder="생성할 서버 URL을 작성해주세요"
+                      onChange={(e) => setServerUrl(e.target.value)}
+                    />
+                  </div>
+                  <div className="inputWrapper">
+                    <label htmlFor="contextUri">Context URI</label>
+                    <input
+                      id="contextUri"
+                      className="contextUri"
+                      type="text"
+                      placeholder="생성할 context URI를 작성해주세요"
+                      onChange={(e) => setContextUri(e.target.value)}
+                    />
+                  </div>
+                  <div className="inputWrapper">
+                    <label>Java Version</label>
+                    <div className="radioWrapper">
+                      {creationInfo.javaVersion.values.map((version: any) => (
+                        <div key={version.id} className="radioBtnWrapper">
+                          <input
+                            type="radio"
+                            name="javaVersion"
+                            id={"java" + version.id}
+                            value={version.id}
+                            checked={javaVersion === version.id}
+                            onChange={(e) => setJavaVersion(e.target.value)}
+                          />
+                          <label htmlFor={"java" + version.id}>
+                            {version.name}
+                          </label>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-                <div className="modalBtn">
-                  <button className="copyBtn">
-                    <FontAwesomeIcon icon={faLink} />
-                    <span>링크복사</span>
-                  </button>
+                  </div>
+                  <div className="inputWrapper">
+                    <label>Spring Boot</label>
+                    <div className="radioWrapper">
+                      {creationInfo.bootVersion.values.map((version: any) => (
+                        <div key={version.id} className="radioBtnWrapper">
+                          <input
+                            type="radio"
+                            name="springVersion"
+                            id={version.id}
+                            value={version.id}
+                            checked={springVersion === version.id}
+                            onChange={(e) => setSpringVersion(e.target.value)}
+                          />
+                          <label htmlFor={version.id}>{version.name}</label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="inputWrapper">
+                    <label>Build Management</label>
+                    <div className="radioWrapper">
+                      {creationInfo.type.values.map((type: any) => (
+                        <div key={type.id} className="radioBtnWrapper">
+                          <input
+                            type="radio"
+                            name="buildManagement"
+                            id={type.id}
+                            value={type.id}
+                            checked={buildManagement === type.id}
+                            onChange={(e) => setBuildManagement(e.target.value)}
+                          />
+                          <label htmlFor={type.id}>{type.name}</label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="inputWrapper">
+                    <label htmlFor="groupPackage">Group Package</label>
+                    <input
+                      id="groupPackage"
+                      className="groupPackage"
+                      type="text"
+                      placeholder="생성할 group package를 작성해주세요"
+                      value={groupPackage}
+                      onChange={(e) => {
+                        setGroupPackage(e.target.value);
+                        setPackageName(groupPackage + "." + docsName);
+                      }}
+                    />
+                  </div>
+                  <div className="inputWrapper">
+                    <label htmlFor="packageName">Package</label>
+                    <input
+                      id="packageName"
+                      className="packageName"
+                      type="text"
+                      placeholder="생성할 package를 작성해주세요"
+                      value={packageName}
+                      onChange={(e) => setPackageName(e.target.value)}
+                    />
+                  </div>
+                  <div className="inputWrapper">
+                    <label>Packaging</label>
+                    <div className="radioWrapper">
+                      {creationInfo.packaging.values.map((p: any) => (
+                        <div key={p.id} className="radioBtnWrapper">
+                          <input
+                            type="radio"
+                            name="packaging"
+                            id={p.id}
+                            value={p.id}
+                            checked={packaging === p.id}
+                            onChange={(e) => setPackaging(e.target.value)}
+                          />
+                          <label htmlFor={p.id}>{p.name}</label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+              <p>초대하기</p>
+              <input
+                className="groupMember"
+                type="text"
+                placeholder="추가할 사용자의 이메일을 작성해주세요"
+                onChange={(e) => {
+                  setSerchUser(e.target.value);
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  search(searcUser);
+                }}
+              >
+                검색하기
+              </button>
+              {searchUserRes && (
+                <div>
+                  <span>{searchUserRes.name}</span>
                   <button
-                    className="makeBtn"
-                    type="submit"
-                    disabled={!canGoNext}
+                    type="button"
+                    onClick={() => {
+                      let copy = [...invitedUsers];
+                      const isIncluded = copy.find((ele) => {
+                        if (ele.userId === searchUserRes.id) {
+                          return true;
+                        }
+                      });
+                      if (isIncluded) {
+                        alert("이미 추가된 유저입니다.");
+                        return;
+                      }
+                      copy.push({
+                        userId: searchUserRes.id,
+                        name: searchUserRes.name,
+                        email: searchUserRes.email,
+                        authority: 3,
+                      });
+                      setInvitedUsers(copy);
+                    }}
                   >
-                    완료
+                    추가하기
                   </button>
                 </div>
-              </form>
-            )}
+              )}
+              {searchUserRes === null && <p>존재하지 않는 사용자 입니다.</p>}
+              <p>그룹목록</p>
+              <div className="apiUser">
+                {invitedUsers.map((it, idx) => (
+                  <div className="apiUserList" key={idx}>
+                    <FontAwesomeIcon
+                      className="apiUserIcon"
+                      icon={faCircleUser}
+                    />
+                    <div className="apiUserTitle">
+                      <p>{it.name}</p>
+                      <p>{it.email}</p>
+                    </div>
+                    <select
+                      onChange={(e) => {
+                        handleAuthortyChange(e, idx);
+                      }}
+                      value={it.authority}
+                    >
+                      <option value="2">editor</option>
+                      <option value="3">viewer</option>
+                    </select>
+                  </div>
+                ))}
+              </div>
+              <div className="modalBtn">
+                <button className="copyBtn">
+                  <FontAwesomeIcon icon={faLink} />
+                  <span>링크복사</span>
+                </button>
+                <button className="makeBtn" type="submit" disabled={!canGoNext}>
+                  완료
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </DialogBox>
