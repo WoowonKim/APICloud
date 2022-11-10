@@ -38,6 +38,7 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
     private static final String IMPORT_REQUEST_BODY = "org.springframework.web.bind.annotation.RequestBody";
     private static final String IMPORT_ANNOTATION = "org.springframework.web.bind.annotation.*";
     private static final String IMPORT_LIST = "java.util.List";
+    private static final String IMPORT_UTIL = "java.util.*";
 
     private static final String NOT_FOUND_FILE = "해당 파일을 찾을 수 없습니다.";
 
@@ -322,7 +323,10 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
                     type = query.getDtoName();
                 } else type = query.getType();
                 if (query.getCollectionType() != null) {
-                    if (importList.get(IMPORT_LIST) == null) updateImport.add(IMPORT + " " + IMPORT_LIST + ";");
+                    if (importList.get(IMPORT_UTIL) == null && importList.get(IMPORT_LIST) == null) {
+                        importList.put(IMPORT_LIST, IMPORT);
+                        updateImport.add(IMPORT + " " + IMPORT_LIST + ";");
+                    }
                     queryStr += query.getCollectionType() + "<" + type + ">";
                 } else queryStr += type;
                 queryStr += " " + query.getName() + ", ";
@@ -337,7 +341,10 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
             String requestStr = "";
             requestStr += "@" + REQUEST_BODY + "(required = " + detailApiVO.getRequestBody().isRequired() + ") ";
             if (detailApiVO.getRequestBody().getCollectionType() != null) {
-                if (importList.get(IMPORT_LIST) == null) updateImport.add(IMPORT + " " + IMPORT_LIST + ";");
+                if (importList.get(IMPORT_UTIL) == null && importList.get(IMPORT_LIST) == null) {
+                    importList.put(IMPORT_LIST, IMPORT);
+                    updateImport.add(IMPORT + " " + IMPORT_LIST + ";");
+                }
                 requestStr += detailApiVO.getRequestBody().getCollectionType() + "<" + detailApiVO.getRequestBody().getDtoName() + ">";
             } else requestStr += detailApiVO.getRequestBody().getDtoName();
             requestStr += " " + detailApiVO.getRequestBody().getName() + ", ";
