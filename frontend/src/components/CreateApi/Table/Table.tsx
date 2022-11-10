@@ -19,6 +19,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfo, faRemove } from "@fortawesome/free-solid-svg-icons";
 import SelectTypes from "../SelectTypes/SelectTypes";
 import DtoInputModal from "../DtoInputModal/DtoInputModal";
+import { checkDtoNameValidation } from "../validationCheck";
 
 declare module "@tanstack/react-table" {
   interface TableMeta<TData extends RowData> {
@@ -51,20 +52,12 @@ const Table = ({
   const [propertiesIndex, setPropertiesIndex] = useState(-1);
   const [final, setFinal] = useState<PropertiesType>();
   const [propertiesIndexList, setPropertiesIndexList] = useState<number[]>([
-    -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1,
   ]);
-  const [nameList, setNameList] = useState<string[]>([
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-  ]);
-
+  const [nameList, setNameList] = useState<string[]>(["", "", "", "", ""]);
+  const [dtoData, setDtoData] = useState();
+  const [currentDtoData, setCurrentDtoData] = useState();
+  const [dtoExists, setDtoExists] = useState(false);
   const path =
     activeTab === 2
       ? state.data[selectedController].apis[selectedApi].parameters
@@ -282,6 +275,10 @@ const Table = ({
     setPropertiesIndexList([-1, -1, -1, -1, -1, -1, -1, -1, -1]);
   }, [activeTab, propertiesIndex]);
 
+  useEffect(() => {
+    setDtoExists(false);
+  }, [activeTab]);
+
   const table = useReactTable({
     data,
     columns,
@@ -372,6 +369,7 @@ const Table = ({
         ? rootPath.requestBody
         : rootPath.parameters[index];
     let i = activeTab === 2 || activeTab === 3 ? 1 : 0;
+
     if (depth !== 1 && (activeTab === 4 || activeTab === 5)) {
       infoPath = infoPath.properties[index];
     }
@@ -380,6 +378,8 @@ const Table = ({
         infoPath = infoPath.properties[propertiesIndexList[i]];
       }
     }
+
+    let checkDto;
     if (depth === 1) {
       if (typeof e !== "string" && key === "required") {
         infoPath[key] = e.target.checked;
@@ -388,6 +388,13 @@ const Table = ({
         (key === "name" || key === "dtoName")
       ) {
         infoPath[key] = e.target.value;
+        checkDto = checkDtoNameValidation(
+          e.target.value,
+          state.data[selectedController].apis,
+          state.data[selectedController].apis.length,
+          infoPath,
+          false
+        );
       } else if (typeof e === "string" && key === "type") {
         if (e === "List") {
           infoPath.collectionType = "List";
@@ -412,7 +419,21 @@ const Table = ({
     } else {
       if (typeof e !== "string" && key === "dtoName") {
         infoPath[key] = e.target.value;
+        checkDto = checkDtoNameValidation(
+          e.target.value,
+          state.data[selectedController].apis,
+          state.data[selectedController].apis.length,
+          infoPath,
+          false
+        );
       }
+    }
+    if (checkDto && typeof checkDto !== "boolean" && checkDto[1]) {
+      setDtoData(checkDto[1]);
+      setDtoExists(true);
+      setCurrentDtoData(checkDto[0]);
+    } else {
+      setDtoExists(false);
     }
   };
   return (
@@ -434,6 +455,9 @@ const Table = ({
           getDepth={getDepth}
           setNameList={setNameList}
           nameList={nameList}
+          dtoData={dtoData}
+          dtoExists={dtoExists}
+          currentDtoData={currentDtoData}
         />
       )}
       <TableInfo
@@ -443,6 +467,8 @@ const Table = ({
         selectedController={selectedController}
         state={state}
         responseType={responseType}
+        dtoData={dtoData}
+        dtoExists={dtoExists}
       />
       <table>
         <thead>
