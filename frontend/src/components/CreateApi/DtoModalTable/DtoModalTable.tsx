@@ -5,41 +5,48 @@ import {
   flexRender,
 } from "@tanstack/react-table";
 import React, { useEffect, useMemo, useState } from "react";
-import { ApisType, ControllerType } from "../../../pages/CreateApi/ApisType";
+import { PropertiesType } from "../../../pages/CreateApi/ApisType";
 import "../ControllerAddModal/ControllerAddModal.scss";
 import { faInfo, faRemove } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SelectTypes from "../SelectTypes/SelectTypes";
-import { MappedTypeDescription } from "@syncedstore/core/types/doc";
 
 // ControllerAddModal에서 받아오는 props의 type 설정
 interface Props {
-  data: ApisType[];
-  state: MappedTypeDescription<{
-    data: ControllerType[];
-  }>;
-  selectedController: number;
-  selectedApi: number;
+  data: PropertiesType[];
   propertiesIndex: number;
-  responseType?: string;
   activeTab: number;
-  deleteRow: (index: number, depth: number, propIndex?: number) => void;
+  setPropertiesIndexList: React.Dispatch<React.SetStateAction<number[]>>;
+  propertiesIndexList: number[];
+  getDepth: (
+    idx: number,
+    datas: PropertiesType[],
+    isAdd: boolean,
+    isNew: boolean,
+    isDelete: boolean
+  ) => number;
+  setModalDepth: React.Dispatch<React.SetStateAction<number>>;
+  modalDepth: number;
+  path: PropertiesType;
+  final: PropertiesType | undefined;
 }
 const DtoModalTable = ({
   data,
-  state,
-  selectedApi,
-  selectedController,
   propertiesIndex,
   activeTab,
-  responseType,
-  deleteRow,
+  setPropertiesIndexList,
+  propertiesIndexList,
+  getDepth,
+  setModalDepth,
+  modalDepth,
+  path,
+  final,
 }: Props) => {
-  const defaultColumn: Partial<ColumnDef<ApisType>> = {
+  useEffect(() => {}, [data, activeTab, final]);
+  const defaultColumn: Partial<ColumnDef<PropertiesType>> = {
     cell: function Cell({ getValue, row: { index }, column: { id }, table }) {
       const initialValue = getValue<string>();
       const [value, setValue] = useState<string>(initialValue);
-      const rootPath = state.data[selectedController].apis[selectedApi];
 
       const onBlur = (temp?: string) => {
         table.options.meta?.updateData(index, id, temp ? temp : value);
@@ -50,7 +57,19 @@ const DtoModalTable = ({
 
       useEffect(() => {
         setValue(initialValue);
-      }, [initialValue]);
+      }, [initialValue, modalDepth, data, index]);
+
+      let copyPath = path;
+      if (modalDepth >= 3) {
+        let i = activeTab === 2 || activeTab === 3 ? 1 : 0;
+        for (i; i < modalDepth - 1; i++) {
+          if (propertiesIndexList[i] !== -1) {
+            copyPath = copyPath.properties[propertiesIndexList[i]];
+          }
+        }
+      } else if (activeTab === 4 || activeTab === 5) {
+        copyPath = copyPath.properties[propertiesIndex];
+      }
 
       return id === "required" ? (
         <input
@@ -64,54 +83,27 @@ const DtoModalTable = ({
         <FontAwesomeIcon
           icon={faRemove}
           className="removeIcon"
-          onClick={() => deleteRow(index, 2, propertiesIndex)}
+          onClick={() =>
+            final && getDepth(index, final.properties, false, false, true)
+          }
         />
       ) : id === "type" ? (
         <div className="typeInfoContainer">
-          {activeTab === 2 &&
-          rootPath.parameters[propertiesIndex].properties[index]
-            .collectionType === "List" ? (
+          {copyPath && copyPath.properties[index].collectionType === "List" && (
             <SelectTypes
               onBlur={onBlur}
               setValue={setValue}
               value={"List"}
               isCollection={true}
             />
-          ) : activeTab === 3 &&
-            rootPath.queries[propertiesIndex].properties[index]
-              .collectionType === "List" ? (
-            <SelectTypes
-              onBlur={onBlur}
-              setValue={setValue}
-              value={"List"}
-              isCollection={true}
-            />
-          ) : activeTab === 4 &&
-            rootPath.requestBody.properties[propertiesIndex].properties[index]
-              .collectionType === "List" ? (
-            <SelectTypes
-              onBlur={onBlur}
-              setValue={setValue}
-              value={"List"}
-              isCollection={true}
-            />
-          ) : activeTab === 5 &&
-            (responseType === "fail" || responseType === "success") &&
-            rootPath.responses[responseType].responseBody.properties[
-              propertiesIndex
-            ].properties[index].collectionType === "List" ? (
-            <SelectTypes
-              onBlur={onBlur}
-              setValue={setValue}
-              value={"List"}
-              isCollection={true}
-            />
-          ) : (
-            <></>
           )}
           <SelectTypes onBlur={onBlur} setValue={setValue} value={value} />
           {value === "Object" && (
-            <FontAwesomeIcon icon={faInfo} className="infoIcon" />
+            <FontAwesomeIcon
+              icon={faInfo}
+              className="infoIcon"
+              onClick={() => handleObject(index)}
+            />
           )}
         </div>
       ) : (
@@ -125,7 +117,25 @@ const DtoModalTable = ({
     },
   };
 
-  const columns = useMemo<ColumnDef<ApisType>[]>(
+  const handleObject = (index: number) => {
+    let copyPath = path;
+    const getDepth2 =
+      final && getDepth(index, final.properties, false, false, false);
+
+    if ((getDepth2 && getDepth2 > 3) || getDepth2 === 3) {
+      for (let i = 1; i < getDepth2 - 2; i++) {
+        if (propertiesIndexList[i] !== -1) {
+          copyPath = copyPath.properties[propertiesIndexList[i]];
+        }
+      }
+    }
+    const newDepth = getDepth(index, copyPath.properties, true, true, false);
+    setModalDepth(newDepth);
+    let properties = [...propertiesIndexList];
+    properties[newDepth - 2] = index;
+    setPropertiesIndexList(properties);
+  };
+  const columns = useMemo<ColumnDef<PropertiesType>[]>(
     () => [
       {
         accessorKey: "name",
@@ -156,104 +166,41 @@ const DtoModalTable = ({
     meta: {
       updateData: (rowIndex: string | number, columnId: any, value: any) => {
         if (!!value) {
-          const rootPath = state.data[selectedController].apis[selectedApi];
-          const newValue = value === "true" ? false : true;
+          const requiredValue = value === "true" ? false : true;
           const type =
             columnId === "name"
               ? "name"
               : columnId === "type"
               ? "type"
               : "required";
-          if (activeTab === 2 || activeTab === 3) {
-            const tab = activeTab === 3 ? "queries" : "parameters";
-            rootPath[tab][propertiesIndex].properties.map((row, idx) => {
-              if (idx === rowIndex && type === "required") {
-                rootPath[tab][propertiesIndex].properties[rowIndex][type] =
-                  newValue;
-              } else if (
-                idx === rowIndex &&
-                (type === "name" || type === "type")
-              ) {
-                if (type === "type" && value === "List") {
-                  rootPath[tab][propertiesIndex].properties[
-                    rowIndex
-                  ].collectionType = "List";
-                  rootPath[tab][propertiesIndex].properties[rowIndex][type] =
-                    "String";
-                } else if (type === "type" && value === "X") {
-                  rootPath[tab][propertiesIndex].properties[
-                    rowIndex
-                  ].collectionType = "";
-                } else {
-                  rootPath[tab][propertiesIndex].properties[rowIndex][type] =
-                    value;
-                }
+          let copyPath = path;
+          if (modalDepth >= 3) {
+            let i = activeTab === 2 || activeTab === 3 ? 1 : 0;
+            for (i; i < modalDepth - 1; i++) {
+              if (propertiesIndexList[i] !== -1) {
+                copyPath = copyPath.properties[propertiesIndexList[i]];
               }
-            });
-          } else if (activeTab === 4) {
-            rootPath.requestBody.properties[propertiesIndex].properties.map(
-              (row, idx) => {
-                if (idx === rowIndex && type === "required") {
-                  rootPath.requestBody.properties[propertiesIndex].properties[
-                    rowIndex
-                  ][type] = newValue;
-                } else if (
-                  idx === rowIndex &&
-                  (type === "name" || type === "type")
-                ) {
-                  if (type === "type" && value === "List") {
-                    rootPath.requestBody.properties[propertiesIndex].properties[
-                      rowIndex
-                    ].collectionType = "List";
-                    rootPath.requestBody.properties[propertiesIndex].properties[
-                      rowIndex
-                    ][type] = "String";
-                  } else if (type === "type" && value === "X") {
-                    rootPath.requestBody.properties[propertiesIndex].properties[
-                      rowIndex
-                    ].collectionType = "";
-                  } else {
-                    rootPath.requestBody.properties[propertiesIndex].properties[
-                      rowIndex
-                    ][type] = value;
-                  }
-                }
-              }
-            );
-          } else if (
-            activeTab === 5 &&
-            (responseType === "fail" || responseType === "success")
-          ) {
-            rootPath.responses[responseType].responseBody.properties[
-              propertiesIndex
-            ].properties.map((row, idx) => {
-              if (idx === rowIndex && type === "required") {
-                rootPath.responses[responseType].responseBody.properties[
-                  propertiesIndex
-                ].properties[rowIndex][type] = newValue;
-              } else if (
-                idx === rowIndex &&
-                (type === "name" || type === "type")
-              ) {
-                if (type === "type" && value === "List") {
-                  rootPath.responses[responseType].responseBody.properties[
-                    propertiesIndex
-                  ].properties[rowIndex].collectionType = "List";
-                  rootPath.responses[responseType].responseBody.properties[
-                    propertiesIndex
-                  ].properties[rowIndex][type] = "String";
-                } else if (type === "type" && value === "X") {
-                  rootPath.responses[responseType].responseBody.properties[
-                    propertiesIndex
-                  ].properties[rowIndex].collectionType = "";
-                } else {
-                  rootPath.responses[responseType].responseBody.properties[
-                    propertiesIndex
-                  ].properties[rowIndex][type] = value;
-                }
-              }
-            });
+            }
+          } else if (activeTab === 4 || activeTab === 5) {
+            copyPath = copyPath.properties[propertiesIndex];
           }
+          copyPath?.properties.map((row, idx) => {
+            if (idx === rowIndex && type === "required") {
+              copyPath.properties[rowIndex][type] = requiredValue;
+            } else if (
+              idx === rowIndex &&
+              (type === "name" || type === "type")
+            ) {
+              if (type === "type" && value === "List") {
+                copyPath.properties[rowIndex].collectionType = "List";
+                copyPath.properties[rowIndex][type] = "String";
+              } else if (type === "type" && value === "X") {
+                copyPath.properties[rowIndex].collectionType = "";
+              } else {
+                copyPath.properties[rowIndex][type] = value;
+              }
+            }
+          });
         }
       },
     },

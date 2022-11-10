@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ApisType, ControllerType, PropertiesType } from "./ApisType";
 import "./CreateApi.scss";
 import Sidebar from "../../components/CreateApi/Sidebar/Sidebar";
@@ -13,7 +13,7 @@ const CreateApi = () => {
   const [apiData, setApiData] = useState<ApisType>({
     name: "",
     uri: "",
-    method: "GET",
+    method: "get",
     requestBody: {
       dtoName: "",
       name: "",
@@ -215,57 +215,52 @@ const CreateApi = () => {
               >
                 <FontAwesomeIcon icon={faPlus} className="plusIcon" />
               </button>
-              <Table
-                activeTab={activeTab}
-                selectedController={selectedController}
-                selectedApi={selectedApi}
-                data={
-                  activeTab === 1 &&
-                  state.data.length > 0 &&
-                  state.data[selectedController].apis.length > 0
-                    ? JSON.parse(
-                        JSON.stringify(
-                          state.data[selectedController].apis[selectedApi]
-                            .headers
-                        )
-                      )
-                    : activeTab === 2 &&
-                      state.data.length > 0 &&
-                      state.data[selectedController].apis.length > 0
-                    ? JSON.parse(
-                        JSON.stringify(
-                          state.data[selectedController].apis[selectedApi]
-                            .parameters
-                        )
-                      )
-                    : activeTab === 3 &&
-                      state.data.length > 0 &&
-                      state.data[selectedController].apis.length > 0
-                    ? JSON.parse(
-                        JSON.stringify(
-                          state.data[selectedController].apis[selectedApi]
-                            .queries
-                        )
-                      )
-                    : activeTab === 4 &&
-                      state.data.length > 0 &&
-                      state.data[selectedController].apis.length > 0
-                    ? JSON.parse(
-                        JSON.stringify(
-                          state.data[selectedController].apis[selectedApi]
-                            .requestBody?.properties
-                        )
-                      )
-                    : JSON.parse(
-                        JSON.stringify(
-                          state.data[selectedController].apis[selectedApi]
-                            .responses.success.responseBody?.properties
-                        )
-                      )
-                }
-                state={state}
-                responseType={"success"}
-              />
+              {state?.data.length > 0 &&
+                state.data[selectedController]?.apis.length > 0 && (
+                  <Table
+                    activeTab={activeTab}
+                    selectedController={selectedController}
+                    selectedApi={selectedApi}
+                    data={
+                      activeTab === 1
+                        ? JSON.parse(
+                            JSON.stringify(
+                              state.data[selectedController].apis[selectedApi]
+                                .headers
+                            )
+                          )
+                        : activeTab === 2
+                        ? JSON.parse(
+                            JSON.stringify(
+                              state.data[selectedController].apis[selectedApi]
+                                .parameters
+                            )
+                          )
+                        : activeTab === 3
+                        ? JSON.parse(
+                            JSON.stringify(
+                              state.data[selectedController].apis[selectedApi]
+                                .queries
+                            )
+                          )
+                        : activeTab === 4
+                        ? JSON.parse(
+                            JSON.stringify(
+                              state.data[selectedController].apis[selectedApi]
+                                .requestBody?.properties
+                            )
+                          )
+                        : JSON.parse(
+                            JSON.stringify(
+                              state.data[selectedController].apis[selectedApi]
+                                .responses.success.responseBody?.properties
+                            )
+                          )
+                    }
+                    state={state}
+                    responseType={"success"}
+                  />
+                )}
             </div>
           )}
           {selectedApi > -1 && selectedController > -1 && activeTab === 5 && (
