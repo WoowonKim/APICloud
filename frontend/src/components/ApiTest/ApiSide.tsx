@@ -7,10 +7,23 @@ import { RequestTypeInfo } from "../../pages/CreateApi/ApisType";
 const Item = styled.p`
   border: none;
   border-radius: 10px;
-  padding: 0px 10px 0px 10px;
+  padding: 9px 10px 3px 10px;
   background-color: ${(props) => props.color};
 `;
+const SideMenuList = styled.div`
+  padding: 5px 7px 5px 7px;
+  display: flex;
+  font-size: 12px;
+  font-weight: bold;
+  justify-content: space-between;
+`;
 
+const SideContollerName = styled.p`
+  padding: 10px 5px 3px 5px;
+  border-bottom: 2px solid ${(props) => props.color};
+  width: 80px;
+  text-color: ${(props) => props.color};
+`;
 interface type {
   getInfo: RequestTypeInfo | undefined;
 }
@@ -21,11 +34,10 @@ const ApiSide = ({ getInfo }: type) => {
     <div className="">
       {getInfo?.controllers.map((it, index) => (
         <div key={index}>
-          <p>{it.name}</p>
+          <SideContollerName>{it.name}</SideContollerName>
           {it.apis.map((item, idx) => (
-            <div
+            <SideMenuList
               key={idx}
-              className="sideMenuList"
               onClick={() => {
                 dispatch(testApiSlice.actions.addController(index));
                 dispatch(testApiSlice.actions.addApis(idx));
@@ -50,8 +62,8 @@ const ApiSide = ({ getInfo }: type) => {
               >
                 {item.method}
               </Item>
-              <p>{item.uri}</p>
-            </div>
+              <p className="apiSideUriAddress">{item.uri}</p>
+            </SideMenuList>
           ))}
         </div>
       ))}

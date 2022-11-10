@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RequestBodyType, RequestTypeInfo } from "../../pages/CreateApi/ApisType";
 import testApiSlice, { selectTestApi } from "../../Store/slice/testApi";
+import { ChoiceText } from "../main/ApiList";
+import { HeaderContatinerList, HeaderListInput, HeaderListTitle } from "./Headerheader";
 
 interface type {
   getInfo: RequestTypeInfo | undefined;
@@ -19,16 +21,16 @@ const ApiBody = ({ getInfo }: type) => {
 
   return (
     <div className="apiHeaderContainer">
-      <span className="headerClickList">Body</span>
+      <ChoiceText>Body</ChoiceText>
       <div>
         {requestBody?.properties.map((it, idx) => (
-          <div key={idx} className="headerContainerList">
+          <HeaderContatinerList key={idx}>
             <div className="headerListTitle">
-              <p>{it.name}</p>
+              <HeaderListTitle>{it.name}</HeaderListTitle>
             </div>
             <div className="headerListContent">
               <p>
-                <input
+                <HeaderListInput
                   type="text"
                   onChange={(e) => {
                     setAddObject(`${it.name} = ${e.target.value}`);
@@ -36,7 +38,7 @@ const ApiBody = ({ getInfo }: type) => {
                 />
               </p>
             </div>
-          </div>
+          </HeaderContatinerList>
         ))}
       </div>
     </div>

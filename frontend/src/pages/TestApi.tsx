@@ -10,8 +10,21 @@ import { useAppDispatch, useAppSelector } from "../Store/hooks";
 import { mainApi } from "../Store/slice/mainApi";
 import { getApiRequestInfo } from "../Store/slice/testApi";
 import { RequestTypeInfo } from "./CreateApi/ApisType";
+import styled from "styled-components";
 
-const TestApi = () => {
+interface IHome {
+  isDarkMode: boolean;
+  toggleDarkMode: () => void;
+}
+
+const TestSide = styled.div`
+  width: 20%;
+  height: 91vh;
+  background-color: ${(props) => props.theme.sideBgClodr};
+  border-top: 1px solid ${(props) => props.theme.border};
+  border-right: 2px solid ${(props) => props.theme.border};
+`;
+const TestApi = ({ isDarkMode, toggleDarkMode }: IHome) => {
   const [getInfo, setGetInfo] = useState<RequestTypeInfo>();
   const dispatch = useAppDispatch();
   const getDocsId = useAppSelector(mainApi);
@@ -29,9 +42,9 @@ const TestApi = () => {
     <div>
       <Header />
       <div className="testContainer">
-        <div className="testSide">
+        <TestSide>
           <ApiSide getInfo={getInfo} />
-        </div>
+        </TestSide>
         <div className="testMain">
           <div className="testInfomation">
             <ApiInputUri getInfo={getInfo} />
