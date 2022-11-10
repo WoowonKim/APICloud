@@ -95,8 +95,6 @@ const CreateApi = () => {
   const [addedApiIndex, setAddedApiIndex] = useState(-1);
   const [addedControllerIndex, setAddedControllerIndex] = useState(-1);
 
-  const [depth, setDepth] = useState(2);
-
   // controller 추가/삭제 함수 -> 기존 데이터에 새 데이터 추가
   const handleController = (method: string, index?: number) => {
     if (method === "add") {
@@ -261,8 +259,6 @@ const CreateApi = () => {
                     }
                     state={state}
                     responseType={"success"}
-                    setDepth={setDepth}
-                    depth={depth}
                   />
                 )}
             </div>
@@ -287,8 +283,6 @@ const CreateApi = () => {
                 )}
                 state={state}
                 responseType={"fail"}
-                setDepth={setDepth}
-                depth={depth}
               />
             </div>
           )}

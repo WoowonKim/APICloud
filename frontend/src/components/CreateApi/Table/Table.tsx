@@ -36,8 +36,6 @@ interface Props {
     data: ControllerType[];
   }>;
   responseType?: string;
-  setDepth: React.Dispatch<React.SetStateAction<number>>;
-  depth: number;
 }
 
 const Table = ({
