@@ -39,10 +39,6 @@ const Sidebar = ({
     setEditControllerIndex(-1);
     setDtoInfoVisible(false);
   }, []);
-
-  useEffect(() => {}, [allDtoDatas]);
-  console.log(JSON.parse(JSON.stringify(allDtoDatas)));
-
   return (
     <>
       {isModalVisible && (
