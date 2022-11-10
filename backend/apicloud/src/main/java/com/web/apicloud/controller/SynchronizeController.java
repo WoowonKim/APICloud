@@ -22,7 +22,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/synchronize")
+@RequestMapping(value = "/synchronize")
 public class SynchronizeController {
 
     private final SynchronizeDocService synchronizeDocService;

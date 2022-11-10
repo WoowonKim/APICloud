@@ -5,7 +5,6 @@ import com.web.apicloud.domain.dto.CodeResponse;
 import com.web.apicloud.domain.dto.DetailRequest;
 import com.web.apicloud.domain.entity.Docs;
 import com.web.apicloud.domain.entity.Group;
-import com.web.apicloud.domain.vo.ApiDetailVO;
 import com.web.apicloud.domain.vo.ApiVO;
 import com.web.apicloud.domain.vo.ControllerVO;
 import com.web.apicloud.domain.vo.PropertyVO;
@@ -14,6 +13,7 @@ import com.web.apicloud.model.parsing.ParsingService;
 import com.web.apicloud.model.parsing.S3Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -41,12 +41,16 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private static List<CodeResponse> codeList = new ArrayList<>();
+    private StringBuffer sb = new StringBuffer();
+
     private int count = 0;
+    private boolean etcFlag = false;
 
     @Override
     public List<CodeResponse> updateCode(Long docId, DetailRequest detailRequest) throws IOException {
         codeList = new ArrayList<>();
         count = 0;
+        etcFlag = false;
 
         ControllerVO detailVO = objectMapper.readValue(detailRequest.getDetail(), ControllerVO.class);
         Docs doc = docsService.findByDocsId(docId);
@@ -71,8 +75,11 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
                 } else {
                     value = parsingService.getValue(codeList.get(0).getCode().get(i));
                 }
-                // TODO : uri 없을 경우랑 삭제하는 경우 처리
-                codeList.get(0).getCode().set(i, codeList.get(0).getCode().get(i).replace(value, detailVO.getCommonUri()));
+                String commonUri = "";
+                if (detailVO.getCommonUri() != null) commonUri = detailVO.getCommonUri();
+                if (value == null) {
+                    codeList.get(0).getCode().set(i, codeList.get(0).getCode().get(i) + "(value = \"" + commonUri + "\")");
+                } else codeList.get(0).getCode().set(i, codeList.get(0).getCode().get(i).replace(value, commonUri));
                 i++;
                 break;
             }
@@ -103,7 +110,6 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
     }
 
     private void updateApi(ControllerVO detailVO, int start, int end) {
-        System.out.println("updateApi ==> ");
         Stack<Character> stack = new Stack<>();
         boolean responseFlag = false;
         boolean requestFlag = false;
@@ -112,7 +118,7 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
         String requestStr = "";
         Map<Integer, String> request = new HashMap<>();
         String methodName = "";
-
+        int[] insertIndex = new int[2];
         ApiVO detailApiVO = detailVO.getApis().get(count);
 
         while (start <= end) {
@@ -133,8 +139,9 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
                         stack.push('(');
                         if (methodNameFlag) {
                             methodNameFlag = false;
+                            insertIndex = new int[]{start, j + 1};
                             methodName = methodName.replaceAll(" ", "");
-                            codeList.get(0).getCode().set(start, codeList.get(0).getCode().get(start).replace(methodName.substring(0, methodName.length() - 1), detailApiVO.getName()));
+                            codeList.get(0).getCode().set(start, codeList.get(0).getCode().get(start).replace(StringUtils.removeEnd(methodName, "("), detailApiVO.getName()));
                         }
                         break;
                     case '{':
@@ -166,11 +173,26 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
                             requestStr = requestStr.substring(0, requestStr.length() - 1);
                             request.put(start, requestStr);
                             checkRequestDetail(request);
-                            System.out.println(codeList.get(0).getCode().get(start));
 
                             String api = makeApi(detailApiVO);
-//                            codeList.get(0).getCode().set(start, codeList.get(0).getCode().get(start).replace(request, api));
-//                            System.out.println();
+                            if (insertIndex[0] != start) {
+                                codeList.get(0).getCode().set(insertIndex[0], codeList.get(0).getCode().get(insertIndex[0]) + api);
+                                if (!etcFlag)
+                                    codeList.get(0).getCode().set(insertIndex[0], StringUtils.removeEnd(codeList.get(0).getCode().get(insertIndex[0]), ", "));
+                            } else {
+                                for (int k = 0; k < codeList.get(0).getCode().get(start).length(); k++) {
+                                    if (codeList.get(0).getCode().get(start).charAt(k) == '(') {
+                                        sb.append(codeList.get(0).getCode().get(start));
+                                        sb.insert(k + 1, api);
+                                        codeList.get(0).getCode().set(start, String.valueOf(sb));
+                                        sb.delete(0, sb.length());
+                                        break;
+                                    }
+                                }
+                            }
+                            codeList.get(0).getCode().set(start, codeList.get(0).getCode().get(start).replace(", )", ")"));
+                            codeList.get(0).getCode().set(start, codeList.get(0).getCode().get(start).replace(",)", ")"));
+                            System.out.println(codeList.get(0).getCode().get(start));
                             return;
                         }
                         break;
@@ -223,13 +245,56 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
             while (itr.hasNext()) {
                 Map.Entry<Integer, String> entry = itr.next();
                 codeList.get(0).getCode().set(entry.getKey(), codeList.get(0).getCode().get(entry.getKey()).replace(entry.getValue(), ""));
-                codeList.get(0).getCode().set(entry.getKey(), codeList.get(0).getCode().get(entry.getKey()).replace(", )", ")"));
-                codeList.get(0).getCode().set(entry.getKey(), codeList.get(0).getCode().get(entry.getKey()).replace(",)", ")"));   }
-        }
+            }
+        } else etcFlag = true;
     }
 
     private String makeApi(ApiVO detailApiVO) {
-        return null;
+        String api = "";
+
+        if (detailApiVO.getParameters() != null) {
+            for (int p = 0; p < detailApiVO.getParameters().size(); p++) {
+                PropertyVO path = detailApiVO.getParameters().get(p);
+                String pathStr = "";
+                if (path.getType() != null && path.getName() != null) {
+                    pathStr += "@" + PATH_VARIABLE + "(" + VALUE + " = " + path.getName() + ", required = " + path.isRequired() + ") " + path.getType() + " " + path.getName() + ", ";
+                }
+                api += pathStr;
+            }
+        }
+        if (detailApiVO.getQueries() != null) {
+            for (int p = 0; p < detailApiVO.getQueries().size(); p++) {
+                PropertyVO query = detailApiVO.getQueries().get(p);
+                String queryStr = "";
+                if (query.getName() == null) continue;
+                queryStr += "@" + REQUEST_PARAM + "(" + VALUE + " = " + query.getName() + ", required = " + query.isRequired() + ") ";
+
+                String type;
+                if (query.getType().equals("Object")) {
+                    // TODO: property 업데이트 하러 가기
+                    type = query.getDtoName();
+                } else type = query.getType();
+                if (query.getCollectionType() != null) {
+                    // TODO: import 추가
+                    queryStr += query.getCollectionType() + "<" + type + ">";
+                } else queryStr += type;
+                queryStr += " " + query.getName() + ", ";
+                api += queryStr;
+            }
+        }
+        if (detailApiVO.getRequestBody() != null && detailApiVO.getRequestBody().getName() != null) {
+            String requestStr = "";
+            requestStr += "@" + REQUEST_BODY + "(required = " + detailApiVO.getRequestBody().isRequired() + ") ";
+            if (detailApiVO.getRequestBody().getCollectionType() != null) {
+                // TODO: import 추가
+                requestStr += detailApiVO.getRequestBody().getCollectionType() + "<" + detailApiVO.getRequestBody().getDtoName() + ">";
+            } else requestStr += detailApiVO.getRequestBody().getDtoName();
+            requestStr += " " + detailApiVO.getRequestBody().getName() + ", ";
+            // TODO : 리퀘스트 바디 업데이트 하러가기
+            // TODO: 어노테이션 import 없으면 추가
+            api += requestStr;
+        }
+        return api;
     }
 
     private void updateMethodAndUri(ControllerVO detailVO, int start) {
