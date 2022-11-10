@@ -94,13 +94,14 @@ public class TextUtils {
 
     public static String getValidPackageName(String docsName, String groupPackage, String packageName) {
         int idx = packageName.indexOf(groupPackage);
-        if (idx != -1) {
-            String sub = packageName.substring(idx + groupPackage.length());
-            System.out.println("groupPackage::::"+groupPackage);
-            System.out.println("sub::::"+sub);
-            return groupPackage + "." + getValidPackage(sub);
+        if (idx != 0) {
+            return groupPackage + "." + docsName;
         }
-        return groupPackage + "." + docsName;
+        String sub = packageName.substring(groupPackage.length());
+        if(sub.length() == 0 || sub.charAt(0) != '.'){
+            return groupPackage + "." + docsName;
+        }
+        return groupPackage + "." + getValidPackage(sub);
     }
 
     private static String getValidPackage(String groupPackage) {
