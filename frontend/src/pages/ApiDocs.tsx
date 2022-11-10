@@ -68,12 +68,6 @@ const ApiDocs = () => {
     };
   }, []);
 
-  useEffect(() => {
-    if (detail) {
-      console.log("detail", detail);
-    }
-  }, [detail]);
-
   return (
     <div className="apiDocContainer">
       <div className="sidebarDocWrapper">
