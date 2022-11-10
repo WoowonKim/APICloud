@@ -94,17 +94,31 @@ const UpdateModal = () => {
           setGroupPackage(res.payload.groupPackage);
           setPackageName(res.payload.packageName);
           setPackaging(res.payload.packaging);
+          dispatch(getApiCreationInfo()).then((info: any) => {
+            addCurrentVersion(info.payload, res.payload.springVersion);
+            setCreationInfo(info.payload);
+            setIsCreationInfoAvailable(true);
+          });
         }
       });
     }
   }, []);
 
-  useEffect(() => {
-    dispatch(getApiCreationInfo()).then((res: any) => {
-      setCreationInfo(res.payload);
-      setIsCreationInfoAvailable(true);
-    });
-  }, []);
+  const addCurrentVersion = (info: any, currentVersion: string) => {
+    let isExists = false;
+    for (let bootVersion of info.bootVersion.values) {
+      if (bootVersion.id === currentVersion) {
+        isExists = true;
+        break;
+      }
+    }
+    if (!isExists) {
+      info.bootVersion.values.push({
+        id: currentVersion,
+        name: currentVersion,
+      });
+    }
+  };
 
   return (
     <ModalContainer>

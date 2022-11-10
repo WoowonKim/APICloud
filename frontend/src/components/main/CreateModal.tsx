@@ -154,7 +154,6 @@ const CreateModal = () => {
                       onChange={(e) => {
                         setDocsName(e.target.value);
                         setPackageName(groupPackage + "." + docsName);
-                        console.log(packageName);
                       }}
                     />
                   </div>
