@@ -6,7 +6,9 @@ import com.web.apicloud.domain.dto.DetailRequest;
 import com.web.apicloud.domain.entity.Docs;
 import com.web.apicloud.domain.entity.Group;
 import com.web.apicloud.domain.vo.ApiDetailVO;
+import com.web.apicloud.domain.vo.ApiVO;
 import com.web.apicloud.domain.vo.ControllerVO;
+import com.web.apicloud.domain.vo.PropertyVO;
 import com.web.apicloud.exception.NotFoundException;
 import com.web.apicloud.model.parsing.ParsingService;
 import com.web.apicloud.model.parsing.S3Service;
@@ -15,9 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -28,6 +28,9 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
     private static final String VALUE = "value";
     private static final String METHOD = "Mapping";
     private static final String RESPONSE_ENTITY = "ResponseEntity";
+    private static final String REQUEST_PARAM = "RequestParam";
+    private static final String PATH_VARIABLE = "PathVariable";
+    private static final String REQUEST_BODY = "RequestBody";
 
     private static final String NOT_FOUND_FILE = "해당 파일을 찾을 수 없습니다.";
 
@@ -43,6 +46,8 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
     @Override
     public List<CodeResponse> updateCode(Long docId, DetailRequest detailRequest) throws IOException {
         codeList = new ArrayList<>();
+        count = 0;
+
         ControllerVO detailVO = objectMapper.readValue(detailRequest.getDetail(), ControllerVO.class);
         Docs doc = docsService.findByDocsId(docId);
         Group group = groupService.findById(doc.getGroup().getId());
@@ -90,7 +95,6 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
 
         while (++start <= end) {
             if (parsingService.KMP(codeList.get(0).getCode().get(start), RESPONSE_ENTITY) != -1) {
-                // TODO : makeUri 해서 replace 하기
                 updateApi(detailVO, start, end);
                 break;
             }
@@ -99,20 +103,25 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
     }
 
     private void updateApi(ControllerVO detailVO, int start, int end) {
+        System.out.println("updateApi ==> ");
         Stack<Character> stack = new Stack<>();
         boolean responseFlag = false;
         boolean requestFlag = false;
         boolean methodNameFlag = false;
         String response = "";
-        String request = "";
+        String requestStr = "";
+        Map<Integer, String> request = new HashMap<>();
         String methodName = "";
 
-        ApiDetailVO apiDetail = new ApiDetailVO();
+        ApiVO detailApiVO = detailVO.getApis().get(count);
 
         while (start <= end) {
             String line = codeList.get(0).getCode().get(start);
             for (int j = 0; j < line.length(); j++) {
-                if (requestFlag) request += line.charAt(j);
+                if (requestFlag) {
+                    requestStr += line.charAt(j);
+                    request.put(start, requestStr);
+                }
                 if (methodNameFlag) methodName += line.charAt(j);
 
                 switch (line.charAt(j)) {
@@ -125,7 +134,7 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
                         if (methodNameFlag) {
                             methodNameFlag = false;
                             methodName = methodName.replaceAll(" ", "");
-//                            apiDetail.setName(methodName.substring(0, methodName.length() - 1));
+                            codeList.get(0).getCode().set(start, codeList.get(0).getCode().get(start).replace(methodName.substring(0, methodName.length() - 1), detailApiVO.getName()));
                         }
                         break;
                     case '{':
@@ -139,7 +148,13 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
                         if (!requestFlag) {
                             if (stack.isEmpty()) {
                                 responseFlag = false;
-//                                getResponseDetail(apiDetail, response);
+                                PropertyVO responseBody = detailApiVO.getResponses().get("success").getResponseBody();
+                                if (responseBody == null) {
+                                    codeList.get(0).getCode().set(start, codeList.get(0).getCode().get(start).replace(response, ""));
+                                } else {
+                                    codeList.get(0).getCode().set(start, codeList.get(0).getCode().get(start).replace(response, responseBody.getDtoName()));
+                                }
+                                // TODO : response CLass 바꾸러 가기
                                 methodNameFlag = true;
                             }
                         }
@@ -147,8 +162,16 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
                     case ')':
                         if (stack.peek() == '(') stack.pop();
                         if (stack.isEmpty()) {
-//                            getRequestDetail(apiDetail, request);
-//                            return apiDetail;
+                            System.out.println("request ==> ");
+                            requestStr = requestStr.substring(0, requestStr.length() - 1);
+                            request.put(start, requestStr);
+                            checkRequestDetail(request);
+                            System.out.println(codeList.get(0).getCode().get(start));
+
+                            String api = makeApi(detailApiVO);
+//                            codeList.get(0).getCode().set(start, codeList.get(0).getCode().get(start).replace(request, api));
+//                            System.out.println();
+                            return;
                         }
                         break;
                     case '}':
@@ -159,12 +182,14 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
                         break;
                     case '@':
                         requestFlag = true;
-                        request += line.charAt(j);
+                        requestStr += line.charAt(j);
+                        request.put(start, requestStr);
                         break;
                     case ',':
                         if (stack.size() != 1) break;
-//                        getRequestDetail(apiDetail, request);
-                        request = "";
+                        checkRequestDetail(request);
+                        requestStr = "";
+                        request = new HashMap<>();
                         requestFlag = false;
                         break;
                     default:
@@ -173,7 +198,38 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
             }
             start++;
         }
-//        return apiDetail;
+    }
+
+    private void checkRequestDetail(Map<Integer, String> request) {
+        Iterator<Map.Entry<Integer, String>> itr = request.entrySet().iterator();
+        boolean flag = false;
+        while (itr.hasNext()) {
+            Map.Entry<Integer, String> entry = itr.next();
+            if (parsingService.KMP(entry.getValue(), PATH_VARIABLE) != -1) {
+                flag = true;
+                break;
+            }
+            if (parsingService.KMP(entry.getValue(), REQUEST_PARAM) != -1) {
+                flag = true;
+                break;
+            }
+            if (parsingService.KMP(entry.getValue(), REQUEST_BODY) != -1) {
+                flag = true;
+                break;
+            }
+        }
+        if (flag) {
+            itr = request.entrySet().iterator();
+            while (itr.hasNext()) {
+                Map.Entry<Integer, String> entry = itr.next();
+                codeList.get(0).getCode().set(entry.getKey(), codeList.get(0).getCode().get(entry.getKey()).replace(entry.getValue(), ""));
+                codeList.get(0).getCode().set(entry.getKey(), codeList.get(0).getCode().get(entry.getKey()).replace(", )", ")"));
+                codeList.get(0).getCode().set(entry.getKey(), codeList.get(0).getCode().get(entry.getKey()).replace(",)", ")"));   }
+        }
+    }
+
+    private String makeApi(ApiVO detailApiVO) {
+        return null;
     }
 
     private void updateMethodAndUri(ControllerVO detailVO, int start) {
@@ -194,7 +250,5 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
                 codeList.get(0).getCode().set(start, codeList.get(0).getCode().get(start) + uri);
             }
         }
-        System.out.println("메소드 변경");
-        System.out.println(codeList.get(0).getCode().get(start));
     }
 }
