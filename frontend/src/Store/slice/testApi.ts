@@ -7,6 +7,7 @@ const initialState = {
   getControllerInfomation: 0,
   getApisInfomation: 0,
   getRequest: 0,
+  getIsDarkMode: false,
 };
 
 // API 조회 하기.
@@ -23,6 +24,11 @@ const testApiSlice = createSlice({
   name: "testApi",
   initialState,
   reducers: {
+    setGlobalDarkMode(state, action) {
+      console.log("ACTION ->", action.payload);
+
+      state = action.payload;
+    },
     addController(state, action) {
       state.getControllerInfomation = action.payload;
     },
