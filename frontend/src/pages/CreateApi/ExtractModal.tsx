@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
-import apiDocsApiSlice from "../../Store/slice/apiDocsApi";
+import apiDocsApiSlice, { getCsv } from "../../Store/slice/apiDocsApi";
 import { RootState } from "../../Store/store";
 import "./ExtractModal.scss";
 
@@ -13,6 +13,29 @@ const ExtractModal = () => {
   );
   const dispatch = useDispatch();
   const [openIdx, setOpenIdx] = useState(0);
+
+  const downloadFile = (res: any) => {
+    const href = URL.createObjectURL(res.data);
+
+    const link = document.createElement("a");
+    link.href = href;
+    link.download = extractDownloadFilename(res);
+    document.body.appendChild(link);
+    link.click();
+
+    document.body.removeChild(link);
+    URL.revokeObjectURL(href);
+  };
+
+  const extractDownloadFilename = (res: any) => {
+    const disposition = res.headers["content-disposition"];
+    const fileName = decodeURI(
+      disposition
+        .match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)[1]
+        .replace(/['"]/g, "")
+    );
+    return fileName;
+  };
 
   return (
     <ModalContainer>
@@ -60,7 +83,10 @@ const ExtractModal = () => {
               </div>
               <li
                 onClick={() => {
-                  // TODO: csv 다운로드 dispatch
+                  // FIXME: docId 현재 encrypted docId로 수정
+                  dispatch(getCsv({ docId: 1 })).then((res: any) => {
+                    downloadFile(res.payload);
+                  });
                   setOpenIdx(0);
                 }}
               >
