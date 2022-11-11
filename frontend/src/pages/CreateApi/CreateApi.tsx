@@ -7,17 +7,32 @@ import { useSyncedStore } from "@syncedstore/react";
 import { connectDoc, store } from "../../components/CreateApi/store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { Provider, useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Store/store";
 import apiDocsApiSlice from "../../Store/slice/apiDocsApi";
 import ExtractModal from "./ExtractModal";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { axiosGet } from "../../util/axiosUtil";
+import ErrorPage from "../ErrorPage";
 
 const CreateApi = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { encryptedUrl } = useParams();
+  const [authority, setAuthority] = useState<number>(0);
+  const checckAutority = async (encryptedUrl: string) => {
+    return await axiosGet(`/docs/authority/${encryptedUrl}`);
+  };
   useEffect(() => {
     if (encryptedUrl) {
+      checckAutority(encryptedUrl)
+        .then((res) => {
+          setAuthority(res.data);
+        })
+        .catch((err) => {
+          console.log(err.response.data);
+          setAuthority(0);
+        });
       connectDoc(encryptedUrl);
     }
   }, [encryptedUrl]);
@@ -100,9 +115,6 @@ const CreateApi = () => {
   };
 
   const state = useSyncedStore(store);
-  useEffect(() => {
-    console.log(JSON.parse(JSON.stringify(state.data)));
-  }, [state.data]);
   // 테이블의 탭 전환을 위한 state
   const [activeTab, setActiveTab] = useState(1);
   // 선택된 api,controller 저장 state
@@ -167,161 +179,169 @@ const CreateApi = () => {
     setActiveTab(1);
   };
   // 데이터 확인 용 로그
-  return (
-    <div className="apiDocscontainer">
-      <Sidebar
-        handleController={handleController}
-        addApi={addApi}
-        state={state}
-        handleSidebarApi={handleSidebarApi}
-        selectedApi={selectedApi}
-        selectedController={selectedController}
-        addedApiIndex={addedApiIndex}
-        addedControllerIndex={addedControllerIndex}
-      />
-      <div className="apiDocsMaincontainer">
-        <div className="titleContainer">
-          <p className="apiDocsTitleText">APICloud API 명세서</p>
-          <div className="buttonContainer">
-            <button>공유</button>
-            <button>동기화</button>
-            <button
-              type="button"
-              onClick={() =>
-                dispatch(
-                  apiDocsApiSlice.actions.setIsOpenExtractModal({
-                    isOpenExtractModal: true,
-                  })
-                )
-              }
-            >
-              추출
-            </button>
-            {isOpenExtractModal && <ExtractModal></ExtractModal>}
-          </div>
-        </div>
-        <div className="infoContainer">
-          <div>
-            <p>사이트 주소</p>
-            <p className="infoValue">http://localhost:8080</p>
-          </div>
-          <div>
-            <p>공통 URI</p>
-            <p className="infoValue">/api</p>
-          </div>
-        </div>
-        <div className="tabContainer">
-          <div
-            className={activeTab === 1 ? "tabItem active" : "tabItem"}
-            onClick={() => setActiveTab(1)}
-          >
-            headers
-          </div>
-          <div
-            className={activeTab === 2 ? "tabItem active" : "tabItem"}
-            onClick={() => setActiveTab(2)}
-          >
-            parameters
-          </div>
-          <div
-            className={activeTab === 3 ? "tabItem active" : "tabItem"}
-            onClick={() => setActiveTab(3)}
-          >
-            queries
-          </div>
-          <div
-            className={activeTab === 4 ? "tabItem active" : "tabItem"}
-            onClick={() => setActiveTab(4)}
-          >
-            requestBody
-          </div>
-          <div
-            className={activeTab === 5 ? "tabItem active" : "tabItem"}
-            onClick={() => setActiveTab(5)}
-          >
-            responses
-          </div>
-        </div>
-        <div className="tableContainer">
-          {selectedApi > -1 && selectedController > -1 && (
-            <div className="apiTable">
+  if (authority == 0) {
+    return (
+      <>
+        <ErrorPage></ErrorPage>
+      </>
+    );
+  } else {
+    return (
+      <div className="apiDocscontainer">
+        <Sidebar
+          handleController={handleController}
+          addApi={addApi}
+          state={state}
+          handleSidebarApi={handleSidebarApi}
+          selectedApi={selectedApi}
+          selectedController={selectedController}
+          addedApiIndex={addedApiIndex}
+          addedControllerIndex={addedControllerIndex}
+        />
+        <div className="apiDocsMaincontainer">
+          <div className="titleContainer">
+            <p className="apiDocsTitleText">APICloud API 명세서</p>
+            <div className="buttonContainer">
+              <button>공유</button>
+              <button>동기화</button>
               <button
-                className="apiPlusButton"
-                onClick={() => addTableRow("success")}
-              >
-                <FontAwesomeIcon icon={faPlus} className="plusIcon" />
-              </button>
-              {state?.data.length > 0 &&
-                state.data[selectedController]?.apis.length > 0 && (
-                  <Table
-                    activeTab={activeTab}
-                    selectedController={selectedController}
-                    selectedApi={selectedApi}
-                    data={
-                      activeTab === 1
-                        ? JSON.parse(
-                            JSON.stringify(
-                              state.data[selectedController].apis[selectedApi]
-                                .headers
-                            )
-                          )
-                        : activeTab === 2
-                        ? JSON.parse(
-                            JSON.stringify(
-                              state.data[selectedController].apis[selectedApi]
-                                .parameters
-                            )
-                          )
-                        : activeTab === 3
-                        ? JSON.parse(
-                            JSON.stringify(
-                              state.data[selectedController].apis[selectedApi]
-                                .queries
-                            )
-                          )
-                        : activeTab === 4
-                        ? JSON.parse(
-                            JSON.stringify(
-                              state.data[selectedController].apis[selectedApi]
-                                .requestBody?.properties
-                            )
-                          )
-                        : JSON.parse(
-                            JSON.stringify(
-                              state.data[selectedController].apis[selectedApi]
-                                .responses.success.responseBody?.properties
-                            )
-                          )
-                    }
-                    responseType={"success"}
-                  />
-                )}
-            </div>
-          )}
-          {selectedApi > -1 && selectedController > -1 && activeTab === 5 && (
-            <div className="apiTable">
-              <button
-                className="apiPlusButton"
-                onClick={() => addTableRow("fail")}
-              >
-                <FontAwesomeIcon icon={faPlus} className="plusIcon" />
-              </button>
-              <Table
-                activeTab={activeTab}
-                selectedController={selectedController}
-                selectedApi={selectedApi}
-                data={
-                  state.data[selectedController].apis[selectedApi].responses
-                    .fail.responseBody?.properties
+                type="button"
+                onClick={() =>
+                  dispatch(
+                    apiDocsApiSlice.actions.setIsOpenExtractModal({
+                      isOpenExtractModal: true,
+                    })
+                  )
                 }
-                responseType={"fail"}
-              />
+              >
+                추출
+              </button>
+              {isOpenExtractModal && <ExtractModal></ExtractModal>}
             </div>
-          )}
+          </div>
+          <div className="infoContainer">
+            <div>
+              <p>사이트 주소</p>
+              <p className="infoValue">http://localhost:8080</p>
+            </div>
+            <div>
+              <p>공통 URI</p>
+              <p className="infoValue">/api</p>
+            </div>
+          </div>
+          <div className="tabContainer">
+            <div
+              className={activeTab === 1 ? "tabItem active" : "tabItem"}
+              onClick={() => setActiveTab(1)}
+            >
+              headers
+            </div>
+            <div
+              className={activeTab === 2 ? "tabItem active" : "tabItem"}
+              onClick={() => setActiveTab(2)}
+            >
+              parameters
+            </div>
+            <div
+              className={activeTab === 3 ? "tabItem active" : "tabItem"}
+              onClick={() => setActiveTab(3)}
+            >
+              queries
+            </div>
+            <div
+              className={activeTab === 4 ? "tabItem active" : "tabItem"}
+              onClick={() => setActiveTab(4)}
+            >
+              requestBody
+            </div>
+            <div
+              className={activeTab === 5 ? "tabItem active" : "tabItem"}
+              onClick={() => setActiveTab(5)}
+            >
+              responses
+            </div>
+          </div>
+          <div className="tableContainer">
+            {selectedApi > -1 && selectedController > -1 && (
+              <div className="apiTable">
+                <button
+                  className="apiPlusButton"
+                  onClick={() => addTableRow("success")}
+                >
+                  <FontAwesomeIcon icon={faPlus} className="plusIcon" />
+                </button>
+                {state?.data.length > 0 &&
+                  state.data[selectedController]?.apis.length > 0 && (
+                    <Table
+                      activeTab={activeTab}
+                      selectedController={selectedController}
+                      selectedApi={selectedApi}
+                      data={
+                        activeTab === 1
+                          ? JSON.parse(
+                              JSON.stringify(
+                                state.data[selectedController].apis[selectedApi]
+                                  .headers
+                              )
+                            )
+                          : activeTab === 2
+                          ? JSON.parse(
+                              JSON.stringify(
+                                state.data[selectedController].apis[selectedApi]
+                                  .parameters
+                              )
+                            )
+                          : activeTab === 3
+                          ? JSON.parse(
+                              JSON.stringify(
+                                state.data[selectedController].apis[selectedApi]
+                                  .queries
+                              )
+                            )
+                          : activeTab === 4
+                          ? JSON.parse(
+                              JSON.stringify(
+                                state.data[selectedController].apis[selectedApi]
+                                  .requestBody?.properties
+                              )
+                            )
+                          : JSON.parse(
+                              JSON.stringify(
+                                state.data[selectedController].apis[selectedApi]
+                                  .responses.success.responseBody?.properties
+                              )
+                            )
+                      }
+                      responseType={"success"}
+                    />
+                  )}
+              </div>
+            )}
+            {selectedApi > -1 && selectedController > -1 && activeTab === 5 && (
+              <div className="apiTable">
+                <button
+                  className="apiPlusButton"
+                  onClick={() => addTableRow("fail")}
+                >
+                  <FontAwesomeIcon icon={faPlus} className="plusIcon" />
+                </button>
+                <Table
+                  activeTab={activeTab}
+                  selectedController={selectedController}
+                  selectedApi={selectedApi}
+                  data={
+                    state.data[selectedController].apis[selectedApi].responses
+                      .fail.responseBody?.properties
+                  }
+                  responseType={"fail"}
+                />
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  }
 };
 
 export default CreateApi;
