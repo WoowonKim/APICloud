@@ -13,6 +13,7 @@ import apiDocsApiSlice, { getApiDetail } from "../../Store/slice/apiDocsApi";
 import ExtractModal from "./ExtractModal";
 import { useLocation, useParams } from "react-router-dom";
 import { useAppDispatch } from "../../Store/hooks";
+import { checkDataValidation } from "../../components/CreateApi/validationCheck";
 
 const CreateApi = () => {
   const dispatch = useAppDispatch();
@@ -196,6 +197,14 @@ const CreateApi = () => {
         <div className="titleContainer">
           <p className="apiDocsTitleText">APICloud API 명세서</p>
           <div className="buttonContainer">
+            <button
+              onClick={() => {
+                const test = checkDataValidation(state.data);
+                console.log(test);
+              }}
+            >
+              테스트
+            </button>
             <button>공유</button>
             <button>동기화</button>
             <button
