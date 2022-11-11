@@ -3,14 +3,14 @@ import { useSelector } from "react-redux";
 import { RequestBodyType, RequestTypeInfo } from "../../pages/CreateApi/ApisType";
 import testApiSlice, { selectTestApi } from "../../Store/slice/testApi";
 import { ChoiceText } from "../main/ApiList";
-import { HeaderContatinerList, HeaderListInput, HeaderListTitle } from "./Headerheader";
+import { HeaderContatinerList, HeaderListInput, HeaderListTitle, HeaderListTitleCon } from "./Headerheader";
 
 interface type {
   getInfo: RequestTypeInfo | undefined;
 }
 const ApiBody = ({ getInfo }: type) => {
   const [requestBody, setRequestBody] = useState<RequestBodyType>();
-  const [Addobject, setAddObject] = useState({});
+  const [Addobject, setAddObject] = useState([""]);
   const info = useSelector(selectTestApi);
 
   useEffect(() => {
@@ -19,29 +19,37 @@ const ApiBody = ({ getInfo }: type) => {
     }
   }, [getInfo, info.getControllerInfomation, info.getApisInfomation]);
 
+  const requestBodyKey: string[] = [];
+  useEffect(() => {
+    if (requestBody) {
+      requestBody?.properties.map((it, idx) => (requestBodyKey[idx] = it.name));
+    }
+  }, [requestBody]);
+
   return (
-    <div className="apiHeaderContainer">
-      <ChoiceText>Body</ChoiceText>
-      <div>
-        {requestBody?.properties.map((it, idx) => (
+    <>
+      {requestBody?.properties.map((it, idx) => (
+        <>
           <HeaderContatinerList key={idx}>
-            <div className="headerListTitle">
+            <HeaderListTitleCon>
               <HeaderListTitle>{it.name}</HeaderListTitle>
-            </div>
+            </HeaderListTitleCon>
             <div className="headerListContent">
-              <p>
-                <HeaderListInput
-                  type="text"
-                  onChange={(e) => {
-                    setAddObject(`${it.name} = ${e.target.value}`);
-                  }}
-                />
-              </p>
+              <HeaderListInput
+                type="text"
+                // onChange={(e) => {
+                // setAddObject(`${it.name} = ${e.target.value}`);
+                // '            setAddObject(
+                //               {...Addobject,}
+                //             );
+                //           }}'
+              />
+              <button>저장</button>
             </div>
           </HeaderContatinerList>
-        ))}
-      </div>
-    </div>
+        </>
+      ))}
+    </>
   );
 };
 
