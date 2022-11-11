@@ -4,6 +4,7 @@ import { axiosGet, axiosGetFile, axiosPost } from "../../util/axiosUtil";
 
 const initialState = {
   isOpenExtractModal: false,
+  isOpenDependencyModal: false,
 };
 
 // 특정 API DOC Detail 조회하기
@@ -69,6 +70,9 @@ const apiDocsApiSlice = createSlice({
   reducers: {
     setIsOpenExtractModal(state, action) {
       state.isOpenExtractModal = action.payload.isOpenExtractModal;
+    },
+    setIsOpenDependencyModal(state, action) {
+      state.isOpenDependencyModal = action.payload.isOpenDependencyModal;
     },
   },
   extraReducers: {
