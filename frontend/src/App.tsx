@@ -34,11 +34,22 @@ const App = () => {
         <GlobalStyles />
         <Routes>
           <Route path="/" element={<Main />} />
-          <Route path="/oauth2/redirect/" element={<OAuth2RedirectHandler />}></Route>
+          <Route
+            path="/oauth2/redirect/"
+            element={<OAuth2RedirectHandler />}
+          ></Route>
           <Route path="/welcome" element={<Welcome />} />
-          <Route path="/createApi" element={<CreateApi />} />
+          <Route path="/createApi/:encryptedUrl" element={<CreateApi />} />
           <Route path="/apiDocs/:encryptedUrl" element={<ApiDocs />} />
-          <Route path="/testApi" element={<TestApi isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />} />
+          <Route
+            path="/testApi"
+            element={
+              <TestApi
+                isDarkMode={isDarkMode}
+                toggleDarkMode={toggleDarkMode}
+              />
+            }
+          />
           <Route path="/*" element={<ErrorPage />} />
         </Routes>
         <ModeChange

@@ -9,11 +9,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Store/store";
-import apiDocsApiSlice from "../../Store/slice/apiDocsApi";
+import apiDocsApiSlice, { getApiDetail } from "../../Store/slice/apiDocsApi";
 import ExtractModal from "./ExtractModal";
+import { useLocation } from "react-router-dom";
+import { useAppDispatch } from "../../Store/hooks";
 
 const CreateApi = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const isOpenExtractModal = useSelector(
     (state: RootState) => state.apiDocsApi.isOpenExtractModal
@@ -151,6 +153,16 @@ const CreateApi = () => {
   };
   // 데이터 확인 용 로그
   console.log(JSON.parse(JSON.stringify(state.data)));
+  const location = useLocation();
+  useEffect(() => {
+    dispatch(getApiDetail({ docId: location.state.data.docId })).then(
+      (res: any) => {
+        if (res.meta.requestStatus === "fulfilled") {
+          console.log(res.payload);
+        }
+      }
+    );
+  }, []);
 
   return (
     <div className="apiDocscontainer">
