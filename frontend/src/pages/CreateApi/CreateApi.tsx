@@ -1,21 +1,27 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { ApisType, ControllerType, PropertiesType } from "./ApisType";
 import "./CreateApi.scss";
 import Sidebar from "../../components/CreateApi/Sidebar/Sidebar";
 import Table from "../../components/CreateApi/Table/Table";
 import { useSyncedStore } from "@syncedstore/react";
-import { store } from "../../components/CreateApi/store";
+import { connectDoc, store } from "../../components/CreateApi/store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "../../Store/store";
 import apiDocsApiSlice, { getApiDetail } from "../../Store/slice/apiDocsApi";
 import ExtractModal from "./ExtractModal";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { useAppDispatch } from "../../Store/hooks";
 
 const CreateApi = () => {
   const dispatch = useAppDispatch();
+  const { encryptedUrl } = useParams();
+  useEffect(() => {
+    if (encryptedUrl) {
+      connectDoc(encryptedUrl);
+    }
+  }, [encryptedUrl]);
 
   const isOpenExtractModal = useSelector(
     (state: RootState) => state.apiDocsApi.isOpenExtractModal
@@ -96,6 +102,9 @@ const CreateApi = () => {
   };
 
   const state = useSyncedStore(store);
+  useEffect(() => {
+    console.log(JSON.parse(JSON.stringify(state.data)));
+  }, [state.data]);
   // 테이블의 탭 전환을 위한 state
   const [activeTab, setActiveTab] = useState(1);
   // 선택된 api,controller 저장 state
@@ -145,6 +154,14 @@ const CreateApi = () => {
     }
   };
 
+  const getData = (selectedController: number, selectedApi: number) => {
+    return state.data[selectedController].apis[selectedApi].headers;
+  };
+  const data = useMemo(() => {
+    if (state.data[selectedController])
+      return getData(selectedController, selectedApi);
+    else return [];
+  }, [state.data]);
   // 사이드바의 api 정보 가져오는 함수
   const handleSidebarApi = (index: number, idx: number) => {
     setSelectedController(index);
@@ -163,7 +180,6 @@ const CreateApi = () => {
       }
     );
   }, []);
-
   return (
     <div className="apiDocscontainer">
       <Sidebar
@@ -290,7 +306,6 @@ const CreateApi = () => {
                             )
                           )
                     }
-                    state={state}
                     responseType={"success"}
                   />
                 )}
@@ -308,13 +323,10 @@ const CreateApi = () => {
                 activeTab={activeTab}
                 selectedController={selectedController}
                 selectedApi={selectedApi}
-                data={JSON.parse(
-                  JSON.stringify(
-                    state.data[selectedController].apis[selectedApi].responses
-                      .fail.responseBody?.properties
-                  )
-                )}
-                state={state}
+                data={
+                  state.data[selectedController].apis[selectedApi].responses
+                    .fail.responseBody?.properties
+                }
                 responseType={"fail"}
               />
             </div>

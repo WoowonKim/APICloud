@@ -1,6 +1,8 @@
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { MappedTypeDescription } from "@syncedstore/core/types/doc";
+import { useSyncedStore } from "@syncedstore/react";
+import { store } from "../store";
 import React, { useState } from "react";
 import { ControllerType } from "../../../pages/CreateApi/ApisType";
 import SelectTypes from "../SelectTypes/SelectTypes";
@@ -17,9 +19,6 @@ interface Props {
   ) => void;
   selectedController: number;
   selectedApi: number;
-  state: MappedTypeDescription<{
-    data: ControllerType[];
-  }>;
   responseType?: string;
   dtoData: any;
   dtoExists: boolean;
@@ -30,13 +29,12 @@ const TableInfo = ({
   handleBasicInfo,
   selectedApi,
   selectedController,
-  state,
   responseType,
   dtoData,
   dtoExists,
 }: Props) => {
+  const state = useSyncedStore(store);
   const [visible, setVisible] = useState(false);
-
   return (
     <div>
       {activeTab === 4 ? (
