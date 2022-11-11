@@ -4,17 +4,23 @@ import "./CreateApi.scss";
 import Sidebar from "../../components/CreateApi/Sidebar/Sidebar";
 import Table from "../../components/CreateApi/Table/Table";
 import { useSyncedStore } from "@syncedstore/react";
-import { store } from "../../components/CreateApi/store";
+import { connectDoc, store } from "../../components/CreateApi/store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { useDispatch, useSelector } from "react-redux";
+import { Provider, useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Store/store";
 import apiDocsApiSlice from "../../Store/slice/apiDocsApi";
 import ExtractModal from "./ExtractModal";
+import { useParams } from "react-router-dom";
 
 const CreateApi = () => {
   const dispatch = useDispatch();
-
+  const { encryptedUrl } = useParams();
+  useEffect(() => {
+    if (encryptedUrl) {
+      connectDoc(encryptedUrl);
+    }
+  }, [encryptedUrl]);
   const isOpenExtractModal = useSelector(
     (state: RootState) => state.apiDocsApi.isOpenExtractModal
   );
