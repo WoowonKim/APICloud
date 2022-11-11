@@ -1,23 +1,49 @@
 import { faTurnUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React from "react";
+import React, { ForwardedRef, forwardRef, useEffect, useRef } from "react";
 import "./ApiDocPaper2.scss";
 import Headers from "./Headers";
 import Parameters from "./Parameters";
 import Queries from "./Queries";
 import RequestBody from "./RequestBody";
 import Responses from "./Responses";
+import { Ref } from "./Sidebar";
 
 interface Props {
   detail: any;
 }
 
-const ApiDocPaper2 = ({ detail }: Props) => {
+// ref의 객체, 함수 여부 판단
+const useForwardRef = <T,>(
+  ref: ForwardedRef<T>,
+  initialValue: any = null
+) => {
+  const targetRef = useRef<T>(initialValue);
+
+  useEffect(() => {
+    if (!ref) return;
+
+    if (typeof ref === 'function') {
+      ref(targetRef.current);
+    } else {
+      ref.current = targetRef.current;
+    }
+  }, [ref]);
+
+  return targetRef;
+};
+
+const ApiDocPaper2 = forwardRef<Ref, Props>(({ detail }, menuRef) => {
+  const refList = useForwardRef<Ref>(menuRef, []);
+
+  // map 돌면서 refList에 ref 요소 할당 함수
+  const addToRefs = (el: never) => {refList.current.push(el)}
+
   return (
     <div className="docPaper2Wrapper">
       {detail && (
         <div>
-          <div>server</div>
+          <div ref={el => refList.current[0] = el}>server</div>
           <div className="titleContentWrapper">
             <div>
               &nbsp;
@@ -28,7 +54,7 @@ const ApiDocPaper2 = ({ detail }: Props) => {
           </div>
         </div>
       )}
-      <div>controllers</div>
+      <div ref={el => refList.current[1] = el}>controllers</div>
       {detail &&
         detail.controllers.map((item: any, idx: any) => (
           <div key={idx}>
@@ -49,7 +75,7 @@ const ApiDocPaper2 = ({ detail }: Props) => {
               <div className="content">{item.commonUri}</div>
             </div>
             {item.apis.map((item: any, idx: any) => (
-              <div key={idx}>
+              <div key={idx} ref={addToRefs}>
                 <div className="iconTitleWrapper">
                   &nbsp;
                   <FontAwesomeIcon icon={faTurnUp} rotation={90} />
@@ -90,6 +116,6 @@ const ApiDocPaper2 = ({ detail }: Props) => {
         ))}
     </div>
   );
-};
+});
 
 export default ApiDocPaper2;
