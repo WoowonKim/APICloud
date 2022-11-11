@@ -9,6 +9,7 @@ import com.web.apicloud.domain.vo.ApiVO;
 import com.web.apicloud.domain.vo.ControllerVO;
 import com.web.apicloud.domain.vo.PropertyVO;
 import com.web.apicloud.exception.NotFoundException;
+import com.web.apicloud.model.parsing.ClassUpdateService;
 import com.web.apicloud.model.parsing.ParsingService;
 import com.web.apicloud.model.parsing.S3Service;
 import lombok.RequiredArgsConstructor;
@@ -46,16 +47,19 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
     private final GroupService groupService;
     private final S3Service s3Service;
     private final ParsingService parsingService;
+    private final ClassUpdateService classUpdateService;
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
-    private static List<CodeResponse> codeList = new ArrayList<>();
-    private Map<String, String> importList = new HashMap<>();
-    private List<String> updateImport = new ArrayList<>();
+    public static List<CodeResponse> codeList = new ArrayList<>();
+    public static Map<String, String> importList = new HashMap<>();
+    public static List<String> updateImport = new ArrayList<>();
 
     private StringBuffer sb = new StringBuffer();
 
     private int count = 0;
     private boolean etcFlag = false;
+    private static String groupSecretKey = "";
+
 
     @Override
     public List<CodeResponse> updateCode(Long docId, DetailRequest detailRequest) throws IOException {
@@ -68,11 +72,18 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
         ControllerVO detailVO = objectMapper.readValue(detailRequest.getDetail(), ControllerVO.class);
         Docs doc = docsService.findByDocsId(docId);
         Group group = groupService.findById(doc.getGroup().getId());
+        groupSecretKey = group.getGroupSecretKey();
 
-        List<String> lines = s3Service.getFile(detailVO.getName(), null, group.getGroupSecretKey());
+        Map<String, List<String>> getFileCode = s3Service.getFile(detailVO.getName(), null, groupSecretKey);
+        if (getFileCode == null) new NotFoundException(NOT_FOUND_FILE);
+        List<String> lines = getFileCode.get("code");
+        String key = String.valueOf(getFileCode.get(IMPORT));
+        key = StringUtils.removeEnd(key, "]");
+        key = StringUtils.removeStart(key, "[");
+        System.out.println(lines);
         if (lines == null) new NotFoundException(NOT_FOUND_FILE);
 
-        codeList.add(CodeResponse.builder().name(detailVO.getName()).code(lines).build());
+        codeList.add(CodeResponse.builder().name(detailVO.getName()).importPackage(key).code(lines).build());
         getUpdateCode(detailVO);
         getUpdateImport();
         return codeList;
@@ -93,7 +104,7 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
         codeList.get(0).getCode().addAll(i, updateImport);
     }
 
-    private void getUpdateCode(ControllerVO detailVO) {
+    private void getUpdateCode(ControllerVO detailVO) throws IOException {
         int i = 0;
 
         while (i < codeList.get(0).getCode().size()) {
@@ -132,7 +143,7 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
         }
     }
 
-    private void apiParsing(ControllerVO detailVO, int start, int end) {
+    private void apiParsing(ControllerVO detailVO, int start, int end) throws IOException {
         if (detailVO.getApis().size() <= count) return;
         updateMethodAndUri(detailVO, start);
 
@@ -145,7 +156,7 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
         count++;
     }
 
-    private void updateApi(ControllerVO detailVO, int start, int end) {
+    private void updateApi(ControllerVO detailVO, int start, int end) throws IOException {
         Stack<Character> stack = new Stack<>();
         boolean responseFlag = false;
         boolean requestFlag = false;
@@ -285,7 +296,7 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
         } else etcFlag = true;
     }
 
-    private String makeApi(ApiVO detailApiVO) {
+    private String makeApi(ApiVO detailApiVO) throws IOException {
         String api = "";
 
         if (detailApiVO.getParameters() != null) {
@@ -299,7 +310,7 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
                 PropertyVO path = detailApiVO.getParameters().get(p);
                 String pathStr = "";
                 if (path.getType() != null && path.getName() != null) {
-                    pathStr += "@" + PATH_VARIABLE + "(" + VALUE + " = " + path.getName() + ", required = " + path.isRequired() + ") " + path.getType() + " " + path.getName() + ", ";
+                    pathStr += "@" + PATH_VARIABLE + "(" + VALUE + " = \"" + path.getName() + "\", required = " + path.isRequired() + ") " + path.getType() + " " + path.getName() + ", ";
                 }
                 api += pathStr;
             }
@@ -349,6 +360,7 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
             } else requestStr += detailApiVO.getRequestBody().getDtoName();
             requestStr += " " + detailApiVO.getRequestBody().getName() + ", ";
             // TODO : 리퀘스트 바디 업데이트 하러가기
+            classUpdateService.updateObject(groupSecretKey, detailApiVO.getRequestBody());
             api += requestStr;
         }
         return api;

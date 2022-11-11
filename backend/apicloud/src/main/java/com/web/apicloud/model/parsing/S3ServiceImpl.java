@@ -8,6 +8,7 @@ import com.web.apicloud.util.FileUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.lingala.zip4j.ZipFile;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,8 +17,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -27,6 +27,7 @@ public class S3ServiceImpl implements S3Service {
     private final TransferManager transferManager;
 
     private final AmazonS3 amazonS3;
+    private final ParsingService parsingService;
 
     @Value("${cloud.aws.s3.bucket}")
     public String bucket;
@@ -51,7 +52,7 @@ public class S3ServiceImpl implements S3Service {
     }
 
     @Override
-    public List<String> getFile(String name, MultipartFile file, String groupSecretKey) throws IOException {
+    public Map<String, List<String>> getFile(String name, MultipartFile file, String groupSecretKey) throws IOException {
         String fileName = name + ".java";
         if (file == null) {
             if (!findPath(groupSecretKey)) return null;
@@ -69,7 +70,7 @@ public class S3ServiceImpl implements S3Service {
         return true;
     }
 
-    public List<String> findFile(String name, String groupSecretKey) throws IOException {
+    public Map<String, List<String>> findFile(String name, String groupSecretKey) throws IOException {
         ListObjectsRequest listObjectsRequest = new ListObjectsRequest();
         listObjectsRequest.setBucketName(bucket);
         listObjectsRequest.setPrefix(groupSecretKey);
@@ -88,11 +89,12 @@ public class S3ServiceImpl implements S3Service {
         return null;
     }
 
-    public List<String> getCode(String key) throws IOException {
+    public Map<String, List<String>> getCode(String key) throws IOException {
         S3Object o = amazonS3.getObject(new GetObjectRequest(bucket, key));
         S3ObjectInputStream ois = null;
         BufferedReader br = null;
         List<String> line = new ArrayList<>();
+
         try {
             ois = o.getObjectContent();
             br = new BufferedReader(new InputStreamReader(ois, "UTF-8"));
@@ -109,6 +111,12 @@ public class S3ServiceImpl implements S3Service {
             }
         }
         if (line == null || line.size() == 0) return null;
-        return line;
+
+        Map<String, List<String>> code = new HashMap<>();
+        int keyIndex = parsingService.KMP(key, "com");
+        if (keyIndex != -1) key = StringUtils.removeEnd(key.substring(keyIndex - 2, key.length()), ".java").replaceAll("/", ".");
+        code.put("import", Collections.singletonList(key));
+        code.put("code", line);
+        return code;
     }
 }

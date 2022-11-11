@@ -11,11 +11,14 @@ import java.util.List;
 public class CodeResponse {
     private String name;
 
+    private String importPackage;
+
     private List<String> code;
 
     @Builder
-    public CodeResponse(String name, List<String> code) {
+    public CodeResponse(String name, String importPackage, List<String> code) {
         this.name = name;
+        this.importPackage = importPackage;
         this.code = code;
     }
 }
