@@ -1,6 +1,6 @@
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Sidebar from "../components/ApiDocs/Sidebar";
 import "../components/ApiDocs/ApiDocs.scss";
 import ApiDocPaper from "../components/ApiDocs/ApiDocPaper";
@@ -23,6 +23,8 @@ const ApiDocs = () => {
   };
 
   const dispatch = useDispatch();
+
+  const menuRef = useRef<HTMLDivElement[]>(null);
 
   // PDF로 변환하기
   const pdf = MakeToPDF();
@@ -75,7 +77,12 @@ const ApiDocs = () => {
           <div onClick={toggleSide} className="sidebarButton">
             <FontAwesomeIcon icon={faBars} size="2x" />
           </div>
-          <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
+          <Sidebar
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+            detail={detail}
+            ref={menuRef}
+          />
         </div>
         <div className="docBox">
           <div className="title">API DOC 페이지</div>
@@ -86,7 +93,7 @@ const ApiDocs = () => {
             <ApiDocPaper docInformArray={docInformArray} />
           </div>
           <div className="doc2">
-            <ApiDocPaper2 detail={detail} />
+            <ApiDocPaper2 detail={detail} ref={menuRef} />
           </div>
           <button onClick={onClick}>pdf로 변환</button>
         </div>
