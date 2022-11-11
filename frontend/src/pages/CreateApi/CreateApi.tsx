@@ -7,20 +7,22 @@ import { useSyncedStore } from "@syncedstore/react";
 import { connectDoc, store } from "../../components/CreateApi/store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { Provider, useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "../../Store/store";
-import apiDocsApiSlice from "../../Store/slice/apiDocsApi";
+import apiDocsApiSlice, { getApiDetail } from "../../Store/slice/apiDocsApi";
 import ExtractModal from "./ExtractModal";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
+import { useAppDispatch } from "../../Store/hooks";
 
 const CreateApi = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { encryptedUrl } = useParams();
   useEffect(() => {
     if (encryptedUrl) {
       connectDoc(encryptedUrl);
     }
   }, [encryptedUrl]);
+
   const isOpenExtractModal = useSelector(
     (state: RootState) => state.apiDocsApi.isOpenExtractModal
   );
@@ -167,6 +169,17 @@ const CreateApi = () => {
     setActiveTab(1);
   };
   // 데이터 확인 용 로그
+  console.log(JSON.parse(JSON.stringify(state.data)));
+  const location = useLocation();
+  useEffect(() => {
+    dispatch(getApiDetail({ docId: location.state.data.docId })).then(
+      (res: any) => {
+        if (res.meta.requestStatus === "fulfilled") {
+          console.log(res.payload);
+        }
+      }
+    );
+  }, []);
   return (
     <div className="apiDocscontainer">
       <Sidebar

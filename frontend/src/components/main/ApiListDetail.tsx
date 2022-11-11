@@ -32,11 +32,18 @@ const ListContent = styled.div`
 const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const isOpenUpdateModal = useSelector((state: RootState) => state.mainApi.isOpenUpdateModal);
+  const isOpenUpdateModal = useSelector(
+    (state: RootState) => state.mainApi.isOpenUpdateModal
+  );
 
-  const moveApidocs: any = (docId: number) => {
+  const moveApidocs: any = (docId: number, isEdit: boolean, data?: any) => {
     dispatch(mainApiSlice.actions.setDocId({ docId: docId }));
-    navigate(`/apiDocs/${docId}`);
+    localStorage.setItem("docId", docId.toString());
+    if (isEdit && data) {
+      navigate(`/createApi/${docId}`, { state: { data: data } });
+    } else {
+      navigate(`/apiDocs/${docId}`);
+    }
   };
   const list = apiList === 0 ? apiDocList : apiDocList;
 
@@ -58,9 +65,7 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
           <div
             className="content"
             onClick={() => {
-              moveApidocs(it.encryptedUrl);
-              dispatch(mainApiSlice.actions.setDocId({ docId: it.docId }));
-              localStorage.setItem("docId", it.docId.toString());
+              moveApidocs(it.encryptedUrl, false);
             }}
           >
             <p>{it.docName}</p>
@@ -71,7 +76,11 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
                 <FontAwesomeIcon icon={faUser} />
                 {it.groupUser.name}
               </div>
-              <FontAwesomeIcon className="DeatilIcon" icon={faRightToBracket} />
+              <FontAwesomeIcon
+                className="DeatilIcon"
+                icon={faRightToBracket}
+                onClick={() => moveApidocs(it.encryptedUrl, true, it)}
+              />
               {apiList === 0 ? (
                 <>
                   <FontAwesomeIcon
@@ -83,11 +92,17 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
                           isOpenUpdateModal: true,
                         })
                       );
-                      dispatch(mainApiSlice.actions.setDocId({ docId: it.docId }));
+                      dispatch(
+                        mainApiSlice.actions.setDocId({ docId: it.docId })
+                      );
                       console.log("ApiListDetail DocId => ", it.docId);
                     }}
                   />
-                  <FontAwesomeIcon className="DeatilIcon" icon={faTrash} onClick={() => dispatchDeleteDoc(it.docId)} />
+                  <FontAwesomeIcon
+                    className="DeatilIcon"
+                    icon={faTrash}
+                    onClick={() => dispatchDeleteDoc(it.docId)}
+                  />
                 </>
               ) : (
                 <div></div>
