@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import apiDocsApiSlice, {
   getCsv,
+  getNotion,
   getSpringBoot,
 } from "../../Store/slice/apiDocsApi";
 import { RootState } from "../../Store/store";
@@ -15,7 +16,10 @@ const ExtractModal = () => {
     (state: RootState) => state.apiDocsApi.isOpenExtractModal
   );
   const dispatch = useDispatch();
+
   const [openIdx, setOpenIdx] = useState(0);
+  const [notionDBId, setNotionDBId] = useState("");
+  const [notionToken, setNotionToken] = useState("");
 
   const downloadFile = (res: any) => {
     const href = URL.createObjectURL(res.data);
@@ -46,7 +50,10 @@ const ExtractModal = () => {
         <div className="modalContainer">
           <div className="modalMain">
             <ul className="extractModal-extractList">
-              <li onClick={() => setOpenIdx(1)}>
+              <li
+                onClick={() => setOpenIdx(1)}
+                className={openIdx === 1 ? "open" : ""}
+              >
                 <div>Spring boot</div>
               </li>
               <div className={openIdx === 1 ? "open" : ""}>
@@ -68,7 +75,10 @@ const ExtractModal = () => {
                   </button>
                 </div>
               </div>
-              <li onClick={() => setOpenIdx(2)}>
+              <li
+                onClick={() => setOpenIdx(2)}
+                className={openIdx === 1 ? "open" : ""}
+              >
                 <div>Notion</div>
               </li>
               <div className={openIdx === 2 ? "open" : ""}>
@@ -82,17 +92,43 @@ const ExtractModal = () => {
                   <div>
                     {/* TODO: 페이지 링크를 받아서 데이터베이스 찾아주기 */}
                     {/* TODO: local storage에 저장 */}
-                    2. 데이터베이스 key
-                    <input type="text"></input>
+                    2. 데이터베이스 id
+                    <input
+                      type="text"
+                      value={notionDBId}
+                      onChange={(e) => setNotionDBId(e.target.value)}
+                    ></input>
                   </div>
                   <div>
                     {/* TODO: secret key oauth로 받기 */}
-                    3. secret key
-                    <input type="text"></input>
+                    3. token
+                    <input
+                      type="text"
+                      value={notionToken}
+                      onChange={(e) => setNotionToken(e.target.value)}
+                    ></input>
                   </div>
                 </div>
                 <button>도움말</button>
-                <button>추출</button>
+                <button
+                  onClick={() => {
+                    // FIXME: docId 현재 encrypted docId로 수정
+                    dispatch(
+                      getNotion({
+                        docId: 1,
+                        notionRequest: {
+                          token: notionToken,
+                          databaseId: notionDBId,
+                        },
+                      })
+                    ).then((res: any) => {
+                      console.log(res.payload);
+                    });
+                    setOpenIdx(0);
+                  }}
+                >
+                  추출
+                </button>
               </div>
               <li
                 onClick={() => {

@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
-import { axiosGet, axiosGetFile } from "../../util/axiosUtil";
+import { axiosGet, axiosGetFile, axiosPost } from "../../util/axiosUtil";
 
 const initialState = {
   isOpenExtractModal: false,
@@ -41,6 +41,22 @@ export const getSpringBoot: any = createAsyncThunk(
       // TODO: 현재 detail, dependencies 전달
       const response = await axiosGetFile(`docs/${args.docId}/project`);
       return response;
+    } catch (err: any) {
+      return rejectWithValue(err.response);
+    }
+  }
+);
+
+// notion 추출
+export const getNotion: any = createAsyncThunk(
+  "apiDocsApi/getNotion",
+  async (args: any, { rejectWithValue }) => {
+    try {
+      const response = await axiosPost(
+        `docs/${args.docId}/notion`,
+        args.notionRequest
+      );
+      return response.data;
     } catch (err: any) {
       return rejectWithValue(err.response);
     }
