@@ -15,9 +15,7 @@ import ExtractModal from "./ExtractModal";
 const CreateApi = () => {
   const dispatch = useDispatch();
 
-  const isOpenExtractModal = useSelector(
-    (state: RootState) => state.apiDocsApi.isOpenExtractModal
-  );
+  const isOpenExtractModal = useSelector((state: RootState) => state.apiDocsApi.isOpenExtractModal);
   // api 정보를 저장할 state
   const [apiData, setApiData] = useState<ApisType>({
     name: "",
@@ -129,17 +127,11 @@ const CreateApi = () => {
       });
     } else if (activeTab === 2 || activeTab === 3) {
       const tab = activeTab === 3 ? "queries" : "parameters";
-      state.data[selectedController].apis[selectedApi][tab].push(
-        propertiesData
-      );
+      state.data[selectedController].apis[selectedApi][tab].push(propertiesData);
     } else if (activeTab === 4) {
-      state.data[selectedController].apis[
-        selectedApi
-      ].requestBody.properties.push(propertiesData);
+      state.data[selectedController].apis[selectedApi].requestBody.properties.push(propertiesData);
     } else if (activeTab === 5 && responseType) {
-      state.data[selectedController].apis[selectedApi].responses[
-        responseType
-      ].responseBody.properties.push(propertiesData);
+      state.data[selectedController].apis[selectedApi].responses[responseType].responseBody.properties.push(propertiesData);
     }
   };
 
@@ -150,7 +142,11 @@ const CreateApi = () => {
     setActiveTab(1);
   };
   // 데이터 확인 용 로그
-  console.log(JSON.parse(JSON.stringify(state.data)));
+  const test = {
+    server: { dependencies: [] },
+    controllers: state.data,
+  };
+  console.log(JSON.stringify(test));
 
   return (
     <div className="apiDocscontainer">
@@ -196,112 +192,60 @@ const CreateApi = () => {
           </div>
         </div>
         <div className="tabContainer">
-          <div
-            className={activeTab === 1 ? "tabItem active" : "tabItem"}
-            onClick={() => setActiveTab(1)}
-          >
+          <div className={activeTab === 1 ? "tabItem active" : "tabItem"} onClick={() => setActiveTab(1)}>
             headers
           </div>
-          <div
-            className={activeTab === 2 ? "tabItem active" : "tabItem"}
-            onClick={() => setActiveTab(2)}
-          >
+          <div className={activeTab === 2 ? "tabItem active" : "tabItem"} onClick={() => setActiveTab(2)}>
             parameters
           </div>
-          <div
-            className={activeTab === 3 ? "tabItem active" : "tabItem"}
-            onClick={() => setActiveTab(3)}
-          >
+          <div className={activeTab === 3 ? "tabItem active" : "tabItem"} onClick={() => setActiveTab(3)}>
             queries
           </div>
-          <div
-            className={activeTab === 4 ? "tabItem active" : "tabItem"}
-            onClick={() => setActiveTab(4)}
-          >
+          <div className={activeTab === 4 ? "tabItem active" : "tabItem"} onClick={() => setActiveTab(4)}>
             requestBody
           </div>
-          <div
-            className={activeTab === 5 ? "tabItem active" : "tabItem"}
-            onClick={() => setActiveTab(5)}
-          >
+          <div className={activeTab === 5 ? "tabItem active" : "tabItem"} onClick={() => setActiveTab(5)}>
             responses
           </div>
         </div>
         <div className="tableContainer">
           {selectedApi > -1 && selectedController > -1 && (
             <div className="apiTable">
-              <button
-                className="apiPlusButton"
-                onClick={() => addTableRow("success")}
-              >
+              <button className="apiPlusButton" onClick={() => addTableRow("success")}>
                 <FontAwesomeIcon icon={faPlus} className="plusIcon" />
               </button>
-              {state?.data.length > 0 &&
-                state.data[selectedController]?.apis.length > 0 && (
-                  <Table
-                    activeTab={activeTab}
-                    selectedController={selectedController}
-                    selectedApi={selectedApi}
-                    data={
-                      activeTab === 1
-                        ? JSON.parse(
-                            JSON.stringify(
-                              state.data[selectedController].apis[selectedApi]
-                                .headers
-                            )
-                          )
-                        : activeTab === 2
-                        ? JSON.parse(
-                            JSON.stringify(
-                              state.data[selectedController].apis[selectedApi]
-                                .parameters
-                            )
-                          )
-                        : activeTab === 3
-                        ? JSON.parse(
-                            JSON.stringify(
-                              state.data[selectedController].apis[selectedApi]
-                                .queries
-                            )
-                          )
-                        : activeTab === 4
-                        ? JSON.parse(
-                            JSON.stringify(
-                              state.data[selectedController].apis[selectedApi]
-                                .requestBody?.properties
-                            )
-                          )
-                        : JSON.parse(
-                            JSON.stringify(
-                              state.data[selectedController].apis[selectedApi]
-                                .responses.success.responseBody?.properties
-                            )
-                          )
-                    }
-                    state={state}
-                    responseType={"success"}
-                  />
-                )}
+              {state?.data.length > 0 && state.data[selectedController]?.apis.length > 0 && (
+                <Table
+                  activeTab={activeTab}
+                  selectedController={selectedController}
+                  selectedApi={selectedApi}
+                  data={
+                    activeTab === 1
+                      ? JSON.parse(JSON.stringify(state.data[selectedController].apis[selectedApi].headers))
+                      : activeTab === 2
+                      ? JSON.parse(JSON.stringify(state.data[selectedController].apis[selectedApi].parameters))
+                      : activeTab === 3
+                      ? JSON.parse(JSON.stringify(state.data[selectedController].apis[selectedApi].queries))
+                      : activeTab === 4
+                      ? JSON.parse(JSON.stringify(state.data[selectedController].apis[selectedApi].requestBody?.properties))
+                      : JSON.parse(JSON.stringify(state.data[selectedController].apis[selectedApi].responses.success.responseBody?.properties))
+                  }
+                  state={state}
+                  responseType={"success"}
+                />
+              )}
             </div>
           )}
           {selectedApi > -1 && selectedController > -1 && activeTab === 5 && (
             <div className="apiTable">
-              <button
-                className="apiPlusButton"
-                onClick={() => addTableRow("fail")}
-              >
+              <button className="apiPlusButton" onClick={() => addTableRow("fail")}>
                 <FontAwesomeIcon icon={faPlus} className="plusIcon" />
               </button>
               <Table
                 activeTab={activeTab}
                 selectedController={selectedController}
                 selectedApi={selectedApi}
-                data={JSON.parse(
-                  JSON.stringify(
-                    state.data[selectedController].apis[selectedApi].responses
-                      .fail.responseBody?.properties
-                  )
-                )}
+                data={JSON.parse(JSON.stringify(state.data[selectedController].apis[selectedApi].responses.fail.responseBody?.properties))}
                 state={state}
                 responseType={"fail"}
               />

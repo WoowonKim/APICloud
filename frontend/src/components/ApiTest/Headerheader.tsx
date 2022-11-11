@@ -13,8 +13,8 @@ export const HeaderContatinerList = styled.div`
   width: 100%;
 `;
 export const HeaderListTitleCon = styled.div`
-  width: 30%;
-  text-align: left;
+  width: 20%;
+  text-align: center;
 `;
 export const HeaderListTitle = styled.p`
   font-weight: bold;
@@ -25,8 +25,10 @@ export const HeaderListTitle = styled.p`
 
 export const HeaderListInput = styled.input`
   width: 300px;
+  padding-top: 17px;
+  font-weight: bold;
   border: none;
-  font-size: 12px;
+  font-size: 13px;
   border-bottom: 1px solid black;
   background-color: ${(props) => props.theme.bgColor};
   color: ${(props) => props.theme.color};
@@ -36,6 +38,7 @@ const Headerheader = ({ getInfo }: type) => {
   const [getCollection, setGetCollection] = useState("");
   const [getDtoName, setGetDtoName] = useState("");
   const [getType, setGetType] = useState("");
+  const [test, setTest] = useState("");
   useEffect(() => {
     if (getInfo) {
       setGetCollection(getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].requestBody.collectionType);
@@ -43,63 +46,28 @@ const Headerheader = ({ getInfo }: type) => {
       setGetType(getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].requestBody.type);
     }
   }, [getInfo, info.getControllerInfomation, info.getApisInfomation]);
+
   return (
-    <HeaderContatinerList>
-      <HeaderListTitleCon>
-        <HeaderListTitle>CollectionType </HeaderListTitle>
-        <HeaderListTitle>DtoName </HeaderListTitle>
-        <HeaderListTitle>Type </HeaderListTitle>
-        <HeaderListTitle>Token </HeaderListTitle>
-        <HeaderListTitle>Cookie </HeaderListTitle>
-      </HeaderListTitleCon>
-      <div className="headerListContent">
-        <p>
-          <HeaderListInput
-            type="text"
-            value={getCollection}
-            onChange={(e) => {
-              setGetCollection(e.target.value);
-            }}
-          />
-        </p>
-        <p>
-          <HeaderListInput
-            type="text"
-            value={getDtoName}
-            onChange={(e) => {
-              setGetDtoName(e.target.value);
-            }}
-          />
-        </p>
-        <p>
-          <HeaderListInput
-            type="text"
-            value={getType}
-            onChange={(e) => {
-              setGetType(e.target.value);
-            }}
-          />
-        </p>
-        <p>
-          <HeaderListInput
-            type="text"
-            value={getType}
-            onChange={(e) => {
-              setGetType(e.target.value);
-            }}
-          />
-        </p>
-        <p>
-          <HeaderListInput
-            type="text"
-            value={getType}
-            onChange={(e) => {
-              setGetType(e.target.value);
-            }}
-          />
-        </p>
-      </div>
-    </HeaderContatinerList>
+    <>
+      {getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].headers.map((it, idx) => (
+        <>
+          <HeaderContatinerList key={idx}>
+            <HeaderListTitleCon>
+              <HeaderListTitle>{it.key}</HeaderListTitle>
+            </HeaderListTitleCon>
+            <div className="headerListContent">
+              <HeaderListInput
+                type="text"
+                value={it.value}
+                onChange={(e) => {
+                  setGetCollection(e.target.value);
+                }}
+              />
+            </div>
+          </HeaderContatinerList>
+        </>
+      ))}
+    </>
   );
 };
 

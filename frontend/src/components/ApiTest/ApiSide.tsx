@@ -20,9 +20,9 @@ const SideMenuList = styled.div`
 
 const SideContollerName = styled.p`
   padding: 10px 5px 3px 5px;
-  border-bottom: 2px solid ${(props) => props.color};
+  border-bottom: 2px solid ${(props) => props.theme.color};
   width: 80px;
-  text-color: ${(props) => props.color};
+  text-color: ${(props) => props.theme.color};
 `;
 interface type {
   getInfo: RequestTypeInfo | undefined;
@@ -45,17 +45,17 @@ const ApiSide = ({ getInfo }: type) => {
             >
               <Item
                 color={
-                  item.method === "GET"
+                  item?.method === "get"
                     ? "#FDECC8"
-                    : item.method === "POST"
+                    : item?.method === "post"
                     ? "#F5E0E9"
-                    : item.method === "PUT"
+                    : item?.method === "put"
                     ? "#F1F0EF"
-                    : item.method === "DELETE"
+                    : item?.method === "delete"
                     ? "#D3E5EF"
-                    : item.method === "PATCH"
+                    : item?.method === "patch"
                     ? "#E8DEEE"
-                    : item.method === "OPTIONS"
+                    : item?.method === "options"
                     ? "#FFE2DD"
                     : "#EEE0DA"
                 }

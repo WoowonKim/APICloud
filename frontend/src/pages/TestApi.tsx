@@ -54,9 +54,9 @@ const TestApi = ({ isDarkMode, toggleDarkMode }: IHome) => {
             <div className="testInfo">
               <ApiHeader getInfo={getInfo} />
             </div>
-            <div className="testBodyInfo">
+            {/* <div className="testBodyInfo">
               <ApiBody getInfo={getInfo} />
-            </div>
+            </div> */}
           </div>
           <p className="apiHeaderMainTitle">Response</p>
           <ApiResponse getInfo={getInfo} />

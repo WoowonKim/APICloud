@@ -43,17 +43,17 @@ const MethodTest = ({ methodApiWord }: word) => {
     <div className="selectBoxTESTApi" onClick={() => setVisible(!visible)}>
       <SelectedItem
         color={
-          selectedMethod === "GET"
+          selectedMethod === "get"
             ? "#FDECC8"
-            : selectedMethod === "POST"
+            : selectedMethod === "post"
             ? "#F5E0E9"
-            : selectedMethod === "PUT"
+            : selectedMethod === "put"
             ? "#F1F0EF"
-            : selectedMethod === "DELETE"
+            : selectedMethod === "delete"
             ? "#D3E5EF"
-            : selectedMethod === "PATCH"
+            : selectedMethod === "patch"
             ? "#E8DEEE"
-            : selectedMethod === "OPTIONS"
+            : selectedMethod === "options"
             ? "#FFE2DD"
             : "#EEE0DA"
         }
