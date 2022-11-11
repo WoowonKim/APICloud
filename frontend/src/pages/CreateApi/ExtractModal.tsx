@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
-import apiDocsApiSlice, { getCsv } from "../../Store/slice/apiDocsApi";
+import apiDocsApiSlice, {
+  getCsv,
+  getSpringBoot,
+} from "../../Store/slice/apiDocsApi";
 import { RootState } from "../../Store/store";
 import "./ExtractModal.scss";
 
@@ -52,7 +55,17 @@ const ExtractModal = () => {
                   {/* TODO: dependency 추가 기능 구현 */}
                   {/* TODO: dependency local storage에 저장 */}
                   <button>dependency 추가</button>
-                  <button>추출</button>
+                  <button
+                    onClick={() => {
+                      // FIXME: docId 현재 encrypted docId로 수정
+                      dispatch(getSpringBoot({ docId: 1 })).then((res: any) => {
+                        downloadFile(res.payload);
+                      });
+                      setOpenIdx(0);
+                    }}
+                  >
+                    추출
+                  </button>
                 </div>
               </div>
               <li onClick={() => setOpenIdx(2)}>
@@ -90,7 +103,7 @@ const ExtractModal = () => {
                   setOpenIdx(0);
                 }}
               >
-                <a>CSV</a>
+                <p>CSV</p>
               </li>
             </ul>
           </div>

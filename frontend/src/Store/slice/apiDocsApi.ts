@@ -33,6 +33,20 @@ export const getCsv: any = createAsyncThunk(
   }
 );
 
+// spring boot 파일 다운로드
+export const getSpringBoot: any = createAsyncThunk(
+  "apiDocsApi/getSpringBoot",
+  async (args: any, { rejectWithValue }) => {
+    try {
+      // TODO: 현재 detail, dependencies 전달
+      const response = await axiosGetFile(`docs/${args.docId}/project`);
+      return response;
+    } catch (err: any) {
+      return rejectWithValue(err.response);
+    }
+  }
+);
+
 const apiDocsApiSlice = createSlice({
   name: "mainApi",
   initialState,
