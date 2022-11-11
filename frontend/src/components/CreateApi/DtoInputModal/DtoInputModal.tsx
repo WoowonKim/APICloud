@@ -1,6 +1,8 @@
 import { faCheck, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { MappedTypeDescription } from "@syncedstore/core/types/doc";
+import { useSyncedStore } from "@syncedstore/react";
+import { store } from "../store";
 import React, { useEffect, useState } from "react";
 import {
   ControllerType,
@@ -13,9 +15,6 @@ import "./DtoInputModal.scss";
 interface Props {
   setIsModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
   activeTab: number;
-  state: MappedTypeDescription<{
-    data: ControllerType[];
-  }>;
   selectedController: number;
   selectedApi: number;
   propertiesIndex: number;
@@ -46,7 +45,6 @@ interface Props {
 const DtoInputModal = ({
   setIsModalVisible,
   activeTab,
-  state,
   selectedApi,
   selectedController,
   propertiesIndex,
@@ -63,6 +61,7 @@ const DtoInputModal = ({
   dtoExists,
   currentDtoData,
 }: Props) => {
+  const state = useSyncedStore(store);
   const rootPath = state.data[selectedController].apis[selectedApi];
   const [modalDepth, setModalDepth] = useState(2);
   const [visible, setVisible] = useState(false);
