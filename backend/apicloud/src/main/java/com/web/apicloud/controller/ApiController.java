@@ -18,10 +18,10 @@ public class ApiController {
 
     private final ApiService apiService;
 
-    @GetMapping("/{docId}")
-    ResponseEntity<DetailResponse> docDetail(@PathVariable Long docId) {
+    @GetMapping("/{encryptedDocId}")
+    ResponseEntity<DetailResponse> docDetail(@PathVariable String encryptedDocId) {
         log.info("DOC ApiInfo 조회 API 호출");
-        DetailResponse detailResponse = apiService.getDetailById(docId);
+        DetailResponse detailResponse = apiService.getDetailById(encryptedDocId);
         return ResponseEntity.ok().body(detailResponse);
     }
 

@@ -21,7 +21,7 @@ public interface DocsService {
 
     List<DocListResponse> getDocs(Long userId);
 
-    UpdateDocDto getDoc(Long docId);
+    UpdateDocDto getDoc(String encryptedDocId);
 
     DocVO getDocVOByDocsId(Long docId);
 
