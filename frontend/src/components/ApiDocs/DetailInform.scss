@@ -1,16 +1,38 @@
 .docPaper2Wrapper {
 	width: 90%;
 	margin-top: 30px;
+	.detailInformTitle {
+		margin-bottom: 20px;
+		font-size: 25px;
+		font-weight: bold;
+	}
+	.highLightedSubtitle {
+		background-color: yellow;
+		font-size: 25px;
+		margin-bottom: 15px;
+	}
+	.subtitle {
+		background-color: white;
+		font-size: 25px;
+		margin-bottom: 15px;
+	}
 	.titleContentWrapper {
 		display: flex;
 		margin-bottom: 3%;
+		font-size: 23px;
 		.iconTitleWrppaer {
 			display: flex;
 		}
 		.content {
 			margin-left: 10px;
 		}
-	}	
+	}
+	.highLightedTitleContentWrapper {
+		display: flex;
+		margin-bottom: 3%;
+		background-color: yellow;
+		font-size: 23px;
+	}		
 	.contentBox {
 		width: 90%;
 		margin-left: 10%;
@@ -18,7 +40,7 @@
 		margin-bottom: 3%;
 		border-radius: 10px;
 		background-color: rgb(245, 245, 245);
-		font-size: 12px;
+		font-size: 15px;
 		overflow: auto;
 		white-space: nowrap;
 		.titleContentWrapper2 {
@@ -32,7 +54,7 @@
 		margin-bottom: 3%;
 		border-radius: 10px;
 		background-color: rgb(245, 245, 245);
-		font-size: 12px;
+		font-size: 15px;
 		overflow: auto;
 		white-space: nowrap;
 		.titleContentWrapper2 {
