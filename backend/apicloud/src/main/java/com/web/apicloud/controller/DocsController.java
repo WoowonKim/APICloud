@@ -38,10 +38,10 @@ public class DocsController {
 
     private final UserService userService;
 
-    @GetMapping("/authority/{docId}")
-    public ResponseEntity<Object> getAuthority(@CurrentUser UserPrincipal userPrincipal, @PathVariable Long docId) {
+    @GetMapping("/authority/{encryptedUrl}")
+    public ResponseEntity<Object> getAuthority(@CurrentUser UserPrincipal userPrincipal, @PathVariable String encryptedUrl) {
         log.info("Doc 권한 조회 API 요청");
-        Group group = docsService.findByDocsId(docId).getGroup();
+        Group group = docsService.findByEncryptUrl(encryptedUrl).getGroup();
         User user = userService.findUserById(userPrincipal.getId());
         GroupUser groupUser = groupUserService.getGroupUserByGroupAndUser(group, user);
         return ResponseEntity.ok().body(groupUser.getAuthority());

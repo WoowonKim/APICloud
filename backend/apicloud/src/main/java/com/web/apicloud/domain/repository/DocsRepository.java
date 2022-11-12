@@ -9,6 +9,5 @@ import java.util.Optional;
 
 public interface DocsRepository extends JpaRepository<Docs, Long> {
     List<Docs> findByGroup(Group group);
-
     Optional<Docs> findByEncryptedUrl(String encryptedUrl);
 }

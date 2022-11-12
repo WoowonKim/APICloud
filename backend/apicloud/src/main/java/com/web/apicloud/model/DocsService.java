@@ -11,6 +11,9 @@ import com.web.apicloud.domain.vo.DocVO;
 import java.util.List;
 
 public interface DocsService {
+
+    Docs findByEncryptUrl(String encryptUrl);
+
     Docs findByDocsId(Long docsId);
 
     User findByUserId(Long userId);
