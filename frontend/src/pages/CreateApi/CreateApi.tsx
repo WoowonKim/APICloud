@@ -13,6 +13,7 @@ import apiDocsApiSlice, { getApiDetail } from "../../Store/slice/apiDocsApi";
 import ExtractModal from "./ExtractModal";
 import { useLocation, useParams } from "react-router-dom";
 import { useAppDispatch } from "../../Store/hooks";
+import { checkDataValidation } from "../../components/CreateApi/validationCheck";
 
 const CreateApi = () => {
   const dispatch = useAppDispatch();
@@ -101,6 +102,30 @@ const CreateApi = () => {
     properties: [],
   };
 
+  const responsesData = {
+    fail: {
+      status: 400,
+      responseBody: {
+        dtoName: "",
+        name: "",
+        type: "String",
+        required: true,
+        collectionType: "",
+        properties: [],
+      },
+    },
+    success: {
+      status: 200,
+      responseBody: {
+        dtoName: "",
+        name: "",
+        type: "String",
+        required: true,
+        collectionType: "",
+        properties: [],
+      },
+    },
+  };
   const state = useSyncedStore(store);
   useEffect(() => {
     console.log(JSON.parse(JSON.stringify(state.data)));
@@ -196,6 +221,15 @@ const CreateApi = () => {
         <div className="titleContainer">
           <p className="apiDocsTitleText">APICloud API 명세서</p>
           <div className="buttonContainer">
+            <button
+              onClick={() => {
+                const test = checkDataValidation(state.data);
+                // 데이터 확인용 로그
+                console.log(test);
+              }}
+            >
+              테스트
+            </button>
             <button>공유</button>
             <button>동기화</button>
             <button
@@ -244,13 +278,57 @@ const CreateApi = () => {
           </div>
           <div
             className={activeTab === 4 ? "tabItem active" : "tabItem"}
-            onClick={() => setActiveTab(4)}
+            onClick={() => {
+              if (
+                JSON.stringify(
+                  state.data[selectedController].apis[selectedApi].requestBody
+                ) === "{}"
+              ) {
+                state.data[selectedController].apis[selectedApi].requestBody =
+                  propertiesData;
+              }
+              setActiveTab(4);
+            }}
           >
             requestBody
           </div>
           <div
             className={activeTab === 5 ? "tabItem active" : "tabItem"}
-            onClick={() => setActiveTab(5)}
+            onClick={() => {
+              if (
+                JSON.stringify(
+                  state.data[selectedController].apis[selectedApi].responses
+                ) === "{}"
+              ) {
+                state.data[selectedController].apis[selectedApi].responses =
+                  responsesData;
+              } else if (
+                JSON.stringify(
+                  state.data[selectedController].apis[selectedApi].responses
+                    .fail
+                ) === "{}"
+              ) {
+                state.data[selectedController].apis[
+                  selectedApi
+                ].responses.fail = {
+                  status: 400,
+                  responseBody: propertiesData,
+                };
+              } else if (
+                JSON.stringify(
+                  state.data[selectedController].apis[selectedApi].responses
+                    .success
+                ) === "{}"
+              ) {
+                state.data[selectedController].apis[
+                  selectedApi
+                ].responses.success = {
+                  status: 200,
+                  responseBody: propertiesData,
+                };
+              }
+              setActiveTab(5);
+            }}
           >
             responses
           </div>
@@ -299,7 +377,8 @@ const CreateApi = () => {
                                 .requestBody?.properties
                             )
                           )
-                        : JSON.parse(
+                        : activeTab === 5 &&
+                          JSON.parse(
                             JSON.stringify(
                               state.data[selectedController].apis[selectedApi]
                                 .responses.success.responseBody?.properties

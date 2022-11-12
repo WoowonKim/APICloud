@@ -115,7 +115,7 @@ const DtoInputModal = ({
                 placeholder="DtoName"
                 onChange={(e) => {
                   const type = responseType ? responseType : "";
-                  handleBasicInfo(e, "dtoName", 0, type);
+                  handleBasicInfo(e, "dtoName", modalDepth, type);
                 }}
                 autoFocus
                 value={final?.dtoName}
