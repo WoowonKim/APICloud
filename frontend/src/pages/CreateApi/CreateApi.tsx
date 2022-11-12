@@ -102,6 +102,30 @@ const CreateApi = () => {
     properties: [],
   };
 
+  const responsesData = {
+    fail: {
+      status: 400,
+      responseBody: {
+        dtoName: "",
+        name: "",
+        type: "String",
+        required: true,
+        collectionType: "",
+        properties: [],
+      },
+    },
+    success: {
+      status: 200,
+      responseBody: {
+        dtoName: "",
+        name: "",
+        type: "String",
+        required: true,
+        collectionType: "",
+        properties: [],
+      },
+    },
+  };
   const state = useSyncedStore(store);
   useEffect(() => {
     console.log(JSON.parse(JSON.stringify(state.data)));
@@ -253,13 +277,57 @@ const CreateApi = () => {
           </div>
           <div
             className={activeTab === 4 ? "tabItem active" : "tabItem"}
-            onClick={() => setActiveTab(4)}
+            onClick={() => {
+              if (
+                JSON.stringify(
+                  state.data[selectedController].apis[selectedApi].requestBody
+                ) === "{}"
+              ) {
+                state.data[selectedController].apis[selectedApi].requestBody =
+                  propertiesData;
+              }
+              setActiveTab(4);
+            }}
           >
             requestBody
           </div>
           <div
             className={activeTab === 5 ? "tabItem active" : "tabItem"}
-            onClick={() => setActiveTab(5)}
+            onClick={() => {
+              if (
+                JSON.stringify(
+                  state.data[selectedController].apis[selectedApi].responses
+                ) === "{}"
+              ) {
+                state.data[selectedController].apis[selectedApi].responses =
+                  responsesData;
+              } else if (
+                JSON.stringify(
+                  state.data[selectedController].apis[selectedApi].responses
+                    .fail
+                ) === "{}"
+              ) {
+                state.data[selectedController].apis[
+                  selectedApi
+                ].responses.fail = {
+                  status: 400,
+                  responseBody: propertiesData,
+                };
+              } else if (
+                JSON.stringify(
+                  state.data[selectedController].apis[selectedApi].responses
+                    .success
+                ) === "{}"
+              ) {
+                state.data[selectedController].apis[
+                  selectedApi
+                ].responses.success = {
+                  status: 200,
+                  responseBody: propertiesData,
+                };
+              }
+              setActiveTab(5);
+            }}
           >
             responses
           </div>
@@ -305,7 +373,7 @@ const CreateApi = () => {
                         ? JSON.parse(
                             JSON.stringify(
                               state.data[selectedController].apis[selectedApi]
-                                .requestBody?.properties
+                                .requestBody
                             )
                           )
                         : JSON.parse(
