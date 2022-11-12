@@ -20,9 +20,9 @@ interface IHome {
 const TestSide = styled.div`
   width: 20%;
   height: 91vh;
-  background-color: ${(props) => props.theme.sideBgClodr};
-  border-top: 1px solid ${(props) => props.theme.border};
-  border-right: 2px solid ${(props) => props.theme.border};
+  background-color: ${props => props.theme.sideBgClodr};
+  border-top: 1px solid ${props => props.theme.border};
+  border-right: 2px solid ${props => props.theme.border};
 `;
 const TestApi = ({ isDarkMode, toggleDarkMode }: IHome) => {
   const [getInfo, setGetInfo] = useState<RequestTypeInfo>();
@@ -54,9 +54,6 @@ const TestApi = ({ isDarkMode, toggleDarkMode }: IHome) => {
             <div className="testInfo">
               <ApiHeader getInfo={getInfo} />
             </div>
-            {/* <div className="testBodyInfo">
-              <ApiBody getInfo={getInfo} />
-            </div> */}
           </div>
           <p className="apiHeaderMainTitle">Response</p>
           <ApiResponse getInfo={getInfo} />
