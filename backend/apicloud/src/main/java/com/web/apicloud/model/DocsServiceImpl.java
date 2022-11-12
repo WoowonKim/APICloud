@@ -156,8 +156,8 @@ public class DocsServiceImpl implements DocsService {
     }
 
     @Override
-    public UpdateDocDto getDoc(Long docId) {
-        Docs doc = findByDocsId(docId);
+    public UpdateDocDto getDoc(String encryptedDocId) {
+        Docs doc = docsRepository.findByEncryptedUrl(encryptedDocId).orElseThrow(()->new NotFoundException(NOT_FOUND_DOCS));
         UpdateDocDto updateDocDto = doc.toUpdateDocDto();
         return updateDocDto;
     }

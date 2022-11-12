@@ -33,3 +33,8 @@
   display: block;
   transition: 200ms;
 }
+
+.extractModal-extractList > li.selected {
+  background-color: #3a00e533;
+  transition: 200ms ease-in-out;
+}

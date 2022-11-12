@@ -1,11 +1,11 @@
 import React from "react";
-import "./ApiDocPaper.scss";
+import "./ServerInform.scss";
 
 interface Props {
   docInformArray: [string, string | number][] | undefined
 }
 
-const ApiDocPaper = ({docInformArray}: Props) => {
+const ServerInform = ({docInformArray}: Props) => {
   return (
     <div className="apiDocTableWrapper">
       <table className="apiDocTable">
@@ -29,4 +29,4 @@ const ApiDocPaper = ({docInformArray}: Props) => {
   );
 };
 
-export default ApiDocPaper;
+export default ServerInform;

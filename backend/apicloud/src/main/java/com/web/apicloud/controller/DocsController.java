@@ -66,10 +66,10 @@ public class DocsController {
         return ResponseEntity.ok().body(docListResponses);
     }
 
-    @GetMapping("/{docId}")
-    public ResponseEntity<Object> getSpecificDoc(@PathVariable Long docId) {
+    @GetMapping("/{encryptedDocId}")
+    public ResponseEntity<Object> getSpecificDoc(@PathVariable String encryptedDocId) {
         log.info("특정 API DOC 조회 API 호출");
-        UpdateDocDto updateDocDto = docsService.getDoc(docId);
+        UpdateDocDto updateDocDto = docsService.getDoc(encryptedDocId);
         return ResponseEntity.ok().body(updateDocDto);
     }
 
