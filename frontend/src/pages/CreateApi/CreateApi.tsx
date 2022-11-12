@@ -224,6 +224,7 @@ const CreateApi = () => {
             <button
               onClick={() => {
                 const test = checkDataValidation(state.data);
+                // 데이터 확인용 로그
                 console.log(test);
               }}
             >
