@@ -374,10 +374,11 @@ const CreateApi = () => {
                         ? JSON.parse(
                             JSON.stringify(
                               state.data[selectedController].apis[selectedApi]
-                                .requestBody
+                                .requestBody?.properties
                             )
                           )
-                        : JSON.parse(
+                        : activeTab === 5 &&
+                          JSON.parse(
                             JSON.stringify(
                               state.data[selectedController].apis[selectedApi]
                                 .responses.success.responseBody?.properties

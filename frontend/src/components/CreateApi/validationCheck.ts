@@ -356,10 +356,13 @@ export function checkDataValidation(data: ControllerType[]) {
                   requestBodyIdx < current[item].properties.length;
                   requestBodyIdx++
                 ) {
-                  if (
-                    Object.keys(current[item].properties[requestBodyIdx])
-                      .length !== 0
-                  ) {
+                  let requestBodyPropertyCheck = checkRequiredValueValidation(
+                    "properties",
+                    current[item].properties[requestBodyIdx]
+                  );
+                  if (requestBodyPropertyCheck === "delete") {
+                    current[item].properties.splice(requestBodyIdx, 1);
+                  } else {
                     queue.push(current[item].properties[requestBodyIdx]);
                   }
                 }
@@ -391,6 +394,7 @@ export function checkDataValidation(data: ControllerType[]) {
                 if (!responsesTypeCheck) {
                   typeInvalidCount++;
                 }
+
                 if (
                   JSON.stringify(current[item][status].responseBody) !== "{}" &&
                   current[item][status].responseBody?.properties.length > 0
@@ -408,11 +412,34 @@ export function checkDataValidation(data: ControllerType[]) {
                         ]
                       ).length !== 0
                     ) {
-                      queue.push(
-                        current[item][status].responseBody.properties[
-                          responseBodyIdx
-                        ]
+                      console.log(
+                        JSON.parse(
+                          JSON.stringify(
+                            current[item][status].responseBody.properties[
+                              responseBodyIdx
+                            ]
+                          )
+                        )
                       );
+                      let responseBodyPropertyValue =
+                        checkRequiredValueValidation(
+                          "properties",
+                          current[item][status].responseBody.properties[
+                            responseBodyIdx
+                          ]
+                        );
+                      if (responseBodyPropertyValue === "delete") {
+                        current[item][status].responseBody.properties.splice(
+                          responseBodyIdx,
+                          1
+                        );
+                      } else {
+                        queue.push(
+                          current[item][status].responseBody.properties[
+                            responseBodyIdx
+                          ]
+                        );
+                      }
                     }
                   }
                 }
