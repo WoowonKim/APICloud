@@ -1,9 +1,10 @@
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { MappedTypeDescription } from "@syncedstore/core/types/doc";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ControllerType } from "../../../pages/CreateApi/ApisType";
 import ModalTable from "../ModalTable/ModalTable";
+import { checkControllerApiValidation } from "../validationCheck";
 import "./ControllerAddModal.scss";
 
 interface Props {
@@ -46,9 +47,26 @@ const ControllerAddModal = ({
     editControllerIndex > -1 ? true : false
   );
 
-  const checkControllerValidation = () => {
-    if (controllerName.trim() && controllerUri.trim()) {
+  const [controllerValidation, setControllerValidation] = useState([-1, -1]);
+  const [apiValidation, setApiValidation] = useState([-1, -1]);
+
+  const checkControllerValidation = (value: any, type: string) => {
+    if (type === "uri") {
       setIsControllerAddPossible(!isControllerAdd);
+      let checkController = checkControllerApiValidation(
+        state.data,
+        [controllerName, value],
+        "controller"
+      );
+      setControllerValidation(checkController);
+    } else {
+      setIsControllerAddPossible(!isControllerAdd);
+      let checkController = checkControllerApiValidation(
+        state.data,
+        [value, controllerUri],
+        "controller"
+      );
+      setControllerValidation(checkController);
     }
   };
 
@@ -64,6 +82,11 @@ const ControllerAddModal = ({
     setIsApiAddPossible(true);
     setIsModalVisible((curr) => !curr);
   };
+
+  useEffect(() => {
+    setControllerValidation([-1, -1]);
+    setApiValidation([-1, -1]);
+  }, []);
 
   return (
     <div className="sidebarModalContainer">
@@ -82,7 +105,7 @@ const ControllerAddModal = ({
               id="controllerUri"
               onChange={(e) => {
                 setControllerUri(e.target.value);
-                checkControllerValidation();
+                checkControllerValidation(e.target.value, "uri");
               }}
               className="controllerInput1"
               placeholder="/test"
@@ -92,6 +115,11 @@ const ControllerAddModal = ({
                   : ""
               }
             />
+            {controllerValidation[1] === 1 && (
+              <p className="controllerInfoText">
+                동일한 컨트롤러 URI가 있습니다.
+              </p>
+            )}
           </div>
           <div className="controllerInfoItem">
             <label htmlFor="controllerUri" className="controllerLabel">
@@ -102,7 +130,7 @@ const ControllerAddModal = ({
               id="controllerName"
               onChange={(e) => {
                 setControllerName(e.target.value);
-                checkControllerValidation();
+                checkControllerValidation(e.target.value, "name");
               }}
               className="controllerInput1"
               placeholder="TestController"
@@ -112,6 +140,11 @@ const ControllerAddModal = ({
                   : ""
               }
             />
+            {controllerValidation[0] === 1 && (
+              <p className="controllerInfoText">
+                동일한 컨트롤러 이름이 있습니다.
+              </p>
+            )}
           </div>
           <button
             className="modalCotrollerAddButton"
@@ -126,7 +159,10 @@ const ControllerAddModal = ({
               }
               setIsControllerAdd(true);
             }}
-            disabled={!isControllerAddPossible}
+            disabled={
+              !isControllerAddPossible &&
+              (controllerValidation[0] === 1 || controllerValidation[1] === 1)
+            }
           >
             {isControllerAdd ? "Controller 수정" : "Controller 추가"}
           </button>
@@ -173,10 +209,33 @@ const ControllerAddModal = ({
         {!isApiAddPossible && (
           <p className="controllerInfoText">Api 정보를 모두 입력해주세요</p>
         )}
+        {apiValidation[0] === 1 && (
+          <p className="controllerInfoText">api 이름이 중복되었습니다</p>
+        )}
+        {apiValidation[1] === 1 && (
+          <p className="controllerInfoText">api uri가 중복되었습니다</p>
+        )}
         <button
           className="controllerModalCloseButton"
-          disabled={!isControllerAdd}
-          onClick={checkApiValidation}
+          disabled={
+            !isControllerAdd &&
+            (apiValidation[0] === 1 || apiValidation[1] === 1)
+          }
+          onClick={() => {
+            let checkApi = checkControllerApiValidation(
+              state.data[
+                editControllerIndex > -1
+                  ? editControllerIndex
+                  : addedControllerIndex
+              ].apis,
+              [],
+              "api"
+            );
+            setApiValidation(checkApi);
+            if (checkApi[0] === -1 && checkApi[1] === -1) {
+              checkApiValidation();
+            }
+          }}
         >
           Controller 추가 완료하기
         </button>
