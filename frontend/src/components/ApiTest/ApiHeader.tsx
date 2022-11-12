@@ -12,51 +12,51 @@ interface type {
 const ApiHeader = ({ getInfo }: type) => {
   const [headerTokenFlag, setHeaderTokenFlag] = useState<number | null>(0);
   return (
-    <div className="apiHeaderContainer">
-      <ChoiceText
-        onClick={() => {
-          setHeaderTokenFlag(0);
-        }}
-      >
-        Header
-      </ChoiceText>
-      {/* {headerTokenFlag === 0 && (
-        <>
-          <ChoiceText
-            onClick={() => {
-              setHeaderTokenFlag(0);
-            }}
-          >
-            Header
-          </ChoiceText>
-          <NoChoiceText
-            onClick={() => {
-              setHeaderTokenFlag(1);
-            }}
-          >
-            Token
-          </NoChoiceText>
-        </>
-      )}
-      {headerTokenFlag === 1 && (
-        <>
-          <NoChoiceText
-            onClick={() => {
-              setHeaderTokenFlag(0);
-            }}
-          >
-            Header
-          </NoChoiceText>
-          <ChoiceText
-            onClick={() => {
-              setHeaderTokenFlag(1);
-            }}
-          >
-            Token
-          </ChoiceText>
-        </>
-      )} */}
-      <div className="">{headerTokenFlag === 0 && <Headerheader getInfo={getInfo} />}</div>
+    <div className="requestInfosetting">
+      <div className="requestInfoHeaderSetting">
+        {headerTokenFlag === 0 && (
+          <>
+            <ChoiceText
+              onClick={() => {
+                setHeaderTokenFlag(0);
+              }}
+            >
+              Header
+            </ChoiceText>
+            <NoChoiceText
+              onClick={() => {
+                setHeaderTokenFlag(1);
+              }}
+            >
+              Token
+            </NoChoiceText>
+            <Headerheader getInfo={getInfo} />
+          </>
+        )}
+        {headerTokenFlag === 1 && (
+          <>
+            <NoChoiceText
+              onClick={() => {
+                setHeaderTokenFlag(0);
+              }}
+            >
+              Header
+            </NoChoiceText>
+            <ChoiceText
+              onClick={() => {
+                setHeaderTokenFlag(1);
+              }}
+            >
+              Token
+            </ChoiceText>
+            <HeaderToken />
+          </>
+        )}
+      </div>
+      <div className="requestInfoBodySetting">
+        <ChoiceText>Body</ChoiceText>
+        <ApiBody getInfo={getInfo}></ApiBody>
+      </div>
     </div>
   );
 };
