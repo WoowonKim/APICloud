@@ -113,7 +113,7 @@ public class S3ServiceImpl implements S3Service {
         if (line == null || line.size() == 0) return null;
 
         Map<String, List<String>> code = new HashMap<>();
-        int keyIndex = parsingService.KMP(key, "com");
+        int keyIndex = parsingService.KMP(key, "java/com");
         if (keyIndex != -1) key = StringUtils.removeEnd(key.substring(keyIndex - 2, key.length()), ".java").replaceAll("/", ".");
         code.put("import", Collections.singletonList(key));
         code.put("code", line);
