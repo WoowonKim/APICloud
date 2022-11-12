@@ -1,21 +1,34 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import apiDocsApiSlice, {
   getCsv,
   getNotion,
   getSpringBoot,
+  setApiDetail,
 } from "../../Store/slice/apiDocsApi";
 import { RootState } from "../../Store/store";
+import { ControllerType, ServerInfoType } from "./ApisType";
 import DependencyModal from "./DependencyModal";
 import "./ExtractModal.scss";
 
-const ExtractModal = () => {
+type ExtractModalProps = {
+  controllers: ControllerType[];
+};
+
+type DetailType = {
+  server: ServerInfoType;
+  controllers: ControllerType[];
+};
+
+const ExtractModal = ({ controllers }: ExtractModalProps) => {
   const NOTION_URL =
     "https://great-haircut-17f.notion.site/APICloud-notion-template-24e0ac07d6e241f692aaaac2912b6732";
   const isOpenExtractModal = useSelector(
     (state: RootState) => state.apiDocsApi.isOpenExtractModal
   );
+  const { encryptedUrl } = useParams();
 
   const dispatch = useDispatch();
 
@@ -28,7 +41,63 @@ const ExtractModal = () => {
     (state: RootState) => state.apiDocsApi.isOpenDependencyModal
   );
 
+  useEffect(() => {
+    const stringDependencies = localStorage.getItem("dependencies");
+    if (stringDependencies !== null) {
+      const localDependencies = JSON.parse(stringDependencies);
+      setDependencies(localDependencies);
+    }
+  }, []);
+
+  const prepareExtraction = (extract: () => void) => {
+    const detail = {} as DetailType;
+    detail.controllers = controllers;
+    dispatch(
+      setApiDetail({
+        docId: 1,
+        detailRequest: { detail: JSON.stringify(detail) },
+      })
+    ).then((res: any) => {
+      extract();
+    });
+  };
+
+  const extractCsv = () => {
+    dispatch(getCsv({ encryptedUrl: encryptedUrl })).then((res: any) => {
+      downloadFile(res.payload);
+    });
+  };
+
+  const extractSpringBoot = () => {
+    dispatch(
+      getSpringBoot({
+        encryptedUrl: encryptedUrl,
+        springExtractRequest: { dependencies: dependencies },
+      })
+    ).then((res: any) => {
+      downloadFile(res.payload);
+    });
+  };
+
+  const extractNotion = () => {
+    dispatch(
+      getNotion({
+        encryptedUrl: encryptedUrl,
+        notionRequest: {
+          token: notionToken,
+          databaseId: notionDBId,
+        },
+      })
+    ).then((res: any) => {
+      window.open(res.payload.notionUrl);
+    });
+  };
+
   const downloadFile = (res: any) => {
+    if (res.status !== 200) {
+      alert("추출에 실패하였습니다.");
+      return;
+    }
     const href = URL.createObjectURL(res.data);
 
     const link = document.createElement("a");
@@ -67,11 +136,8 @@ const ExtractModal = () => {
                 <div className={openIdx === 1 ? "open" : ""}>
                   <div>{dependencies}</div>
                   <div>
-                    {/* TODO: dependency 추가 기능 구현 */}
-                    {/* TODO: dependency local storage에 저장 */}
                     <button
                       onClick={() => {
-                        console.log("dependency 추가 clicked");
                         dispatch(
                           apiDocsApiSlice.actions.setIsOpenDependencyModal({
                             isOpenDependencyModal: true,
@@ -83,12 +149,7 @@ const ExtractModal = () => {
                     </button>
                     <button
                       onClick={() => {
-                        // FIXME: docId 현재 encrypted docId로 수정
-                        dispatch(getSpringBoot({ docId: 1 })).then(
-                          (res: any) => {
-                            downloadFile(res.payload);
-                          }
-                        );
+                        prepareExtraction(extractSpringBoot);
                         setOpenIdx(0);
                       }}
                     >
@@ -133,18 +194,7 @@ const ExtractModal = () => {
                   <button>도움말</button>
                   <button
                     onClick={() => {
-                      // FIXME: docId 현재 encrypted docId로 수정
-                      dispatch(
-                        getNotion({
-                          docId: 1,
-                          notionRequest: {
-                            token: notionToken,
-                            databaseId: notionDBId,
-                          },
-                        })
-                      ).then((res: any) => {
-                        console.log(res.payload);
-                      });
+                      prepareExtraction(extractNotion);
                       setOpenIdx(0);
                     }}
                   >
@@ -153,10 +203,7 @@ const ExtractModal = () => {
                 </div>
                 <li
                   onClick={() => {
-                    // FIXME: docId 현재 encrypted docId로 수정
-                    dispatch(getCsv({ docId: 1 })).then((res: any) => {
-                      downloadFile(res.payload);
-                    });
+                    prepareExtraction(extractCsv);
                     setOpenIdx(3);
                   }}
                   className={openIdx === 3 ? "selected" : ""}

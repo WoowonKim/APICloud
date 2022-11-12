@@ -203,7 +203,7 @@ const CreateApi = () => {
     console.log(JSON.parse(JSON.stringify(state.data)));
     const location = useLocation();
     useEffect(() => {
-      dispatch(getApiDetail({ docId: location.state.data.docId })).then(
+      dispatch(getApiDetail({ docId: encryptedUrl })).then(
         (res: any) => {
           if (res.meta.requestStatus === "fulfilled") {
             console.log(res.payload);
@@ -257,7 +257,7 @@ const CreateApi = () => {
                 >
                   추출
                 </button>
-                {isOpenExtractModal && <ExtractModal></ExtractModal>}
+                {isOpenExtractModal && <ExtractModal controllers={state.data}></ExtractModal>}
               </div>
             </div>
             <div className="infoContainer">

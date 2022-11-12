@@ -1,6 +1,12 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
-import { axiosGet, axiosGetFile, axiosPost } from "../../util/axiosUtil";
+import {
+  axiosGet,
+  axiosGetFile,
+  axiosPost,
+  axiosPostFile,
+  axiosPut,
+} from "../../util/axiosUtil";
 
 const initialState = {
   isOpenExtractModal: false,
@@ -26,7 +32,7 @@ export const getCsv: any = createAsyncThunk(
   async (args: any, { rejectWithValue }) => {
     try {
       // TODO: 현재 detail 전달
-      const response = await axiosGetFile(`docs/${args.docId}/csv`);
+      const response = await axiosGetFile(`docs/${args.encryptedUrl}/csv`);
       return response;
     } catch (err: any) {
       return rejectWithValue(err.response);
@@ -39,8 +45,10 @@ export const getSpringBoot: any = createAsyncThunk(
   "apiDocsApi/getSpringBoot",
   async (args: any, { rejectWithValue }) => {
     try {
-      // TODO: 현재 detail, dependencies 전달
-      const response = await axiosGetFile(`docs/${args.docId}/project`);
+      const response = await axiosPostFile(
+        `docs/${args.encryptedUrl}/project`,
+        args.springExtractRequest
+      );
       return response;
     } catch (err: any) {
       return rejectWithValue(err.response);
@@ -54,9 +62,22 @@ export const getNotion: any = createAsyncThunk(
   async (args: any, { rejectWithValue }) => {
     try {
       const response = await axiosPost(
-        `docs/${args.docId}/notion`,
+        `docs/${args.encryptedUrl}/notion`,
         args.notionRequest
       );
+      return response.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response);
+    }
+  }
+);
+
+// FIXME: detail 임시 업데이트
+export const setApiDetail: any = createAsyncThunk(
+  "apiDocsApi/setApiDetail",
+  async (args: any, { rejectWithValue }) => {
+    try {
+      const response = await axiosPut(`apis/${args.docId}`, args.detailRequest);
       return response.data;
     } catch (err: any) {
       return rejectWithValue(err.response);

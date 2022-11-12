@@ -29,6 +29,12 @@ const DependencyModal = (props: PropType) => {
     });
   }, []);
 
+  useEffect(() => {
+    if (props.dependencies) {
+      setSelectedDependencies(new Set(props.dependencies));
+    }
+  }, [props.dependencies]);
+
   useEffect(() => {}, [props.dependencies, dependencyInfo]);
 
   return (
@@ -84,7 +90,12 @@ const DependencyModal = (props: PropType) => {
               )}
               <button
                 onClick={() => {
-                  props.setDependencies(Array.from(selectedDependencies));
+                  const dependenciesArr = Array.from(selectedDependencies);
+                  localStorage.setItem(
+                    "dependencies",
+                    JSON.stringify(dependenciesArr)
+                  );
+                  props.setDependencies(dependenciesArr);
                   if (isOpenDependencyModal) {
                     dispatch(
                       apiDocsApiSlice.actions.setIsOpenDependencyModal({

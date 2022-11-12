@@ -10,7 +10,7 @@ export type ServerInfoType = {
   packageName: string; // 전체 패키지 이름: com.example.demo
   packaging: string; // jar, war
   javaVersion: string; // 자바버전 string값 ( ex. 17, 1.8)
-  dependencies: [];
+  dependencies: string[];
 };
 
 export type RequestTypeInfo = {
