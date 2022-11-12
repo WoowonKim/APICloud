@@ -1,11 +1,11 @@
-import { faBars } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faCircleUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useRef, useState } from "react";
 import Sidebar from "../components/ApiDocs/Sidebar";
 import "../components/ApiDocs/ApiDocs.scss";
-import ApiDocPaper from "../components/ApiDocs/ApiDocPaper";
+import ApiDocPaper from "../components/ApiDocs/ServerInform";
 import MakeToPDF from "../components/ApiDocs/MakeToPDF";
-import ApiDocPaper2 from "../components/ApiDocs/ApiDocPaper2";
+import ApiDocPaper2 from "../components/ApiDocs/DetailInform";
 import { useDispatch } from "react-redux";
 import { getApiDoc } from "../Store/slice/mainApi";
 import { getApiDetail } from "../Store/slice/apiDocsApi";
@@ -16,15 +16,16 @@ const ApiDocs = () => {
   const [detail, setDetail] = useState(); // Doc Detail 정보
   const [docInformArray, setDocInformArray] =
     useState<[string, string | number][]>(); // docInform object를 array로 바꾸고 저장할 state
-  const localStorageDocId = localStorage.getItem("docId");
   const [isOpen, setIsOpen] = useState(false);
+  const [scrollPosition, setScrollPosition] = useState(0); // 스크롤된 위치 확인
+  const dispatch = useDispatch();
+  const localStorageDocId = localStorage.getItem("docId");
+  const menuRef = useRef<HTMLDivElement[]>(null);
+  const serverInformRef = useRef<HTMLDivElement>(null);
+
   const toggleSide = () => {
     setIsOpen(true);
   };
-
-  const dispatch = useDispatch();
-
-  const menuRef = useRef<HTMLDivElement[]>(null);
 
   // PDF로 변환하기
   const pdf = MakeToPDF();
@@ -52,9 +53,27 @@ const ApiDocs = () => {
     });
   };
 
+  // 최상단으로 scroll
+  const scrollUp = () => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "auto",
+    });
+  };
+
+  // Scroll 위치 Update
+  const updateScroll = () => {
+    setScrollPosition(window.scrollY || document.documentElement.scrollTop);
+  };
+
   useEffect(() => {
     dispatchGetApiDetail();
     dispatchGetApiDoc();
+    window.addEventListener("scroll", updateScroll);
+    return () => {
+      localStorage.removeItem("docId");
+    };
   }, []);
 
   useEffect(() => {
@@ -64,14 +83,14 @@ const ApiDocs = () => {
     }
   }, [docInform]);
 
-  useEffect(() => {
-    return () => {
-      localStorage.removeItem("docId");
-    };
-  }, []);
-
   return (
     <div className="apiDocContainer">
+      <FontAwesomeIcon
+        icon={faCircleUp}
+        className="circleUpIcon"
+        size="3x"
+        onClick={scrollUp}
+      />
       <div className="sidebarDocWrapper">
         <div className="sidebarBox">
           <div onClick={toggleSide} className="sidebarButton">
@@ -81,19 +100,26 @@ const ApiDocs = () => {
             isOpen={isOpen}
             setIsOpen={setIsOpen}
             detail={detail}
+            scrollUp={scrollUp}
             ref={menuRef}
           />
         </div>
         <div className="docBox">
-          <div className="title">API DOC 페이지</div>
           <div className="doc1">
             <div className="docTitleWrapper">
-              <h1 className="docTitle">Server정보</h1>
+              <h1 className="docTitle" ref={serverInformRef}>
+                {docInform?.docsName} 문서
+              </h1>
             </div>
+            <h2 className='serverInformTitle'>Server 정보</h2>
             <ApiDocPaper docInformArray={docInformArray} />
           </div>
           <div className="doc2">
-            <ApiDocPaper2 detail={detail} ref={menuRef} />
+            <ApiDocPaper2
+              detail={detail}
+              scrollPosition={scrollPosition}
+              ref={menuRef}
+            />
           </div>
           <button onClick={onClick}>pdf로 변환</button>
         </div>
