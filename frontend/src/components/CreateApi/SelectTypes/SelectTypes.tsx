@@ -5,7 +5,7 @@ import "./SelectTypes.scss";
 
 interface Props {
   onBlur?: (temp?: string) => void;
-  setValue?: React.Dispatch<React.SetStateAction<string>>;
+  setValue?: any;
   value?: string;
   handleBasicInfo?: (
     e: React.ChangeEvent<HTMLInputElement> | string,

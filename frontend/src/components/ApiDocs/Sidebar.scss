@@ -1,6 +1,6 @@
 .openSidebar {
   z-index: 5;
-  width: 15vw;
+  width: 18vw;
   height: 100vh;
   position: absolute;
   left: 0px;
@@ -20,4 +20,17 @@
 
 .closeButtonWrapper {
   padding: 10px;
+}
+
+.sidebarUl {
+  .sidebarLi {
+    margin-bottom: 20px;
+    margin-left: 20px;
+    font-size: 25px;
+  }
+  .sidebarLi2 {
+    margin-bottom: 20px;
+    margin-left: 20px;
+    font-size: 20px;
+  }
 }

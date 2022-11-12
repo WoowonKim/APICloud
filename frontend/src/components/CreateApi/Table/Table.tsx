@@ -20,6 +20,8 @@ import { faInfo, faRemove } from "@fortawesome/free-solid-svg-icons";
 import SelectTypes from "../SelectTypes/SelectTypes";
 import DtoInputModal from "../DtoInputModal/DtoInputModal";
 import { checkDtoNameValidation } from "../validationCheck";
+import { useSyncedStore } from "@syncedstore/react";
+import { store } from "../store";
 
 declare module "@tanstack/react-table" {
   interface TableMeta<TData extends RowData> {
@@ -33,9 +35,6 @@ interface Props {
   selectedController: number;
   selectedApi: number;
   data: PropertiesType[] | HeadersType[];
-  state: MappedTypeDescription<{
-    data: ControllerType[];
-  }>;
   responseType?: string;
 }
 
@@ -44,9 +43,9 @@ const Table = ({
   selectedController,
   selectedApi,
   data,
-  state,
   responseType,
 }: Props) => {
+  const state = useSyncedStore(store);
   const rootPath = state.data[selectedController].apis[selectedApi];
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [propertiesIndex, setPropertiesIndex] = useState(-1);
@@ -442,7 +441,6 @@ const Table = ({
         <DtoInputModal
           setIsModalVisible={setIsModalVisible}
           activeTab={activeTab}
-          state={state}
           selectedController={selectedController}
           selectedApi={selectedApi}
           propertiesIndex={propertiesIndex}
@@ -465,7 +463,6 @@ const Table = ({
         handleBasicInfo={handleBasicInfo}
         selectedApi={selectedApi}
         selectedController={selectedController}
-        state={state}
         responseType={responseType}
         dtoData={dtoData}
         dtoExists={dtoExists}

@@ -48,6 +48,11 @@ public class DocsServiceImpl implements DocsService {
     private static final String NOT_FOUND_DETAIL = "API Doc의 내용이 존재하지 않습니다.";
 
     @Override
+    public Docs findByEncryptUrl(String encryptUrl) {
+        return docsRepository.findByEncryptedUrl(encryptUrl).orElseThrow(() -> new NotFoundException(NOT_FOUND_DOCS));
+    }
+
+    @Override
     public Docs findByDocsId(Long docsId) {
         return docsRepository.findById(docsId).orElseThrow(() -> new NotFoundException(NOT_FOUND_DOCS));
     }
@@ -151,8 +156,8 @@ public class DocsServiceImpl implements DocsService {
     }
 
     @Override
-    public UpdateDocDto getDoc(Long docId) {
-        Docs doc = findByDocsId(docId);
+    public UpdateDocDto getDoc(String encryptedDocId) {
+        Docs doc = docsRepository.findByEncryptedUrl(encryptedDocId).orElseThrow(()->new NotFoundException(NOT_FOUND_DOCS));
         UpdateDocDto updateDocDto = doc.toUpdateDocDto();
         return updateDocDto;
     }

@@ -9,13 +9,14 @@ export const store = syncedStore({
 
 const doc = getYjsValue(store);
 
-const webrtcProvider = new WebrtcProvider(
-  "apiCloud",
-  doc as Doc,
-  {
-    signaling: ["ws://localhost:4444"],
-  } as any
-);
-
-export const disconnect = () => webrtcProvider.disconnect();
-export const connect = () => webrtcProvider.connect();
+export const connectDoc = (encryptedUrl: string) => {
+  const webrtcProvider = new WebrtcProvider(
+    encryptedUrl,
+    doc as Doc,
+    {
+      signaling: ["ws://localhost:4444"],
+    } as any
+  );
+};
+// export const disconnect = () => webrtcProvider.disconnect();
+// export const connect = () => webrtcProvider.connect();
