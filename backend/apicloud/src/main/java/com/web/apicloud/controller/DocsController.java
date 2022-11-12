@@ -1,5 +1,6 @@
 package com.web.apicloud.controller;
 
+import com.web.apicloud.domain.SpringExportRequest;
 import com.web.apicloud.domain.dto.*;
 import com.web.apicloud.domain.entity.Group;
 import com.web.apicloud.domain.entity.GroupUser;
@@ -87,25 +88,27 @@ public class DocsController {
         return ResponseEntity.ok(null);
     }
 
-    @GetMapping("/{docsId}/project")
-    public ResponseEntity<byte[]> exportProject(@PathVariable("docsId") Long docsId, @RequestHeader Map<String, String> headers) throws IOException {
+    @PostMapping("/{encryptedId}/project")
+    public ResponseEntity<byte[]> exportProject(@PathVariable("encryptedId") String encryptedId,
+                                                @RequestBody SpringExportRequest springExportRequest,
+                                                @RequestHeader Map<String, String> headers) throws IOException {
         log.info("프로젝트 추출 API 호출");
-        return projectGenerationController.springZip(docsService.getDocVOByDocsId(docsId), headers);
+        return projectGenerationController.springZip(docsService.getDocVOByEncryptedId(encryptedId), headers, springExportRequest);
     }
 
-    @GetMapping("/{docsId}/csv")
-    public ResponseEntity<byte[]> exportCsv(@PathVariable("docsId") Long docsId) {
+    @GetMapping("/{encryptedId}/csv")
+    public ResponseEntity<byte[]> exportCsv(@PathVariable("encryptedId") String encryptedId) {
         log.info("csv 추출 API 호출");
-        DocVO doc = docsService.getDocVOByDocsId(docsId);
+        DocVO doc = docsService.getDocVOByEncryptedId(encryptedId);
         byte[] file = docsService.getCsvFile(doc.getControllers());
         return FileUtils.createResponseEntity(file, "text/csv", doc.getServer().getName() + ".csv");
     }
 
-    @PostMapping("/{docsId}/notion")
-    public ResponseEntity<NotionExportResponse> exportNotion(@PathVariable("docsId") Long docsId,
+    @PostMapping("/{encryptedId}/notion")
+    public ResponseEntity<NotionExportResponse> exportNotion(@PathVariable("encryptedId") String encryptedId,
                                                              @RequestBody(required = false) NotionExportRequest request) {
         log.info("노션 추출 API 호출");
-        DocVO doc = docsService.getDocVOByDocsId(docsId);
+        DocVO doc = docsService.getDocVOByEncryptedId(encryptedId);
         notionService.makeApiPage(request.getToken(), request.getDatabaseId(), doc);
         return ResponseEntity.ok().body(new NotionExportResponse("https://www.notion.so/" + request.getDatabaseId()));
     }
