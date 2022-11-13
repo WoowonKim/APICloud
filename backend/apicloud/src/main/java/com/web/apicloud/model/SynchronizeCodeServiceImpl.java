@@ -9,6 +9,7 @@ import com.web.apicloud.domain.vo.ApiVO;
 import com.web.apicloud.domain.vo.ControllerVO;
 import com.web.apicloud.domain.vo.PropertyVO;
 import com.web.apicloud.exception.NotFoundException;
+import com.web.apicloud.model.parsing.ClassUpdateService;
 import com.web.apicloud.model.parsing.ParsingService;
 import com.web.apicloud.model.parsing.S3Service;
 import lombok.RequiredArgsConstructor;
@@ -46,61 +47,69 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
     private final GroupService groupService;
     private final S3Service s3Service;
     private final ParsingService parsingService;
+    private final ClassUpdateService classUpdateService;
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
-    private static List<CodeResponse> codeList = new ArrayList<>();
-    private Map<String, String> importList = new HashMap<>();
-    private List<String> updateImport = new ArrayList<>();
+    public static List<CodeResponse> codeList = new ArrayList<>();
+    public static List<Map<String, String>> importList = new ArrayList<>();
 
     private StringBuffer sb = new StringBuffer();
 
     private int count = 0;
     private boolean etcFlag = false;
+    private static String groupSecretKey = "";
+
 
     @Override
     public List<CodeResponse> updateCode(Long docId, DetailRequest detailRequest) throws IOException {
         codeList = new ArrayList<>();
         count = 0;
         etcFlag = false;
-        importList = new HashMap<>();
-        updateImport = new ArrayList<>();
+        importList = new ArrayList<>();
 
         ControllerVO detailVO = objectMapper.readValue(detailRequest.getDetail(), ControllerVO.class);
         Docs doc = docsService.findByDocsId(docId);
         Group group = groupService.findById(doc.getGroup().getId());
+        groupSecretKey = group.getGroupSecretKey();
 
-        List<String> lines = s3Service.getFile(detailVO.getName(), null, group.getGroupSecretKey());
+        Map<String, List<String>> getFileCode = s3Service.getFile(detailVO.getName(), null, groupSecretKey);
+        if (getFileCode == null) new NotFoundException(NOT_FOUND_FILE);
+        List<String> lines = getFileCode.get("code");
+        String key = StringUtils.removeStart(StringUtils.removeEnd(String.valueOf(getFileCode.get(IMPORT)), "]"), "[");
+        System.out.println(lines);
         if (lines == null) new NotFoundException(NOT_FOUND_FILE);
 
-        codeList.add(CodeResponse.builder().name(detailVO.getName()).code(lines).build());
+        codeList.add(CodeResponse.builder().name(detailVO.getName()).importPackage(key).code(lines).build());
+        importList.add(new HashMap<>());
         getUpdateCode(detailVO);
         getUpdateImport();
         return codeList;
     }
 
     private void getUpdateImport() {
-        if (updateImport.size() == 0) return;
-        int i = 0;
-        while (i < codeList.get(0).getCode().size()) {
-            if (parsingService.KMP(codeList.get(0).getCode().get(i++), "package") != -1) break;
-        }
-        if (!codeList.get(0).getCode().get(i).equals("")) codeList.get(0).getCode().add(i, "");
-        i++;
-        updateImport.add(0, "//추가된 import");
-        updateImport.add("");
+        for (int i = 0; i < codeList.size(); i++) {
+            if (codeList.get(i).getUpdateImport().size() == 0) continue;
+            int j = 0;
+            while (j < codeList.get(i).getCode().size()) {
+                if (parsingService.KMP(codeList.get(i).getCode().get(j++), "package") != -1) break;
+            }
+            if (!codeList.get(i).getCode().get(j).equals("")) codeList.get(i).getCode().add(j, "");
+            j++;
+            codeList.get(i).getUpdateImport().add(0, "//추가된 import");
+            codeList.get(i).getUpdateImport().add("");
 
-        System.out.println(updateImport);
-        codeList.get(0).getCode().addAll(i, updateImport);
+            System.out.println(codeList.get(i).getUpdateImport());
+            codeList.get(i).getCode().addAll(j, codeList.get(i).getUpdateImport());
+        }
     }
 
-    private void getUpdateCode(ControllerVO detailVO) {
+    private void getUpdateCode(ControllerVO detailVO) throws IOException {
         int i = 0;
-
         while (i < codeList.get(0).getCode().size()) {
             if (parsingService.KMP(codeList.get(0).getCode().get(i), IMPORT) != -1) {
                 String importStr = codeList.get(0).getCode().get(i).replace(IMPORT, "");
                 importStr = importStr.replaceFirst(" ", "");
-                importList.put(StringUtils.removeEnd(importStr, ";"), IMPORT);
+                importList.get(0).put(StringUtils.removeEnd(importStr, ";"), IMPORT);
             }
             if (parsingService.KMP(codeList.get(0).getCode().get(i), REQUEST_MAPPING) != -1) {
                 int target = parsingService.KMP(codeList.get(0).getCode().get(i), VALUE);
@@ -132,9 +141,9 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
         }
     }
 
-    private void apiParsing(ControllerVO detailVO, int start, int end) {
+    private void apiParsing(ControllerVO detailVO, int start, int end) throws IOException {
         if (detailVO.getApis().size() <= count) return;
-        updateMethodAndUri(detailVO, start);
+        if (!updateMethodAndUri(detailVO, start)) return;
 
         while (++start <= end) {
             if (parsingService.KMP(codeList.get(0).getCode().get(start), RESPONSE_ENTITY) != -1) {
@@ -145,7 +154,7 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
         count++;
     }
 
-    private void updateApi(ControllerVO detailVO, int start, int end) {
+    private void updateApi(ControllerVO detailVO, int start, int end) throws IOException {
         Stack<Character> stack = new Stack<>();
         boolean responseFlag = false;
         boolean requestFlag = false;
@@ -198,6 +207,7 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
                                     codeList.get(0).getCode().set(start, codeList.get(0).getCode().get(start).replace(response, responseBody.getDtoName()));
                                 }
                                 // TODO : response CLass 바꾸러 가기,  import 추가
+                                classUpdateService.updateObject(groupSecretKey, responseBody, 0);
                                 methodNameFlag = true;
                             }
                         }
@@ -285,30 +295,30 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
         } else etcFlag = true;
     }
 
-    private String makeApi(ApiVO detailApiVO) {
+    private String makeApi(ApiVO detailApiVO) throws IOException {
         String api = "";
 
         if (detailApiVO.getParameters() != null) {
             if (detailApiVO.getParameters().size() != 0) {
-                if (importList.get(IMPORT_ANNOTATION) == null && importList.get(IMPORT_PATH_VARIABLE) == null) {
-                    importList.put(IMPORT_PATH_VARIABLE, IMPORT);
-                    updateImport.add(IMPORT + " " + IMPORT_PATH_VARIABLE + ";");
+                if (importList.get(0).get(IMPORT_ANNOTATION) == null && importList.get(0).get(IMPORT_PATH_VARIABLE) == null) {
+                    importList.get(0).put(IMPORT_PATH_VARIABLE, IMPORT);
+                    codeList.get(0).getUpdateImport().add(IMPORT + " " + IMPORT_PATH_VARIABLE + ";");
                 }
             }
             for (int p = 0; p < detailApiVO.getParameters().size(); p++) {
                 PropertyVO path = detailApiVO.getParameters().get(p);
                 String pathStr = "";
                 if (path.getType() != null && path.getName() != null) {
-                    pathStr += "@" + PATH_VARIABLE + "(" + VALUE + " = " + path.getName() + ", required = " + path.isRequired() + ") " + path.getType() + " " + path.getName() + ", ";
+                    pathStr += "@" + PATH_VARIABLE + "(" + VALUE + " = \"" + path.getName() + "\", required = " + path.isRequired() + ") " + path.getType() + " " + path.getName() + ", ";
                 }
                 api += pathStr;
             }
         }
         if (detailApiVO.getQueries() != null) {
             if (detailApiVO.getQueries().size() != 0) {
-                if (importList.get(IMPORT_ANNOTATION) == null && importList.get(IMPORT_REQUEST_PARAM) == null) {
-                    importList.put(IMPORT_REQUEST_PARAM, IMPORT);
-                    updateImport.add(IMPORT + " " + IMPORT_REQUEST_PARAM + ";");
+                if (importList.get(0).get(IMPORT_ANNOTATION) == null && importList.get(0).get(IMPORT_REQUEST_PARAM) == null) {
+                    importList.get(0).put(IMPORT_REQUEST_PARAM, IMPORT);
+                    codeList.get(0).getUpdateImport().add(IMPORT + " " + IMPORT_REQUEST_PARAM + ";");
                 }
             }
             for (int p = 0; p < detailApiVO.getQueries().size(); p++) {
@@ -320,12 +330,13 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
                 String type;
                 if (query.getType().equals("Object")) {
                     // TODO: property 업데이트 하러 가기, import 추가
+                    classUpdateService.updateObject(groupSecretKey, query, 0);
                     type = query.getDtoName();
                 } else type = query.getType();
                 if (query.getCollectionType() != null) {
-                    if (importList.get(IMPORT_UTIL) == null && importList.get(IMPORT_LIST) == null) {
-                        importList.put(IMPORT_LIST, IMPORT);
-                        updateImport.add(IMPORT + " " + IMPORT_LIST + ";");
+                    if (importList.get(0).get(IMPORT_UTIL) == null && importList.get(0).get(IMPORT_LIST) == null) {
+                        importList.get(0).put(IMPORT_LIST, IMPORT);
+                        codeList.get(0).getUpdateImport().add(IMPORT + " " + IMPORT_LIST + ";");
                     }
                     queryStr += query.getCollectionType() + "<" + type + ">";
                 } else queryStr += type;
@@ -334,29 +345,30 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
             }
         }
         if (detailApiVO.getRequestBody() != null && detailApiVO.getRequestBody().getName() != null) {
-            if (importList.get(IMPORT_ANNOTATION) == null && importList.get(IMPORT_REQUEST_BODY) == null) {
-                importList.put(IMPORT_REQUEST_BODY, IMPORT);
-                updateImport.add(IMPORT + " " + IMPORT_REQUEST_BODY + ";");
+            if (importList.get(0).get(IMPORT_ANNOTATION) == null && importList.get(0).get(IMPORT_REQUEST_BODY) == null) {
+                importList.get(0).put(IMPORT_REQUEST_BODY, IMPORT);
+                codeList.get(0).getUpdateImport().add(IMPORT + " " + IMPORT_REQUEST_BODY + ";");
             }
             String requestStr = "";
             requestStr += "@" + REQUEST_BODY + "(required = " + detailApiVO.getRequestBody().isRequired() + ") ";
             if (detailApiVO.getRequestBody().getCollectionType() != null) {
-                if (importList.get(IMPORT_UTIL) == null && importList.get(IMPORT_LIST) == null) {
-                    importList.put(IMPORT_LIST, IMPORT);
-                    updateImport.add(IMPORT + " " + IMPORT_LIST + ";");
+                if (importList.get(0).get(IMPORT_UTIL) == null && importList.get(0).get(IMPORT_LIST) == null) {
+                    importList.get(0).put(IMPORT_LIST, IMPORT);
+                    codeList.get(0).getUpdateImport().add(IMPORT + " " + IMPORT_LIST + ";");
                 }
                 requestStr += detailApiVO.getRequestBody().getCollectionType() + "<" + detailApiVO.getRequestBody().getDtoName() + ">";
             } else requestStr += detailApiVO.getRequestBody().getDtoName();
             requestStr += " " + detailApiVO.getRequestBody().getName() + ", ";
             // TODO : 리퀘스트 바디 업데이트 하러가기
+            classUpdateService.updateObject(groupSecretKey, detailApiVO.getRequestBody(), 0);
             api += requestStr;
         }
         return api;
     }
 
-    private void updateMethodAndUri(ControllerVO detailVO, int start) {
+    private boolean updateMethodAndUri(ControllerVO detailVO, int start) {
         List<String> getMethod = parsingService.getMethod(codeList.get(0).getCode().get(start));
-        if (getMethod == null) return;
+        if (getMethod == null) return false;
         if (getMethod.size() > 0) {
             codeList.get(0).getCode().set(start, codeList.get(0).getCode().get(start).replace(getMethod.get(0), detailVO.getApis().get(count).getMethod()));
         }
@@ -372,5 +384,6 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
                 codeList.get(0).getCode().set(start, codeList.get(0).getCode().get(start) + uri);
             }
         }
+        return true;
     }
 }
