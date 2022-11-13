@@ -42,6 +42,8 @@ interface Props {
   dtoData: any;
   dtoExists: boolean;
   currentDtoData: any;
+  setModalDepth: React.Dispatch<React.SetStateAction<number>>;
+  modalDepth: number;
 }
 const DtoInputModal = ({
   setIsModalVisible,
@@ -61,10 +63,11 @@ const DtoInputModal = ({
   dtoData,
   dtoExists,
   currentDtoData,
+  setModalDepth,
+  modalDepth,
 }: Props) => {
   const state = useSyncedStore(store);
   const rootPath = state.data[selectedController].apis[selectedApi];
-  const [modalDepth, setModalDepth] = useState(2);
   const [visible, setVisible] = useState(false);
 
   const index =
@@ -97,17 +100,16 @@ const DtoInputModal = ({
     }
     setFinal(copy);
   }, [modalDepth, path, final]);
+  console.log(modalDepth, 1);
+  if (final) {
+    console.log(JSON.parse(JSON.stringify(final)));
+    console.log(propertiesIndexList);
+  }
 
   return (
     <div className="dtoInputModal">
       <div className="dtoModalContainer">
         <div className="dtoModalTitleContainer">
-          <div>
-            {nameList.length > 0 &&
-              nameList.map(
-                (name, index) => !!name && <span key={index}>{name}/</span>
-              )}
-          </div>
           {final && (
             <div className="dtoModalInputGroup">
               <input
@@ -181,7 +183,6 @@ const DtoInputModal = ({
               activeTab={activeTab}
               setPropertiesIndexList={setPropertiesIndexList}
               propertiesIndexList={propertiesIndexList}
-              getDepth={getDepth}
               setModalDepth={setModalDepth}
               modalDepth={modalDepth}
               path={path}
@@ -192,7 +193,11 @@ const DtoInputModal = ({
       </div>
       <button
         className="dtoInputModalCloseButton"
-        onClick={() => setIsModalVisible(false)}
+        onClick={() => {
+          setModalDepth(2);
+          setIsModalVisible(false);
+          setPropertiesIndexList([-1, -1, -1, -1]);
+        }}
       ></button>
     </div>
   );

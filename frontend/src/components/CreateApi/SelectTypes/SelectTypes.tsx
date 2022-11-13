@@ -22,6 +22,7 @@ interface Props {
     index: number
   ) => void;
   index?: number;
+  modalDepth?: number;
 }
 
 const SelectTypes = ({
@@ -34,6 +35,7 @@ const SelectTypes = ({
   isCollection,
   handelCellValue,
   index,
+  modalDepth,
 }: Props) => {
   const [visible, setVisible] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState(
@@ -64,10 +66,22 @@ const SelectTypes = ({
       handelCellValue(eventTarget.innerText, "type", index);
     }
   };
-
   // String, List, Map, Byte, Character, Boolean, Integer, Long, Short, Float, Double, Object
   const typeList = isCollection
     ? ["List", "X"]
+    : modalDepth && modalDepth > 2
+    ? [
+        "String",
+        "Boolean",
+        "Integer",
+        "Long",
+        "List",
+        "Byte",
+        "Character",
+        "Short",
+        "Float",
+        "Double",
+      ]
     : [
         "String",
         "Boolean",

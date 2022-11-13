@@ -3,6 +3,7 @@ import {
   useReactTable,
   getCoreRowModel,
   flexRender,
+  RowData,
 } from "@tanstack/react-table";
 import React, { useEffect, useMemo, useState } from "react";
 import { PropertiesType } from "../../../pages/CreateApi/ApisType";
@@ -10,6 +11,13 @@ import "../ControllerAddModal/ControllerAddModal.scss";
 import { faInfo, faRemove } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SelectTypes from "../SelectTypes/SelectTypes";
+import { getDepth } from "../validationCheck";
+
+declare module "@tanstack/react-table" {
+  interface TableMeta<TData extends RowData> {
+    updateData: (rowIndex: number, columnId: string, value: unknown) => void;
+  }
+}
 
 // ControllerAddModal에서 받아오는 props의 type 설정
 interface Props {
@@ -18,14 +26,6 @@ interface Props {
   activeTab: number;
   setPropertiesIndexList: React.Dispatch<React.SetStateAction<number[]>>;
   propertiesIndexList: number[];
-  getDepth(
-    idx: number,
-    datas: any,
-    isAdd: boolean,
-    isNew: boolean,
-    isDelete: boolean,
-    path: any
-  ): number;
   setModalDepth: React.Dispatch<React.SetStateAction<number>>;
   modalDepth: number;
   path: PropertiesType;
@@ -37,7 +37,6 @@ const DtoModalTable = ({
   activeTab,
   setPropertiesIndexList,
   propertiesIndexList,
-  getDepth,
   setModalDepth,
   modalDepth,
   path,
@@ -58,6 +57,7 @@ const DtoModalTable = ({
 
       useEffect(() => {
         setValue(initialValue);
+        console.log(modalDepth);
       }, [initialValue, modalDepth, data, index]);
 
       let copyPath = path;
@@ -86,7 +86,7 @@ const DtoModalTable = ({
           className="removeIcon"
           onClick={() =>
             final &&
-            getDepth(index, final.properties, false, false, true, final)
+            getDepth(index, data[index], false, false, true, final.properties)
           }
         />
       ) : id === "type" ? (
@@ -100,7 +100,12 @@ const DtoModalTable = ({
                 isCollection={true}
               />
             )}
-          <SelectTypes onBlur={onBlur} setValue={setValue} value={value} />
+          <SelectTypes
+            onBlur={onBlur}
+            setValue={setValue}
+            value={value}
+            modalDepth={modalDepth}
+          />
           {value === "Object" && (
             <FontAwesomeIcon
               icon={faInfo}
@@ -134,12 +139,18 @@ const DtoModalTable = ({
     }
     const newDepth = getDepth(
       index,
-      copyPath.properties,
+      final?.properties,
       true,
       true,
       false,
-      final
+      copyPath
     );
+    console.log(
+      JSON.parse(JSON.stringify(copyPath)),
+      JSON.parse(JSON.stringify(final)),
+      newDepth
+    );
+
     setModalDepth(newDepth);
     let properties = [...propertiesIndexList];
     properties[newDepth - 2] = index;

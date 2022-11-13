@@ -551,15 +551,25 @@ export function getDepth(
 
   while (queue.length !== 1) {
     const current = queue.shift();
+    console.log(
+      JSON.parse(JSON.stringify(current)),
+      JSON.parse(JSON.stringify(path)),
+      JSON.parse(JSON.stringify(datas))
+    );
+
     if (JSON.stringify(current) === JSON.stringify(datas)) {
       if (current && typeof current !== "string" && isDelete) {
         path.splice(idx, 1);
       } else if (current && typeof current !== "string" && isAdd && isNew) {
-        if (current?.properties.length === 0) {
+        if (current.properties && current.properties.length === 0) {
           current.properties.push(newData);
         }
       } else if (current && typeof current !== "string" && isAdd) {
-        path.properties.push(newData);
+        if (path?.length > 0 && current?.properties) {
+          current.properties.push(newData);
+        } else {
+          path.properties.push(newData);
+        }
       }
       break;
     }
@@ -576,8 +586,12 @@ export function getDepth(
           queue.push(item);
         }
       } else {
-        for (let item of current.properties) {
-          queue.push(item);
+        if (current && current?.properties && current.properties.length > 0)
+          for (let item of current.properties) {
+            queue.push(item);
+          }
+        if (current.length === 0 && isAdd && isNew) {
+          current.push(newData);
         }
       }
     }

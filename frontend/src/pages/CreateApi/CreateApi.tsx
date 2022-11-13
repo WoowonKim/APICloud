@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import { ApisType, ControllerType, PropertiesType } from "./ApisType";
 import "./CreateApi.scss";
 import Sidebar from "../../components/CreateApi/Sidebar/Sidebar";
-import Table from "../../components/CreateApi/Table/Table";
 import { useSyncedStore } from "@syncedstore/react";
 import { connectDoc, store } from "../../components/CreateApi/store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -363,45 +362,47 @@ const CreateApi = () => {
               responses
             </div>
           </div>
-          {selectedApi > -1 &&
-            selectedController > -1 &&
-            state?.data.length > 0 &&
-            state.data[selectedController]?.apis.length > 0 && (
-              <div className="apiTable">
-                <button
-                  className="apiPlusButton"
-                  onClick={() => addTableRow("success")}
-                >
-                  <FontAwesomeIcon icon={faPlus} className="plusIcon" />
-                </button>
-                <ApiTable
-                  activeTab={activeTab}
-                  selectedController={selectedController}
-                  selectedApi={selectedApi}
-                  responseType={"success"}
-                />
-              </div>
-            )}
-          {selectedApi > -1 &&
-            selectedController > -1 &&
-            state?.data.length > 0 &&
-            state.data[selectedController]?.apis.length > 0 &&
-            activeTab === 5 && (
-              <div className="apiTable">
-                <button
-                  className="apiPlusButton"
-                  onClick={() => addTableRow("fail")}
-                >
-                  <FontAwesomeIcon icon={faPlus} className="plusIcon" />
-                </button>
-                <ApiTable
-                  activeTab={activeTab}
-                  selectedController={selectedController}
-                  selectedApi={selectedApi}
-                  responseType={"fail"}
-                />
-              </div>
-            )}
+          <div className="tableContainer">
+            {selectedApi > -1 &&
+              selectedController > -1 &&
+              state?.data.length > 0 &&
+              state.data[selectedController]?.apis.length > 0 && (
+                <div className="apiTable">
+                  <button
+                    className="apiPlusButton"
+                    onClick={() => addTableRow("success")}
+                  >
+                    <FontAwesomeIcon icon={faPlus} className="plusIcon" />
+                  </button>
+                  <ApiTable
+                    activeTab={activeTab}
+                    selectedController={selectedController}
+                    selectedApi={selectedApi}
+                    responseType={"success"}
+                  />
+                </div>
+              )}
+            {selectedApi > -1 &&
+              selectedController > -1 &&
+              state?.data.length > 0 &&
+              state.data[selectedController]?.apis.length > 0 &&
+              activeTab === 5 && (
+                <div className="apiTable">
+                  <button
+                    className="apiPlusButton"
+                    onClick={() => addTableRow("fail")}
+                  >
+                    <FontAwesomeIcon icon={faPlus} className="plusIcon" />
+                  </button>
+                  <ApiTable
+                    activeTab={activeTab}
+                    selectedController={selectedController}
+                    selectedApi={selectedApi}
+                    responseType={"fail"}
+                  />
+                </div>
+              )}
+          </div>
         </div>
       </div>
     );
