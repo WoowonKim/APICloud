@@ -37,6 +37,8 @@ public class ClassUpdateServiceImpl implements ClassUpdateService {
         Map<String, List<String>> getFileCode = s3Service.getFile(property.getDtoName(), null, groupSecretKey);
         if (getFileCode == null) return;
         List<String> lines = getFileCode.get("code");
+        if (lines == null) return;
+
         String key = StringUtils.removeStart(StringUtils.removeEnd(String.valueOf(getFileCode.get(IMPORT)), "]"), "[");
         SynchronizeCodeServiceImpl.codeList.add(CodeResponse.builder().name(property.getDtoName()).importPackage(key).code(lines).build());
         SynchronizeCodeServiceImpl.importList.add(new HashMap<>());

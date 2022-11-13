@@ -29,7 +29,7 @@ public class SynchronizeController {
     private final SynchronizeCodeService synchronizeCodeService;
 
     @PostMapping("/{docId}")
-    public ResponseEntity<ControllerDTO> getFile(@PathVariable("docId") Long docId, @RequestPart(value = "file", required = false) MultipartFile multipartFile, @RequestBody SynchronizeRequest synchronizeRequest) throws IOException {
+    public ResponseEntity<ControllerDTO> getFile(@PathVariable("docId") Long docId, @RequestPart(value = "file", required = false) MultipartFile multipartFile, @RequestPart SynchronizeRequest synchronizeRequest) throws IOException {
         log.info("프로젝트 동기화 API 요청");
         ControllerDTO response = synchronizeDocService.getFile(docId, synchronizeRequest, multipartFile);
         return ResponseEntity.ok()
