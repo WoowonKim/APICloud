@@ -2,14 +2,17 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
+import {
+  ControllerType,
+  ServerInfoType,
+} from "../../../pages/CreateApi/ApisType";
 import apiDocsApiSlice, {
   getCsv,
   getNotion,
   getSpringBoot,
   setApiDetail,
-} from "../../Store/slice/apiDocsApi";
-import { RootState } from "../../Store/store";
-import { ControllerType, ServerInfoType } from "./ApisType";
+} from "../../../Store/slice/apiDocsApi";
+import { RootState } from "../../../Store/store";
 import DependencyModal from "./DependencyModal";
 import "./ExtractModal.scss";
 
@@ -54,16 +57,24 @@ const ExtractModal = ({ controllers }: ExtractModalProps) => {
     detail.controllers = controllers;
     dispatch(
       setApiDetail({
-        docId: 1,
+        encryptedUrl: encryptedUrl,
         detailRequest: { detail: JSON.stringify(detail) },
       })
     ).then((res: any) => {
+      if (res.meta.requestStatus !== "fulfilled") {
+        alert("추출에 실패하였습니다.");
+        return;
+      }
       extract();
     });
   };
 
   const extractCsv = () => {
     dispatch(getCsv({ encryptedUrl: encryptedUrl })).then((res: any) => {
+      if (res.meta.requestStatus !== "fulfilled") {
+        alert("추출에 실패하였습니다");
+        return;
+      }
       downloadFile(res.payload);
     });
   };
@@ -75,6 +86,10 @@ const ExtractModal = ({ controllers }: ExtractModalProps) => {
         springExtractRequest: { dependencies: dependencies },
       })
     ).then((res: any) => {
+      if (res.meta.requestStatus !== "fulfilled") {
+        alert("추출에 실패하였습니다.");
+        return;
+      }
       downloadFile(res.payload);
     });
   };
@@ -94,10 +109,6 @@ const ExtractModal = ({ controllers }: ExtractModalProps) => {
   };
 
   const downloadFile = (res: any) => {
-    if (res.status !== 200) {
-      alert("추출에 실패하였습니다.");
-      return;
-    }
     const href = URL.createObjectURL(res.data);
 
     const link = document.createElement("a");

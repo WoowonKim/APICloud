@@ -77,7 +77,10 @@ export const setApiDetail: any = createAsyncThunk(
   "apiDocsApi/setApiDetail",
   async (args: any, { rejectWithValue }) => {
     try {
-      const response = await axiosPut(`apis/${args.docId}`, args.detailRequest);
+      const response = await axiosPut(
+        `apis/enc/${args.encryptedUrl}`,
+        args.detailRequest
+      );
       return response.data;
     } catch (err: any) {
       return rejectWithValue(err.response);
@@ -110,6 +113,27 @@ const apiDocsApiSlice = createSlice({
     },
     [getCsv.rejected]: (state, action) => {
       console.log("getCsv rejected", action.payload);
+    },
+    [getSpringBoot.fulfilled]: (state, action) => {
+      if (action.meta.requestStatus === "fulfilled") {
+      }
+    },
+    [getSpringBoot.rejected]: (state, action) => {
+      console.log("getSpringBoot rejected", action.payload);
+    },
+    [getNotion.fulfilled]: (state, action) => {
+      if (action.meta.requestStatus === "fulfilled") {
+      }
+    },
+    [getNotion.rejected]: (state, action) => {
+      console.log("getNotion rejected", action.payload);
+    },
+    [setApiDetail.fulfilled]: (state, action) => {
+      if (action.meta.requestStatus === "fulfilled") {
+      }
+    },
+    [setApiDetail.rejected]: (state, action) => {
+      console.log("setApiDetail rejected", action.payload);
     },
   },
 });

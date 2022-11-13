@@ -1,9 +1,9 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../Store/store";
 import styled from "styled-components";
-import apiDocsApiSlice from "../../Store/slice/apiDocsApi";
-import { getApiCreationInfo } from "../../Store/slice/mainApi";
+import apiDocsApiSlice from "../../../Store/slice/apiDocsApi";
+import { getApiCreationInfo } from "../../../Store/slice/mainApi";
+import { RootState } from "../../../Store/store";
 import "./DependencyModal.scss";
 
 interface PropType {

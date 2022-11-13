@@ -10,7 +10,7 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Store/store";
 import apiDocsApiSlice, { getApiDetail } from "../../Store/slice/apiDocsApi";
-import ExtractModal from "./ExtractModal";
+import ExtractModal from "../../components/CreateApi/ExtractModal/ExtractModal";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { axiosGet } from "../../util/axiosUtil";
 import ErrorPage from "../ErrorPage";
@@ -201,13 +201,11 @@ const CreateApi = () => {
   console.log(JSON.parse(JSON.stringify(state.data)));
   const location = useLocation();
   useEffect(() => {
-    dispatch(getApiDetail({ docId: encryptedUrl })).then(
-      (res: any) => {
-        if (res.meta.requestStatus === "fulfilled") {
-          console.log(res.payload);
-        }
+    dispatch(getApiDetail({ docId: encryptedUrl })).then((res: any) => {
+      if (res.meta.requestStatus === "fulfilled") {
+        console.log(res.payload);
       }
-    );
+    });
   }, []);
   if (authority == 0) {
     return (
@@ -255,7 +253,9 @@ const CreateApi = () => {
               >
                 추출
               </button>
-              {isOpenExtractModal && <ExtractModal controllers={state.data}></ExtractModal>}
+              {isOpenExtractModal && (
+                <ExtractModal controllers={state.data}></ExtractModal>
+              )}
             </div>
           </div>
           <div className="infoContainer">
