@@ -18,10 +18,10 @@ public class ApiController {
 
     private final ApiService apiService;
 
-    @GetMapping("/{docId}")
-    ResponseEntity<DetailResponse> docDetail(@PathVariable Long docId) {
+    @GetMapping("/{encryptedDocId}")
+    ResponseEntity<DetailResponse> docDetail(@PathVariable String encryptedDocId) {
         log.info("DOC ApiInfo 조회 API 호출");
-        DetailResponse detailResponse = apiService.getDetailById(docId);
+        DetailResponse detailResponse = apiService.getDetailById(encryptedDocId);
         return ResponseEntity.ok().body(detailResponse);
     }
 
@@ -29,6 +29,13 @@ public class ApiController {
     ResponseEntity<DetailResponse> updateDocDetail(@PathVariable Long docId, @RequestBody DetailRequest detailRequest) {
         log.info("Doc ApiDetail 수정 API 호출");
         DetailResponse detailResponse = apiService.updateDetailById(docId, detailRequest.getDetail());
+        return ResponseEntity.ok().body(detailResponse);
+    }
+
+    @PutMapping("/enc/{encryptedId}")
+    ResponseEntity<DetailResponse> updateDocDetail(@PathVariable String encryptedId, @RequestBody DetailRequest detailRequest) {
+        log.info("Doc ApiDetail 수정 API 호출");
+        DetailResponse detailResponse = apiService.updateDetailById(encryptedId, detailRequest.getDetail());
         return ResponseEntity.ok().body(detailResponse);
     }
 

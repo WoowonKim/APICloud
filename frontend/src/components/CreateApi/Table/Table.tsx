@@ -19,6 +19,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfo, faRemove } from "@fortawesome/free-solid-svg-icons";
 import SelectTypes from "../SelectTypes/SelectTypes";
 import DtoInputModal from "../DtoInputModal/DtoInputModal";
+import { checkDtoNameValidation } from "../validationCheck";
+import { useSyncedStore } from "@syncedstore/react";
+import { store } from "../store";
 
 declare module "@tanstack/react-table" {
   interface TableMeta<TData extends RowData> {
@@ -32,9 +35,6 @@ interface Props {
   selectedController: number;
   selectedApi: number;
   data: PropertiesType[] | HeadersType[];
-  state: MappedTypeDescription<{
-    data: ControllerType[];
-  }>;
   responseType?: string;
 }
 
@@ -43,80 +43,83 @@ const Table = ({
   selectedController,
   selectedApi,
   data,
-  state,
   responseType,
 }: Props) => {
+  const state = useSyncedStore(store);
+  const rootPath = state.data[selectedController].apis[selectedApi];
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [propertiesIndex, setPropertiesIndex] = useState(-1);
+  const [final, setFinal] = useState<PropertiesType>();
+  const [propertiesIndexList, setPropertiesIndexList] = useState<number[]>([
+    -1, -1, -1, -1, -1,
+  ]);
+  const [nameList, setNameList] = useState<string[]>(["", "", "", "", ""]);
+  const [dtoData, setDtoData] = useState();
+  const [currentDtoData, setCurrentDtoData] = useState();
+  const [dtoExists, setDtoExists] = useState(false);
+  const path =
+    activeTab === 2
+      ? state.data[selectedController].apis[selectedApi].parameters
+      : activeTab === 3
+      ? state.data[selectedController].apis[selectedApi].queries
+      : activeTab === 4
+      ? state.data[selectedController].apis[selectedApi].requestBody.properties
+      : activeTab === 5 &&
+        (responseType === "fail" || responseType === "success")
+      ? state.data[selectedController].apis[selectedApi].responses[responseType]
+          .responseBody.properties
+      : state.data[selectedController].apis[selectedApi].parameters;
 
-  const addProperties = (index: number, flag?: boolean) => {
-    const commonPath = state.data[selectedController].apis[selectedApi];
+  const getDepth = (
+    idx: number,
+    datas: any,
+    isAdd: boolean,
+    isNew: boolean,
+    isDelete: boolean
+  ) => {
     const newData = {
       dtoName: "",
       name: "",
-      type: "",
+      type: "String",
       collectionType: "",
       properties: [],
       required: true,
     };
-    if (
-      activeTab === 2 &&
-      (commonPath.parameters[index].properties.length === 0 || flag)
-    ) {
-      commonPath.parameters[index].properties.push(newData);
-    } else if (
-      activeTab === 4 &&
-      (commonPath.requestBody.properties[index].properties.length === 0 || flag)
-    ) {
-      commonPath.requestBody.properties[index].properties.push(newData);
-    } else if (
-      activeTab === 5 &&
-      (responseType === "fail" || responseType === "success") &&
-      (commonPath.responses[responseType].responseBody.properties[index]
-        .properties.length === 0 ||
-        flag)
-    ) {
-      commonPath.responses[responseType].responseBody.properties[
-        index
-      ].properties.push(newData);
-    }
-  };
 
-  const deleteRow = (index: number, depth: number, propIndex?: number) => {
-    if (activeTab === 1) {
-      state.data[selectedController].apis[selectedApi].headers.splice(index, 1);
-    } else if (activeTab === 2) {
-      let rootPath =
-        depth === 2 && propIndex
-          ? state.data[selectedController].apis[selectedApi].parameters[
-              propIndex
-            ].properties
-          : state.data[selectedController].apis[selectedApi].parameters;
-      rootPath.splice(index, 1);
-    } else if (activeTab === 3 || activeTab === 4) {
-      const tab = activeTab === 3 ? "query" : "requestBody";
-      let rootPath =
-        depth === 2 && propIndex
-          ? state.data[selectedController].apis[selectedApi][tab].properties[
-              propIndex
-            ].properties
-          : state.data[selectedController].apis[selectedApi][tab].properties;
+    const queue = [path, "flag"];
+    const levels = [0];
 
-      rootPath.splice(index, 1);
-    } else if (
-      activeTab === 5 &&
-      (responseType === "fail" || responseType === "success")
-    ) {
-      let rootPath =
-        depth === 2 && propIndex
-          ? state.data[selectedController].apis[selectedApi].responses[
-              responseType
-            ].responseBody.properties[propIndex].properties
-          : state.data[selectedController].apis[selectedApi].responses[
-              responseType
-            ].responseBody.properties;
-      rootPath.splice(index, 1);
+    while (queue.length !== 1) {
+      const current = queue.shift();
+      if (JSON.stringify(current) === JSON.stringify(datas)) {
+        if (current && typeof current !== "string" && isDelete) {
+          current.splice(idx, 1);
+        } else if (current && typeof current !== "string" && isAdd && isNew) {
+          if (
+            current.length > idx + 1 &&
+            current[idx].properties.length === 0
+          ) {
+            current[idx].properties.push(newData);
+          }
+        } else if (current && typeof current !== "string" && isAdd) {
+          current.push(newData);
+        }
+        break;
+      }
+
+      if (current === "flag") {
+        levels.push(0);
+        queue.push("flag");
+      }
+
+      if (current && current !== "flag" && typeof current !== "string") {
+        levels[levels.length - 1]++;
+        for (let item of current) {
+          queue.push(item.properties);
+        }
+      }
     }
+    return levels.length + 1;
   };
 
   const defaultColumn: Partial<ColumnDef<PropertiesType | HeadersType>> = {
@@ -127,13 +130,25 @@ const Table = ({
       const onBlur = (temp?: string) => {
         table.options.meta?.updateData(index, id, temp ? temp : value);
         if (temp) {
-          setValue(temp);
+          setValue(id === "type" && temp === "List" ? "String" : temp);
         }
       };
 
       useEffect(() => {
         setValue(initialValue);
-      }, [initialValue]);
+      }, [initialValue, data]);
+
+      let tablePath =
+        activeTab === 5
+          ? activeTab === 5 &&
+            (responseType === "fail" || responseType === "success") &&
+            rootPath.responses[responseType].responseBody.properties[index]
+              ?.collectionType === "List"
+          : activeTab === 3
+          ? rootPath.queries[index]?.collectionType === "List"
+          : activeTab === 4
+          ? rootPath.requestBody.properties[index]?.collectionType
+          : rootPath.parameters[index]?.collectionType;
 
       return id === "required" ? (
         <input
@@ -147,17 +162,28 @@ const Table = ({
         <FontAwesomeIcon
           icon={faRemove}
           className="removeIcon"
-          onClick={() => deleteRow(index, 1)}
+          onClick={() => getDepth(index, data, false, false, true)}
         />
       ) : id === "type" ? (
         <div className="typeInfoContainer">
+          {tablePath && (
+            <SelectTypes
+              onBlur={onBlur}
+              setValue={setValue}
+              value={"List"}
+              isCollection={true}
+            />
+          )}
           <SelectTypes onBlur={onBlur} setValue={setValue} value={value} />
           {value === "Object" && (
             <FontAwesomeIcon
               icon={faInfo}
               className="infoIcon"
               onClick={() => {
-                addProperties(index);
+                let properties = [...propertiesIndexList];
+                properties[0] = index;
+                setPropertiesIndexList(properties);
+                getDepth(index, data, true, true, false);
                 setPropertiesIndex(index);
                 setIsModalVisible(!isModalVisible);
               }}
@@ -241,7 +267,16 @@ const Table = ({
     [activeTab]
   );
 
-  const [columnResizeMode, setColumnResizeMode] = useState<ColumnResizeMode>("onChange");
+  const [columnResizeMode, setColumnResizeMode] =
+    useState<ColumnResizeMode>("onChange");
+
+  useEffect(() => {
+    setPropertiesIndexList([-1, -1, -1, -1, -1, -1, -1, -1, -1]);
+  }, [activeTab, propertiesIndex]);
+
+  useEffect(() => {
+    setDtoExists(false);
+  }, [activeTab]);
 
   const table = useReactTable({
     data,
@@ -252,52 +287,42 @@ const Table = ({
     meta: {
       updateData: (rowIndex: string | number, columnId: any, value: any) => {
         if (!!value && state.data) {
-          const newValue = value === "true" ? false : true;
-          const type = columnId === "name" ? "name" : columnId === "type" ? "type" : "required";
-          if (activeTab === 1) {
-            state.data[selectedController].apis[selectedApi].headers.map((row, idx) => {
-              if (idx === rowIndex && state.data) {
-                const type = columnId === "key" ? "key" : "value";
-                state.data[selectedController].apis[selectedApi].headers[rowIndex][type] = value;
-              }
-            });
-          } else if (activeTab === 2) {
-            state.data[selectedController].apis[selectedApi].parameters.map((row, idx) => {
-              if (idx === rowIndex && state.data) {
-                if (type === "required") {
-                  state.data[selectedController].apis[selectedApi].parameters[rowIndex][type] = newValue;
-                } else {
-                  state.data[selectedController].apis[selectedApi].parameters[rowIndex][type] = value;
-                }
-              }
-            });
-          } else if (activeTab === 3 || activeTab === 4) {
-            const tab = activeTab === 3 ? "query" : "requestBody";
-            state.data[selectedController].apis[selectedApi][tab].properties.map((row, idx) => {
-              if (idx === rowIndex && state.data) {
-                if (type === "required") {
-                  state.data[selectedController].apis[selectedApi][tab].properties[rowIndex][type] = newValue;
-                } else {
-                  state.data[selectedController].apis[selectedApi][tab].properties[rowIndex][type] = value;
-                }
-              }
-            });
-          } else if (
+          const requiredValue = value === "true" ? false : true;
+          const type =
+            columnId === "name"
+              ? "name"
+              : columnId === "type"
+              ? "type"
+              : "required";
+          const tableUpdatePath =
             activeTab === 5 &&
             (responseType === "fail" || responseType === "success")
-          ) {
-            state.data[selectedController].apis[selectedApi].responses[
-              responseType
-            ].responseBody.properties.map((row, idx) => {
-              if (idx === rowIndex && state.data) {
+              ? rootPath.responses[responseType].responseBody.properties
+              : activeTab === 2
+              ? rootPath.parameters
+              : activeTab === 3
+              ? rootPath.queries
+              : rootPath.requestBody.properties;
+
+          if (activeTab === 1) {
+            rootPath.headers.map((row, idx) => {
+              if (idx === rowIndex) {
+                const headersType = columnId === "key" ? "key" : "value";
+                rootPath.headers[rowIndex][headersType] = value;
+              }
+            });
+          } else {
+            tableUpdatePath.map((row, idx) => {
+              if (idx === rowIndex) {
                 if (type === "required") {
-                  state.data[selectedController].apis[selectedApi].responses[
-                    responseType
-                  ].responseBody.properties[rowIndex][type] = newValue;
+                  tableUpdatePath[rowIndex][type] = requiredValue;
+                } else if (type === "type" && value === "List") {
+                  tableUpdatePath[rowIndex].collectionType = "List";
+                  tableUpdatePath[rowIndex][type] = "String";
+                } else if (type === "type" && value === "X") {
+                  tableUpdatePath[rowIndex].collectionType = "";
                 } else {
-                  state.data[selectedController].apis[selectedApi].responses[
-                    responseType
-                  ].responseBody.properties[rowIndex][type] = value;
+                  tableUpdatePath[rowIndex][type] = value;
                 }
               }
             });
@@ -312,55 +337,11 @@ const Table = ({
     e: React.ChangeEvent<HTMLInputElement> | string,
     type: string,
     depth: number,
-    responseType?: string
+    responseType: string
   ) => {
     const key =
-      type === "name"
-        ? "name"
-        : type === "type"
-        ? "type"
-        : type === "dtoName"
-        ? "dtoName"
-        : "required";
-    if (activeTab === 3 && state.data) {
-      if (typeof e !== "string" && key === "required") {
-        state.data[selectedController].apis[selectedApi].query[key] =
-          e.target.checked;
-      } else if (
-        typeof e !== "string" &&
-        (key === "name" || key === "dtoName")
-      ) {
-        state.data[selectedController].apis[selectedApi].query[key] =
-          e.target.value;
-      } else if (typeof e === "string" && key === "type") {
-        state.data[selectedController].apis[selectedApi].query[key] = e;
-      }
-    } else if (activeTab === 4 && state.data) {
-      let rootPath =
-        depth === 1
-          ? state.data[selectedController].apis[selectedApi].requestBody
-          : state.data[selectedController].apis[selectedApi].requestBody
-              .properties[propertiesIndex];
-      if (typeof e !== "string" && key === "required") {
-        rootPath[key] = e.target.checked;
-      } else if (
-        typeof e !== "string" &&
-        (key === "name" || key === "dtoName")
-      ) {
-        rootPath[key] = e.target.value;
-      } else if (typeof e === "string" && key === "type") {
-        rootPath[key] = e;
-      }
-    } else if (activeTab === 5 && state.data) {
-      const response = responseType === "fail" ? "fail" : "success";
-      let rootPath =
-        depth === 1
-          ? state.data[selectedController].apis[selectedApi].responses[response]
-              .responseBody
-          : state.data[selectedController].apis[selectedApi].responses[response]
-              .responseBody.properties[propertiesIndex];
-      const key2 =
-        type === "name"
+      activeTab === 5
+        ? type === "name"
           ? "name"
           : type === "type"
           ? "type"
@@ -368,38 +349,113 @@ const Table = ({
           ? "dtoName"
           : type === "status"
           ? "status"
-          : "required";
-      if (typeof e !== "string" && key2 === "required") {
-        rootPath[key2] = e.target.checked;
-      } else if (
-        typeof e !== "string" &&
-        (key2 === "name" || key2 === "dtoName")
-      ) {
-        rootPath[key2] = e.target.value;
-      } else if (typeof e !== "string" && key2 === "status") {
-        state.data[selectedController].apis[selectedApi].responses[response][
-          key2
-        ] = Number(e.target.value);
-      } else if (typeof e === "string" && key2 === "type") {
-        rootPath[key2] = e;
+          : "required"
+        : type === "name"
+        ? "name"
+        : type === "type"
+        ? "type"
+        : type === "dtoName"
+        ? "dtoName"
+        : "required";
+    const index =
+      propertiesIndexList[0] !== -1 ? propertiesIndexList[0] : propertiesIndex;
+    let infoPath =
+      activeTab === 5 && (responseType === "fail" || responseType === "success")
+        ? rootPath.responses[responseType].responseBody
+        : activeTab === 3
+        ? rootPath.queries[index]
+        : activeTab === 4
+        ? rootPath.requestBody
+        : rootPath.parameters[index];
+    let i = activeTab === 2 || activeTab === 3 ? 1 : 0;
+
+    if (depth !== 1 && (activeTab === 4 || activeTab === 5)) {
+      infoPath = infoPath.properties[index];
+    }
+    for (i; i < depth - 1; i++) {
+      if (propertiesIndexList[i] !== -1) {
+        infoPath = infoPath.properties[propertiesIndexList[i]];
       }
     }
-  };
 
+    let checkDto;
+    if (depth === 1) {
+      if (typeof e !== "string" && key === "required") {
+        infoPath[key] = e.target.checked;
+      } else if (
+        typeof e !== "string" &&
+        (key === "name" || key === "dtoName")
+      ) {
+        infoPath[key] = e.target.value;
+        checkDto = checkDtoNameValidation(
+          e.target.value,
+          state.data[selectedController].apis,
+          state.data[selectedController].apis.length,
+          infoPath,
+          false
+        );
+      } else if (typeof e === "string" && key === "type") {
+        if (e === "List") {
+          infoPath.collectionType = "List";
+          infoPath[key] = "String";
+        } else if (e === "X") {
+          infoPath.collectionType = "";
+        } else {
+          infoPath[key] = e;
+        }
+      }
+      if (activeTab === 5) {
+        if (
+          typeof e !== "string" &&
+          key === "status" &&
+          (responseType === "fail" || responseType === "success")
+        ) {
+          state.data[selectedController].apis[selectedApi].responses[
+            responseType
+          ][key] = Number(e.target.value);
+        }
+      }
+    } else {
+      if (typeof e !== "string" && key === "dtoName") {
+        infoPath[key] = e.target.value;
+        checkDto = checkDtoNameValidation(
+          e.target.value,
+          state.data[selectedController].apis,
+          state.data[selectedController].apis.length,
+          infoPath,
+          false
+        );
+      }
+    }
+    if (checkDto && typeof checkDto !== "boolean" && checkDto[1]) {
+      setDtoData(checkDto[1]);
+      setDtoExists(true);
+      setCurrentDtoData(checkDto[0]);
+    } else {
+      setDtoExists(false);
+    }
+  };
   return (
     <div>
       {isModalVisible && (
         <DtoInputModal
           setIsModalVisible={setIsModalVisible}
           activeTab={activeTab}
-          state={state}
           selectedController={selectedController}
           selectedApi={selectedApi}
           propertiesIndex={propertiesIndex}
           responseType={responseType}
           handleBasicInfo={handleBasicInfo}
-          addProperties={addProperties}
-          deleteRow={deleteRow}
+          setPropertiesIndexList={setPropertiesIndexList}
+          propertiesIndexList={propertiesIndexList}
+          setFinal={setFinal}
+          final={final}
+          getDepth={getDepth}
+          setNameList={setNameList}
+          nameList={nameList}
+          dtoData={dtoData}
+          dtoExists={dtoExists}
+          currentDtoData={currentDtoData}
         />
       )}
       <TableInfo
@@ -407,8 +463,9 @@ const Table = ({
         handleBasicInfo={handleBasicInfo}
         selectedApi={selectedApi}
         selectedController={selectedController}
-        state={state}
         responseType={responseType}
+        dtoData={dtoData}
+        dtoExists={dtoExists}
       />
       <table>
         <thead>
@@ -425,16 +482,26 @@ const Table = ({
                       },
                     }}
                   >
-                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                     <div
                       {...{
                         onMouseDown: header.getResizeHandler(),
                         onTouchStart: header.getResizeHandler(),
-                        className: `resizer ${header.column.getIsResizing() ? "isResizing" : ""}`,
+                        className: `resizer ${
+                          header.column.getIsResizing() ? "isResizing" : ""
+                        }`,
                         style: {
                           transform:
-                            columnResizeMode === "onEnd" && header.column.getIsResizing()
-                              ? `translateX(${table.getState().columnSizingInfo.deltaOffset}px)`
+                            columnResizeMode === "onEnd" &&
+                            header.column.getIsResizing()
+                              ? `translateX(${
+                                  table.getState().columnSizingInfo.deltaOffset
+                                }px)`
                               : "",
                         },
                       }}
@@ -450,7 +517,14 @@ const Table = ({
             return (
               <tr key={row.id}>
                 {row.getVisibleCells().map((cell) => {
-                  return <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>;
+                  return (
+                    <td key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </td>
+                  );
                 })}
               </tr>
             );

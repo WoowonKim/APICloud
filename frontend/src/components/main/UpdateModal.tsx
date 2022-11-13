@@ -6,23 +6,12 @@ import { faLink } from "@fortawesome/free-solid-svg-icons";
 import { userDummy } from "./ListDummy";
 import { useDispatch, useSelector } from "react-redux";
 import mainApiSlice, {
+  getApiCreationInfo,
   getApiDoc,
   updateApiDoc,
 } from "../../Store/slice/mainApi";
 import { RootState } from "../../Store/store";
-
-export type DocInformationType = {
-  docId: number;
-  docsName: string;
-  serverUrl: string;
-  contextUri: string;
-  javaVersion: string;
-  springVersion: string;
-  buildManagement: number;
-  groupPackage: string;
-  packageName: string;
-  packaging: number;
-};
+import "./CreateModal.scss";
 
 const UpdateModal = () => {
   const [docsName, setDocsName] = useState("");
@@ -34,6 +23,8 @@ const UpdateModal = () => {
   const [groupPackage, setGroupPackage] = useState("");
   const [packageName, setPackageName] = useState("");
   const [packaging, setPackaging] = useState("");
+  const [isDefaultAvailable, setIsCreationInfoAvailable] = useState(false);
+  const [creationInfo, setCreationInfo] = useState({} as any);
 
   const docsNameInput: any = useRef();
 
@@ -75,7 +66,7 @@ const UpdateModal = () => {
       dispatch(
         updateApiDoc({ docId: docId, updateDocRequest: updateDocRequest })
       ).then((res: any) => {
-        if (res.payload?.status === 200) {
+        if (res.meta.requestStatus === "fulfilled") {
           dispatch(mainApiSlice.actions.setDocId({ docId: 0 }));
           dispatch(
             mainApiSlice.actions.setIsOpenUpdateModal({ isOpenModal: false })
@@ -93,92 +84,188 @@ const UpdateModal = () => {
   useEffect(() => {
     if (docId > 0) {
       dispatch(getApiDoc({ docId: docId })).then((res: any) => {
-        if (res.payload?.status === 200) {
-          setDocsName(res.payload.docInformation.docsName);
-          setServerUrl(res.payload.docInformation.serverUrl);
-          setContextUri(res.payload.docInformation.contextUri);
-          setJavaVersion(res.payload.docInformation.javaVersion);
-          setSpringVersion(res.payload.docInformation.springVersion);
-          setBuildManagement(res.payload.docInformation.buildManagement);
-          setGroupPackage(res.payload.docInformation.groupPackage);
-          setPackageName(res.payload.docInformation.packageName);
-          setPackaging(res.payload.docInformation.packaging);
+        if (res.meta.requestStatus === "fulfilled") {
+          setDocsName(res.payload.docsName);
+          setServerUrl(res.payload.serverUrl);
+          setContextUri(res.payload.contextUri);
+          setJavaVersion(res.payload.javaVersion);
+          setSpringVersion(res.payload.springVersion);
+          setBuildManagement(res.payload.buildManagement);
+          setGroupPackage(res.payload.groupPackage);
+          setPackageName(res.payload.packageName);
+          setPackaging(res.payload.packaging);
+          dispatch(getApiCreationInfo()).then((info: any) => {
+            addCurrentVersion(info.payload, res.payload.springVersion);
+            setCreationInfo(info.payload);
+            setIsCreationInfoAvailable(true);
+          });
         }
       });
     }
   }, []);
+
+  const addCurrentVersion = (info: any, currentVersion: string) => {
+    let isExists = false;
+    for (let bootVersion of info.bootVersion.values) {
+      if (bootVersion.id === currentVersion) {
+        isExists = true;
+        break;
+      }
+    }
+    if (!isExists) {
+      info.bootVersion.values.push({
+        id: currentVersion,
+        name: currentVersion,
+      });
+    }
+  };
 
   return (
     <ModalContainer>
       <DialogBox>
         <div className="modalContainer">
           <div className="modalMain">
-            <form onSubmit={onSubmit}>
+            <form className="modalForm" onSubmit={onSubmit}>
               <p>수정하기</p>
-              <input
-                className="docsName"
-                type="text"
-                placeholder="생성할 API 명을 작성해주세요"
-                ref={docsNameInput}
-                value={docsName}
-                onChange={(e) => setDocsName(e.target.value)}
-              />
-              <input
-                className="serverUrl"
-                type="text"
-                placeholder="생성할 serverUrl을 작성해주세요"
-                value={serverUrl}
-                onChange={(e) => setServerUrl(e.target.value)}
-              />
-              <input
-                className="contextUrl"
-                type="text"
-                placeholder="생성할 contextUrl를 작성해주세요"
-                value={contextUri}
-                onChange={(e) => setContextUri(e.target.value)}
-              />
-              <input
-                className="javaVersion"
-                type="text"
-                placeholder="생성할 javaVersion을 작성해주세요"
-                value={javaVersion}
-                onChange={(e) => setJavaVersion(e.target.value)}
-              />
-              <input
-                className="springVersion"
-                type="text"
-                placeholder="생성할 springVersion을 작성해주세요"
-                value={springVersion}
-                onChange={(e) => setSpringVersion(e.target.value)}
-              />
-              <input
-                className="buildManagement"
-                type="text"
-                placeholder="생성할 buildManagement을 작성해주세요"
-                value={buildManagement}
-                onChange={(e) => setBuildManagement(e.target.value)}
-              />
-              <input
-                className="groupPackage"
-                type="text"
-                placeholder="생성할 groupPackage을 작성해주세요"
-                value={groupPackage}
-                onChange={(e) => setGroupPackage(e.target.value)}
-              />
-              <input
-                className="packageName"
-                type="text"
-                placeholder="생성할 packageName을 작성해주세요"
-                value={packageName}
-                onChange={(e) => setPackageName(e.target.value)}
-              />
-              <input
-                className="packaging"
-                type="text"
-                placeholder="생성할 packaging을 작성해주세요"
-                value={packaging}
-                onChange={(e) => setPackaging(e.target.value)}
-              />
+              {isDefaultAvailable && (
+                <>
+                  <div className="inputWrapper">
+                    <label htmlFor="docsName">Doc 이름</label>
+                    <input
+                      id="docsName"
+                      className="docsName"
+                      type="text"
+                      placeholder="생성할 Doc 이름을 작성해주세요"
+                      value={docsName}
+                      onChange={(e) => {
+                        setDocsName(e.target.value);
+                        setPackageName(groupPackage + "." + docsName);
+                      }}
+                    />
+                  </div>
+                  <div className="inputWrapper">
+                    <label htmlFor="serverUrl">서버 URL</label>
+                    <input
+                      id="serverUrl"
+                      className="serverUrl"
+                      type="text"
+                      placeholder="생성할 서버 URL을 작성해주세요"
+                      value={serverUrl}
+                      onChange={(e) => setServerUrl(e.target.value)}
+                    />
+                  </div>
+                  <div className="inputWrapper">
+                    <label htmlFor="contextUri">Context URI</label>
+                    <input
+                      id="contextUri"
+                      className="contextUri"
+                      type="text"
+                      placeholder="생성할 context URI를 작성해주세요"
+                      value={contextUri}
+                      onChange={(e) => setContextUri(e.target.value)}
+                    />
+                  </div>
+                  <div className="inputWrapper">
+                    <label>Java Version</label>
+                    <div className="radioWrapper">
+                      {creationInfo.javaVersion.values.map((version: any) => (
+                        <div key={version.id} className="radioBtnWrapper">
+                          <input
+                            type="radio"
+                            name="javaVersion"
+                            id={"java" + version.id}
+                            value={version.id}
+                            checked={javaVersion === version.id}
+                            onChange={(e) => setJavaVersion(e.target.value)}
+                          />
+                          <label htmlFor={"java" + version.id}>
+                            {version.name}
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="inputWrapper">
+                    <label>Spring Boot</label>
+                    <div className="radioWrapper">
+                      {creationInfo.bootVersion.values.map((version: any) => (
+                        <div key={version.id} className="radioBtnWrapper">
+                          <input
+                            type="radio"
+                            name="springVersion"
+                            id={version.id}
+                            value={version.id}
+                            checked={springVersion === version.id}
+                            onChange={(e) => setSpringVersion(e.target.value)}
+                          />
+                          <label htmlFor={version.id}>{version.name}</label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="inputWrapper">
+                    <label>Build Management</label>
+                    <div className="radioWrapper">
+                      {creationInfo.type.values.map((type: any) => (
+                        <div key={type.id} className="radioBtnWrapper">
+                          <input
+                            type="radio"
+                            name="buildManagement"
+                            id={type.id}
+                            value={type.id}
+                            checked={buildManagement === type.id}
+                            onChange={(e) => setBuildManagement(e.target.value)}
+                          />
+                          <label htmlFor={type.id}>{type.name}</label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="inputWrapper">
+                    <label htmlFor="groupPackage">Group Package</label>
+                    <input
+                      id="groupPackage"
+                      className="groupPackage"
+                      type="text"
+                      placeholder="생성할 group package를 작성해주세요"
+                      value={groupPackage}
+                      onChange={(e) => {
+                        setGroupPackage(e.target.value);
+                        setPackageName(groupPackage + "." + docsName);
+                      }}
+                    />
+                  </div>
+                  <div className="inputWrapper">
+                    <label htmlFor="packageName">Package</label>
+                    <input
+                      id="packageName"
+                      className="packageName"
+                      type="text"
+                      placeholder="생성할 package를 작성해주세요"
+                      value={packageName}
+                      onChange={(e) => setPackageName(e.target.value)}
+                    />
+                  </div>
+                  <div className="inputWrapper">
+                    <label>Packaging</label>
+                    <div className="radioWrapper">
+                      {creationInfo.packaging.values.map((p: any) => (
+                        <div key={p.id} className="radioBtnWrapper">
+                          <input
+                            type="radio"
+                            name="packaging"
+                            id={p.id}
+                            value={p.id}
+                            checked={packaging === p.id}
+                            onChange={(e) => setPackaging(e.target.value)}
+                          />
+                          <label htmlFor={p.id}>{p.name}</label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
               <p>초대하기</p>
               <input
                 className="groupMember"

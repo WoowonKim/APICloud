@@ -1,63 +1,78 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useAppDispatch } from "../../Store/hooks";
+import {
+  RequestBodyType,
+  RequestTypeInfo,
+} from "../../pages/CreateApi/ApisType";
+import testApiSlice, { selectTestApi } from "../../Store/slice/testApi";
+import { ChoiceText } from "../main/ApiList";
+import {
+  HeaderContatinerList,
+  HeaderListInput,
+  HeaderListTitle,
+  HeaderListTitleCon,
+} from "./Headerheader";
 
-import testApiSlice from "../../Store/slice/testApi";
-import { RootState } from "../../Store/store";
 interface type {
-  sideApiList: number;
+  getInfo: RequestTypeInfo | undefined;
 }
-const ApiBody = ({ sideApiList }: type) => {
-  const [textValue, setTextValue] = useState("");
-  const listInfo = useSelector((state: RootState) => state.sideApi);
-  const [bodyValue, setBodyValue] = useState(listInfo[sideApiList]?.body);
-  const dispatch = useAppDispatch();
-  useEffect(() => {
-    setBodyValue(listInfo[sideApiList]?.body);
-  }, [sideApiList]);
-  const handleSetValue = (e: { target: { value: React.SetStateAction<string> } }) => {
-    setTextValue(e.target.value);
-    dispatch(testApiSlice.actions.setBody({ body: e.target.value }));
-  };
 
-  const handleSetTab = (e: { keyCode?: any; preventDefault?: any; target: any }) => {
-    if (e.keyCode === 9) {
-      e.preventDefault();
-      let val = e.target.value;
-      let start = e.target.selectionStart;
-      let end = e.target.selectionEnd;
-      e.target.value = val.substring(0, start) + "\t" + val.substring(end);
-      e.target.selectionStart = e.target.selectionEnd = start + 1;
-      handleSetValue(e);
-      return false; //  prevent focus
+const ApiBody = ({ getInfo }: type) => {
+  const [requestBody, setRequestBody] = useState<RequestBodyType>();
+  const [test, setTest] = useState("");
+  const [bodyInfo, setBodyInfo] = useState([{}]);
+  const [inputBody, setInputBody] = useState("");
+  const [newBodyInfo, setNewBodyInfo] = useState({});
+  const info = useSelector(selectTestApi);
+
+  useEffect(() => {
+    if (getInfo) {
+      setRequestBody(
+        getInfo?.controllers[info.getControllerInfomation].apis[
+          info.getApisInfomation
+        ].requestBody
+      );
     }
+  }, [getInfo, info.getControllerInfomation, info.getApisInfomation]);
+
+  useEffect(() => {
+    let key = test;
+    setNewBodyInfo({ [key]: inputBody });
+  }, [inputBody]);
+
+  const onSubmit = (e: any) => {
+    e.preventDefault();
+    setBodyInfo([...bodyInfo, newBodyInfo]);
+    setInputBody("");
   };
+  useEffect(() => {
+    console.log("BodyInfo", bodyInfo);
+  }, [bodyInfo]);
+
   return (
-    <div className="apiBodyContainer">
-      <span>Body</span>
-      {sideApiList === 0 ? (
-        <textarea
-          className="bodyArea"
-          placeholder="값을 입력해 주세요"
-          value={textValue || ""}
-          onChange={(e) => {
-            handleSetValue(e);
-          }}
-          onKeyDown={(e) => handleSetTab(e)}
-        ></textarea>
-      ) : (
-        <textarea
-          className="bodyArea"
-          placeholder="값을 입력해 주세요"
-          value={bodyValue || ""}
-          onChange={(e) => {
-            handleSetValue(e);
-            setBodyValue(e.target.value);
-          }}
-          onKeyDown={(e) => handleSetTab(e)}
-        ></textarea>
-      )}
-    </div>
+    <>
+      {requestBody?.properties.map((it, idx) => (
+        <div key={idx}>
+          <HeaderContatinerList>
+            <HeaderListTitleCon>
+              <HeaderListTitle>{it.name}</HeaderListTitle>
+            </HeaderListTitleCon>
+            <div className="headerListContent">
+              <form onSubmit={onSubmit}>
+                <HeaderListInput
+                  type="text"
+                  onChange={e => {
+                    setInputBody(e.target.value);
+                    setTest(it.name);
+                  }}
+                />
+                <button>저장</button>
+              </form>
+            </div>
+          </HeaderContatinerList>
+        </div>
+      ))}
+    </>
   );
 };
 

@@ -1,0 +1,40 @@
+.extractModal-extractList {
+  list-style: none;
+  margin: 0px;
+  padding: 0px;
+
+  max-width: 250px;
+  width: 100%;
+}
+
+.extractModal-extractList > li,
+.extractModal-extractList > div {
+  padding: 10px 0px 10px 5px;
+  border-bottom: 1px solid #efefef;
+  font-size: 12px;
+}
+
+.extractModal-extractList li:hover {
+  background-color: #3a00e533;
+  transition: 200ms ease-in-out;
+  cursor: pointer;
+}
+
+.extractModal-extractList li:active {
+  background-color: #3a00e555;
+  cursor: pointer;
+}
+
+.extractModal-extractList > div {
+  display: none;
+}
+
+.extractModal-extractList > div.open {
+  display: block;
+  transition: 200ms;
+}
+
+.extractModal-extractList > li.selected {
+  background-color: #3a00e533;
+  transition: 200ms ease-in-out;
+}

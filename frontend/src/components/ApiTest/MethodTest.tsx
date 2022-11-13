@@ -16,46 +16,44 @@ const Item = styled.div`
 const SelectedItem = styled.button`
   border: none;
   border-radius: 10px;
-  padding: 5px 10px;
+  padding: 5px 10px 5px 10px;
   margin-top: 5px;
   font-weight: bold;
   background-color: ${(props) => props.color};
   width: 100%;
+  cursor: pointer;
 `;
 interface word {
-  methodApiWord: string;
+  methodApiWord: string | undefined;
 }
 const MethodTest = ({ methodApiWord }: word) => {
-  const dispatch = useAppDispatch();
   const [visible, setVisible] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState("GET");
   const handleSelect = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
     const eventTarget = e.target as HTMLElement;
     setSelectedMethod(eventTarget.innerText);
-    dispatch(testApiSlice.actions.setMethod({ method: eventTarget.innerText }));
     setVisible(!visible);
   };
   useEffect(() => {
-    if (methodApiWord?.length > 0) {
+    if (methodApiWord) {
       setSelectedMethod(methodApiWord);
-      dispatch(testApiSlice.actions.setMethod({ method: methodApiWord }));
     }
   }, [methodApiWord]);
   return (
-    <div className="selectBox" onClick={() => setVisible(!visible)}>
+    <div className="selectBoxTESTApi" onClick={() => setVisible(!visible)}>
       <SelectedItem
         color={
-          selectedMethod === "GET"
+          selectedMethod === "get"
             ? "#FDECC8"
-            : selectedMethod === "POST"
+            : selectedMethod === "post"
             ? "#F5E0E9"
-            : selectedMethod === "PUT"
+            : selectedMethod === "put"
             ? "#F1F0EF"
-            : selectedMethod === "DELETE"
+            : selectedMethod === "delete"
             ? "#D3E5EF"
-            : selectedMethod === "PATCH"
+            : selectedMethod === "patch"
             ? "#E8DEEE"
-            : selectedMethod === "OPTIONS"
+            : selectedMethod === "options"
             ? "#FFE2DD"
             : "#EEE0DA"
         }

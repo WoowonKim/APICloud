@@ -1,160 +1,72 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useAppDispatch } from "../../Store/hooks";
-import testApiSlice from "../../Store/slice/testApi";
-import { RootState } from "../../Store/store";
+import styled from "styled-components";
+import { RequestTypeInfo } from "../../pages/CreateApi/ApisType";
+import testApiSlice, { getApiRequestInfo, selectTestApi } from "../../Store/slice/testApi";
+
 interface type {
-  sideApiList: number;
+  getInfo: RequestTypeInfo | undefined;
 }
-const Headerheader = ({ sideApiList }: type) => {
-  const isHeaderApi = useSelector((state: RootState) => state.testApi.header);
-  const listInfo = useSelector((state: RootState) => state.sideApi);
-  const [acceptValue, setAcceptValue] = useState(listInfo[sideApiList]?.header.Accept);
-  const [acceptEncodingValue, setAcceptEncdingValue] = useState(listInfo[sideApiList]?.header.AcceptEncoding);
-  const [connectionValue, setConnectionValue] = useState(listInfo[sideApiList]?.header.Connection);
-  const [hostValue, setHostValue] = useState(listInfo[sideApiList]?.header.Host);
-  const [contentLengthValue, setContentLengthValue] = useState(listInfo[sideApiList]?.header.contentLength);
-  const [contentTypeValue, setContentTypeValue] = useState(listInfo[sideApiList]?.header.contentType);
+
+export const HeaderContatinerList = styled.div`
+  display: flex;
+  width: 100%;
+`;
+export const HeaderListTitleCon = styled.div`
+  width: 20%;
+  text-align: center;
+`;
+export const HeaderListTitle = styled.p`
+  font-weight: bold;
+  color: ${(props) => props.theme.color};
+  font-size: 13px;
+  margin: 13px 0px 20px 5px;
+`;
+
+export const HeaderListInput = styled.input`
+  width: 300px;
+  padding-top: 17px;
+  font-weight: bold;
+  border: none;
+  font-size: 13px;
+  border-bottom: 1px solid black;
+  background-color: ${(props) => props.theme.bgColor};
+  color: ${(props) => props.theme.color};
+`;
+const Headerheader = ({ getInfo }: type) => {
+  const info = useSelector(selectTestApi);
+  const [getCollection, setGetCollection] = useState("");
+  const [getDtoName, setGetDtoName] = useState("");
+  const [getType, setGetType] = useState("");
+  const [test, setTest] = useState("");
   useEffect(() => {
-    setAcceptValue(listInfo[sideApiList]?.header.Accept);
-    setAcceptEncdingValue(listInfo[sideApiList]?.header.AcceptEncoding);
-    setConnectionValue(listInfo[sideApiList]?.header.Connection);
-    setHostValue(listInfo[sideApiList]?.header.Host);
-    setContentLengthValue(listInfo[sideApiList]?.header.contentLength);
-    setContentTypeValue(listInfo[sideApiList]?.header.contentType);
-  }, [sideApiList]);
-  const dispatch = useAppDispatch();
+    if (getInfo) {
+      setGetCollection(getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].requestBody.collectionType);
+      setGetDtoName(getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].requestBody.dtoName);
+      setGetType(getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].requestBody.type);
+    }
+  }, [getInfo, info.getControllerInfomation, info.getApisInfomation]);
+
   return (
     <>
-      <div className="headerListTitle">
-        <p>Accept :</p>
-        <p>Accept-Encoding :</p>
-        <p>Connection :</p>
-        <p>Host :</p>
-        <p>Content-Length :</p>
-        <p>Content-Type :</p>
-      </div>
-      {sideApiList === 0 ? (
-        <div className="headerListContent">
-          <p>
-            <input
-              type="text"
-              defaultValue={isHeaderApi.Accept || ""}
-              onChange={(e) => {
-                dispatch(testApiSlice.actions.setAccept({ Accept: e.target.value }));
-              }}
-            />
-          </p>
-          <p>
-            <input
-              type="text"
-              defaultValue={isHeaderApi.AcceptEncoding || ""}
-              onChange={(e) => {
-                dispatch(testApiSlice.actions.setAcceptEncodng({ AcceptEncoding: e.target.value }));
-              }}
-            />
-          </p>
-          <p>
-            <input
-              type="text"
-              defaultValue={isHeaderApi.Connection || ""}
-              onChange={(e) => {
-                dispatch(testApiSlice.actions.setConnection({ Connection: e.target.value }));
-              }}
-            />
-          </p>
-          <p>
-            <input
-              type="text"
-              defaultValue={isHeaderApi.Host || ""}
-              onChange={(e) => {
-                dispatch(testApiSlice.actions.setHost({ Host: e.target.value }));
-              }}
-            />
-          </p>
-          <p>
-            <input
-              type="text"
-              defaultValue={isHeaderApi.contentLength || ""}
-              onChange={(e) => {
-                dispatch(testApiSlice.actions.setContentLength({ contentLength: e.target.value }));
-              }}
-            />
-          </p>
-          <p>
-            <input
-              type="text"
-              defaultValue={isHeaderApi.contentType || ""}
-              onChange={(e) => {
-                dispatch(testApiSlice.actions.setContentType({ contentType: e.target.value }));
-              }}
-            />
-          </p>
-        </div>
-      ) : (
-        <div className="headerListContent">
-          <p>
-            <input
-              type="text"
-              value={acceptValue || ""}
-              onChange={(e) => {
-                dispatch(testApiSlice.actions.setAccept({ Accept: e.target.value }));
-                setAcceptValue(e.target.value);
-              }}
-            />
-          </p>
-          <p>
-            <input
-              type="text"
-              value={acceptEncodingValue || ""}
-              onChange={(e) => {
-                dispatch(testApiSlice.actions.setAcceptEncodng({ AcceptEncoding: e.target.value }));
-                setAcceptEncdingValue(e.target.value);
-              }}
-            />
-          </p>
-          <p>
-            <input
-              type="text"
-              value={connectionValue || ""}
-              onChange={(e) => {
-                dispatch(testApiSlice.actions.setConnection({ Connection: e.target.value }));
-                setConnectionValue(e.target.value);
-              }}
-            />
-          </p>
-          <p>
-            <input
-              type="text"
-              value={hostValue || ""}
-              onChange={(e) => {
-                dispatch(testApiSlice.actions.setHost({ Host: e.target.value }));
-                setHostValue(e.target.value);
-              }}
-            />
-          </p>
-          <p>
-            <input
-              type="text"
-              value={contentLengthValue || ""}
-              onChange={(e) => {
-                dispatch(testApiSlice.actions.setContentLength({ contentLength: e.target.value }));
-                setContentLengthValue(e.target.value);
-              }}
-            />
-          </p>
-          <p>
-            <input
-              type="text"
-              value={contentTypeValue || ""}
-              onChange={(e) => {
-                dispatch(testApiSlice.actions.setContentType({ contentType: e.target.value }));
-                setContentTypeValue(e.target.value);
-              }}
-            />
-          </p>
-        </div>
-      )}
+      {getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].headers.map((it, idx) => (
+        <>
+          <HeaderContatinerList key={idx}>
+            <HeaderListTitleCon>
+              <HeaderListTitle>{it.key}</HeaderListTitle>
+            </HeaderListTitleCon>
+            <div className="headerListContent">
+              <HeaderListInput
+                type="text"
+                value={it.value}
+                onChange={(e) => {
+                  setGetCollection(e.target.value);
+                }}
+              />
+            </div>
+          </HeaderContatinerList>
+        </>
+      ))}
     </>
   );
 };

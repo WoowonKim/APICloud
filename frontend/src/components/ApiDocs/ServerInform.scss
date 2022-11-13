@@ -1,0 +1,40 @@
+.apiDocTableWrapper {
+	width: 80%;
+	height: 50%;
+	margin: auto;
+	.apiDocTable {
+		border: none;
+		align-items: center;
+		margin: auto;
+		.apiDocHead {
+			.apiDocHeadRow {
+				background-color: #6FC7D1;
+				.apiDocHeadTitle {
+					border-radius: 5px;
+					width: 40%;
+					padding: 0px;
+				}
+				.apiDocHeadContent {
+					border-radius: 5px;
+					width: 60%;
+					padding: 0px;
+				}
+			}
+		}
+		.apiDocBody {
+			.apiDocBodyRow {
+				.apiDocBodyTitle {
+					border-radius: 5px;
+					padding: 0px;
+					height: 50%;
+				}
+				.apiDocBodyContent {
+					border-radius: 5px;
+					padding: 0px;
+					height: 50%;
+				}
+			}
+		}
+
+	}
+}

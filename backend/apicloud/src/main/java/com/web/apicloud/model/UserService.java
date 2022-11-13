@@ -7,8 +7,8 @@ import java.util.Optional;
 
 public interface UserService {
 
-    public UserResponse findUserById(Long id);
+    User findUserById(Long id);
 
-    public UserResponse findUserByEmail(String email);
+    User findUserByEmail(String email);
 
 }

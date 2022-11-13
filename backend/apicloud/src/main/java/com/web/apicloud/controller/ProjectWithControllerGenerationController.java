@@ -17,10 +17,10 @@
  */
 package com.web.apicloud.controller;
 
-import com.web.apicloud.domain.vo.ApiVO;
-import com.web.apicloud.domain.vo.ControllerVO;
+import com.web.apicloud.domain.SpringExportRequest;
 import com.web.apicloud.domain.vo.DocVO;
 import com.web.apicloud.domain.vo.ServerVO;
+import com.web.apicloud.exception.NotFoundException;
 import com.web.apicloud.util.FileUtils;
 import com.web.apicloud.util.code.ProjectWithControllerGenerationInvoker;
 import com.web.apicloud.util.code.ProjectWithControllerGenerationResult;
@@ -34,18 +34,18 @@ import io.spring.initializr.web.project.ProjectRequest;
 import io.spring.initializr.web.project.WebProjectRequest;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
-import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
-import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.UnixStat;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
-import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -55,10 +55,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class ProjectWithControllerGenerationController {
@@ -66,8 +66,9 @@ public class ProjectWithControllerGenerationController {
     private static final Log logger = LogFactory.getLog(io.spring.initializr.web.controller.ProjectGenerationController.class);
 
     private final InitializrMetadataProvider metadataProvider;
-
     private final ProjectWithControllerGenerationInvoker<ProjectRequest> projectGenerationInvoker;
+
+    private static final String NOT_FOUND_SERVER = "API Doc의 서버 정보가 존재하지 않습니다.";
 
     public ProjectWithControllerGenerationController(InitializrMetadataProvider metadataProvider,
                                                      ProjectWithControllerGenerationInvoker<ProjectRequest> projectGenerationInvoker) {
@@ -77,7 +78,7 @@ public class ProjectWithControllerGenerationController {
 
     @ModelAttribute
     ProjectRequest projectRequest(@RequestHeader Map<String, String> headers,
-                     @RequestParam(name = "style", required = false) String style) {
+                                  @RequestParam(name = "style", required = false) String style) {
         if (style != null) {
             throw new InvalidProjectRequestException("Dependencies must be specified using 'dependencies'");
         }
@@ -87,6 +88,7 @@ public class ProjectWithControllerGenerationController {
     /**
      * Create an initialized {@link ProjectRequest} instance to use to bind the parameters
      * of a project generation request.
+     *
      * @param headers the headers of the request
      * @return a new {@link ProjectRequest} instance
      */
@@ -107,37 +109,9 @@ public class ProjectWithControllerGenerationController {
         response.sendError(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
     }
 
-    @RequestMapping(path = { "/pom", "/pom.xml" })
-    public ResponseEntity<byte[]> pom(ProjectRequest request) {
-        request.setType("maven-build");
-        byte[] mavenPom = this.projectGenerationInvoker.invokeBuildGeneration(request);
-        return FileUtils.createResponseEntity(mavenPom, "application/octet-stream", "pom.xml");
-    }
-
-    @RequestMapping(path = { "/build", "/build.gradle" })
-    public ResponseEntity<byte[]> gradle(ProjectRequest request) {
-        request.setType("gradle-build");
-        byte[] gradleBuild = this.projectGenerationInvoker.invokeBuildGeneration(request);
-        return FileUtils.createResponseEntity(gradleBuild, "application/octet-stream", "build.gradle");
-    }
-
-    @RequestMapping("/starter.zip")
-    public ResponseEntity<byte[]> springZip(ProjectRequest request) throws IOException {
-        DocVO doc = DocVO.builder()
-            .controllers(List.of(
-                ControllerVO.builder().apis(List.of(ApiVO.builder().name("api1").build())).name("controller1").build(),
-                ControllerVO.builder().apis(List.of(ApiVO.builder().name("api2").build())).name("controller2").build()
-            ))
-            .build();
-        ProjectWithControllerGenerationResult result = this.projectGenerationInvoker.invokeProjectStructureGeneration(request, doc);
-        Path archive = createArchive(result, "zip", ZipArchiveOutputStream::new, ZipArchiveEntry::new,
-                ZipArchiveEntry::setUnixMode);
-        return upload(archive, result.getRootDirectory(), generateFileName(request, "zip"), "application/zip");
-    }
-
-    public ResponseEntity<byte[]> springZip(DocVO doc, Map<String, String> header) throws IOException {
+    public ResponseEntity<byte[]> springZip(DocVO doc, Map<String, String> header, SpringExportRequest springExportRequest) throws IOException {
         ProjectRequest request = projectRequest(header);
-        if(doc == null) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        doc.getServer().setDependencies(springExportRequest.getDependencies());
         updateProjectRequestByServerInfo(request, doc.getServer());
         ProjectWithControllerGenerationResult result = this.projectGenerationInvoker.invokeProjectStructureGeneration(request, doc);
         Path archive = createArchive(result, "zip", ZipArchiveOutputStream::new, ZipArchiveEntry::new,
@@ -146,36 +120,26 @@ public class ProjectWithControllerGenerationController {
     }
 
     private void updateProjectRequestByServerInfo(ProjectRequest request, ServerVO server) {
-        request.setType(server.getType());
-        request.setLanguage(server.getLanguage());
-        request.setBootVersion(server.getBootVersion());
-        request.setBaseDir(server.getBaseDir());
-        request.setGroupId(server.getGroupId());
-        request.setArtifactId(server.getArtifactId());
-        request.setName(server.getName());
-        request.setDescription(server.getName());
-        request.setPackageName(server.getPackageName());
-        request.setPackaging(server.getPackaging());
-        request.setJavaVersion(server.getJavaVersion());
-    }
-
-    @RequestMapping(path = "/starter.tgz", produces = "application/x-compress")
-    public ResponseEntity<byte[]> springTgz(ProjectRequest request) throws IOException {
-        ProjectWithControllerGenerationResult result = this.projectGenerationInvoker.invokeProjectStructureGeneration(request, new DocVO());
-        Path archive = createArchive(result, "tar.gz", this::createTarArchiveOutputStream, TarArchiveEntry::new,
-                TarArchiveEntry::setMode);
-        return upload(archive, result.getRootDirectory(), generateFileName(request, "tar.gz"),
-                "application/x-compress");
-    }
-
-    private TarArchiveOutputStream createTarArchiveOutputStream(OutputStream output) {
-        try {
-            TarArchiveOutputStream out = new TarArchiveOutputStream(new GzipCompressorOutputStream(output));
-            out.setLongFileMode(TarArchiveOutputStream.LONGFILE_POSIX);
-            return out;
+        if (server == null) {
+            throw new NotFoundException(NOT_FOUND_SERVER);
         }
-        catch (IOException ex) {
-            throw new IllegalStateException(ex);
+        setIfNotEmpty(request::setType, server.getType());
+        setIfNotEmpty(request::setLanguage, server.getLanguage());
+        setIfNotEmpty(request::setBootVersion, server.getBootVersion());
+        setIfNotEmpty(request::setBaseDir, server.getBaseDir());
+        setIfNotEmpty(request::setGroupId, server.getGroupId());
+        setIfNotEmpty(request::setArtifactId, server.getArtifactId());
+        setIfNotEmpty(request::setName, server.getName());
+        setIfNotEmpty(request::setDescription, server.getDescription());
+        setIfNotEmpty(request::setPackageName, server.getPackageName());
+        setIfNotEmpty(request::setPackaging, server.getPackaging());
+        setIfNotEmpty(request::setJavaVersion, server.getJavaVersion());
+        request.setDependencies(server.getDependencies());
+    }
+
+    private void setIfNotEmpty(Consumer<String> setter, String str) {
+        if (str != null && !str.isEmpty()) {
+            setter.accept(str);
         }
     }
 
@@ -197,8 +161,7 @@ public class ProjectWithControllerGenerationController {
                                 Files.copy(path, output);
                             }
                             output.closeArchiveEntry();
-                        }
-                        catch (IOException ex) {
+                        } catch (IOException ex) {
                             throw new IllegalStateException(ex);
                         }
                     });
@@ -227,8 +190,7 @@ public class ProjectWithControllerGenerationController {
         String tmp = candidate.replaceAll(" ", "_");
         try {
             return URLEncoder.encode(tmp, "UTF-8") + "." + extension;
-        }
-        catch (UnsupportedEncodingException ex) {
+        } catch (UnsupportedEncodingException ex) {
             throw new IllegalStateException("Cannot encode URL", ex);
         }
     }

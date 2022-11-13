@@ -10,7 +10,12 @@ export type ServerInfoType = {
   packageName: string; // 전체 패키지 이름: com.example.demo
   packaging: string; // jar, war
   javaVersion: string; // 자바버전 string값 ( ex. 17, 1.8)
-  dependencies: [];
+  dependencies: string[];
+};
+
+export type RequestTypeInfo = {
+  controllers: ControllerType[];
+  server: {};
 };
 
 export type ControllerType = {
@@ -25,7 +30,7 @@ export type ApisType = {
   method: string;
   requestBody: DtoType;
   parameters: PropertiesType[];
-  query: DtoType;
+  queries: PropertiesType[];
   headers: HeadersType[];
   responses: ResponsesType;
 };
@@ -66,4 +71,13 @@ export type ResponsesType = {
 
 export type DataType = {
   controllers: ControllerType[];
+};
+
+export type RequestBodyType = {
+  collectionType: string;
+  dtoName: string;
+  name: string;
+  properties: PropertiesType[];
+  type: string;
+  required: boolean;
 };

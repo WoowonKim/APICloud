@@ -55,3 +55,22 @@ export function axiosPatch(url: string, data: any) {
     headers: getHeaders(),
   });
 }
+
+export function axiosGetFile(url: string) {
+  return axiosInstance({
+    method: "GET",
+    url,
+    responseType: "blob",
+    headers: getHeaders(),
+  });
+}
+
+export function axiosPostFile(url: string, data: any) {
+  return axiosInstance({
+    method: "POST",
+    url,
+    data,
+    responseType: "blob",
+    headers: getHeaders(),
+  });
+}

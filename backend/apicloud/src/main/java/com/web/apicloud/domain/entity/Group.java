@@ -4,8 +4,9 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import javax.persistence.*;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -18,8 +19,13 @@ public class Group {
     @Column(name = "group_id")
     private Long id;
 
+    @NotNull
+    @Column(unique = true)
+    private String groupSecretKey;
+
     @Builder
-    public Group(Long id) {
+    public Group(Long id, String groupSecretKey) {
         this.id = id;
+        this.groupSecretKey = groupSecretKey;
     }
 }

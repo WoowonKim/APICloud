@@ -17,4 +17,6 @@ public class DocListResponse {
 
     private Integer authority;
 
+    private String encryptedUrl;
+
 }

@@ -1,78 +1,70 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import styled from "styled-components";
+import { RequestTypeInfo } from "../../pages/CreateApi/ApisType";
 import { useAppDispatch } from "../../Store/hooks";
-import sideApiSlice, { SideApiProps } from "../../Store/slice/sideApi";
-import testApiSlice from "../../Store/slice/testApi";
-import { RootState } from "../../Store/store";
+import testApiSlice, { selectTestApi } from "../../Store/slice/testApi";
 import MethodTest from "./MethodTest";
 
-interface list {
-  sideApiList: number;
-}
+export type list = {
+  getInfo: RequestTypeInfo | undefined;
+};
 
-const ApiInputUri = ({ sideApiList }: list) => {
-  const isInfo = useSelector((state: RootState) => state.testApi);
-  const listInfo = useSelector((state: RootState) => state.sideApi);
+const ApiInputUriSearch = styled.input`
+  width: 50%;
+  border: none;
+  border-bottom: 1px solid #000000;
+  border-right: 1px solid #000000;
+  border-top: 1px solid #000000;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
+  padding: 1px 50px 1px 10px;
+  outline: none;
+  font-weight: 500;
+  font-size: 14px;
+  color: ${(props) => props.theme.color};
+  background-color: ${(props) => props.theme.bgColor};
+`;
+
+const ApiInputUri = ({ getInfo }: list) => {
+  const [getUri, setUri] = useState("");
+  const [getMethodApi, setMethodApi] = useState("");
   const dispatch = useAppDispatch();
-  const [value, setValue] = useState(listInfo[sideApiList]?.infomethod.userAddress);
-  const [defaultFlag, setDefaltFlag] = useState(false);
+  const info = useSelector(selectTestApi);
+
   useEffect(() => {
-    setValue(listInfo[sideApiList]?.infomethod.userAddress);
-    if (!defaultFlag) {
-      dispatch(sideApiSlice.actions.addMethodUri(isInfo));
-      setDefaltFlag(true);
+    if (getInfo) {
+      setUri(getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].uri);
+      setMethodApi(getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].method);
     }
-  }, [sideApiList]);
-  const testFunction = () => {
-    // 보내기 클릭 시 전송해야하는 객체이므로 임시로 log처리 추후 변경 예정
-    console.log("isInfo ====> ", isInfo);
+  }, [getInfo, info.getControllerInfomation, info.getApisInfomation]);
+  const addRequestFun = (e: number) => {
+    dispatch(testApiSlice.actions.addRequest(e));
   };
 
-  const wordApi = listInfo[sideApiList]?.infomethod.method;
-  const pushInfoUri = (e: SideApiProps) => {
-    dispatch(sideApiSlice.actions.checkMethod(e));
-  };
   return (
     <div className="apiInputContainer">
       <span className="apiChoice">
-        <MethodTest methodApiWord={wordApi} />
+        <MethodTest methodApiWord={getMethodApi} />
       </span>
-      {sideApiList === 0 ? (
-        <input
-          className="apiInput"
-          type="text"
-          defaultValue={isInfo.infomethod.userAddress}
-          onChange={(e) => {
-            dispatch(testApiSlice.actions.setUserAddress({ userAddress: e.target.value }));
-          }}
-        />
-      ) : (
-        <input
-          className="apiInput"
-          type="text"
-          value={value || ""}
-          onChange={(e) => {
-            dispatch(testApiSlice.actions.setUserAddress({ userAddress: e.target.value }));
-            setValue(e.target.value);
-          }}
-        />
-      )}
+      <ApiInputUriSearch type="text" defaultValue={getUri} />
       <button
         className="apiTestBtn"
         onClick={() => {
-          testFunction();
+          addRequestFun(0);
         }}
       >
-        보내기
+        성공
       </button>
       <button
         className="apiTestBtn"
         onClick={() => {
-          pushInfoUri(isInfo);
+          addRequestFun(1);
         }}
       >
-        저장하기
+        실패
       </button>
+      {/* <button className="apiTestBtn">저장하기</button> */}
     </div>
   );
 };

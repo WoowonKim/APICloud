@@ -1,23 +1,29 @@
 package com.web.apicloud.model;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.web.apicloud.domain.dto.DetailRequest;
+import com.web.apicloud.domain.dto.SynchronizeRequest;
+import com.web.apicloud.domain.dto.SynchronizeUpdateRequest;
+import com.web.apicloud.domain.dto.synchronize.ControllerDTO;
+import com.web.apicloud.domain.entity.Docs;
+import com.web.apicloud.domain.entity.Group;
 import com.web.apicloud.domain.vo.*;
-import com.web.apicloud.model.parsing.ClassParsingService;
-import com.web.apicloud.model.parsing.ClassParsingServiceImpl;
-import com.web.apicloud.model.parsing.FileSearchService;
-import com.web.apicloud.model.parsing.ParsingService;
+import com.web.apicloud.exception.NotFoundException;
+import com.web.apicloud.model.parsing.*;
+import com.web.apicloud.util.Message;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class SynchronizeServiceImpl implements SynchronizeService {
+public class SynchronizeDocServiceImpl implements SynchronizeDocService {
 
     private static final String REQUEST_MAPPING = "@RequestMapping";
     private static final String METHOD = "Mapping";
@@ -26,19 +32,31 @@ public class SynchronizeServiceImpl implements SynchronizeService {
     private static final String PATH_VARIABLE = "PathVariable";
     private static final String REQUEST_BODY = "RequestBody";
     private static final String VALUE = "value";
-    private static String rootPath = "";
 
+    private static String groupSecretKey = "";
+
+    private static final String NOT_FOUND_CONTROLLER = "해당 Controller를 찾을 수 없습니다.";
+
+    private final S3Service s3Service;
     private final ParsingService parsingService;
     private final ClassParsingService classParsingService;
-    private final FileSearchService fileSearchService;
+    private final CompareService compareService;
+    private final DocsService docsService;
+    private final GroupService groupService;
+
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public ControllerVO getFile(String root, String name) throws IOException {
-        rootPath = root;
+    public ControllerDTO getFile(Long docId, SynchronizeRequest synchronizeRequest, MultipartFile file) throws IOException {
+        Docs doc = docsService.findByDocsId(docId);
+        Group group = groupService.findById(doc.getGroup().getId());
 
-        String path = fileSearchService.getControllerPath(rootPath, name);
-        if (path == null) return null;
-        List<String> lines = Files.readAllLines(Paths.get(path));
+        groupSecretKey = group.getGroupSecretKey();
+        Map<String, List<String>> getFindFile = s3Service.getFile(synchronizeRequest.getName(), file, groupSecretKey);
+        if (getFindFile == null) return null;
+        List<String> lines = getFindFile.get("code");
+        if (lines == null) return null;
+
         String value = null;
         int i = 0;
         while (i < lines.size()) {
@@ -59,7 +77,9 @@ public class SynchronizeServiceImpl implements SynchronizeService {
         List<String> api = new ArrayList<>();
         while (i < lines.size()) {
             if (parsingService.KMP(lines.get(i), METHOD) != -1) {
-                ClassParsingServiceImpl.useObject = new ArrayList<>();
+                ClassParsingServiceImpl.useQuery = new ArrayList<>();
+                ClassParsingServiceImpl.useRequest = new ArrayList<>();
+                ClassParsingServiceImpl.useResponse = new ArrayList<>();
                 ApiVO apiVO = apiParsing(api);
                 if (apiVO != null) {
                     apis.add(apiVO);
@@ -77,8 +97,13 @@ public class SynchronizeServiceImpl implements SynchronizeService {
                 .commonUri(value)
                 .apis(apis)
                 .build();
-        System.out.println(controllerVO);
-        return controllerVO;
+        System.out.println("controllerVO => " + controllerVO);
+
+        DocVO detailVO = objectMapper.readValue(doc.getDetail(), DocVO.class);
+        if (detailVO.getControllers().size() <= synchronizeRequest.getControllerId())
+            new NotFoundException(NOT_FOUND_CONTROLLER);
+        ControllerVO original = detailVO.getControllers().get(synchronizeRequest.getControllerId());
+        return compareService.compareControllerVO(original, controllerVO);
     }
 
     private ApiVO apiParsing(List<String> api) throws IOException {
@@ -108,6 +133,7 @@ public class SynchronizeServiceImpl implements SynchronizeService {
             return apiVO;
         }
         ApiVO apiVO = ApiVO.builder()
+                .name(apiDetail.getName())
                 .uri(uri)
                 .method(method)
                 .parameters(apiDetail.getParameters())
@@ -120,7 +146,6 @@ public class SynchronizeServiceImpl implements SynchronizeService {
     }
 
     private void getRequestDetail(ApiDetailVO apiDetail, String request) throws IOException {
-        System.out.println(request);
         if (request.equals("")) return;
 
         int pathVariable = parsingService.KMP(request, PATH_VARIABLE);
@@ -137,7 +162,7 @@ public class SynchronizeServiceImpl implements SynchronizeService {
                 String value = parsingService.getValue(str);
                 if (value == null) value = parsingService.getName(str);
                 String type = parsingService.getParamType(request);
-                PropertyVO query = classParsingService.getBody(rootPath, type);
+                PropertyVO query = classParsingService.getBody(groupSecretKey, type, "query");
                 apiDetail.getQueries().add(PropertyVO.builder()
                         .dtoName(query.getDtoName())
                         .collectionType(query.getCollectionType())
@@ -150,7 +175,7 @@ public class SynchronizeServiceImpl implements SynchronizeService {
                 int requestBody = parsingService.KMP(request, REQUEST_BODY);
                 if (requestBody != -1) {
                     String[] tokens = request.split(" ");
-                    apiDetail.setRequestBody(classParsingService.getBody(rootPath, tokens[tokens.length - 2]));
+                    apiDetail.setRequestBody(classParsingService.getBody(groupSecretKey, tokens[tokens.length - 2], "request"));
                     apiDetail.getRequestBody().setRequired(parsingService.getRequired(request));
                     apiDetail.getRequestBody().setName(tokens[tokens.length - 1].substring(0, tokens[tokens.length - 1].length() - 1));
                 }
@@ -161,7 +186,7 @@ public class SynchronizeServiceImpl implements SynchronizeService {
     private void getResponseDetail(ApiDetailVO apiDetail, String response) throws IOException {
         if (response.equals("")) return;
         Map<String, ResponseVO> getResponseMap = new HashMap<>();
-        ResponseVO getResponse = ResponseVO.builder().responseBody(classParsingService.getBody(rootPath, response)).build();
+        ResponseVO getResponse = ResponseVO.builder().responseBody(classParsingService.getBody(groupSecretKey, response, "response")).build();
         getResponseMap.put("success", getResponse);
         apiDetail.setResponses(getResponseMap);
     }
@@ -170,14 +195,18 @@ public class SynchronizeServiceImpl implements SynchronizeService {
         Stack<Character> stack = new Stack<>();
         boolean responseFlag = false;
         boolean requestFlag = false;
+        boolean methodNameFlag = false;
         String response = "";
         String request = "";
+        String methodName = "";
 
         ApiDetailVO apiDetail = new ApiDetailVO();
 
         while (i < api.size()) {
             for (int j = 0; j < api.get(i).length(); j++) {
                 if (requestFlag) request += api.get(i).charAt(j);
+                if (methodNameFlag) methodName += api.get(i).charAt(j);
+
                 switch (api.get(i).charAt(j)) {
                     case '<':
                         stack.push('<');
@@ -185,6 +214,11 @@ public class SynchronizeServiceImpl implements SynchronizeService {
                         break;
                     case '(':
                         stack.push('(');
+                        if (methodNameFlag) {
+                            methodNameFlag = false;
+                            methodName = methodName.replaceAll(" ", "");
+                            apiDetail.setName(methodName.substring(0, methodName.length() - 1));
+                        }
                         break;
                     case '{':
                         stack.push('{');
@@ -198,6 +232,7 @@ public class SynchronizeServiceImpl implements SynchronizeService {
                             if (stack.isEmpty()) {
                                 responseFlag = false;
                                 getResponseDetail(apiDetail, response);
+                                methodNameFlag = true;
                             }
                         }
                         break;
@@ -215,8 +250,6 @@ public class SynchronizeServiceImpl implements SynchronizeService {
                         if (stack.peek() == ']') stack.pop();
                         break;
                     case '@':
-//                        getRequestDetail(apiDetail, request);
-//                        request = "";
                         requestFlag = true;
                         request += api.get(i).charAt(j);
                         break;
@@ -225,7 +258,6 @@ public class SynchronizeServiceImpl implements SynchronizeService {
                         getRequestDetail(apiDetail, request);
                         request = "";
                         requestFlag = false;
-//                        request += api.get(i).charAt(j);
                         break;
                     default:
                         if (responseFlag) response += api.get(i).charAt(j);
@@ -234,5 +266,17 @@ public class SynchronizeServiceImpl implements SynchronizeService {
             i++;
         }
         return apiDetail;
+    }
+
+    @Override
+    public Message updateDetail(Long docId, SynchronizeUpdateRequest synchronizeUpdateRequest) throws JsonProcessingException {
+        Docs doc = docsService.findByDocsId(docId);
+        DocVO detailVO = objectMapper.readValue(doc.getDetail(), DocVO.class);
+        ControllerVO controllerVO = ControllerMapper.INSTANCE.ControllerDTOToControllerVO(synchronizeUpdateRequest.getControllerDTO());
+        controllerVO.setName(detailVO.getControllers().get(synchronizeUpdateRequest.getControllerId()).getName());
+        detailVO.getControllers().set(synchronizeUpdateRequest.getControllerId(), controllerVO);
+        doc.setDetail(objectMapper.writeValueAsString(detailVO));
+        docsService.save(doc);
+        return new Message("변경사항 저장에 성공하였습니다.");
     }
 }

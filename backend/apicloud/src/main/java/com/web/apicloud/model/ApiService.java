@@ -4,8 +4,10 @@ import com.web.apicloud.domain.dto.DetailResponse;
 
 public interface ApiService {
 
-    public DetailResponse getDetailById(Long id);
+    public DetailResponse getDetailById(String id);
 
     public DetailResponse updateDetailById(Long id, String detail);
+
+    DetailResponse updateDetailById(String encryptedId, String detail);
 
 }

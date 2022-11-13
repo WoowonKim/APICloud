@@ -9,12 +9,25 @@ import { useDispatch, useSelector } from "react-redux";
 import mainApiSlice, { deleteApiDoc } from "../../Store/slice/mainApi";
 import UpdateModal from "./UpdateModal";
 import { RootState } from "../../Store/store";
+import styled from "styled-components";
 
 interface Props {
   apiList: number;
   apiDocList: ApiDocType[];
   dispatchGetDocList: any;
 }
+const ListContent = styled.div`
+  display: flex;
+  justify-content: space-between;
+  background-color: ${(props) => props.theme.listBgColor};
+  color: black;
+  margin: 5px;
+  border-radius: 10px;
+  padding-left: 23px;
+  padding-right: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+`;
 
 const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
   const navigate = useNavigate();
@@ -23,26 +36,38 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
     (state: RootState) => state.mainApi.isOpenUpdateModal
   );
 
-  const moveApidocs = () => {
-    navigate("/apidocs");
+  const moveApidocs: any = (docId: number, isEdit: boolean, data?: any) => {
+    dispatch(mainApiSlice.actions.setDocId({ docId: docId }));
+    localStorage.setItem("docId", docId.toString());
+    if (isEdit && data) {
+      navigate(`/createApi/${docId}`, { state: { data: data } });
+    } else {
+      navigate(`/apiDocs/${docId}`);
+    }
   };
   const list = apiList === 0 ? apiDocList : apiDocList;
 
   const dispatchDeleteDoc: any = (docId: number) => {
     dispatch(deleteApiDoc({ docId: docId })).then((res: any) => {
-      if (res.payload?.status === 200) {
+      if (res.meta.requestStatus === "fulfilled") {
         dispatchGetDocList();
       }
     });
   };
+  const nBB = `&nbsp &nbsp`;
 
   return (
     <div className="ApiListDetail">
       {isOpenUpdateModal && <UpdateModal></UpdateModal>}
       {apiDocList?.map((it, idx) => (
-        <div className="listContent" key={idx}>
+        <ListContent key={idx}>
           <p>{it.docId}</p>
-          <div className="content" onClick={moveApidocs}>
+          <div
+            className="content"
+            onClick={() => {
+              moveApidocs(it.encryptedUrl, false);
+            }}
+          >
             <p>{it.docName}</p>
           </div>
           <div className="userSetting">
@@ -54,7 +79,7 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
               <FontAwesomeIcon
                 className="DeatilIcon"
                 icon={faRightToBracket}
-                onClick={moveApidocs}
+                onClick={() => moveApidocs(it.encryptedUrl, true, it)}
               />
               {apiList === 0 ? (
                 <>
@@ -70,6 +95,7 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
                       dispatch(
                         mainApiSlice.actions.setDocId({ docId: it.docId })
                       );
+                      console.log("ApiListDetail DocId => ", it.docId);
                     }}
                   />
                   <FontAwesomeIcon
@@ -83,7 +109,7 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
               )}
             </div>
           </div>
-        </div>
+        </ListContent>
       ))}
     </div>
   );

@@ -1,4 +1,9 @@
-import { ColumnDef, useReactTable, getCoreRowModel, flexRender } from "@tanstack/react-table";
+import {
+  ColumnDef,
+  useReactTable,
+  getCoreRowModel,
+  flexRender,
+} from "@tanstack/react-table";
 import React, { useEffect, useMemo, useState } from "react";
 import { ApisType, ControllerType } from "../../../pages/CreateApi/ApisType";
 import SelectMethods from "../SelectMethods/SelectMethods";
@@ -105,8 +110,19 @@ const ModalTable = ({
               : addedControllerIndex
           ].apis.map((row, idx) => {
             if (idx === rowIndex) {
-              const type = columnId === "uri" ? "uri" : columnId === "name" ? "name" : "method";
-
+              const type =
+                columnId === "uri"
+                  ? "uri"
+                  : columnId === "name"
+                  ? "name"
+                  : "method";
+              if (type === "method") {
+                state.data[
+                  editControllerIndex > -1
+                    ? editControllerIndex
+                    : addedControllerIndex
+                ].apis[rowIndex][type] = value;
+              }
               state.data[
                 editControllerIndex > -1
                   ? editControllerIndex
@@ -137,12 +153,19 @@ const ModalTable = ({
                   }}
                   className="tableHeadText"
                 >
-                  {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                   <div
                     {...{
                       onMouseDown: header.getResizeHandler(),
                       onTouchStart: header.getResizeHandler(),
-                      className: `resizer ${header.column.getIsResizing() ? "isResizing" : ""}`,
+                      className: `resizer ${
+                        header.column.getIsResizing() ? "isResizing" : ""
+                      }`,
                     }}
                   />
                 </th>
@@ -156,7 +179,11 @@ const ModalTable = ({
           return (
             <tr key={row.id}>
               {row.getVisibleCells().map((cell) => {
-                return <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>;
+                return (
+                  <td key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                );
               })}
             </tr>
           );

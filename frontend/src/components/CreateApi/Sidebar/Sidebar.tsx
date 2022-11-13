@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { ControllerType } from "../../../pages/CreateApi/ApisType";
 import ControllerAddModal from "../ControllerAddModal/ControllerAddModal";
 import { SelectedItem } from "../SelectMethods/SelectMethods";
+import { checkDtoNameValidation } from "../validationCheck";
 import "./Sidebar.scss";
 
 interface Props {
@@ -31,9 +32,12 @@ const Sidebar = ({
 }: Props) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editControllerIndex, setEditControllerIndex] = useState(-1);
+  const [dtoInfoVisible, setDtoInfoVisible] = useState(false);
+  const [allDtoDatas, setAllDtoDatas] = useState<any>();
 
   useEffect(() => {
     setEditControllerIndex(-1);
+    setDtoInfoVisible(false);
   }, []);
   return (
     <>
@@ -91,6 +95,22 @@ const Sidebar = ({
                     >
                       삭제하기
                     </button>
+                    <button
+                      className="sidebarControllerEdit"
+                      onClick={() => {
+                        const checkDto = checkDtoNameValidation(
+                          "dto",
+                          state.data[index].apis,
+                          state.data[index].apis.length,
+                          "",
+                          true
+                        );
+                        setAllDtoDatas(checkDto);
+                        setDtoInfoVisible(!dtoInfoVisible);
+                      }}
+                    >
+                      {dtoInfoVisible ? "Dto 정보 닫기" : "Dto 정보 보기"}
+                    </button>
                   </div>
                 </div>
               </div>
@@ -108,28 +128,54 @@ const Sidebar = ({
                   >
                     <SelectedItem
                       color={
-                        api.method === "GET"
+                        api.method === "get"
                           ? "#FDECC8"
-                          : api.method === "POST"
+                          : api.method === "post"
                           ? "#F5E0E9"
-                          : api.method === "PUT"
+                          : api.method === "put"
                           ? "#F1F0EF"
-                          : api.method === "DELETE"
+                          : api.method === "delete"
                           ? "#D3E5EF"
-                          : api.method === "PATCH"
+                          : api.method === "patch"
                           ? "#E8DEEE"
-                          : api.method === "OPTIONS"
+                          : api.method === "options"
                           ? "#FFE2DD"
                           : "#EEE0DA"
                       }
                     >
-                      {api.method}
+                      {api.method.toUpperCase()}
                     </SelectedItem>
                     <div className="sidebarApiItem">{api.uri}</div>
                   </div>
                 ))}
             </div>
           ))}
+        {allDtoDatas && dtoInfoVisible && (
+          <div className="sidebarDtoInfoContainer">
+            <div className="sidebarDtoInfoTitle">Dto 정보</div>
+            {allDtoDatas.length > 0 &&
+              allDtoDatas.map((item: any, index: number) => (
+                <div key={index} className="sidebarDtoContainer">
+                  <div className="sidebarDtoName">{item.dtoName}</div>
+                  {item.properties.map((props: any, idx: number) => (
+                    <div key={idx} className="sidebarPropertiesContainer">
+                      <div className="sidebarPropertiesItem">{props.name}</div>
+                      <div className="sidebarPropertiesItem">
+                        {props.collectionType === "List" ? (
+                          <span>{`<List>${props.type}`}</span>
+                        ) : (
+                          <span>{props.type}</span>
+                        )}
+                      </div>
+                      <div className="sidebarPropertiesItem">
+                        {props.required ? "true" : "false"}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ))}
+          </div>
+        )}
       </div>
     </>
   );
