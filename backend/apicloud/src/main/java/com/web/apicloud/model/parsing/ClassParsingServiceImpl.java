@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -43,7 +44,7 @@ public class ClassParsingServiceImpl implements ClassParsingService {
             }
         }
 
-        if(name.equals("void")){
+        if (name.equals("void")) {
             requestBody.setType("void");
             return requestBody;
         }
@@ -66,7 +67,9 @@ public class ClassParsingServiceImpl implements ClassParsingService {
         groupSecretKey = secretKey;
         if (groupSecretKey == null || groupSecretKey.equals("")) return null;
 
-        List<String> lines = s3Service.findFile(name + ".java", groupSecretKey).get("code");
+        Map<String, List<String>> getFindFile = s3Service.findFile(name + ".java", groupSecretKey);
+        if (getFindFile == null) return null;
+        List<String> lines = getFindFile.get("code");
         if (lines == null) return null;
         int i = 0;
         while (i < lines.size()) {

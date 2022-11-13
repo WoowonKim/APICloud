@@ -52,7 +52,9 @@ public class SynchronizeDocServiceImpl implements SynchronizeDocService {
         Group group = groupService.findById(doc.getGroup().getId());
 
         groupSecretKey = group.getGroupSecretKey();
-        List<String> lines = s3Service.getFile(synchronizeRequest.getName(), file, groupSecretKey).get("code");
+        Map<String, List<String>> getFindFile = s3Service.getFile(synchronizeRequest.getName(), file, groupSecretKey);
+        if (getFindFile == null) return null;
+        List<String> lines = getFindFile.get("code");
         if (lines == null) return null;
 
         String value = null;

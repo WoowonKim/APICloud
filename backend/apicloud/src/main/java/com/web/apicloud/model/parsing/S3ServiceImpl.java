@@ -34,6 +34,7 @@ public class S3ServiceImpl implements S3Service {
 
     @Override
     public void uploadZip(MultipartFile file, String groupSecretKey) throws IOException {
+        System.out.println("uploadZip ==> ");
         File zipSource = FileUtils.convert(file);
         ZipFile zipFile = new ZipFile(zipSource);
 
@@ -56,8 +57,7 @@ public class S3ServiceImpl implements S3Service {
         String fileName = name + ".java";
         if (file == null) {
             if (!findPath(groupSecretKey)) return null;
-        }
-        //else uploadZip(file, groupSecretKey);
+        } else uploadZip(file, groupSecretKey);
         return findFile(fileName, groupSecretKey);
     }
 
@@ -114,7 +114,8 @@ public class S3ServiceImpl implements S3Service {
 
         Map<String, List<String>> code = new HashMap<>();
         int keyIndex = parsingService.KMP(key, "java/com");
-        if (keyIndex != -1) key = StringUtils.removeEnd(key.substring(keyIndex - 2, key.length()), ".java").replaceAll("/", ".");
+        if (keyIndex != -1)
+            key = StringUtils.removeEnd(key.substring(keyIndex - 2, key.length()), ".java").replaceAll("/", ".");
         code.put("import", Collections.singletonList(key));
         code.put("code", line);
         return code;
