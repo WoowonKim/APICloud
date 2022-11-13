@@ -20,8 +20,8 @@ interface Props {
   selectedController: number;
   selectedApi: number;
   responseType?: string;
-  dtoData: any;
-  dtoExists: boolean;
+  dtoData?: any;
+  dtoExists?: boolean;
 }
 
 const TableInfo = ({
@@ -172,17 +172,7 @@ const TableInfo = ({
             <label htmlFor="successStatus" className="tableInfoLabel">
               status
             </label>
-            <input
-              className="tableInfoInput"
-              type="number"
-              id="successStatus"
-              onChange={(e) => handleBasicInfo(e, "status", 1, responseType)}
-              value={
-                state.data[selectedController].apis[selectedApi].responses[
-                  responseType
-                ].status
-              }
-            />
+            <p>{responseType === "success" ? 200 : 400}</p>
           </div>
           <div className="tableInfoGroup">
             {state.data[selectedController].apis[selectedApi].responses[

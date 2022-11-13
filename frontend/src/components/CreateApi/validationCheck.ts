@@ -1,4 +1,7 @@
-import { ControllerType } from "./../../pages/CreateApi/ApisType";
+import {
+  ControllerType,
+  PropertiesType,
+} from "./../../pages/CreateApi/ApisType";
 export function checkDtoNameValidation(
   value: string,
   data: any,
@@ -412,15 +415,6 @@ export function checkDataValidation(data: ControllerType[]) {
                         ]
                       ).length !== 0
                     ) {
-                      console.log(
-                        JSON.parse(
-                          JSON.stringify(
-                            current[item][status].responseBody.properties[
-                              responseBodyIdx
-                            ]
-                          )
-                        )
-                      );
                       let responseBodyPropertyValue =
                         checkRequiredValueValidation(
                           "properties",
@@ -533,4 +527,60 @@ export function checkControllerApiValidation(
     }
   }
   return checkList;
+}
+
+export function getDepth(
+  idx: number,
+  datas: any,
+  isAdd: boolean,
+  isNew: boolean,
+  isDelete: boolean,
+  path: any
+) {
+  const newData = {
+    dtoName: "",
+    name: "",
+    type: "String",
+    collectionType: "",
+    properties: [],
+    required: true,
+  };
+
+  const queue = [path, "flag"];
+  const levels = [0];
+
+  while (queue.length !== 1) {
+    const current = queue.shift();
+    if (JSON.stringify(current) === JSON.stringify(datas)) {
+      if (current && typeof current !== "string" && isDelete) {
+        path.splice(idx, 1);
+      } else if (current && typeof current !== "string" && isAdd && isNew) {
+        if (current?.properties.length === 0) {
+          current.properties.push(newData);
+        }
+      } else if (current && typeof current !== "string" && isAdd) {
+        path.properties.push(newData);
+      }
+      break;
+    }
+
+    if (current === "flag") {
+      levels.push(0);
+      queue.push("flag");
+    }
+
+    if (current && current !== "flag" && typeof current !== "string") {
+      levels[levels.length - 1]++;
+      if (current.length > 0) {
+        for (let item of current) {
+          queue.push(item);
+        }
+      } else {
+        for (let item of current.properties) {
+          queue.push(item);
+        }
+      }
+    }
+  }
+  return levels.length + 1;
 }

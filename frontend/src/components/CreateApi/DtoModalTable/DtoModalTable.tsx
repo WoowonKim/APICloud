@@ -18,13 +18,14 @@ interface Props {
   activeTab: number;
   setPropertiesIndexList: React.Dispatch<React.SetStateAction<number[]>>;
   propertiesIndexList: number[];
-  getDepth: (
+  getDepth(
     idx: number,
-    datas: PropertiesType[],
+    datas: any,
     isAdd: boolean,
     isNew: boolean,
-    isDelete: boolean
-  ) => number;
+    isDelete: boolean,
+    path: any
+  ): number;
   setModalDepth: React.Dispatch<React.SetStateAction<number>>;
   modalDepth: number;
   path: PropertiesType;
@@ -84,7 +85,8 @@ const DtoModalTable = ({
           icon={faRemove}
           className="removeIcon"
           onClick={() =>
-            final && getDepth(index, final.properties, false, false, true)
+            final &&
+            getDepth(index, final.properties, false, false, true, final)
           }
         />
       ) : id === "type" ? (
@@ -121,7 +123,7 @@ const DtoModalTable = ({
   const handleObject = (index: number) => {
     let copyPath = path;
     const getDepth2 =
-      final && getDepth(index, final.properties, false, false, false);
+      final && getDepth(index, final.properties, false, false, false, final);
 
     if ((getDepth2 && getDepth2 > 3) || getDepth2 === 3) {
       for (let i = 1; i < getDepth2 - 2; i++) {
@@ -130,7 +132,14 @@ const DtoModalTable = ({
         }
       }
     }
-    const newDepth = getDepth(index, copyPath.properties, true, true, false);
+    const newDepth = getDepth(
+      index,
+      copyPath.properties,
+      true,
+      true,
+      false,
+      final
+    );
     setModalDepth(newDepth);
     let properties = [...propertiesIndexList];
     properties[newDepth - 2] = index;
