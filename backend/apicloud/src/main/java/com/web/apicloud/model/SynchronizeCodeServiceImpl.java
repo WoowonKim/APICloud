@@ -95,7 +95,7 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
             }
             if (!codeList.get(i).getCode().get(j).equals("")) codeList.get(i).getCode().add(j, "");
             j++;
-            codeList.get(i).getUpdateImport().add(0, "//추가된 import");
+            codeList.get(i).getUpdateImport().add(0, "//[ApiCloud]를 통해 추가된 import 항목입니다.");
             codeList.get(i).getUpdateImport().add("");
 
             System.out.println(codeList.get(i).getUpdateImport());

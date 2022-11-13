@@ -44,7 +44,7 @@ public class SynchronizeController {
                 .body(response);
     }
 
-    @PostMapping("/{docId}/{controllerId}")
+    @PostMapping("/doc/{docId}")
     public ResponseEntity<List<CodeResponse>> updateCode(@PathVariable("docId") Long docId, @RequestBody DetailRequest detailRequest) throws IOException {
         log.info("문서 => 코드 동기화 API 요청");
         List<CodeResponse> response = synchronizeCodeService.updateCode(docId, detailRequest);

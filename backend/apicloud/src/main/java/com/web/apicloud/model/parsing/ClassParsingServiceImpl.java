@@ -15,6 +15,7 @@ import java.util.List;
 public class ClassParsingServiceImpl implements ClassParsingService {
 
     private static final String LIST = "List";
+    private static final String OBJECT = "Object";
     private static final String[] accessModifier = {"public", "protected", "private", "default", "static"};
     private static final String[] type = {"String", "Long", "long", "Integer", "int", "float", "Float"};
 
@@ -42,8 +43,14 @@ public class ClassParsingServiceImpl implements ClassParsingService {
             }
         }
 
+        if(name.equals("void")){
+            requestBody.setType("void");
+            return requestBody;
+        }
+
         requestBody.setDtoName(name);
-        requestBody.setType("Object");
+        requestBody.setType(OBJECT);
+        if (name.equals(OBJECT)) return requestBody;
 
         if (category.equals("query")) {
             if (useQuery.contains(name)) return requestBody;
