@@ -8,4 +8,6 @@ public interface ApiService {
 
     public DetailResponse updateDetailById(Long id, String detail);
 
+    DetailResponse updateDetailById(String encryptedId, String detail);
+
 }

@@ -32,4 +32,11 @@ public class ApiController {
         return ResponseEntity.ok().body(detailResponse);
     }
 
+    @PutMapping("/enc/{encryptedId}")
+    ResponseEntity<DetailResponse> updateDocDetail(@PathVariable String encryptedId, @RequestBody DetailRequest detailRequest) {
+        log.info("Doc ApiDetail 수정 API 호출");
+        DetailResponse detailResponse = apiService.updateDetailById(encryptedId, detailRequest.getDetail());
+        return ResponseEntity.ok().body(detailResponse);
+    }
+
 }

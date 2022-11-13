@@ -27,4 +27,11 @@ public class ApiServiceImpl implements ApiService{
         return DetailResponse.builder().detail(detail).build();
     }
 
+    @Override
+    public DetailResponse updateDetailById(String encryptedId, String detail) {
+        Docs doc = docsRepository.findByEncryptedUrl(encryptedId).orElseThrow(() -> new ResourceNotFoundException("doc", "encryptedDocId", encryptedId));
+        doc.updateDetail(detail);
+        docsRepository.save(doc);
+        return DetailResponse.builder().detail(detail).build();
+    }
 }

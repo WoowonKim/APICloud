@@ -64,3 +64,13 @@ export function axiosGetFile(url: string) {
     headers: getHeaders(),
   });
 }
+
+export function axiosPostFile(url: string, data: any) {
+  return axiosInstance({
+    method: "POST",
+    url,
+    data,
+    responseType: "blob",
+    headers: getHeaders(),
+  });
+}

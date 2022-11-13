@@ -26,7 +26,7 @@ public interface DocsService {
 
     UpdateDocDto getDoc(String encryptedDocId);
 
-    DocVO getDocVOByDocsId(Long docId);
+    DocVO getDocVOByEncryptedId(String encryptedId);
 
     UpdateDocDto updateDoc(Long docId, UpdateDocDto updateDocDto);
 

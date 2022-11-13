@@ -1,9 +1,9 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../Store/store";
 import styled from "styled-components";
-import apiDocsApiSlice from "../../Store/slice/apiDocsApi";
-import { getApiCreationInfo } from "../../Store/slice/mainApi";
+import apiDocsApiSlice from "../../../Store/slice/apiDocsApi";
+import { getApiCreationInfo } from "../../../Store/slice/mainApi";
+import { RootState } from "../../../Store/store";
 import "./DependencyModal.scss";
 
 interface PropType {
@@ -28,6 +28,12 @@ const DependencyModal = (props: PropType) => {
       setDependencyInfo(res.payload.dependencies.values);
     });
   }, []);
+
+  useEffect(() => {
+    if (props.dependencies) {
+      setSelectedDependencies(new Set(props.dependencies));
+    }
+  }, [props.dependencies]);
 
   useEffect(() => {}, [props.dependencies, dependencyInfo]);
 
@@ -84,7 +90,12 @@ const DependencyModal = (props: PropType) => {
               )}
               <button
                 onClick={() => {
-                  props.setDependencies(Array.from(selectedDependencies));
+                  const dependenciesArr = Array.from(selectedDependencies);
+                  localStorage.setItem(
+                    "dependencies",
+                    JSON.stringify(dependenciesArr)
+                  );
+                  props.setDependencies(dependenciesArr);
                   if (isOpenDependencyModal) {
                     dispatch(
                       apiDocsApiSlice.actions.setIsOpenDependencyModal({

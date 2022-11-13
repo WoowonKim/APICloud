@@ -13,6 +13,7 @@ import io.spring.initializr.generator.language.java.JavaLanguage;
 import io.spring.initializr.generator.language.java.JavaReturnStatement;
 import io.spring.initializr.generator.project.contributor.ProjectContributor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Modifier;
@@ -111,7 +112,7 @@ public class ControllerContributor implements ProjectContributor {
     }
 
     private Optional<AnnotatableParameter> makeParameter(PropertyVO property, String annotationName, String controllerName) {
-        if (property == null) {
+        if (property == null || !StringUtils.hasText(property.getName())) {
             return Optional.empty();
         }
         AnnotatableParameter parameter = new AnnotatableParameter(property.getJavaType(makeDtoPackageName(controllerName), false), property.getName());

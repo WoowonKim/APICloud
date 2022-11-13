@@ -17,6 +17,7 @@
  */
 package com.web.apicloud.controller;
 
+import com.web.apicloud.domain.SpringExportRequest;
 import com.web.apicloud.domain.vo.DocVO;
 import com.web.apicloud.domain.vo.ServerVO;
 import com.web.apicloud.exception.NotFoundException;
@@ -108,8 +109,9 @@ public class ProjectWithControllerGenerationController {
         response.sendError(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
     }
 
-    public ResponseEntity<byte[]> springZip(DocVO doc, Map<String, String> header) throws IOException {
+    public ResponseEntity<byte[]> springZip(DocVO doc, Map<String, String> header, SpringExportRequest springExportRequest) throws IOException {
         ProjectRequest request = projectRequest(header);
+        doc.getServer().setDependencies(springExportRequest.getDependencies());
         updateProjectRequestByServerInfo(request, doc.getServer());
         ProjectWithControllerGenerationResult result = this.projectGenerationInvoker.invokeProjectStructureGeneration(request, doc);
         Path archive = createArchive(result, "zip", ZipArchiveOutputStream::new, ZipArchiveEntry::new,

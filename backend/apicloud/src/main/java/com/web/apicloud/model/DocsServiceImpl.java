@@ -63,8 +63,8 @@ public class DocsServiceImpl implements DocsService {
     }
 
     @Override
-    public DocVO getDocVOByDocsId(Long docId) {
-        Docs doc = findByDocsId(docId);
+    public DocVO getDocVOByEncryptedId(String encryptedId) {
+        Docs doc = findByEncryptUrl(encryptedId);
         return convertDocsToDocVO(doc);
     }
 
@@ -79,9 +79,10 @@ public class DocsServiceImpl implements DocsService {
         }
         try {
             DocVO docVO = objectMapper.readValue(doc.getDetail(), DocVO.class);
-            if (docVO.getServer() != null) {
-                setServerInfoFromDoc(docVO.getServer(), doc);
+            if(docVO.getServer() == null) {
+                docVO.setServer(new ServerVO());
             }
+            setServerInfoFromDoc(docVO.getServer(), doc);
             return docVO;
         } catch (JsonProcessingException ex) {
             throw new RuntimeException(ex.getMessage());
