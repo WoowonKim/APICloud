@@ -14,6 +14,7 @@ import ExtractModal from "./ExtractModal";
 import { useLocation, useParams } from "react-router-dom";
 import { useAppDispatch } from "../../Store/hooks";
 import { checkDataValidation } from "../../components/CreateApi/validationCheck";
+import ApiTable from "../../components/CreateApi/ApiTable/ApiTable";
 
 const CreateApi = () => {
   const dispatch = useAppDispatch();
@@ -326,6 +327,24 @@ const CreateApi = () => {
                   status: 200,
                   responseBody: propertiesData,
                 };
+              } else if (
+                JSON.stringify(
+                  state.data[selectedController].apis[selectedApi].responses
+                    .success.responseBody
+                ) === "{}"
+              ) {
+                state.data[selectedController].apis[
+                  selectedApi
+                ].responses.success.responseBody = propertiesData;
+              } else if (
+                JSON.stringify(
+                  state.data[selectedController].apis[selectedApi].responses
+                    .fail.responseBody
+                ) === "{}"
+              ) {
+                state.data[selectedController].apis[
+                  selectedApi
+                ].responses.fail.responseBody = propertiesData;
               }
               setActiveTab(5);
             }}
@@ -333,8 +352,10 @@ const CreateApi = () => {
             responses
           </div>
         </div>
-        <div className="tableContainer">
-          {selectedApi > -1 && selectedController > -1 && (
+        {selectedApi > -1 &&
+          selectedController > -1 &&
+          state?.data.length > 0 &&
+          state.data[selectedController]?.apis.length > 0 && (
             <div className="apiTable">
               <button
                 className="apiPlusButton"
@@ -342,55 +363,19 @@ const CreateApi = () => {
               >
                 <FontAwesomeIcon icon={faPlus} className="plusIcon" />
               </button>
-              {state?.data.length > 0 &&
-                state.data[selectedController]?.apis.length > 0 && (
-                  <Table
-                    activeTab={activeTab}
-                    selectedController={selectedController}
-                    selectedApi={selectedApi}
-                    data={
-                      activeTab === 1
-                        ? JSON.parse(
-                            JSON.stringify(
-                              state.data[selectedController].apis[selectedApi]
-                                .headers
-                            )
-                          )
-                        : activeTab === 2
-                        ? JSON.parse(
-                            JSON.stringify(
-                              state.data[selectedController].apis[selectedApi]
-                                .parameters
-                            )
-                          )
-                        : activeTab === 3
-                        ? JSON.parse(
-                            JSON.stringify(
-                              state.data[selectedController].apis[selectedApi]
-                                .queries
-                            )
-                          )
-                        : activeTab === 4
-                        ? JSON.parse(
-                            JSON.stringify(
-                              state.data[selectedController].apis[selectedApi]
-                                .requestBody?.properties
-                            )
-                          )
-                        : activeTab === 5 &&
-                          JSON.parse(
-                            JSON.stringify(
-                              state.data[selectedController].apis[selectedApi]
-                                .responses.success.responseBody?.properties
-                            )
-                          )
-                    }
-                    responseType={"success"}
-                  />
-                )}
+              <ApiTable
+                activeTab={activeTab}
+                selectedController={selectedController}
+                selectedApi={selectedApi}
+                responseType={"success"}
+              />
             </div>
           )}
-          {selectedApi > -1 && selectedController > -1 && activeTab === 5 && (
+        {selectedApi > -1 &&
+          selectedController > -1 &&
+          state?.data.length > 0 &&
+          state.data[selectedController]?.apis.length > 0 &&
+          activeTab === 5 && (
             <div className="apiTable">
               <button
                 className="apiPlusButton"
@@ -398,19 +383,14 @@ const CreateApi = () => {
               >
                 <FontAwesomeIcon icon={faPlus} className="plusIcon" />
               </button>
-              <Table
+              <ApiTable
                 activeTab={activeTab}
                 selectedController={selectedController}
                 selectedApi={selectedApi}
-                data={
-                  state.data[selectedController].apis[selectedApi].responses
-                    .fail.responseBody?.properties
-                }
                 responseType={"fail"}
               />
             </div>
           )}
-        </div>
       </div>
     </div>
   );

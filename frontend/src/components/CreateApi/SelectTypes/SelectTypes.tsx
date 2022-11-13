@@ -16,6 +16,12 @@ interface Props {
   responseType?: string;
   depth?: number;
   isCollection?: boolean;
+  handelCellValue?: (
+    e: React.ChangeEvent<HTMLInputElement> | string,
+    header: string,
+    index: number
+  ) => void;
+  index?: number;
 }
 
 const SelectTypes = ({
@@ -26,6 +32,8 @@ const SelectTypes = ({
   responseType,
   depth,
   isCollection,
+  handelCellValue,
+  index,
 }: Props) => {
   const [visible, setVisible] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState(
@@ -50,6 +58,10 @@ const SelectTypes = ({
     if (setValue && onBlur) {
       setValue(eventTarget.innerText);
       onBlur(eventTarget.innerText);
+    }
+
+    if (handelCellValue && typeof index === "number") {
+      handelCellValue(eventTarget.innerText, "type", index);
     }
   };
 
