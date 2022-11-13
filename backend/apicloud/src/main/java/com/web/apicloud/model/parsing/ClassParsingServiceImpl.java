@@ -15,6 +15,7 @@ import java.util.List;
 public class ClassParsingServiceImpl implements ClassParsingService {
 
     private static final String LIST = "List";
+    private static final String OBJECT = "Object";
     private static final String[] accessModifier = {"public", "protected", "private", "default", "static"};
     private static final String[] type = {"String", "Long", "long", "Integer", "int", "float", "Float"};
 
@@ -42,8 +43,14 @@ public class ClassParsingServiceImpl implements ClassParsingService {
             }
         }
 
+        if(name.equals("void")){
+            requestBody.setType("void");
+            return requestBody;
+        }
+
         requestBody.setDtoName(name);
-        requestBody.setType("Object");
+        requestBody.setType(OBJECT);
+        if (name.equals(OBJECT)) return requestBody;
 
         if (category.equals("query")) {
             if (useQuery.contains(name)) return requestBody;
@@ -57,9 +64,9 @@ public class ClassParsingServiceImpl implements ClassParsingService {
         }
 
         groupSecretKey = secretKey;
-        if (groupSecretKey.equals("") || groupSecretKey == null) return null;
+        if (groupSecretKey == null || groupSecretKey.equals("")) return null;
 
-        List<String> lines = s3Service.findFile(name + ".java", groupSecretKey);
+        List<String> lines = s3Service.findFile(name + ".java", groupSecretKey).get("code");
         if (lines == null) return null;
         int i = 0;
         while (i < lines.size()) {

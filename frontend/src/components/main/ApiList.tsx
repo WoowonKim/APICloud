@@ -22,15 +22,18 @@ export type ApiDocType = {
 };
 
 export const ChoiceText = styled.span`
+  font-weight: bold;
   font-size: 13px;
   color: ${(props) => props.theme.color};
   border-bottom: 2px solid ${(props) => props.theme.color};
+  padding: 3px 3px 3px 3px;
 `;
 
 export const NoChoiceText = styled.span`
-  font-size: 10px;
+  font-size: 11px;
   color: ${(props) => props.theme.color};
   border-bottom: 2px solid ${(props) => props.theme.color};
+  margin: 10px 10px 10px 10px;
 `;
 
 const ApiListContent = styled.div`

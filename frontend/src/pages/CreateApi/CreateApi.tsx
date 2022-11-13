@@ -7,24 +7,38 @@ import { useSyncedStore } from "@syncedstore/react";
 import { connectDoc, store } from "../../components/CreateApi/store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Store/store";
 import apiDocsApiSlice, { getApiDetail } from "../../Store/slice/apiDocsApi";
 import ExtractModal from "./ExtractModal";
-import { useLocation, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { axiosGet } from "../../util/axiosUtil";
+import ErrorPage from "../ErrorPage";
 import { useAppDispatch } from "../../Store/hooks";
 import { checkDataValidation } from "../../components/CreateApi/validationCheck";
 import ApiTable from "../../components/CreateApi/ApiTable/ApiTable";
 
 const CreateApi = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const { encryptedUrl } = useParams();
+  const [authority, setAuthority] = useState<number>(0);
   useEffect(() => {
+    const checckAutority = async (encryptedUrl: string) => {
+      return await axiosGet(`/docs/authority/${encryptedUrl}`);
+    };
     if (encryptedUrl) {
+      checckAutority(encryptedUrl)
+        .then((res) => {
+          setAuthority(res.data);
+        })
+        .catch((err) => {
+          console.log(err.response.data);
+          setAuthority(0);
+        });
       connectDoc(encryptedUrl);
     }
   }, [encryptedUrl]);
-
   const isOpenExtractModal = useSelector(
     (state: RootState) => state.apiDocsApi.isOpenExtractModal
   );
@@ -93,7 +107,6 @@ const CreateApi = () => {
     commonUri: "",
     apis: [],
   });
-
   const propertiesData: PropertiesType = {
     dtoName: "",
     name: "",
@@ -102,7 +115,6 @@ const CreateApi = () => {
     collectionType: "",
     properties: [],
   };
-
   const responsesData = {
     fail: {
       status: 400,
@@ -128,19 +140,14 @@ const CreateApi = () => {
     },
   };
   const state = useSyncedStore(store);
-  useEffect(() => {
-    console.log(JSON.parse(JSON.stringify(state.data)));
-  }, [state.data]);
   // 테이블의 탭 전환을 위한 state
   const [activeTab, setActiveTab] = useState(1);
   // 선택된 api,controller 저장 state
   const [selectedApi, setSelectedApi] = useState(-1);
   const [selectedController, setSelectedController] = useState(-1);
-
   // 추가된 api, controller index를 저장할 state
   const [addedApiIndex, setAddedApiIndex] = useState(-1);
   const [addedControllerIndex, setAddedControllerIndex] = useState(-1);
-
   // controller 추가/삭제 함수 -> 기존 데이터에 새 데이터 추가
   const handleController = (method: string, index?: number) => {
     if (method === "add") {
@@ -150,13 +157,11 @@ const CreateApi = () => {
       state.data.splice(index, 1);
     }
   };
-
   // api 추가 함수 -> 기존 데이터에 새 데이터 추가
   const addApi = (index: number) => {
     state.data[index].apis.push(apiData);
     setAddedApiIndex(state.data[index].apis.length);
   };
-
   // table의 row 추가 함수
   const addTableRow = (responseType?: "fail" | "success") => {
     if (activeTab === 1) {
@@ -179,7 +184,6 @@ const CreateApi = () => {
       ].responseBody.properties.push(propertiesData);
     }
   };
-
   const getData = (selectedController: number, selectedApi: number) => {
     return state.data[selectedController].apis[selectedApi].headers;
   };
@@ -206,42 +210,137 @@ const CreateApi = () => {
       }
     );
   }, []);
-  return (
-    <div className="apiDocscontainer">
-      <Sidebar
-        handleController={handleController}
-        addApi={addApi}
-        state={state}
-        handleSidebarApi={handleSidebarApi}
-        selectedApi={selectedApi}
-        selectedController={selectedController}
-        addedApiIndex={addedApiIndex}
-        addedControllerIndex={addedControllerIndex}
-      />
-      <div className="apiDocsMaincontainer">
-        <div className="titleContainer">
-          <p className="apiDocsTitleText">APICloud API 명세서</p>
-          <div className="buttonContainer">
-            <button
+  if (authority == 0) {
+    return (
+      <>
+        <ErrorPage></ErrorPage>
+      </>
+    );
+  } else {
+    return (
+      <div className="apiDocscontainer">
+        <Sidebar
+          handleController={handleController}
+          addApi={addApi}
+          state={state}
+          handleSidebarApi={handleSidebarApi}
+          selectedApi={selectedApi}
+          selectedController={selectedController}
+          addedApiIndex={addedApiIndex}
+          addedControllerIndex={addedControllerIndex}
+        />
+        <div className="apiDocsMaincontainer">
+          <div className="titleContainer">
+            <p className="apiDocsTitleText">APICloud API 명세서</p>
+            <div className="buttonContainer">
+              <button
+                onClick={() => {
+                  const test = checkDataValidation(state.data);
+                  // 데이터 확인용 로그
+                  console.log(test);
+                }}
+              >
+                테스트
+              </button>
+              <button>공유</button>
+              <button>동기화</button>
+              <button
+                type="button"
+                onClick={() =>
+                  dispatch(
+                    apiDocsApiSlice.actions.setIsOpenExtractModal({
+                      isOpenExtractModal: true,
+                    })
+                  )
+                }
+              >
+                추출
+              </button>
+              {isOpenExtractModal && <ExtractModal></ExtractModal>}
+            </div>
+          </div>
+          <div className="infoContainer">
+            <div>
+              <p>사이트 주소</p>
+              <p className="infoValue">http://localhost:8080</p>
+            </div>
+            <div>
+              <p>공통 URI</p>
+              <p className="infoValue">/api</p>
+            </div>
+          </div>
+          <div className="tabContainer">
+            <div
+              className={activeTab === 1 ? "tabItem active" : "tabItem"}
+              onClick={() => setActiveTab(1)}
+            >
+              headers
+            </div>
+            <div
+              className={activeTab === 2 ? "tabItem active" : "tabItem"}
+              onClick={() => setActiveTab(2)}
+            >
+              parameters
+            </div>
+            <div
+              className={activeTab === 3 ? "tabItem active" : "tabItem"}
+              onClick={() => setActiveTab(3)}
+            >
+              queries
+            </div>
+            <div
+              className={activeTab === 4 ? "tabItem active" : "tabItem"}
               onClick={() => {
-                const test = checkDataValidation(state.data);
-                // 데이터 확인용 로그
-                console.log(test);
+                if (
+                  JSON.stringify(
+                    state.data[selectedController].apis[selectedApi].requestBody
+                  ) === "{}"
+                ) {
+                  state.data[selectedController].apis[selectedApi].requestBody =
+                    propertiesData;
+                }
+                setActiveTab(4);
               }}
             >
-              테스트
-            </button>
-            <button>공유</button>
-            <button>동기화</button>
-            <button
-              type="button"
-              onClick={() =>
-                dispatch(
-                  apiDocsApiSlice.actions.setIsOpenExtractModal({
-                    isOpenExtractModal: true,
-                  })
-                )
-              }
+              requestBody
+            </div>
+            <div
+              className={activeTab === 5 ? "tabItem active" : "tabItem"}
+              onClick={() => {
+                if (
+                  JSON.stringify(
+                    state.data[selectedController].apis[selectedApi].responses
+                  ) === "{}"
+                ) {
+                  state.data[selectedController].apis[selectedApi].responses =
+                    responsesData;
+                } else if (
+                  JSON.stringify(
+                    state.data[selectedController].apis[selectedApi].responses
+                      .fail
+                  ) === "{}"
+                ) {
+                  state.data[selectedController].apis[
+                    selectedApi
+                  ].responses.fail = {
+                    status: 400,
+                    responseBody: propertiesData,
+                  };
+                } else if (
+                  JSON.stringify(
+                    state.data[selectedController].apis[selectedApi].responses
+                      .success
+                  ) === "{}"
+                ) {
+                  state.data[selectedController].apis[
+                    selectedApi
+                  ].responses.success = {
+                    status: 200,
+                    responseBody: propertiesData,
+                  };
+                }
+                setActiveTab(5);
+              }}
             >
               추출
             </button>
@@ -392,8 +491,8 @@ const CreateApi = () => {
             </div>
           )}
       </div>
-    </div>
-  );
+    );
+  }
 };
 
 export default CreateApi;
