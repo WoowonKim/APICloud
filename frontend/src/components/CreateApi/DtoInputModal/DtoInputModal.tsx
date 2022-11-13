@@ -29,13 +29,14 @@ interface Props {
   propertiesIndexList: number[];
   setFinal: React.Dispatch<React.SetStateAction<PropertiesType | undefined>>;
   final: PropertiesType | undefined;
-  getDepth: (
+  getDepth(
     idx: number,
-    datas: PropertiesType[],
+    datas: any,
     isAdd: boolean,
     isNew: boolean,
-    isDelete: boolean
-  ) => number;
+    isDelete: boolean,
+    path: any
+  ): number;
   setNameList: React.Dispatch<React.SetStateAction<string[]>>;
   nameList: string[];
   dtoData: any;
@@ -161,7 +162,16 @@ const DtoInputModal = ({
           <div className="dtoModalTableContainer">
             <button
               className="apiPlusButton"
-              onClick={() => getDepth(0, final.properties, true, false, false)}
+              onClick={() =>
+                getDepth(
+                  0,
+                  final.properties[final.properties.length - 1],
+                  true,
+                  false,
+                  false,
+                  final
+                )
+              }
             >
               <FontAwesomeIcon icon={faPlus} className="plusIcon" />
             </button>
