@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { RequestTypeInfo } from "../../pages/CreateApi/ApisType";
+import { reBodyType } from "../../pages/TestApi";
 import { NoChoiceText, ChoiceText } from "../main/ApiList";
 import ApiBody from "./ApiBody";
 import Headerheader from "./Headerheader";
@@ -7,9 +8,11 @@ import HeaderToken from "./HeaderToken";
 
 interface type {
   getInfo: RequestTypeInfo | undefined;
+  setTestbodyInfo: Dispatch<SetStateAction<reBodyType[]>>;
+  testbodyInfo: reBodyType[];
 }
 
-const ApiHeader = ({ getInfo }: type) => {
+const ApiHeader = ({ getInfo, testbodyInfo, setTestbodyInfo }: type) => {
   const [headerTokenFlag, setHeaderTokenFlag] = useState<number | null>(0);
   return (
     <div className="requestInfosetting">
@@ -55,7 +58,11 @@ const ApiHeader = ({ getInfo }: type) => {
       </div>
       <div className="requestInfoBodySetting">
         <ChoiceText>Body</ChoiceText>
-        <ApiBody getInfo={getInfo}></ApiBody>
+        <ApiBody
+          getInfo={getInfo}
+          testbodyInfo={testbodyInfo}
+          setTestbodyInfo={setTestbodyInfo}
+        ></ApiBody>
       </div>
     </div>
   );
