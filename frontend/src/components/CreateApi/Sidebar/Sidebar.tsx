@@ -128,17 +128,17 @@ const Sidebar = ({
                   >
                     <SelectedItem
                       color={
-                        api.method === "get"
+                        api.method === "Get"
                           ? "#FDECC8"
-                          : api.method === "post"
+                          : api.method === "Post"
                           ? "#F5E0E9"
-                          : api.method === "put"
+                          : api.method === "Put"
                           ? "#F1F0EF"
-                          : api.method === "delete"
+                          : api.method === "Delete"
                           ? "#D3E5EF"
-                          : api.method === "patch"
+                          : api.method === "Patch"
                           ? "#E8DEEE"
-                          : api.method === "options"
+                          : api.method === "Options"
                           ? "#FFE2DD"
                           : "#EEE0DA"
                       }

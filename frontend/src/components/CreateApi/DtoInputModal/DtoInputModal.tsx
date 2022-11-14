@@ -173,14 +173,9 @@ const DtoInputModal = ({
               <FontAwesomeIcon icon={faPlus} className="plusIcon" />
             </button>
             <DtoModalTable
-              data={JSON.parse(JSON.stringify(final.properties))}
-              propertiesIndex={propertiesIndex}
-              activeTab={activeTab}
               setPropertiesIndexList={setPropertiesIndexList}
               propertiesIndexList={propertiesIndexList}
               setModalDepth={setModalDepth}
-              modalDepth={modalDepth}
-              path={path}
               final={final}
             />
           </div>
