@@ -13,4 +13,4 @@ FROM openjdk:11
 COPY --from=builder build/libs/apicloud-0.0.1-SNAPSHOT.jar apicloud.jar
 
 EXPOSE 8005
-CMD ["java","-jar","/apicloud.jar"]
+CMD ["java","-jar","-Dspring.profiles.active=prod","/apicloud.jar"]
