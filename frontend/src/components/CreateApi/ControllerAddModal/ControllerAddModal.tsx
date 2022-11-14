@@ -160,8 +160,11 @@ const ControllerAddModal = ({
               setIsControllerAdd(true);
             }}
             disabled={
-              !isControllerAddPossible &&
-              (controllerValidation[0] === 1 || controllerValidation[1] === 1)
+              !isControllerAddPossible ||
+              (controllerValidation[0] === 1 &&
+                controllerValidation[1] === 1) ||
+              !controllerName.trim() ||
+              !controllerUri.trim()
             }
           >
             {isControllerAdd ? "Controller 수정" : "Controller 추가"}
