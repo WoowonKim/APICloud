@@ -28,16 +28,25 @@ interface Props {
 
 const SelectMethods = ({ onBlur, setValue, value }: Props) => {
   const [visible, setVisible] = useState(false);
-  const [selectedMethod, setSelectedMethod] = useState(value ? value : "get");
+  const [selectedMethod, setSelectedMethod] = useState(value ? value : "GET");
 
   const handleSelect = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
     const eventTarget = e.target as HTMLElement;
-    setSelectedMethod(eventTarget.innerText);
+    setSelectedMethod(
+      eventTarget.innerText[0] +
+        eventTarget.innerText.substring(1).toLocaleLowerCase()
+    );
     setVisible(!visible);
     // Props에 해당 값이 있을 경우 함수 호출
     if (setValue && onBlur) {
-      setValue(eventTarget.innerText);
-      onBlur(eventTarget.innerText);
+      setValue(
+        eventTarget.innerText[0] +
+          eventTarget.innerText.substring(1).toLocaleLowerCase()
+      );
+      onBlur(
+        eventTarget.innerText[0] +
+          eventTarget.innerText.substring(1).toLocaleLowerCase()
+      );
     }
   };
 
@@ -45,17 +54,17 @@ const SelectMethods = ({ onBlur, setValue, value }: Props) => {
     <div className="selectBox" onClick={() => setVisible(!visible)}>
       <SelectedItem
         color={
-          selectedMethod === "get"
+          selectedMethod === "Get"
             ? "#FDECC8"
-            : selectedMethod === "post"
+            : selectedMethod === "Post"
             ? "#F5E0E9"
-            : selectedMethod === "put"
+            : selectedMethod === "Put"
             ? "#F1F0EF"
-            : selectedMethod === "delete"
+            : selectedMethod === "Delete"
             ? "#D3E5EF"
-            : selectedMethod === "patch"
+            : selectedMethod === "Patch"
             ? "#E8DEEE"
-            : selectedMethod === "options"
+            : selectedMethod === "Options"
             ? "#FFE2DD"
             : "#EEE0DA"
         }
@@ -66,25 +75,25 @@ const SelectMethods = ({ onBlur, setValue, value }: Props) => {
         <div className="selectBoxContainer">
           <ul className="itemList">
             <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#fdecc8">get</Item>
+              <Item color="#fdecc8">GET</Item>
             </li>
             <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#F5E0E9">post</Item>
+              <Item color="#F5E0E9">POST</Item>
             </li>
             <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#F1F0EF">put</Item>
+              <Item color="#F1F0EF">PUT</Item>
             </li>
             <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#D3E5EF">delete</Item>
+              <Item color="#D3E5EF">DELETE</Item>
             </li>
             <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#E8DEEE">patch</Item>
+              <Item color="#E8DEEE">PATCH</Item>
             </li>
             <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#FFE2DD">options</Item>
+              <Item color="#FFE2DD">OPTIONS</Item>
             </li>
             <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#EEE0DA">head</Item>
+              <Item color="#EEE0DA">HEAD</Item>
             </li>
           </ul>
         </div>

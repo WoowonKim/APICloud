@@ -52,7 +52,7 @@ const CreateApi = () => {
   const [apiData, setApiData] = useState<ApisType>({
     name: "",
     uri: "",
-    method: "get",
+    method: "Get",
     requestBody: {
       dtoName: "",
       name: "",
