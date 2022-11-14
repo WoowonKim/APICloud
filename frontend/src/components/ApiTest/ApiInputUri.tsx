@@ -72,7 +72,7 @@ const ApiInputUri = ({ getInfo, testbodyInfo, setTestbodyInfo }: list) => {
   const submitRequest = () => {
     switch (requestMethod) {
       case "get":
-        axios.get("testt/test").then((res) => {
+        axios.get(`http://${testUri}`).then((res) => {
           console.log("RES=>", res);
         });
         break;
