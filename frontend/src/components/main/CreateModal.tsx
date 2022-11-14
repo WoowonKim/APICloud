@@ -96,20 +96,16 @@ const CreateModal = () => {
   // API DOC 생성하기
   const onSubmit = (e: any) => {
     e.preventDefault();
-    if (docId === 0) {
-      dispatch(setApiDoc(createDocRequest)).then((res: any) => {
-        if (res.meta.requestStatus === "fulfilled") {
-          setEncryptedUrl(res.payload.encryptedUrl);
-          console.log(res.payload.encryptedUrl);
-          dispatch(
-            mainApiSlice.actions.setIsOpenCreateModal({ isOpenModal: false })
-          );
-          dispatch(
-            mainApiSlice.actions.setIsDocCreated({ isDocCreated: true })
-          );
-        }
-      });
-    }
+    dispatch(setApiDoc(createDocRequest)).then((res: any) => {
+      if (res.meta.requestStatus === "fulfilled") {
+        setEncryptedUrl(res.payload.encryptedUrl);
+        console.log(res.payload.encryptedUrl);
+        dispatch(
+          mainApiSlice.actions.setIsOpenCreateModal({ isOpenModal: false })
+        );
+        dispatch(mainApiSlice.actions.setIsDocCreated({ isDocCreated: true }));
+      }
+    });
   };
 
   const search = async (email: any) => {

@@ -93,6 +93,11 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
                         })
                       );
                       dispatch(
+                        mainApiSlice.actions.setEncryptedUrl({
+                          encryptedUrl: it.encryptedUrl,
+                        })
+                      );
+                      dispatch(
                         mainApiSlice.actions.setDocId({ docId: it.docId })
                       );
                       console.log("ApiListDetail DocId => ", it.docId);
