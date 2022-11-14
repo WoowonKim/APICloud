@@ -4,36 +4,36 @@
 
 - docker-compose.yml 파일
 
-```
-$ vim docker-compose.yml
+```bash
+vim docker-compose.yml
 ```
 
-```
-version: '3'
+```yml
+version: "3"
 
 services:
   jenkins:
     image: jenkins/jenkins:lts
     container_name: jenkins
     volumes:
-        - /var/run/docker.sock:/var/run/docker.sock
-        - /jenkins:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /jenkins:/var/jenkins_home
     ports:
-        - "9090:8080"
+      - "9090:8080"
     privileged: true
     user: root
 ```
 
 - 컨테이너 생성
 
-```
+```bash
 sudo docker-compose up -d
 sudo docker ps
 ```
 
 - Administrator password 확인
 
-```
+```bash
 sudo docker logs jenkins
 ```
 
@@ -45,18 +45,25 @@ sudo docker logs jenkins
 > **Jenkins plugin 설치**
 
 - 도메인:9090 포트로 접속 후 Admin password 비밀번호를 입력
+
   ![image](https://user-images.githubusercontent.com/93081720/191662258-7cf44cfa-76ca-42bf-b5bf-a15c2e08e2f8.png)
 
 - 기본 플러그인 설치
+
   ![image](https://user-images.githubusercontent.com/93081720/191662709-3b3e6afb-5228-4a0c-83dc-d317e2b345d0.png)
 
 - 계정 생성
+
   ![image](https://user-images.githubusercontent.com/93081720/191662872-6f195fff-7e65-4f65-9f92-65cac427afb0.png)
+
 - Jenkins 관리 > 플러그인 관리
+
   ![image](https://user-images.githubusercontent.com/93081720/191663424-5328f9ca-75a6-4482-b943-0d84aa8910c0.png)
-  <br>
+
   ![image](https://user-images.githubusercontent.com/93081720/191663444-d9706a0f-0829-4ebc-9ba8-c32145f52dc7.png)
+
   ![image](https://user-images.githubusercontent.com/93081720/191664182-36c31681-5ea3-4cf5-adf7-9c1296cfc6f1.png)
+
   ![image](https://user-images.githubusercontent.com/93081720/191664275-252a3316-e84c-4b0e-adc9-1290450878b2.png)
 
 > **Jenkins 프로젝트 생성**
@@ -83,24 +90,28 @@ sudo docker logs jenkins
 > **GitLab WebHook 연결**
 
 - GitLab -> Setting -> WebHook
+
   ![image](https://user-images.githubusercontent.com/64150747/201577589-2f48ea71-6431-41a2-9632-43ca2ba0c9e8.png)
-  URL에는 http://배포서버도메인:9090/project/생성한 jenkins 프로젝트이름/을 입력<br>
+
+  URL에는 http://배포서버도메인:9090/project/생성한 jenkins 프로젝트이름/<br>
+
   빌드 유발 Trigger로, Push events, Merge request events를 설정<br>
-  대상 Branch는 연동을 원하는 브랜치를 선택
-  <br>
+
+  대상 Branch는 연동을 원하는 브랜치를 선택 <br>
+
   완료했다면 하단의 Add Webhook 버튼을 눌러 webhook을 생성
 
 ### **젠킨스 컨테이너 Docker 설치**
 
 - Ec2 접속 후
 
-  ```
+  ```bash
   sudo docker exec -it jenkins bash
   ```
 
 - 패키지 설치
 
-  ```
+  ```bash
   apt update
   apt-get install -y ca-certificates \
      curl \
@@ -112,7 +123,7 @@ sudo docker logs jenkins
 
 - gpg 키 다운로드
 
-  ```
+  ```bash
   mkdir -p /etc/apt/keyrings
   curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 
@@ -123,7 +134,7 @@ sudo docker logs jenkins
 
 - Docker 설치
 
-  ```
+  ```bash
   apt update
   apt install docker-ce docker-ce-cli containerd.io docker-compose
   ```
@@ -131,9 +142,10 @@ sudo docker logs jenkins
 > **jenkins 도커 이미지 빌드하기**
 
 - jenkins 빌드 구성<br>
+
   빌드 단계에 들어가서 Add build step을 누르고 Execute Shell을 선택하여 아래와 같이 입력
 
-```
+```bash
 docker image prune -a --force
 
 mkdir -p /var/jenkins_home/images_tar
