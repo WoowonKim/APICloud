@@ -2,7 +2,7 @@
 
 > **Dockerfile**
 
-```
+```dockerfile
 FROM node:16.15.0 as build-stage
 WORKDIR /app
 COPY package*.json ./
@@ -20,9 +20,6 @@ COPY --from=build-stage /app/build /usr/share/nginx/html
 EXPOSE 80
 CMD ["nginx", "-g","daemon off;"]
 ```
-
-- EC2 서버에 있는 기존 nginx defalut.conf 설정을 지운 후 프로젝트 내 default.conf를 복사
-- npm run build를 통해 생성된 프로젝트 빌드 파일을 EC2 서버의 /usr/share/nginx/html로 복사
 
 #### 과정 설명
 
