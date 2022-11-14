@@ -551,12 +551,6 @@ export function getDepth(
 
   while (queue.length !== 1) {
     const current = queue.shift();
-    console.log(
-      JSON.parse(JSON.stringify(current)),
-      JSON.parse(JSON.stringify(path)),
-      JSON.parse(JSON.stringify(datas))
-    );
-
     if (JSON.stringify(current) === JSON.stringify(datas)) {
       if (current && typeof current !== "string" && isDelete) {
         path.splice(idx, 1);

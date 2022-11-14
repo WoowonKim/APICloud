@@ -47,6 +47,7 @@ const DtoModalTable = ({
     cell: function Cell({ getValue, row: { index }, column: { id }, table }) {
       const initialValue = getValue<string>();
       const [value, setValue] = useState<string>(initialValue);
+      const [checkNumber, setCheckNumber] = useState(2);
 
       const onBlur = (temp?: string) => {
         table.options.meta?.updateData(index, id, temp ? temp : value);
@@ -57,7 +58,7 @@ const DtoModalTable = ({
 
       useEffect(() => {
         setValue(initialValue);
-        console.log(modalDepth);
+        setCheckNumber(2);
       }, [initialValue, modalDepth, data, index]);
 
       let copyPath = path;
@@ -110,7 +111,10 @@ const DtoModalTable = ({
             <FontAwesomeIcon
               icon={faInfo}
               className="infoIcon"
-              onClick={() => handleObject(index)}
+              onClick={() => {
+                setCheckNumber(3);
+                handleObject(index);
+              }}
             />
           )}
         </div>
@@ -129,31 +133,19 @@ const DtoModalTable = ({
     let copyPath = path;
     const getDepth2 =
       final && getDepth(index, final.properties, false, false, false, final);
-
-    if ((getDepth2 && getDepth2 > 3) || getDepth2 === 3) {
-      for (let i = 1; i < getDepth2 - 2; i++) {
+    const getDepth3 = 3;
+    if ((getDepth3 && getDepth3 > 3) || getDepth3 === 3) {
+      for (let i = 1; i < getDepth3 - 2; i++) {
         if (propertiesIndexList[i] !== -1) {
           copyPath = copyPath.properties[propertiesIndexList[i]];
         }
       }
     }
-    const newDepth = getDepth(
-      index,
-      final?.properties,
-      true,
-      true,
-      false,
-      copyPath
-    );
-    console.log(
-      JSON.parse(JSON.stringify(copyPath)),
-      JSON.parse(JSON.stringify(final)),
-      newDepth
-    );
 
-    setModalDepth(newDepth);
+    const newDepth = getDepth(index, final, true, true, false, copyPath);
+    setModalDepth(3);
     let properties = [...propertiesIndexList];
-    properties[newDepth - 2] = index;
+    properties[3 - 2] = index;
     setPropertiesIndexList(properties);
   };
   const columns = useMemo<ColumnDef<PropertiesType>[]>(

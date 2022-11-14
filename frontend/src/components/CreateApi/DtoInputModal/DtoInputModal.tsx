@@ -100,11 +100,6 @@ const DtoInputModal = ({
     }
     setFinal(copy);
   }, [modalDepth, path, final]);
-  console.log(modalDepth, 1);
-  if (final) {
-    console.log(JSON.parse(JSON.stringify(final)));
-    console.log(propertiesIndexList);
-  }
 
   return (
     <div className="dtoInputModal">
