@@ -7,10 +7,6 @@ import testApiSlice, {
   selectTestApi,
 } from "../../Store/slice/testApi";
 
-interface type {
-  getInfo: RequestTypeInfo | undefined;
-}
-
 export const HeaderContatinerList = styled.div`
   display: flex;
   width: 100%;
@@ -36,6 +32,9 @@ export const HeaderListInput = styled.input`
   background-color: ${props => props.theme.bgColor};
   color: ${props => props.theme.color};
 `;
+interface type {
+  getInfo: RequestTypeInfo | undefined;
+}
 const Headerheader = ({ getInfo }: type) => {
   const info = useSelector(selectTestApi);
   const [getCollection, setGetCollection] = useState("");

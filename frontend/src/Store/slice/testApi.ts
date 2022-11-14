@@ -17,6 +17,8 @@ interface initType {
   getRequestBodyInfo: bodyType;
   getServerUrl: string;
   getContextUrl: string;
+  getParams: string;
+  getParamsId: string;
 }
 
 const initialState: initType = {
@@ -27,28 +29,34 @@ const initialState: initType = {
   getRequestBodyInfo: { key: "", value: "" },
   getServerUrl: "",
   getContextUrl: "",
+  getParams: "",
+  getParamsId: "",
 };
 
 // API 조회 하기.
-export const getApiRequestInfo: any = createAsyncThunk("testApi/getApiRequestInfo", async (args: any, { rejectWithValue }) => {
-  try {
-    const response = await axiosGet(`apis/${args.docId}`);
-    return response.data;
-  } catch (err: any) {
-    return rejectWithValue(err.response);
+export const getApiRequestInfo: any = createAsyncThunk(
+  "testApi/getApiRequestInfo",
+  async (args: any, { rejectWithValue }) => {
+    try {
+      const response = await axiosGet(`apis/${args.docId}`);
+      return response.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response);
+    }
   }
-});
-
-// export const testApiRequestInfo:any = createAsyncThunk("testApi/testApiRequestInfo",async(args:any,{rejectWithValue})=>{
-//   try{
-//     const response = await testAxiosGet()
-//   }
-// })
+);
 
 const testApiSlice = createSlice({
   name: "testApi",
   initialState,
   reducers: {
+    getParamsID(state, action) {
+      console.log("ID ACION", action.payload);
+      state.getParamsId = action.payload;
+    },
+    getParam(state, action) {
+      state.getParams = action.payload;
+    },
     getURL(state, action) {
       state.getServerUrl = action.payload;
     },
