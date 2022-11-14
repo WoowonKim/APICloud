@@ -8,8 +8,8 @@ import HeaderToken from "./HeaderToken";
 
 interface type {
   getInfo: RequestTypeInfo | undefined;
-  setTestbodyInfo: Dispatch<SetStateAction<reBodyType[]>>;
-  testbodyInfo: reBodyType[];
+  setTestbodyInfo: Dispatch<SetStateAction<reBodyType | undefined>>;
+  testbodyInfo: reBodyType | undefined;
 }
 
 const ApiHeader = ({ getInfo, testbodyInfo, setTestbodyInfo }: type) => {
@@ -58,11 +58,7 @@ const ApiHeader = ({ getInfo, testbodyInfo, setTestbodyInfo }: type) => {
       </div>
       <div className="requestInfoBodySetting">
         <ChoiceText>Body</ChoiceText>
-        <ApiBody
-          getInfo={getInfo}
-          testbodyInfo={testbodyInfo}
-          setTestbodyInfo={setTestbodyInfo}
-        ></ApiBody>
+        <ApiBody getInfo={getInfo} testbodyInfo={testbodyInfo} setTestbodyInfo={setTestbodyInfo}></ApiBody>
       </div>
     </div>
   );

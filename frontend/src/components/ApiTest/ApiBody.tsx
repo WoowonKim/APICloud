@@ -1,41 +1,31 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import {
-  RequestBodyType,
-  RequestTypeInfo,
-} from "../../pages/CreateApi/ApisType";
+import { RequestBodyType, RequestTypeInfo } from "../../pages/CreateApi/ApisType";
 import { reBodyType } from "../../pages/TestApi";
 import { useAppDispatch } from "../../Store/hooks";
 import testApiSlice, { selectTestApi } from "../../Store/slice/testApi";
 import { ChoiceText } from "../main/ApiList";
-import {
-  HeaderContatinerList,
-  HeaderListInput,
-  HeaderListTitle,
-  HeaderListTitleCon,
-} from "./Headerheader";
+import { HeaderContatinerList, HeaderListInput, HeaderListTitle, HeaderListTitleCon } from "./Headerheader";
 
 interface type {
   getInfo: RequestTypeInfo | undefined;
-  setTestbodyInfo: Dispatch<SetStateAction<reBodyType[]>>;
-  testbodyInfo: reBodyType[];
+  setTestbodyInfo: Dispatch<SetStateAction<reBodyType | undefined>>;
+  testbodyInfo: reBodyType | undefined;
 }
 
 const ApiBody = ({ getInfo, testbodyInfo, setTestbodyInfo }: type) => {
   const [requestBody, setRequestBody] = useState<RequestBodyType>();
   const [test, setTest] = useState("");
-  const [bodyInfo, setBodyInfo] = useState([{}]);
+  const [bodyInfo, setBodyInfo] = useState({});
   const [inputBody, setInputBody] = useState("");
   const [newBodyInfo, setNewBodyInfo] = useState({});
   const info = useSelector(selectTestApi);
 
   useEffect(() => {
     if (getInfo) {
-      setRequestBody(
-        getInfo?.controllers[info.getControllerInfomation].apis[
-          info.getApisInfomation
-        ].requestBody
-      );
+      setRequestBody(getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].requestBody);
+      setTestbodyInfo({});
+      setBodyInfo({});
     }
   }, [getInfo, info.getControllerInfomation, info.getApisInfomation]);
 
@@ -46,8 +36,8 @@ const ApiBody = ({ getInfo, testbodyInfo, setTestbodyInfo }: type) => {
 
   const onSubmit = (e: any) => {
     e.preventDefault();
-    setBodyInfo([...bodyInfo, newBodyInfo]);
-    setTestbodyInfo([...testbodyInfo, newBodyInfo]);
+    setBodyInfo({ ...bodyInfo, ...newBodyInfo });
+    setTestbodyInfo({ ...testbodyInfo, ...newBodyInfo });
     setInputBody("");
   };
 
@@ -63,7 +53,7 @@ const ApiBody = ({ getInfo, testbodyInfo, setTestbodyInfo }: type) => {
               <form onSubmit={onSubmit}>
                 <HeaderListInput
                   type="text"
-                  onChange={e => {
+                  onChange={(e) => {
                     setInputBody(e.target.value);
                     setTest(it.name);
                   }}
