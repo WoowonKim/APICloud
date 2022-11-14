@@ -16,6 +16,8 @@ public interface GroupUserService {
 
     GroupUser getGroupUserByGroupAndUser(Group group, User user);
 
+    List<GroupUser> getGroupUserByGroup(Group group);
+
     @Transactional
     void deleteUser(Group group, User user);
 }

@@ -7,6 +7,7 @@ import com.web.apicloud.domain.entity.Docs;
 import com.web.apicloud.domain.entity.User;
 import com.web.apicloud.domain.vo.ControllerVO;
 import com.web.apicloud.domain.vo.DocVO;
+import com.web.apicloud.security.UserPrincipal;
 
 import java.util.List;
 
@@ -35,4 +36,6 @@ public interface DocsService {
     byte[] getCsvFile(List<ControllerVO> docVOByDocsId);
 
     void save(Docs doc);
+
+    void checkAuthority(UserPrincipal userPrincipal, String encryptedUrl);
 }
