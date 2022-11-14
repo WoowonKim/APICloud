@@ -20,13 +20,14 @@ import { useAppDispatch } from "../../Store/hooks";
 import { checkDataValidation } from "../../components/CreateApi/validationCheck";
 import ApiTable from "../../components/CreateApi/ApiTable/ApiTable";
 import SynchronizeModal from "../../components/CreateApi/SynchronizeModal/SynchronizeModal";
+import WarningModal from "../../components/CreateApi/WarningModal/WarningModal";
 
 const CreateApi = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { encryptedUrl } = useParams();
   const [authority, setAuthority] = useState<number>(0);
-  const [isSynchronizeModalVisible, setIsSynchronizeModal] = useState(false);
+  const [isSynchronizeModal, setIsSynchronizeModal] = useState(false);
   const [changeData, setChangeData] = useState();
   useEffect(() => {
     const checckAutority = async (encryptedUrl: string) => {
@@ -239,7 +240,7 @@ const CreateApi = () => {
     });
     setIsSynchronizeModal(false);
   }, []);
-  if (authority == 0) {
+  if (authority === 0) {
     return (
       <>
         <ErrorPage></ErrorPage>
@@ -291,7 +292,7 @@ const CreateApi = () => {
               <button
                 className="createApiButton"
                 onClick={() => {
-                  setIsSynchronizeModal(!isSynchronizeModalVisible);
+                  setIsSynchronizeModal(!isSynchronizeModal);
                 }}
               >
                 동기화
@@ -312,7 +313,7 @@ const CreateApi = () => {
               {isOpenExtractModal && (
                 <ExtractModal controllers={state.data}></ExtractModal>
               )}
-              {isSynchronizeModalVisible && (
+              {isSynchronizeModal && (
                 <SynchronizeModal
                   setIsSynchronizeModal={setIsSynchronizeModal}
                   setChangeData={setChangeData}

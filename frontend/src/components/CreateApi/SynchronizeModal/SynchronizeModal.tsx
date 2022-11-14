@@ -1,16 +1,21 @@
 import { faCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useSyncedStore } from "@syncedstore/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useAppDispatch } from "../../../Store/hooks";
-import { getSynchronizeFile } from "../../../Store/slice/apiDocsApi";
+import {
+  getSynchronizeApiDoc,
+  getSynchronizeFile,
+} from "../../../Store/slice/apiDocsApi";
 import {
   Backdrop,
   DialogBox,
   ModalContainer,
 } from "../ExtractModal/ExtractModal";
 import { store } from "../store";
+import { checkDataValidation } from "../validationCheck";
+import WarningModal from "../WarningModal/WarningModal";
 import "./SynchronizeModal.scss";
 
 interface Props {
@@ -24,6 +29,9 @@ const SynchronizeModal = ({ setIsSynchronizeModal, setChangeData }: Props) => {
   const [selectedControllerName, setSelectedControllerName] = useState("");
   const [selectedControllerIndex, setSelectedControllerIndex] = useState(-1);
   const [fileInfo, setFileInfo] = useState<any>();
+  const [isWarningModal, setIsWarningModal] = useState(false);
+  const [validationResult, setValidationResult] = useState<any>();
+  const [changeCode, setChangeCode] = useState<any>();
 
   const dispatch = useAppDispatch();
   const location = useLocation();
@@ -44,13 +52,42 @@ const SynchronizeModal = ({ setIsSynchronizeModal, setChangeData }: Props) => {
     }
     dispatch(
       getSynchronizeFile({ formData, docId: location.state?.data.docId })
-    ).then((res: any) => {
-      if (res.meta.requestStatus === "fulfilled") {
-        setChangeData(res.payload);
-        console.log(res.payload);
-      }
-    });
+    )
+      .then((res: any) => {
+        if (res.meta.requestStatus === "fulfilled") {
+          setChangeData(res.payload);
+          console.log(res.payload);
+        }
+      })
+      .catch((err: any) => {
+        console.log(err);
+      });
   };
+
+  const synchronizeApiDoc = () => {
+    dispatch(
+      getSynchronizeApiDoc({
+        docId: location.state?.data.docId,
+        detailRequest: {
+          detail: JSON.stringify(state.data[selectedControllerIndex]),
+        },
+      })
+    )
+      .then((res: any) => {
+        if (res.meta.requestStatus === "fulfilled") {
+          setChangeCode(res.payload);
+          console.log(res.payload);
+        }
+      })
+      .catch((err: any) => {
+        console.log(err);
+      });
+  };
+
+  useEffect(() => {
+    setChangeCode(undefined);
+    setIsWarningModal(false);
+  }, []);
   return (
     <ModalContainer>
       {!isFileInputModal ? (
@@ -82,6 +119,14 @@ const SynchronizeModal = ({ setIsSynchronizeModal, setChangeData }: Props) => {
                       icon={faCircle}
                       color={"#6FC7D1"}
                       className="synchronizeModalIcon"
+                      onClick={() => {
+                        setIsWarningModal(!isWarningModal);
+                        setSelectedControllerIndex(index);
+                        setSelectedControllerName(controller.name);
+                        setValidationResult(
+                          checkDataValidation([state.data[index]])
+                        );
+                      }}
                     />
                     <FontAwesomeIcon
                       icon={faCircle}
@@ -131,6 +176,16 @@ const SynchronizeModal = ({ setIsSynchronizeModal, setChangeData }: Props) => {
           setIsSynchronizeModal(false);
         }}
       />
+      {isWarningModal && (
+        <div className="synchronizeModalWarningModal">
+          <WarningModal
+            setIsWarningModal={setIsWarningModal}
+            validationResult={validationResult}
+            synchronizeApiDoc={synchronizeApiDoc}
+            changeCode={changeCode}
+          />
+        </div>
+      )}
     </ModalContainer>
   );
 };

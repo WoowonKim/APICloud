@@ -1,7 +1,4 @@
-import {
-  ControllerType,
-  PropertiesType,
-} from "./../../pages/CreateApi/ApisType";
+import { ControllerType } from "./../../pages/CreateApi/ApisType";
 export function checkDtoNameValidation(
   value: string,
   data: any,
@@ -237,7 +234,8 @@ export function checkRequiredValueValidation(type: string, item: any) {
     if (
       !item["name"].trim() &&
       item["properties"].length === 0 &&
-      !item["collectionType"]
+      !item["collectionType"] &&
+      item["type"] === "string"
     ) {
       return "delete";
     } else if (!item["name"].trim()) {
