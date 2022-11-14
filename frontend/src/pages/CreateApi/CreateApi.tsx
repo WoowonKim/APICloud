@@ -6,21 +6,20 @@ import { useSyncedStore } from "@syncedstore/react";
 import { connectDoc, store } from "../../components/CreateApi/store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "../../Store/store";
 import apiDocsApiSlice, {
   getApiDetail,
   setApiDetail,
 } from "../../Store/slice/apiDocsApi";
 import ExtractModal from "../../components/CreateApi/ExtractModal/ExtractModal";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { axiosGet } from "../../util/axiosUtil";
 import ErrorPage from "../ErrorPage";
 import { useAppDispatch } from "../../Store/hooks";
 import { checkDataValidation } from "../../components/CreateApi/validationCheck";
 import ApiTable from "../../components/CreateApi/ApiTable/ApiTable";
 import SynchronizeModal from "../../components/CreateApi/SynchronizeModal/SynchronizeModal";
-import syncedStore from "@syncedstore/core";
 
 const CreateApi = () => {
   const dispatch = useAppDispatch();
@@ -28,7 +27,7 @@ const CreateApi = () => {
   const { encryptedUrl } = useParams();
   const [authority, setAuthority] = useState<number>(0);
   const [isSynchronizeModalVisible, setIsSynchronizeModal] = useState(false);
-  const [storeData, setStoreData] = useState();
+  const [changeData, setChangeData] = useState();
   useEffect(() => {
     const checckAutority = async (encryptedUrl: string) => {
       return await axiosGet(`/docs/authority/${encryptedUrl}`);
@@ -316,6 +315,7 @@ const CreateApi = () => {
               {isSynchronizeModalVisible && (
                 <SynchronizeModal
                   setIsSynchronizeModal={setIsSynchronizeModal}
+                  setChangeData={setChangeData}
                 />
               )}
             </div>
