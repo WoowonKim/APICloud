@@ -1,4 +1,12 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { faX } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import apiDocsApiSlice from "../../../Store/slice/apiDocsApi";
@@ -19,9 +27,10 @@ const DependencyModal = (props: PropType) => {
   );
 
   const [dependencyInfo, setDependencyInfo] = useState<any>({});
-  const [selectedDependencies, setSelectedDependencies] = useState<Set<string>>(
-    new Set<string>()
+  const [selectedDependencies, setSelectedDependencies] = useState<string[]>(
+    []
   );
+  const [keyWord, setKeyWord] = useState("");
 
   useEffect(() => {
     dispatch(getApiCreationInfo()).then((res: any) => {
@@ -31,11 +40,25 @@ const DependencyModal = (props: PropType) => {
 
   useEffect(() => {
     if (props.dependencies) {
-      setSelectedDependencies(new Set(props.dependencies));
+      setSelectedDependencies([...props.dependencies]);
     }
   }, [props.dependencies]);
 
-  useEffect(() => {}, [props.dependencies, dependencyInfo]);
+  const itemsRef = useRef<Array<HTMLUListElement | null>>([]);
+  useEffect(() => {}, [dependencyInfo]);
+  useEffect(() => {
+    toggleHiddenList();
+  }, [selectedDependencies, keyWord]);
+
+  const toggleHiddenList = () => {
+    itemsRef.current.forEach((itemRef) => {
+      if (!itemRef?.children.length || itemRef?.children.length === 0) {
+        itemRef?.parentElement?.classList.add("hidden");
+      } else {
+        itemRef?.parentElement?.classList.remove("hidden");
+      }
+    });
+  };
 
   return (
     <ModalContainer>
@@ -43,44 +66,68 @@ const DependencyModal = (props: PropType) => {
         <div className="modalContainer">
           <div className="modalMain">
             <div>
-              <p>dependencies</p>
-              {dependencyInfo.length > 0 && (
+              <p className="dependencyModal-modalTitle">Dependency 선택</p>
+              <div className="dependencyModal-selectedList">
+                {selectedDependencies.map((selected: string) => (
+                  <div
+                    onClick={() => {
+                      setSelectedDependencies((old) => {
+                        const newList = old.filter((id) => id !== selected);
+                        return newList;
+                      });
+                    }}
+                    key={selected}
+                  >
+                    {selected}
+                    <FontAwesomeIcon icon={faX} size="2x" />
+                  </div>
+                ))}
                 <div>
-                  selected: {selectedDependencies}
-                  {dependencyInfo.map((info: any) => (
-                    <div key={info.name}>
-                      <p>{info.name}</p>
-                      <ul className="dependencyModal-dependencyList">
+                  <input
+                    type="text"
+                    value={keyWord}
+                    onChange={(e) => setKeyWord(e.target.value)}
+                    placeholder="검색어를 입력하세요."
+                  ></input>
+                </div>
+              </div>
+              {dependencyInfo.length > 0 && (
+                <div className="dependencyModal-dependencyContainer">
+                  {dependencyInfo.map((info: any, i: number) => (
+                    <div key={i}>
+                      <p className="dependencyModal-typeTitle">{info.name}</p>
+                      <ul
+                        className="dependencyModal-dependencyList"
+                        ref={(el) => (itemsRef.current[i] = el)}
+                      >
                         {info.values
                           .filter(
                             (dependency: any) =>
-                              !props.dependencies.includes(dependency)
+                              !props.dependencies.includes(dependency) &&
+                              !selectedDependencies.includes(dependency.id) &&
+                              (
+                                dependency.name +
+                                " " +
+                                dependency.description +
+                                " " +
+                                dependency.id
+                              )
+                                .toLowerCase()
+                                .includes(keyWord.toLowerCase())
                           )
                           .map((dependency: any) => (
                             <li
                               key={dependency.id}
-                              className={
-                                selectedDependencies.has(dependency.id)
-                                  ? "selected"
-                                  : ""
-                              }
                               onClick={() => {
-                                if (selectedDependencies.has(dependency.id)) {
-                                  setSelectedDependencies((old) => {
-                                    const newSet = new Set<string>(old);
-                                    newSet.delete(dependency.id);
-                                    return newSet;
-                                  });
-                                } else {
-                                  setSelectedDependencies((old) => {
-                                    const newSet = new Set<string>(old);
-                                    newSet.add(dependency.id);
-                                    return newSet;
-                                  });
-                                }
+                                setSelectedDependencies((old) => {
+                                  const newList = [...old];
+                                  newList.push(dependency.id);
+                                  return newList;
+                                });
                               }}
                             >
-                              {dependency.name}
+                              <p>{dependency.name}</p>
+                              <p>{dependency.description}</p>
                             </li>
                           ))}
                       </ul>
@@ -140,7 +187,7 @@ const ModalContainer = styled.div`
 
 const DialogBox = styled.dialog`
   width: 80%;
-  height: 80%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;

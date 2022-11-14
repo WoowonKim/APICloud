@@ -145,7 +145,6 @@ const ExtractModal = ({ controllers }: ExtractModalProps) => {
                   <div>Spring boot</div>
                 </li>
                 <div className={openIdx === 1 ? "open" : ""}>
-                  <div>{dependencies}</div>
                   <div>
                     <button
                       onClick={() => {
