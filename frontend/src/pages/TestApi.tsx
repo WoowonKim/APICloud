@@ -16,7 +16,7 @@ interface IHome {
   isDarkMode: boolean;
   toggleDarkMode: () => void;
 }
-
+export type reBodyType = {};
 const TestSide = styled.div`
   width: 20%;
   height: 91vh;
@@ -28,6 +28,7 @@ const TestApi = ({ isDarkMode, toggleDarkMode }: IHome) => {
   const [getInfo, setGetInfo] = useState<RequestTypeInfo>();
   const dispatch = useAppDispatch();
   const getDocsId = useAppSelector(mainApi);
+  const [testbodyInfo, setTestbodyInfo] = useState<reBodyType[]>([]);
 
   // 해당 API정보의 전체를 불러오기.
   useEffect(() => {
@@ -47,12 +48,20 @@ const TestApi = ({ isDarkMode, toggleDarkMode }: IHome) => {
         </TestSide>
         <div className="testMain">
           <div className="testInfomation">
-            <ApiInputUri getInfo={getInfo} />
+            <ApiInputUri
+              getInfo={getInfo}
+              testbodyInfo={testbodyInfo}
+              setTestbodyInfo={setTestbodyInfo}
+            />
           </div>
           <p className="apiHeaderMainTitle">Request</p>
           <div className="testSetting">
             <div className="testInfo">
-              <ApiHeader getInfo={getInfo} />
+              <ApiHeader
+                getInfo={getInfo}
+                testbodyInfo={testbodyInfo}
+                setTestbodyInfo={setTestbodyInfo}
+              />
             </div>
           </div>
           <p className="apiHeaderMainTitle">Response</p>

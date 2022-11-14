@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import {
   RequestBodyType,
   RequestTypeInfo,
 } from "../../pages/CreateApi/ApisType";
+import { reBodyType } from "../../pages/TestApi";
+import { useAppDispatch } from "../../Store/hooks";
 import testApiSlice, { selectTestApi } from "../../Store/slice/testApi";
 import { ChoiceText } from "../main/ApiList";
 import {
@@ -15,9 +17,11 @@ import {
 
 interface type {
   getInfo: RequestTypeInfo | undefined;
+  setTestbodyInfo: Dispatch<SetStateAction<reBodyType[]>>;
+  testbodyInfo: reBodyType[];
 }
 
-const ApiBody = ({ getInfo }: type) => {
+const ApiBody = ({ getInfo, testbodyInfo, setTestbodyInfo }: type) => {
   const [requestBody, setRequestBody] = useState<RequestBodyType>();
   const [test, setTest] = useState("");
   const [bodyInfo, setBodyInfo] = useState([{}]);
@@ -43,11 +47,9 @@ const ApiBody = ({ getInfo }: type) => {
   const onSubmit = (e: any) => {
     e.preventDefault();
     setBodyInfo([...bodyInfo, newBodyInfo]);
+    setTestbodyInfo([...testbodyInfo, newBodyInfo]);
     setInputBody("");
   };
-  useEffect(() => {
-    console.log("BodyInfo", bodyInfo);
-  }, [bodyInfo]);
 
   return (
     <>

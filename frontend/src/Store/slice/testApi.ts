@@ -3,11 +3,25 @@ import { Action } from "@remix-run/router";
 import { axiosGet } from "../../util/axiosUtil";
 import { RootState } from "../store";
 
-const initialState = {
+type bodyType = {
+  key: string;
+  value: string;
+};
+
+interface initType {
+  getControllerInfomation: number;
+  getApisInfomation: number;
+  getRequest: number;
+  getIsDarkMode: boolean;
+  getRequestBodyInfo: bodyType;
+}
+
+const initialState: initType = {
   getControllerInfomation: 0,
   getApisInfomation: 0,
   getRequest: 0,
   getIsDarkMode: false,
+  getRequestBodyInfo: { key: "", value: "" },
 };
 
 // API 조회 하기.
