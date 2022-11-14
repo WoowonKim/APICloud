@@ -3,9 +3,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useRef, useState } from "react";
 import Sidebar from "../components/ApiDocs/Sidebar";
 import "../components/ApiDocs/ApiDocs.scss";
-import ApiDocPaper from "../components/ApiDocs/ServerInform";
+import ServerInform from "../components/ApiDocs/ServerInform";
 import MakeToPDF from "../components/ApiDocs/MakeToPDF";
-import ApiDocPaper2 from "../components/ApiDocs/DetailInform";
+import DetailInform from "../components/ApiDocs/DetailInform";
 import { useDispatch } from "react-redux";
 import { getApiDoc } from "../Store/slice/mainApi";
 import { getApiDetail } from "../Store/slice/apiDocsApi";
@@ -28,11 +28,9 @@ const ApiDocs = () => {
   };
 
   // PDF로 변환하기
-  const pdf = MakeToPDF();
-
-  const onClick = async (e: any) => {
+  const converToPDF = async (e: any) => {
     e.preventDefault();
-    await pdf.viewWithPdf();
+    await MakeToPDF();
   };
 
   // DOC 기본 정보 가져오기
@@ -70,11 +68,14 @@ const ApiDocs = () => {
   useEffect(() => {
     dispatchGetApiDetail();
     dispatchGetApiDoc();
-    window.addEventListener("scroll", updateScroll);
     return () => {
       localStorage.removeItem("docId");
     };
   }, []);
+
+  useEffect(() => {
+    window.addEventListener("scroll", updateScroll);
+  }, [])
 
   useEffect(() => {
     if (docInform) {
@@ -105,23 +106,25 @@ const ApiDocs = () => {
           />
         </div>
         <div className="docBox">
-          <div className="doc1">
-            <div className="docTitleWrapper">
-              <h1 className="docTitle" ref={serverInformRef}>
-                {docInform?.docsName} 문서
-              </h1>
+          <div className="pdfDocArea">
+            <div className="doc1">
+              <div className="docTitleWrapper">
+                <h1 className="docTitle" ref={serverInformRef}>
+                  {docInform?.docsName} 문서
+                </h1>
+              </div>
+              <h2 className='serverInformTitle'>Server 정보</h2>
+              <ServerInform docInformArray={docInformArray} />
             </div>
-            <h2 className='serverInformTitle'>Server 정보</h2>
-            <ApiDocPaper docInformArray={docInformArray} />
+            <div className="doc2">
+              <DetailInform
+                detail={detail}
+                scrollPosition={scrollPosition}
+                ref={menuRef}
+              />
+            </div>
           </div>
-          <div className="doc2">
-            <ApiDocPaper2
-              detail={detail}
-              scrollPosition={scrollPosition}
-              ref={menuRef}
-            />
-          </div>
-          <button onClick={onClick}>pdf로 변환</button>
+          <button onClick={(e) => converToPDF(e)}>pdf로 변환</button>
         </div>
       </div>
     </div>
