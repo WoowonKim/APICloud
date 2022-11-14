@@ -134,11 +134,9 @@ const DtoModalTable = ({
     const getDepth2 =
       final && getDepth(index, final.properties, false, false, false, final);
     const getDepth3 = 3;
-    if ((getDepth3 && getDepth3 > 3) || getDepth3 === 3) {
-      for (let i = 1; i < getDepth3 - 2; i++) {
-        if (propertiesIndexList[i] !== -1) {
-          copyPath = copyPath.properties[propertiesIndexList[i]];
-        }
+    for (let i = 1; i < getDepth3 - 2; i++) {
+      if (propertiesIndexList[i] !== -1) {
+        copyPath = copyPath.properties[propertiesIndexList[i]];
       }
     }
 
