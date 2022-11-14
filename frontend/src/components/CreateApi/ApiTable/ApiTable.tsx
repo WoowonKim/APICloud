@@ -1,7 +1,7 @@
 import { faInfo, faRemove } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useSyncedStore } from "@syncedstore/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { PropertiesType } from "../../../pages/CreateApi/ApisType";
 import DtoInputModal from "../DtoInputModal/DtoInputModal";
 import SelectTypes from "../SelectTypes/SelectTypes";
@@ -51,6 +51,8 @@ const ApiTable = ({
   const [dtoData, setDtoData] = useState();
   const [currentDtoData, setCurrentDtoData] = useState();
   const [dtoExists, setDtoExists] = useState(false);
+  const [modalDepth, setModalDepth] = useState(2);
+
   const handelCellValue = (
     e: React.ChangeEvent<HTMLInputElement> | string,
     header: string,
@@ -293,6 +295,10 @@ const ApiTable = ({
     }
   };
 
+  useEffect(() => {
+    setModalDepth(2);
+  }, []);
+
   return (
     <div>
       {isModalVisible && (
@@ -314,6 +320,8 @@ const ApiTable = ({
           currentDtoData={currentDtoData}
           setFinal={setFinal}
           final={final}
+          setModalDepth={setModalDepth}
+          modalDepth={modalDepth}
         />
       )}
       <TableInfo

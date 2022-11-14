@@ -3,6 +3,7 @@ import {
   useReactTable,
   getCoreRowModel,
   flexRender,
+  RowData,
 } from "@tanstack/react-table";
 import React, { useEffect, useMemo, useState } from "react";
 import { PropertiesType } from "../../../pages/CreateApi/ApisType";
@@ -10,6 +11,13 @@ import "../ControllerAddModal/ControllerAddModal.scss";
 import { faInfo, faRemove } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SelectTypes from "../SelectTypes/SelectTypes";
+import { getDepth } from "../validationCheck";
+
+declare module "@tanstack/react-table" {
+  interface TableMeta<TData extends RowData> {
+    updateData: (rowIndex: number, columnId: string, value: unknown) => void;
+  }
+}
 
 // ControllerAddModal에서 받아오는 props의 type 설정
 interface Props {
@@ -18,14 +26,6 @@ interface Props {
   activeTab: number;
   setPropertiesIndexList: React.Dispatch<React.SetStateAction<number[]>>;
   propertiesIndexList: number[];
-  getDepth(
-    idx: number,
-    datas: any,
-    isAdd: boolean,
-    isNew: boolean,
-    isDelete: boolean,
-    path: any
-  ): number;
   setModalDepth: React.Dispatch<React.SetStateAction<number>>;
   modalDepth: number;
   path: PropertiesType;
@@ -37,7 +37,6 @@ const DtoModalTable = ({
   activeTab,
   setPropertiesIndexList,
   propertiesIndexList,
-  getDepth,
   setModalDepth,
   modalDepth,
   path,
@@ -48,6 +47,7 @@ const DtoModalTable = ({
     cell: function Cell({ getValue, row: { index }, column: { id }, table }) {
       const initialValue = getValue<string>();
       const [value, setValue] = useState<string>(initialValue);
+      const [checkNumber, setCheckNumber] = useState(2);
 
       const onBlur = (temp?: string) => {
         table.options.meta?.updateData(index, id, temp ? temp : value);
@@ -58,6 +58,7 @@ const DtoModalTable = ({
 
       useEffect(() => {
         setValue(initialValue);
+        setCheckNumber(2);
       }, [initialValue, modalDepth, data, index]);
 
       let copyPath = path;
@@ -86,7 +87,7 @@ const DtoModalTable = ({
           className="removeIcon"
           onClick={() =>
             final &&
-            getDepth(index, final.properties, false, false, true, final)
+            getDepth(index, data[index], false, false, true, final.properties)
           }
         />
       ) : id === "type" ? (
@@ -100,12 +101,20 @@ const DtoModalTable = ({
                 isCollection={true}
               />
             )}
-          <SelectTypes onBlur={onBlur} setValue={setValue} value={value} />
+          <SelectTypes
+            onBlur={onBlur}
+            setValue={setValue}
+            value={value}
+            modalDepth={modalDepth}
+          />
           {value === "Object" && (
             <FontAwesomeIcon
               icon={faInfo}
               className="infoIcon"
-              onClick={() => handleObject(index)}
+              onClick={() => {
+                setCheckNumber(3);
+                handleObject(index);
+              }}
             />
           )}
         </div>
@@ -124,25 +133,17 @@ const DtoModalTable = ({
     let copyPath = path;
     const getDepth2 =
       final && getDepth(index, final.properties, false, false, false, final);
-
-    if ((getDepth2 && getDepth2 > 3) || getDepth2 === 3) {
-      for (let i = 1; i < getDepth2 - 2; i++) {
-        if (propertiesIndexList[i] !== -1) {
-          copyPath = copyPath.properties[propertiesIndexList[i]];
-        }
+    const getDepth3 = 3;
+    for (let i = 1; i < getDepth3 - 2; i++) {
+      if (propertiesIndexList[i] !== -1) {
+        copyPath = copyPath.properties[propertiesIndexList[i]];
       }
     }
-    const newDepth = getDepth(
-      index,
-      copyPath.properties,
-      true,
-      true,
-      false,
-      final
-    );
-    setModalDepth(newDepth);
+
+    const newDepth = getDepth(index, final, true, true, false, copyPath);
+    setModalDepth(3);
     let properties = [...propertiesIndexList];
-    properties[newDepth - 2] = index;
+    properties[3 - 2] = index;
     setPropertiesIndexList(properties);
   };
   const columns = useMemo<ColumnDef<PropertiesType>[]>(
