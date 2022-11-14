@@ -8,7 +8,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Store/store";
-import apiDocsApiSlice, { getApiDetail } from "../../Store/slice/apiDocsApi";
+import apiDocsApiSlice, {
+  getApiDetail,
+  setApiDetail,
+} from "../../Store/slice/apiDocsApi";
 import ExtractModal from "../../components/CreateApi/ExtractModal/ExtractModal";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { axiosGet } from "../../util/axiosUtil";
@@ -16,12 +19,16 @@ import ErrorPage from "../ErrorPage";
 import { useAppDispatch } from "../../Store/hooks";
 import { checkDataValidation } from "../../components/CreateApi/validationCheck";
 import ApiTable from "../../components/CreateApi/ApiTable/ApiTable";
+import SynchronizeModal from "../../components/CreateApi/SynchronizeModal/SynchronizeModal";
+import syncedStore from "@syncedstore/core";
 
 const CreateApi = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { encryptedUrl } = useParams();
   const [authority, setAuthority] = useState<number>(0);
+  const [isSynchronizeModalVisible, setIsSynchronizeModal] = useState(false);
+  const [storeData, setStoreData] = useState();
   useEffect(() => {
     const checckAutority = async (encryptedUrl: string) => {
       return await axiosGet(`/docs/authority/${encryptedUrl}`);
@@ -199,13 +206,39 @@ const CreateApi = () => {
   };
   // 데이터 확인 용 로그
   console.log(JSON.parse(JSON.stringify(state.data)));
-  const location = useLocation();
   useEffect(() => {
     dispatch(getApiDetail({ docId: encryptedUrl })).then((res: any) => {
       if (res.meta.requestStatus === "fulfilled") {
-        console.log(res.payload);
+        const controllers = JSON.parse(res.payload.detail);
+        if (controllers && controllers.controllers.length > 0) {
+          if (state.data.length === 0) {
+            for (let item of controllers.controllers) {
+              state.data.push(item);
+            }
+          } else if (state.data.length !== controllers.controllers.length) {
+            dispatch(
+              setApiDetail({
+                encryptedUrl: localStorage.getItem("docId"),
+                detailRequest: {
+                  detail: JSON.stringify({
+                    server: { dependencies: [] },
+                    controllers: state.data,
+                  }),
+                },
+              })
+            )
+              .then((res: any) => {
+                const controllers2 = JSON.parse(res.payload.detail);
+                for (let item of controllers2.controllers) {
+                  state.data.push(item);
+                }
+              })
+              .catch((err: any) => console.log(err));
+          }
+        }
       }
     });
+    setIsSynchronizeModal(false);
   }, []);
   if (authority == 0) {
     return (
@@ -231,17 +264,41 @@ const CreateApi = () => {
             <p className="apiDocsTitleText">APICloud API 명세서</p>
             <div className="buttonContainer">
               <button
+                className="createApiButton"
                 onClick={() => {
                   const test = checkDataValidation(state.data);
                   // 데이터 확인용 로그
                   console.log(test);
+                  dispatch(
+                    setApiDetail({
+                      encryptedUrl: localStorage.getItem("docId"),
+                      detailRequest: {
+                        detail: JSON.stringify({
+                          server: { dependencies: [] },
+                          controllers: state.data,
+                        }),
+                      },
+                    })
+                  )
+                    .then((res: any) => {
+                      console.log(res);
+                    })
+                    .catch((err: any) => console.log(err));
                 }}
               >
                 테스트
               </button>
-              <button>공유</button>
-              <button>동기화</button>
+              <button className="createApiButton">공유</button>
               <button
+                className="createApiButton"
+                onClick={() => {
+                  setIsSynchronizeModal(!isSynchronizeModalVisible);
+                }}
+              >
+                동기화
+              </button>
+              <button
+                className="createApiButton"
                 type="button"
                 onClick={() =>
                   dispatch(
@@ -255,6 +312,11 @@ const CreateApi = () => {
               </button>
               {isOpenExtractModal && (
                 <ExtractModal controllers={state.data}></ExtractModal>
+              )}
+              {isSynchronizeModalVisible && (
+                <SynchronizeModal
+                  setIsSynchronizeModal={setIsSynchronizeModal}
+                />
               )}
             </div>
           </div>

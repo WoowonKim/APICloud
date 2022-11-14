@@ -251,14 +251,14 @@ const ExtractModal = ({ controllers }: ExtractModalProps) => {
 
 export default ExtractModal;
 
-const ModalContainer = styled.div`
+export const ModalContainer = styled.div`
   width: 100%;
   position: relative;
   top: 1rem;
   right: 0px;
 `;
 
-const DialogBox = styled.dialog`
+export const DialogBox = styled.dialog`
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -271,7 +271,7 @@ const DialogBox = styled.dialog`
   z-index: 10000;
 `;
 
-const Backdrop = styled.div`
+export const Backdrop = styled.div`
   width: 100%;
   height: 100%;
   position: fixed;

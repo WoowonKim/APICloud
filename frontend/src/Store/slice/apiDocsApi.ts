@@ -88,6 +88,21 @@ export const setApiDetail: any = createAsyncThunk(
   }
 );
 
+export const getSynchronizeFile: any = createAsyncThunk(
+  "apiDocsApi/getChangeCode",
+  async (args: any, { rejectWithValue }) => {
+    try {
+      const response = await axiosPost(
+        `synchronize/${args.docId}`,
+        args.formData
+      );
+      return response.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response);
+    }
+  }
+);
+
 const apiDocsApiSlice = createSlice({
   name: "mainApi",
   initialState,
@@ -134,6 +149,13 @@ const apiDocsApiSlice = createSlice({
     },
     [setApiDetail.rejected]: (state, action) => {
       console.log("setApiDetail rejected", action.payload);
+    },
+    [getSynchronizeFile.fulfilled]: (state, action) => {
+      if (action.meta.requestStatus === "fulfilled") {
+      }
+    },
+    [getSynchronizeFile.rejected]: (state, action) => {
+      console.log("getSynchronizeFile rejected", action.payload);
     },
   },
 });
