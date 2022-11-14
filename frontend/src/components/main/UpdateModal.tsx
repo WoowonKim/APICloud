@@ -32,6 +32,9 @@ const UpdateModal = () => {
   const isOpenUpdateModal = useSelector(
     (state: RootState) => state.mainApi.isOpenUpdateModal
   );
+  const encryptedUrl = useSelector(
+    (state: RootState) => state.mainApi.encryptedUrl
+  );
 
   const dispatch = useDispatch();
 
@@ -83,7 +86,7 @@ const UpdateModal = () => {
 
   useEffect(() => {
     if (docId > 0) {
-      dispatch(getApiDoc({ docId: docId })).then((res: any) => {
+      dispatch(getApiDoc({ docId: encryptedUrl })).then((res: any) => {
         if (res.meta.requestStatus === "fulfilled") {
           setDocsName(res.payload.docsName);
           setServerUrl(res.payload.serverUrl);
