@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Action } from "@remix-run/router";
-import { type } from "os";
 import { axiosGet } from "../../util/axiosUtil";
 import { RootState } from "../store";
 
@@ -26,17 +25,14 @@ const initialState: initType = {
 };
 
 // API 조회 하기.
-export const getApiRequestInfo: any = createAsyncThunk(
-  "testApi/getApiRequestInfo",
-  async (args: any, { rejectWithValue }) => {
-    try {
-      const response = await axiosGet(`apis/${args.docId}`);
-      return response.data;
-    } catch (err: any) {
-      return rejectWithValue(err.response);
-    }
+export const getApiRequestInfo: any = createAsyncThunk("testApi/getApiRequestInfo", async (args: any, { rejectWithValue }) => {
+  try {
+    const response = await axiosGet(`apis/${args.docId}`);
+    return response.data;
+  } catch (err: any) {
+    return rejectWithValue(err.response);
   }
-);
+});
 
 const testApiSlice = createSlice({
   name: "testApi",
