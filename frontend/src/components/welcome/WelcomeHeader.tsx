@@ -8,10 +8,7 @@ const WelcomeHeader = () => {
         <div className="logo">API Cloud</div>
         <div className="buttonWrapper">
           <div className="signIn">
-            {/* <a href="http://localhost:8005/api/oauth2/authorize/google?redirect_uri=http://localhost:3000/oauth2/redirect"> */}
-            <a href="http://k7b205.p.ssafy.io:8005/api/oauth2/authorize/google?redirect_uri=https://apiclouds.net/oauth2/redirect">
-              구글 로그인
-            </a>
+            <a href={process.env.REACT_APP_GOOGLE_OAUTH2}>구글 로그인</a>
           </div>
           <div className="signIn">깃헙 로그인</div>
           <div className="signUp">회원가입</div>
