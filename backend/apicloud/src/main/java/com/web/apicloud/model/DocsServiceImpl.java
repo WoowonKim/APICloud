@@ -17,6 +17,8 @@ import com.web.apicloud.domain.vo.ControllerVO;
 import com.web.apicloud.domain.vo.DocVO;
 import com.web.apicloud.domain.vo.ServerVO;
 import com.web.apicloud.exception.NotFoundException;
+import com.web.apicloud.exception.UnauthorizedException;
+import com.web.apicloud.security.UserPrincipal;
 import com.web.apicloud.util.SHA256;
 import com.web.apicloud.util.TextUtils;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,7 @@ import org.springframework.stereotype.Service;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -214,5 +217,13 @@ public class DocsServiceImpl implements DocsService {
         });
 
         return csvContent.toString().getBytes();
+    }
+
+    public void checkAuthority(UserPrincipal userPrincipal, String encryptedUrl) {
+        Docs doc = findByEncryptUrl(encryptedUrl);
+        List<GroupUser> groupUsers = groupUserRepository.findByGroup(doc.getGroup());
+        if (userPrincipal == null || groupUsers.stream().noneMatch(groupUser -> Objects.equals(groupUser.getUser().getId(), userPrincipal.getId()))) {
+            throw new UnauthorizedException("허가되지 않은 사용자입니다.");
+        }
     }
 }
