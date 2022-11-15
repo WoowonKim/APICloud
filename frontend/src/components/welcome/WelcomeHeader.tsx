@@ -10,7 +10,9 @@ const WelcomeHeader = () => {
           <div className="signIn">
             <a href={process.env.REACT_APP_GOOGLE_OAUTH2}>구글 로그인</a>
           </div>
-          <div className="signIn">깃헙 로그인</div>
+          <div className="signIn">
+            <a href={process.env.REACT_APP_GITHUB_OAUTH2}>깃허브 로그인</a>
+          </div>
           <div className="signUp">회원가입</div>
         </div>
       </div>
