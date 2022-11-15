@@ -2,7 +2,7 @@
 
 ## **springboot**
 
-> **Dockerfile**
+> ### **Dockerfile**
 
 ```dockerfile
 FROM openjdk:11 AS builder
@@ -36,7 +36,7 @@ CMD ["java","-jar","/apicloud.jar"]
    - ※ EXPOSE는 컨테이너에 포트를 직접 연결해주는 기능을 하지 않고, 연결 포트가 무엇인지 알려주는 명시적인 역할을 할뿐 기능은 없다 => 실제 포트를 연결하는 것은 docker run에서 -p를 통해서 설정하는 것임
 8. 컨테이너 환경에서 apicloud.jar를 실행
 
-> **MySQL 설정**
+> ### **MySQL 설정**
 
 - src/main/resourse/application.properties
 

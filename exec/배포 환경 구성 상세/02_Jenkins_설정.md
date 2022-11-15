@@ -1,6 +1,6 @@
 # 02. Jenkins 설정
 
-> **젠킨스 컨테이너 생성**
+> ### **젠킨스 컨테이너 생성**
 
 - docker-compose.yml 파일
 
@@ -42,7 +42,7 @@ sudo docker logs jenkins
   - http://도메인:9090 접속
   - 플러그인 설치
 
-> **Jenkins plugin 설치**
+> ### **Jenkins plugin 설치**
 
 - 도메인:9090 포트로 접속 후 Admin password 비밀번호를 입력
 
@@ -144,7 +144,7 @@ sudo docker logs jenkins
   apt install docker-ce docker-ce-cli containerd.io docker-compose
   ```
 
-> **jenkins 도커 이미지 빌드하기**
+> ### **jenkins 도커 이미지 빌드하기**
 
 - jenkins 빌드 구성<br>
 
