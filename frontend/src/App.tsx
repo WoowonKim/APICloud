@@ -13,6 +13,7 @@ import { darkTheme, lightTheme } from "./theme";
 import { useAppDispatch, useAppSelector } from "./Store/hooks";
 import testApiSlice from "./Store/slice/testApi";
 import { selectUser } from "./Store/slice/userSlice";
+import { NotionOAuth2RedirectHandler } from "./components/CreateApi/NotionOAuth2RedirectHandler";
 
 const ModeChange = styled.div`
   position: absolute;
@@ -40,6 +41,10 @@ const App = () => {
             <Route
               path="/oauth2/redirect/"
               element={<OAuth2RedirectHandler />}
+            ></Route>
+            <Route
+              path="/oauth2/notion"
+              element={<NotionOAuth2RedirectHandler />}
             ></Route>
             <Route path="/welcome" element={<Welcome />} />
             <Route path="/createApi/:encryptedUrl" element={<CreateApi />} />
