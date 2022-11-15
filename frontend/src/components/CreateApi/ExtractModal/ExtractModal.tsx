@@ -25,6 +25,18 @@ type DetailType = {
   controllers: ControllerType[];
 };
 
+export type DependencyType = {
+  id: string;
+  name: string;
+  fixed: boolean;
+};
+
+const web = {
+  id: "web",
+  name: "Spring Web",
+  fixed: true,
+} as DependencyType;
+
 const ExtractModal = ({ controllers }: ExtractModalProps) => {
   const NOTION_URL =
     "https://great-haircut-17f.notion.site/APICloud-notion-template-24e0ac07d6e241f692aaaac2912b6732";
@@ -38,18 +50,24 @@ const ExtractModal = ({ controllers }: ExtractModalProps) => {
   const [openIdx, setOpenIdx] = useState(0);
   const [notionDBId, setNotionDBId] = useState("");
   const [notionToken, setNotionToken] = useState("");
-  const [dependencies, setDependencies] = useState<string[]>([]);
+  const [dependencies, setDependencies] = useState<DependencyType[]>([]);
 
   const isOpenDependencyModal = useSelector(
     (state: RootState) => state.apiDocsApi.isOpenDependencyModal
   );
 
   useEffect(() => {
-    const stringDependencies = localStorage.getItem("dependencies");
+    const stringDependencies = localStorage.getItem(
+      `${encryptedUrl}_dependencies`
+    );
+    const localDependencies: DependencyType[] = [];
     if (stringDependencies !== null) {
-      const localDependencies = JSON.parse(stringDependencies);
-      setDependencies(localDependencies);
+      localDependencies.push(JSON.parse(stringDependencies));
     }
+    if (localDependencies.every((dep: DependencyType) => dep.id !== web.id)) {
+      localDependencies.push(web);
+    }
+    setDependencies(localDependencies);
   }, []);
 
   const prepareExtraction = (extract: () => void) => {
@@ -80,10 +98,14 @@ const ExtractModal = ({ controllers }: ExtractModalProps) => {
   };
 
   const extractSpringBoot = () => {
+    const listDependencies = Array.from(
+      dependencies,
+      (v: DependencyType) => v.id
+    );
     dispatch(
       getSpringBoot({
         encryptedUrl: encryptedUrl,
-        springExtractRequest: { dependencies: dependencies },
+        springExtractRequest: { dependencies: listDependencies },
       })
     ).then((res: any) => {
       if (res.meta.requestStatus !== "fulfilled") {

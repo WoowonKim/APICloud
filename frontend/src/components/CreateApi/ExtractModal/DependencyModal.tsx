@@ -8,28 +8,33 @@ import React, {
   useState,
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import apiDocsApiSlice from "../../../Store/slice/apiDocsApi";
 import { getApiCreationInfo } from "../../../Store/slice/mainApi";
 import { RootState } from "../../../Store/store";
 import "./DependencyModal.scss";
+import { DependencyType } from "./ExtractModal";
 
 interface PropType {
-  dependencies: string[];
-  setDependencies: Dispatch<SetStateAction<string[]>>;
+  dependencies: DependencyType[];
+  setDependencies: Dispatch<SetStateAction<DependencyType[]>>;
 }
 
 const DependencyModal = (props: PropType) => {
+  const { encryptedUrl } = useParams();
   const dispatch = useDispatch();
 
   const isOpenDependencyModal = useSelector(
     (state: RootState) => state.apiDocsApi.isOpenDependencyModal
   );
 
+  const itemsRef = useRef<Array<HTMLUListElement | null>>([]);
+
   const [dependencyInfo, setDependencyInfo] = useState<any>({});
-  const [selectedDependencies, setSelectedDependencies] = useState<string[]>(
-    []
-  );
+  const [selectedDependencies, setSelectedDependencies] = useState<
+    DependencyType[]
+  >([]);
   const [keyWord, setKeyWord] = useState("");
 
   useEffect(() => {
@@ -44,7 +49,6 @@ const DependencyModal = (props: PropType) => {
     }
   }, [props.dependencies]);
 
-  const itemsRef = useRef<Array<HTMLUListElement | null>>([]);
   useEffect(() => {}, [dependencyInfo]);
   useEffect(() => {
     toggleHiddenList();
@@ -68,20 +72,29 @@ const DependencyModal = (props: PropType) => {
             <div>
               <p className="dependencyModal-modalTitle">Dependency 선택</p>
               <div className="dependencyModal-selectedList">
-                {selectedDependencies.map((selected: string) => (
-                  <div
-                    onClick={() => {
-                      setSelectedDependencies((old) => {
-                        const newList = old.filter((id) => id !== selected);
-                        return newList;
-                      });
-                    }}
-                    key={selected}
-                  >
-                    {selected}
-                    <FontAwesomeIcon icon={faX} size="2x" />
-                  </div>
-                ))}
+                {selectedDependencies &&
+                  selectedDependencies.map((selected) => (
+                    <div
+                      onClick={
+                        selected.fixed
+                          ? () => {}
+                          : () => {
+                              setSelectedDependencies((old) => {
+                                const newList = old.filter(
+                                  (dependency) => dependency.id !== selected.id
+                                );
+                                return newList;
+                              });
+                            }
+                      }
+                      key={selected.id}
+                    >
+                      {selected.name}
+                      {selected.fixed || (
+                        <FontAwesomeIcon icon={faX} size="2x" />
+                      )}
+                    </div>
+                  ))}
                 <div>
                   <input
                     type="text"
@@ -103,8 +116,10 @@ const DependencyModal = (props: PropType) => {
                         {info.values
                           .filter(
                             (dependency: any) =>
-                              !props.dependencies.includes(dependency) &&
-                              !selectedDependencies.includes(dependency.id) &&
+                              selectedDependencies.every(
+                                (selectedDep) =>
+                                  selectedDep.id !== dependency.id
+                              ) &&
                               (
                                 dependency.name +
                                 " " +
@@ -121,7 +136,11 @@ const DependencyModal = (props: PropType) => {
                               onClick={() => {
                                 setSelectedDependencies((old) => {
                                   const newList = [...old];
-                                  newList.push(dependency.id);
+                                  newList.push({
+                                    id: dependency.id,
+                                    name: dependency.name,
+                                    fixed: false,
+                                  });
                                   return newList;
                                 });
                               }}
@@ -139,7 +158,7 @@ const DependencyModal = (props: PropType) => {
                 onClick={() => {
                   const dependenciesArr = Array.from(selectedDependencies);
                   localStorage.setItem(
-                    "dependencies",
+                    `${encryptedUrl}_dependencies`,
                     JSON.stringify(dependenciesArr)
                   );
                   props.setDependencies(dependenciesArr);
