@@ -8,6 +8,7 @@ import com.web.apicloud.domain.entity.Group;
 import com.web.apicloud.domain.vo.ApiVO;
 import com.web.apicloud.domain.vo.ControllerVO;
 import com.web.apicloud.domain.vo.PropertyVO;
+import com.web.apicloud.domain.vo.ResponseVO;
 import com.web.apicloud.exception.NotFoundException;
 import com.web.apicloud.model.parsing.ClassUpdateService;
 import com.web.apicloud.model.parsing.ParsingService;
@@ -73,11 +74,11 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
         groupSecretKey = group.getGroupSecretKey();
 
         Map<String, List<String>> getFileCode = s3Service.getFile(detailVO.getName(), null, groupSecretKey);
-        if (getFileCode == null) new NotFoundException(NOT_FOUND_FILE);
+        if (getFileCode == null) throw new NotFoundException(NOT_FOUND_FILE);
         List<String> lines = getFileCode.get("code");
         String key = StringUtils.removeStart(StringUtils.removeEnd(String.valueOf(getFileCode.get(IMPORT)), "]"), "[");
         System.out.println(lines);
-        if (lines == null) new NotFoundException(NOT_FOUND_FILE);
+        if (lines == null) throw new NotFoundException(NOT_FOUND_FILE);
 
         codeList.add(CodeResponse.builder().name(detailVO.getName()).importPackage(key).code(lines).build());
         importList.add(new HashMap<>());
@@ -200,14 +201,14 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
                         if (!requestFlag) {
                             if (stack.isEmpty()) {
                                 responseFlag = false;
-                                PropertyVO responseBody = detailApiVO.getResponses().get("success").getResponseBody();
-                                if (responseBody == null) {
+                                ResponseVO responseBody = detailApiVO.getResponses().get("success");
+                                if (responseBody == null || responseBody.getResponseBody() == null) {
                                     codeList.get(0).getCode().set(start, codeList.get(0).getCode().get(start).replace(response, ""));
                                 } else {
-                                    codeList.get(0).getCode().set(start, codeList.get(0).getCode().get(start).replace(response, responseBody.getDtoName()));
+                                    codeList.get(0).getCode().set(start, codeList.get(0).getCode().get(start).replace(response, responseBody.getResponseBody().getDtoName()));
                                 }
                                 // TODO : response CLass 바꾸러 가기,  import 추가
-                                classUpdateService.updateObject(groupSecretKey, responseBody, 0);
+                                classUpdateService.updateObject(groupSecretKey, responseBody.getResponseBody(), 0);
                                 methodNameFlag = true;
                             }
                         }

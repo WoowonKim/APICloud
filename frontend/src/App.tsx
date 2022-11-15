@@ -10,8 +10,9 @@ import ErrorPage from "./pages/ErrorPage";
 import GlobalStyles from "./GlobalStyles";
 import styled, { ThemeProvider } from "styled-components";
 import { darkTheme, lightTheme } from "./theme";
-import { useAppDispatch } from "./Store/hooks";
+import { useAppDispatch, useAppSelector } from "./Store/hooks";
 import testApiSlice from "./Store/slice/testApi";
+import { selectUser } from "./Store/slice/userSlice";
 
 const ModeChange = styled.div`
   position: absolute;
@@ -24,44 +25,58 @@ const ModeChange = styled.div`
 const App = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const dispatch = useAppDispatch();
+  const currentUser = useAppSelector(selectUser);
   const toggleDarkMode = () => {
     setIsDarkMode((prev) => !prev);
     dispatch(testApiSlice.actions.setGlobalDarkMode(!isDarkMode));
   };
-  return (
-    <>
-      <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
-        <GlobalStyles />
-        <Routes>
-          <Route path="/" element={<Main />} />
-          <Route
-            path="/oauth2/redirect/"
-            element={<OAuth2RedirectHandler />}
-          ></Route>
-          <Route path="/welcome" element={<Welcome />} />
-          <Route path="/createApi/:encryptedUrl" element={<CreateApi />} />
-          <Route path="/apiDocs/:encryptedUrl" element={<ApiDocs />} />
-          <Route
-            path="/testApi"
-            element={
-              <TestApi
-                isDarkMode={isDarkMode}
-                toggleDarkMode={toggleDarkMode}
-              />
-            }
-          />
-          <Route path="/*" element={<ErrorPage />} />
-        </Routes>
-        <ModeChange
-          onClick={() => {
-            toggleDarkMode();
-          }}
-        >
-          {isDarkMode ? <p>라이트 모드</p> : <p>다크 모드</p>}
-        </ModeChange>
-      </ThemeProvider>
-    </>
-  );
+  if (window.localStorage.getItem("token")) {
+    return (
+      <>
+        <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
+          <GlobalStyles />
+          <Routes>
+            <Route path="/" element={<Main />} />
+            <Route
+              path="/oauth2/redirect/"
+              element={<OAuth2RedirectHandler />}
+            ></Route>
+            <Route path="/welcome" element={<Welcome />} />
+            <Route path="/createApi/:encryptedUrl" element={<CreateApi />} />
+            <Route path="/apiDocs/:encryptedUrl" element={<ApiDocs />} />
+            <Route
+              path="/testApi"
+              element={
+                <TestApi
+                  isDarkMode={isDarkMode}
+                  toggleDarkMode={toggleDarkMode}
+                />
+              }
+            />
+            <Route path="/*" element={<ErrorPage />} />
+          </Routes>
+          <ModeChange
+            onClick={() => {
+              toggleDarkMode();
+            }}
+          >
+            {isDarkMode ? <p>라이트 모드</p> : <p>다크 모드</p>}
+          </ModeChange>
+        </ThemeProvider>
+      </>
+    );
+  } else {
+    return (
+      <Routes>
+        <Route path="/" element={<Welcome />} />
+        <Route
+          path="/oauth2/redirect/"
+          element={<OAuth2RedirectHandler />}
+        ></Route>
+        <Route path="/*" element={<ErrorPage />} />
+      </Routes>
+    );
+  }
 };
 
 export default App;

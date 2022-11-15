@@ -15,7 +15,7 @@
 
 .apiDocscontainer {
   display: grid;
-  grid-template-columns: 2fr 8fr;
+  grid-template-columns: 1fr 7fr 2fr;
   height: 100vh;
   .apiDocsTitleText {
     font-size: 2em;
@@ -23,7 +23,7 @@
 }
 
 .apiDocsMaincontainer {
-  margin: 0 50px 0 0;
+  margin: 0 20px 0 0;
 }
 
 .titleContainer {
@@ -54,7 +54,7 @@
 
 .infoContainer {
   display: flex;
-  margin: 0 0 50px 90px;
+  margin: 20px 0 50px 90px;
   div {
     margin-right: 3rem;
     p {
@@ -123,5 +123,69 @@
     border-bottom: 5px solid #3a00e5;
     font-size: 1.1em;
     font-weight: bold;
+  }
+}
+
+.rightSideContainer {
+  margin: 50px 0 20px 0;
+  max-width: 25rem;
+}
+
+.createApiTitle {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin: 20px 0 10px 0;
+}
+
+.warningModalCodeBlockContainer {
+  margin-top: 20px;
+}
+
+.createApiTabContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.createApiTabContainer {
+  display: flex;
+  margin: 20px 5px;
+  overflow-x: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  .createApiTabItem {
+    font-size: 0.8em;
+    &:hover {
+      opacity: 0.7;
+      transition: all 300ms ease-in;
+    }
+  }
+  .selectedTabItem {
+    background-color: rgba(39, 127, 195, 0.8);
+    color: white;
+    border-radius: 10px;
+    padding: 7px 10px;
+    font-weight: bold;
+    font-size: 1em;
+  }
+}
+
+.createApiSynchronizeTitle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+.createApiCloseButton {
+  display: flex;
+  text-align: end;
+  justify-content: flex-end;
+  align-items: flex-end;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  &:hover {
+    cursor: pointer;
   }
 }

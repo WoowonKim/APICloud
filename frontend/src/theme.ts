@@ -13,7 +13,7 @@ export const lightTheme: DefaultTheme = {
   color: "#000000",
   bgColor: "#ffffff",
   border: "none",
-  startBgColor: "#e4effa",
+  startBgColor: "#DFF6F5",
   listBgColor: "#ffffff",
   sideBgClodr: "#e4effa",
 };

@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Action } from "@remix-run/router";
 import { axiosGet } from "../../util/axiosUtil";
+import { testAxiosGet } from "../../util/tesxAxiosUtil";
 import { RootState } from "../store";
 
 type bodyType = {
@@ -14,6 +15,11 @@ interface initType {
   getRequest: number;
   getIsDarkMode: boolean;
   getRequestBodyInfo: bodyType;
+  getServerUrl: string;
+  getContextUrl: string;
+  getParams: string;
+  getParamsId: string;
+  getToken: string;
 }
 
 const initialState: initType = {
@@ -22,6 +28,11 @@ const initialState: initType = {
   getRequest: 0,
   getIsDarkMode: false,
   getRequestBodyInfo: { key: "", value: "" },
+  getServerUrl: "",
+  getContextUrl: "",
+  getParams: "",
+  getParamsId: "",
+  getToken: "",
 };
 
 // API 조회 하기.
@@ -38,9 +49,24 @@ const testApiSlice = createSlice({
   name: "testApi",
   initialState,
   reducers: {
+    getTokenInfo(state, action) {
+      state.getToken = action.payload;
+    },
+    getParamsID(state, action) {
+      console.log("ID ACION", action.payload);
+      state.getParamsId = action.payload;
+    },
+    getParam(state, action) {
+      state.getParams = action.payload;
+    },
+    getURL(state, action) {
+      state.getServerUrl = action.payload;
+    },
+    getContext(state, action) {
+      state.getContextUrl = action.payload;
+    },
     setGlobalDarkMode(state, action) {
       console.log("ACTION ->", action.payload);
-
       state = action.payload;
     },
     addController(state, action) {

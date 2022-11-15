@@ -53,9 +53,9 @@ public class SynchronizeDocServiceImpl implements SynchronizeDocService {
 
         groupSecretKey = group.getGroupSecretKey();
         Map<String, List<String>> getFindFile = s3Service.getFile(synchronizeRequest.getName(), file, groupSecretKey);
-        if (getFindFile == null) return null;
+        if (getFindFile == null) throw new NotFoundException(NOT_FOUND_CONTROLLER);
         List<String> lines = getFindFile.get("code");
-        if (lines == null) return null;
+        if (lines == null) throw new NotFoundException(NOT_FOUND_CONTROLLER);
 
         String value = null;
         int i = 0;
@@ -101,7 +101,7 @@ public class SynchronizeDocServiceImpl implements SynchronizeDocService {
 
         DocVO detailVO = objectMapper.readValue(doc.getDetail(), DocVO.class);
         if (detailVO.getControllers().size() <= synchronizeRequest.getControllerId())
-            new NotFoundException(NOT_FOUND_CONTROLLER);
+            throw new NotFoundException(NOT_FOUND_CONTROLLER);
         ControllerVO original = detailVO.getControllers().get(synchronizeRequest.getControllerId());
         return compareService.compareControllerVO(original, controllerVO);
     }
@@ -176,8 +176,10 @@ public class SynchronizeDocServiceImpl implements SynchronizeDocService {
                 if (requestBody != -1) {
                     String[] tokens = request.split(" ");
                     apiDetail.setRequestBody(classParsingService.getBody(groupSecretKey, tokens[tokens.length - 2], "request"));
-                    apiDetail.getRequestBody().setRequired(parsingService.getRequired(request));
-                    apiDetail.getRequestBody().setName(tokens[tokens.length - 1].substring(0, tokens[tokens.length - 1].length() - 1));
+                    if (apiDetail.getRequestBody() != null) {
+                        apiDetail.getRequestBody().setRequired(parsingService.getRequired(request));
+                        apiDetail.getRequestBody().setName(tokens[tokens.length - 1].substring(0, tokens[tokens.length - 1].length() - 1));
+                    }
                 }
             }
         }

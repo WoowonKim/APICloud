@@ -38,15 +38,19 @@ export const NoChoiceText = styled.span`
 
 const ApiListContent = styled.div`
   margin-top: 10px;
-  padding: 10px;
+  // padding: 10px;
   background-color: ${(props) => props.theme.startBgColor};
-  margin-bottom: 30px;
+  // margin-bottom: 30px;
 `;
 const ApiList = () => {
   const [apiList, setApiList] = useState(0);
   const [apiDocList, setApiDocList] = useState<ApiDocType[] | []>([]);
-  const isDocCreated = useSelector((state: RootState) => state.mainApi.isDocCreated);
-  const isDocUpdated = useSelector((state: RootState) => state.mainApi.isDocUpdated);
+  const isDocCreated = useSelector(
+    (state: RootState) => state.mainApi.isDocCreated
+  );
+  const isDocUpdated = useSelector(
+    (state: RootState) => state.mainApi.isDocUpdated
+  );
 
   const dispatch = useDispatch();
 
@@ -113,7 +117,11 @@ const ApiList = () => {
         )}
       </div>
       <ApiListContent>
-        <ApiListDetail apiList={apiList} apiDocList={apiDocList} dispatchGetDocList={dispatchGetDocList} />
+        <ApiListDetail
+          apiList={apiList}
+          apiDocList={apiDocList}
+          dispatchGetDocList={dispatchGetDocList}
+        />
       </ApiListContent>
     </div>
   );

@@ -29,6 +29,7 @@ public class ClassUpdateServiceImpl implements ClassUpdateService {
 
     @Override
     public void updateObject(String groupSecretKey, PropertyVO property, int index) throws IOException {
+        if (property == null) return;
         System.out.println("updateObject ==> " + property.getDtoName());
         int i = 0;
         for (i = 1; i < SynchronizeCodeServiceImpl.codeList.size(); i++) {

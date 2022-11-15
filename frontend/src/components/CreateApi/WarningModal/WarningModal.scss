@@ -1,0 +1,98 @@
+.warningModalContainer {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+}
+.warningModalInnerContainer {
+  width: 35rem;
+  min-height: 28rem;
+  height: auto;
+  background-color: white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 1rem;
+  padding: 1rem 3rem;
+  box-shadow: 2px 2px 25px -12px rgba(0, 0, 0, 0.92);
+  .warningModalTitle {
+    font-size: 2em;
+    font-weight: bold;
+    margin: 20px 0;
+  }
+  .warningModalText {
+    font-size: 1.1em;
+    font-weight: bold;
+    word-break: break-all;
+  }
+  .warningModalValidationResultContainer {
+    display: flex;
+    margin: 20px 0;
+    justify-content: space-between;
+    min-height: 13rem;
+    .warningModalValidationResultText1 {
+      display: flex;
+      margin: 20px 20px 20px 0;
+      font-size: 1.1em;
+      .warningModalCloudIcon {
+        margin: 0 10px 0 0;
+        color: rgba(111, 199, 209, 0.8);
+      }
+      &:hover {
+        cursor: pointer;
+      }
+    }
+    .warningModalInfoText {
+      display: none;
+    }
+    .warningModalInfoDropdown:hover .warningModalInfoText {
+      position: relative;
+      display: block;
+      margin: 5px 20px;
+      font-size: 0.8em;
+    }
+    .warningModalValidationResultText2 {
+      margin: 20px 20px 20px 0;
+      font-size: 1.1em;
+    }
+  }
+}
+
+.warningModalButtonGroup {
+  margin: 30px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .warningModalButton {
+    background-color: #6fc7d1;
+    color: white;
+    width: 45%;
+    text-align: center;
+    padding: 10px;
+    border-radius: 20px;
+    font-family: "twayair";
+    &:hover {
+      opacity: 0.7;
+      transition: all 300ms ease-in;
+    }
+  }
+  .warningModalButton1 {
+    border: 1px solid #6fc7d1;
+    color: #6fc7d1;
+    width: 45%;
+    text-align: center;
+    padding: 10px;
+    border-radius: 20px;
+    font-family: "twayair";
+    &:hover {
+      opacity: 0.7;
+      transition: all 300ms ease-in;
+    }
+  }
+}
+
+.warningModalCloseButton {
+  width: 100%;
+  height: 100%;
+  z-index: 10001;
+}

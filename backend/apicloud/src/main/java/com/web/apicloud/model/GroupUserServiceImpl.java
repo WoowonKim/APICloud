@@ -47,6 +47,11 @@ public class GroupUserServiceImpl implements GroupUserService {
     }
 
     @Override
+    public List<GroupUser> getGroupUserByGroup(Group group) {
+        return groupUserRepository.findByGroup(group);
+    }
+
+    @Override
     public void deleteUser(Group group, User user) {
         groupUserRepository.deleteByGroupAndUser(group, user);
     }

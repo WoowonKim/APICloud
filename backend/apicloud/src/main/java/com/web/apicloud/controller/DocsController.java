@@ -2,11 +2,13 @@ package com.web.apicloud.controller;
 
 import com.web.apicloud.domain.SpringExportRequest;
 import com.web.apicloud.domain.dto.*;
+import com.web.apicloud.domain.entity.Docs;
 import com.web.apicloud.domain.entity.Group;
 import com.web.apicloud.domain.entity.GroupUser;
 import com.web.apicloud.domain.entity.User;
 import com.web.apicloud.domain.vo.DocVO;
 import com.web.apicloud.domain.vo.UserAuthorityVO;
+import com.web.apicloud.exception.UnauthorizedException;
 import com.web.apicloud.model.DocsService;
 import com.web.apicloud.model.GroupUserService;
 import com.web.apicloud.model.NotionService;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -91,14 +94,18 @@ public class DocsController {
     @PostMapping("/{encryptedId}/project")
     public ResponseEntity<byte[]> exportProject(@PathVariable("encryptedId") String encryptedId,
                                                 @RequestBody SpringExportRequest springExportRequest,
-                                                @RequestHeader Map<String, String> headers) throws IOException {
+                                                @RequestHeader Map<String, String> headers,
+                                                @CurrentUser UserPrincipal userPrincipal) throws IOException {
         log.info("프로젝트 추출 API 호출");
+        docsService.checkAuthority(userPrincipal, encryptedId);
         return projectGenerationController.springZip(docsService.getDocVOByEncryptedId(encryptedId), headers, springExportRequest);
     }
 
     @GetMapping("/{encryptedId}/csv")
-    public ResponseEntity<byte[]> exportCsv(@PathVariable("encryptedId") String encryptedId) {
+    public ResponseEntity<byte[]> exportCsv(@PathVariable("encryptedId") String encryptedId,
+                                            @CurrentUser UserPrincipal userPrincipal) {
         log.info("csv 추출 API 호출");
+        docsService.checkAuthority(userPrincipal, encryptedId);
         DocVO doc = docsService.getDocVOByEncryptedId(encryptedId);
         byte[] file = docsService.getCsvFile(doc.getControllers());
         return FileUtils.createResponseEntity(file, "text/csv", doc.getServer().getName() + ".csv");
@@ -106,10 +113,14 @@ public class DocsController {
 
     @PostMapping("/{encryptedId}/notion")
     public ResponseEntity<NotionExportResponse> exportNotion(@PathVariable("encryptedId") String encryptedId,
-                                                             @RequestBody(required = false) NotionExportRequest request) {
+                                                             @RequestBody(required = false) NotionExportRequest request,
+                                                             @CurrentUser UserPrincipal userPrincipal) {
         log.info("노션 추출 API 호출");
+        docsService.checkAuthority(userPrincipal, encryptedId);
         DocVO doc = docsService.getDocVOByEncryptedId(encryptedId);
         notionService.makeApiPage(request.getToken(), request.getDatabaseId(), doc);
         return ResponseEntity.ok().body(new NotionExportResponse("https://www.notion.so/" + request.getDatabaseId()));
     }
+
+
 }

@@ -21,257 +21,132 @@ declare module "@tanstack/react-table" {
 
 // ControllerAddModal에서 받아오는 props의 type 설정
 interface Props {
-  data: PropertiesType[];
-  propertiesIndex: number;
-  activeTab: number;
   setPropertiesIndexList: React.Dispatch<React.SetStateAction<number[]>>;
   propertiesIndexList: number[];
   setModalDepth: React.Dispatch<React.SetStateAction<number>>;
-  modalDepth: number;
-  path: PropertiesType;
   final: PropertiesType | undefined;
 }
 const DtoModalTable = ({
-  data,
-  propertiesIndex,
-  activeTab,
   setPropertiesIndexList,
   propertiesIndexList,
   setModalDepth,
-  modalDepth,
-  path,
   final,
 }: Props) => {
-  useEffect(() => {}, [data, activeTab, final]);
-  const defaultColumn: Partial<ColumnDef<PropertiesType>> = {
-    cell: function Cell({ getValue, row: { index }, column: { id }, table }) {
-      const initialValue = getValue<string>();
-      const [value, setValue] = useState<string>(initialValue);
-      const [checkNumber, setCheckNumber] = useState(2);
+  const headers = ["name", "type", "required", "delete"];
 
-      const onBlur = (temp?: string) => {
-        table.options.meta?.updateData(index, id, temp ? temp : value);
-        if (temp) {
-          setValue(id === "type" && temp === "List" ? "String" : temp);
+  const handelCellValue = (
+    e: React.ChangeEvent<HTMLInputElement> | string,
+    header: string,
+    index: number
+  ) => {
+    if (final && final.properties.length > index) {
+      if (header === "required" && typeof e !== "string") {
+        final.properties[index][header] = e.target.checked;
+      } else if (header === "type" && typeof e === "string") {
+        if (e === "List") {
+          final.properties[index].collectionType = "List";
+          final.properties[index][header] = "String";
+        } else if (e === "X") {
+          final.properties[index].collectionType = "";
+          final.properties[index][header] = "String";
+        } else {
+          final.properties[index][header] = e;
         }
-      };
-
-      useEffect(() => {
-        setValue(initialValue);
-        setCheckNumber(2);
-      }, [initialValue, modalDepth, data, index]);
-
-      let copyPath = path;
-      if (modalDepth >= 3) {
-        let i = activeTab === 2 || activeTab === 3 ? 1 : 0;
-        for (i; i < modalDepth - 1; i++) {
-          if (propertiesIndexList[i] !== -1) {
-            copyPath = copyPath.properties[propertiesIndexList[i]];
-          }
-        }
-      } else if (activeTab === 4 || activeTab === 5) {
-        copyPath = copyPath.properties[propertiesIndex];
+      } else if (header === "name" && typeof e !== "string") {
+        final.properties[index][header] = e.target.value;
       }
-
-      return id === "required" ? (
+    }
+  };
+  const handleTableCell = (item: any, index: number) => {
+    const rows = [];
+    rows.push(
+      <td>
         <input
-          value={value as string}
-          onChange={(e) => setValue(e.target.value)}
-          onBlur={() => onBlur()}
+          type="text"
+          value={item.name}
+          onChange={(e) => handelCellValue(e, "name", index)}
           className="tableInput"
-          type="checkbox"
         />
-      ) : id === "delete" ? (
-        <FontAwesomeIcon
-          icon={faRemove}
-          className="removeIcon"
-          onClick={() =>
-            final &&
-            getDepth(index, data[index], false, false, true, final.properties)
-          }
-        />
-      ) : id === "type" ? (
+      </td>
+    );
+    rows.push(
+      <td>
         <div className="typeInfoContainer">
-          {copyPath?.properties.length > index &&
-            copyPath.properties[index].collectionType === "List" && (
-              <SelectTypes
-                onBlur={onBlur}
-                setValue={setValue}
-                value={"List"}
-                isCollection={true}
-              />
-            )}
+          {item.collectionType === "List" && (
+            <SelectTypes
+              value={item.type}
+              handelCellValue={handelCellValue}
+              index={index}
+              isCollection={true}
+            />
+          )}
           <SelectTypes
-            onBlur={onBlur}
-            setValue={setValue}
-            value={value}
-            modalDepth={modalDepth}
+            value={item.type}
+            handelCellValue={handelCellValue}
+            index={index}
+            isCollection={false}
           />
-          {value === "Object" && (
+          {item.type === "Object" && (
             <FontAwesomeIcon
               icon={faInfo}
               className="infoIcon"
               onClick={() => {
-                setCheckNumber(3);
-                handleObject(index);
+                setModalDepth(3);
+                let properties = [...propertiesIndexList];
+                properties[1] = index;
+                setPropertiesIndexList(properties);
+                getDepth(index, item, true, true, false, final?.properties);
               }}
             />
           )}
         </div>
-      ) : (
+      </td>
+    );
+    rows.push(
+      <td>
         <input
-          value={value as string}
-          onChange={(e) => setValue(e.target.value)}
-          onBlur={() => onBlur()}
-          className="tableInput"
+          type="checkbox"
+          checked={item.required}
+          onChange={(e) => handelCellValue(e, "required", index)}
         />
-      );
-    },
-  };
+      </td>
+    );
 
-  const handleObject = (index: number) => {
-    let copyPath = path;
-    const getDepth2 =
-      final && getDepth(index, final.properties, false, false, false, final);
-    const getDepth3 = 3;
-    for (let i = 1; i < getDepth3 - 2; i++) {
-      if (propertiesIndexList[i] !== -1) {
-        copyPath = copyPath.properties[propertiesIndexList[i]];
-      }
-    }
-
-    const newDepth = getDepth(index, final, true, true, false, copyPath);
-    setModalDepth(3);
-    let properties = [...propertiesIndexList];
-    properties[3 - 2] = index;
-    setPropertiesIndexList(properties);
-  };
-  const columns = useMemo<ColumnDef<PropertiesType>[]>(
-    () => [
-      {
-        accessorKey: "name",
-        footer: (props) => props.column.id,
-      },
-      {
-        accessorKey: "type",
-        footer: (props) => props.column.id,
-      },
-      {
-        accessorKey: "required",
-        footer: (props) => props.column.id,
-      },
-      {
-        accessorKey: "delete",
-        footer: (props) => props.column.id,
-        size: 50,
-      },
-    ],
-    []
-  );
-
-  const table = useReactTable({
-    data,
-    columns,
-    defaultColumn,
-    getCoreRowModel: getCoreRowModel(),
-    meta: {
-      updateData: (rowIndex: string | number, columnId: any, value: any) => {
-        if (!!value) {
-          const requiredValue = value === "true" ? false : true;
-          const type =
-            columnId === "name"
-              ? "name"
-              : columnId === "type"
-              ? "type"
-              : "required";
-          let copyPath = path;
-          if (modalDepth >= 3) {
-            let i = activeTab === 2 || activeTab === 3 ? 1 : 0;
-            for (i; i < modalDepth - 1; i++) {
-              if (propertiesIndexList[i] !== -1) {
-                copyPath = copyPath.properties[propertiesIndexList[i]];
-              }
-            }
-          } else if (activeTab === 4 || activeTab === 5) {
-            copyPath = copyPath.properties[propertiesIndex];
+    rows.push(
+      <td>
+        <FontAwesomeIcon
+          icon={faRemove}
+          className="removeIcon"
+          onClick={() =>
+            getDepth(index, item, false, false, true, final?.properties)
           }
-          copyPath?.properties.map((row, idx) => {
-            if (idx === rowIndex && type === "required") {
-              copyPath.properties[rowIndex][type] = requiredValue;
-            } else if (
-              idx === rowIndex &&
-              (type === "name" || type === "type")
-            ) {
-              if (type === "type" && value === "List") {
-                copyPath.properties[rowIndex].collectionType = "List";
-                copyPath.properties[rowIndex][type] = "String";
-              } else if (type === "type" && value === "X") {
-                copyPath.properties[rowIndex].collectionType = "";
-              } else {
-                copyPath.properties[rowIndex][type] = value;
-              }
-            }
-          });
-        }
-      },
-    },
-    debugTable: true,
-  });
+        />
+      </td>
+    );
+    return rows;
+  };
 
   return (
-    <table className="modalTable">
-      <thead>
-        {table.getHeaderGroups().map((headerGroup) => (
-          <tr key={headerGroup.id}>
-            {headerGroup.headers.map((header) => {
-              return (
-                <th
-                  {...{
-                    key: header.id,
-                    colSpan: header.colSpan,
-                    style: {
-                      width: header.getSize(),
-                    },
-                  }}
-                  className="tableHeadText"
-                >
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                  <div
-                    {...{
-                      onMouseDown: header.getResizeHandler(),
-                      onTouchStart: header.getResizeHandler(),
-                      className: `resizer ${
-                        header.column.getIsResizing() ? "isResizing" : ""
-                      }`,
-                    }}
-                  />
-                </th>
-              );
-            })}
+    <div>
+      <table>
+        <thead>
+          <tr>
+            {headers.map((item, index) => (
+              <th key={index} style={{ width: "200px" }}>
+                {item}
+              </th>
+            ))}
           </tr>
-        ))}
-      </thead>
-      <tbody>
-        {table.getRowModel().rows.map((row) => {
-          return (
-            <tr key={row.id}>
-              {row.getVisibleCells().map((cell) => {
-                return (
-                  <td key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                );
-              })}
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {final &&
+            final.properties.length > 0 &&
+            final.properties.map((item, index) => (
+              <tr key={index}>{handleTableCell(item, index)}</tr>
+            ))}
+        </tbody>
+      </table>
+    </div>
   );
 };
 

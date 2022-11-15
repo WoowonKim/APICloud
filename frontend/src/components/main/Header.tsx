@@ -15,13 +15,36 @@ const ApiMainHeader = styled.div`
   display: flex;
   justify-content: space-between;
 `;
+
+const LogoutPopUp = styled.div`
+  background-color: white;
+  height: 40px;
+  z-index: 1;
+  width: 100px;
+  position: absolute;
+  top: 60px;
+  text-align: center;
+  line-height: 24px;
+  border: 8px solid;
+  border-color: orange;
+  border-radius: 10px;
+  cursor: pointer;
+`;
 const Header = () => {
   const navigate = useNavigate();
   const [userImg, setUserImg] = useState("");
+  const [modal, setModal] = useState(false);
   const user = useAppSelector(selectUser);
   useEffect(() => {
     setUserImg(user?.imgUrl);
   }, [user]);
+  const handleLogOut = () => {
+    window.localStorage.removeItem("token");
+    window.location.reload();
+  };
+  const handleClick = () => {
+    setModal(!modal);
+  };
   return (
     <ApiMainHeader>
       {/* 로고 */}
@@ -35,7 +58,11 @@ const Header = () => {
 
       {/* 검색창  */}
       <div className="search">
-        <input className="searchbar" type="text" placeholder="   검색어를 입력하세요" />
+        <input
+          className="searchbar"
+          type="text"
+          placeholder="   검색어를 입력하세요"
+        />
         <button>
           <FontAwesomeIcon icon={faMagnifyingGlass} />
         </button>
@@ -43,7 +70,13 @@ const Header = () => {
 
       {/* 사용자 프로필 */}
       <div className="user">
-        <img className="userImg" src={userImg} referrerPolicy="no-referrer" />
+        <img
+          className="userImg"
+          src={userImg}
+          referrerPolicy="no-referrer"
+          onClick={handleClick}
+        />
+        {modal && <LogoutPopUp onClick={handleLogOut}>Log Out</LogoutPopUp>}
       </div>
     </ApiMainHeader>
   );
