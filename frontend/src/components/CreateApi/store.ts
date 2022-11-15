@@ -14,7 +14,7 @@ export const connectDoc = (encryptedUrl: string) => {
     encryptedUrl,
     doc as Doc,
     {
-      signaling: ["ws://k7b205.p.ssafy.io:3333"],
+      signaling: ["wss://k7b205.p.ssafy.io:3333"],
     } as any
   );
 };
