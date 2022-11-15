@@ -75,16 +75,16 @@ sudo service mysql restart
 - 사용자 계정 생성<br>
   Users and Privileges -> Add Account 후 계정 생성
 
-  ![image](https://user-images.githubusercontent.com/64150747/201581062-23f0802e-c139-4c90-9c65-8029b6498d63.png)
+  <img src="https://user-images.githubusercontent.com/64150747/201581062-23f0802e-c139-4c90-9c65-8029b6498d63.png" width="600"/>
 
   생성된 계정 클릭 -> Schema Privileges -> Add Entry.. -> 권한 부여할 스키마 선택
 
-  ![image](https://user-images.githubusercontent.com/64150747/201581113-02c8c8f1-ece9-4415-bd36-15d3f3ab84aa.png)
+  <img src="https://user-images.githubusercontent.com/64150747/201581113-02c8c8f1-ece9-4415-bd36-15d3f3ab84aa.png" width="600"/>
 
   부여할 권한 선택 -> Apply
 
 - 커넥션 생성
 
-  ![image](https://user-images.githubusercontent.com/64150747/201581481-097449a1-b1aa-4e59-abc3-b94d64263bb6.png)
+  <img src="https://user-images.githubusercontent.com/64150747/201581481-097449a1-b1aa-4e59-abc3-b94d64263bb6.png" width="600"/>
 
 - DB 접속 후 database 생성
