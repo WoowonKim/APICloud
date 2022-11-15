@@ -45,17 +45,17 @@ const ApiSide = ({ getInfo }: type) => {
             >
               <Item
                 color={
-                  item?.method === "get"
+                  item?.method === "Get"
                     ? "#FDECC8"
-                    : item?.method === "post"
+                    : item?.method === "Post"
                     ? "#F5E0E9"
-                    : item?.method === "put"
+                    : item?.method === "Put"
                     ? "#F1F0EF"
-                    : item?.method === "delete"
+                    : item?.method === "Delete"
                     ? "#D3E5EF"
-                    : item?.method === "patch"
+                    : item?.method === "Patch"
                     ? "#E8DEEE"
-                    : item?.method === "options"
+                    : item?.method === "Options"
                     ? "#FFE2DD"
                     : "#EEE0DA"
                 }
