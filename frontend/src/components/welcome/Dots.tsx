@@ -1,4 +1,5 @@
 import React from 'react'
+import "./Dots.scss";
 
 interface dotProps {
 	num: number;
@@ -12,7 +13,7 @@ interface dotsProps {
 const Dot = ({num, scrollIndex}: dotProps) => {
 	return (
 		<div>
-			<div className={scrollIndex ===  num ? ('dot-black') : ('dot-transparent')}></div>
+			<div className={scrollIndex ===  num ? ('dotBlack') : ('dotTransparent')}></div>
 		</div>
 	)
 }

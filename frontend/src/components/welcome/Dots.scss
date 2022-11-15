@@ -1,18 +1,18 @@
 .dotBlack {
-	width: 10;
-	height: 10;
-	border: 1px solid black;
-	border-radius: 999;
-	background-color: black;
+	width: 10px;
+	height: 10px;
+	border: 1px solid gray;
+	border-radius: 999px;
+	background-color: gray;
 	transition-duration: 1000;
 	transition: background-color 0.5s;
 }
 
 .dotTransparent {
-	width: 10;
-	height: 10;
-	border: 1px solid black;
-	border-radius: 999;
+	width: 10px;
+	height: 10px;
+	border: 1px solid gray;
+	border-radius: 999px;
 	background-color: transparent;
 	transition-duration: 1000;
 	transition: background-color 0.5s;
@@ -21,7 +21,7 @@
 .dotsContainer {
 	position: fixed;
 	top: 50vh;
-	right: 100
+	right: 50px;
 }
 
 .dotsWrapper {
@@ -29,6 +29,6 @@
 	flex-direction: column;
 	justify-content: space-between;
 	align-items: center;
-	width: 20;
-	height: 100;
+	width: 20px;
+	height: 100px;
 }
