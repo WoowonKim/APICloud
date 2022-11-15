@@ -28,15 +28,17 @@ const WelcomeHeader = ({ scrollIndex }: Props) => {
             </a>
           </div>
           <div className="welcomeSignIn">
-            <img
-              alt="githubLogin"
-              src={
-                scrollIndex === 3
-                  ? require("../../assets/githubLoginWhite.png")
-                  : require("../../assets/githubLogin.png")
-              }
-              className="welcomeGithubLogin"
-            />
+            <a href={process.env.REACT_APP_GITHUB_OAUTH2}>
+              <img
+                alt="githubLogin"
+                src={
+                  scrollIndex === 3
+                    ? require("../../assets/githubLoginWhite.png")
+                    : require("../../assets/githubLogin.png")
+                }
+                className="welcomeGithubLogin"
+              />
+            </a>
           </div>
         </div>
       </div>

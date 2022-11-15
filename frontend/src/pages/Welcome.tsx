@@ -244,11 +244,13 @@ const Welcome = () => {
           </div>
           <div className="startButtonWrapper">
             <div className="welcomeStartButton">
-              <img
-                alt="githubLoginImage"
-                src={require("../assets/githubLoginWhite.png")}
-                className="loginImage"
-              />
+              <a href={process.env.REACT_APP_GITHUB_OAUTH2}>
+                <img
+                  alt="githubLoginImage"
+                  src={require("../assets/githubLoginWhite.png")}
+                  className="loginImage"
+                />
+              </a>
               으로 시작하기
             </div>
           </div>
