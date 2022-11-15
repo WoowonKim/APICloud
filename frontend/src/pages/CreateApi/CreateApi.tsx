@@ -5,7 +5,7 @@ import Sidebar from "../../components/CreateApi/Sidebar/Sidebar";
 import { useSyncedStore } from "@syncedstore/react";
 import { connectDoc, store } from "../../components/CreateApi/store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faClose, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Store/store";
 import apiDocsApiSlice, {
@@ -20,7 +20,8 @@ import { useAppDispatch } from "../../Store/hooks";
 import { checkDataValidation } from "../../components/CreateApi/validationCheck";
 import ApiTable from "../../components/CreateApi/ApiTable/ApiTable";
 import SynchronizeModal from "../../components/CreateApi/SynchronizeModal/SynchronizeModal";
-import WarningModal from "../../components/CreateApi/WarningModal/WarningModal";
+import CodeBlock from "../../components/CreateApi/WarningModal/CodeBlock";
+import { getApiDoc } from "../../Store/slice/mainApi";
 
 const CreateApi = () => {
   const dispatch = useAppDispatch();
@@ -29,6 +30,10 @@ const CreateApi = () => {
   const [authority, setAuthority] = useState<number>(0);
   const [isSynchronizeModal, setIsSynchronizeModal] = useState(false);
   const [changeData, setChangeData] = useState();
+  const [changeCode, setChangeCode] = useState<any>();
+  const [selectedChangeCode, setSelectedChangeCode] = useState(0);
+  const [docInfo, setDocInfo] = useState<any>();
+
   useEffect(() => {
     const checckAutority = async (encryptedUrl: string) => {
       return await axiosGet(`/docs/authority/${encryptedUrl}`);
@@ -239,7 +244,22 @@ const CreateApi = () => {
       }
     });
     setIsSynchronizeModal(false);
+  }, [changeCode]);
+
+  useEffect(() => {
+    dispatch(getApiDoc({ docId: encryptedUrl })).then((res: any) => {
+      if (res.meta.requestStatus === "fulfilled") {
+        setDocInfo(res.payload);
+      }
+    });
   }, []);
+
+  useEffect(() => {
+    if (!docInfo) {
+      return;
+    }
+  }, [docInfo]);
+
   if (authority === 0) {
     return (
       <>
@@ -258,77 +278,20 @@ const CreateApi = () => {
           selectedController={selectedController}
           addedApiIndex={addedApiIndex}
           addedControllerIndex={addedControllerIndex}
+          docInfo={docInfo}
         />
         <div className="apiDocsMaincontainer">
           <div className="titleContainer">
-            <p className="apiDocsTitleText">APICloud API 명세서</p>
-            <div className="buttonContainer">
-              <button
-                className="createApiButton"
-                onClick={() => {
-                  const test = checkDataValidation(state.data);
-                  // 데이터 확인용 로그
-                  console.log(test);
-                  dispatch(
-                    setApiDetail({
-                      encryptedUrl: localStorage.getItem("docId"),
-                      detailRequest: {
-                        detail: JSON.stringify({
-                          server: { dependencies: [] },
-                          controllers: state.data,
-                        }),
-                      },
-                    })
-                  )
-                    .then((res: any) => {
-                      console.log(res);
-                    })
-                    .catch((err: any) => console.log(err));
-                }}
-              >
-                테스트
-              </button>
-              <button className="createApiButton">공유</button>
-              <button
-                className="createApiButton"
-                onClick={() => {
-                  setIsSynchronizeModal(!isSynchronizeModal);
-                }}
-              >
-                동기화
-              </button>
-              <button
-                className="createApiButton"
-                type="button"
-                onClick={() =>
-                  dispatch(
-                    apiDocsApiSlice.actions.setIsOpenExtractModal({
-                      isOpenExtractModal: true,
-                    })
-                  )
-                }
-              >
-                추출
-              </button>
-              {isOpenExtractModal && (
-                <ExtractModal controllers={state.data}></ExtractModal>
-              )}
-              {isSynchronizeModal && (
-                <SynchronizeModal
-                  setIsSynchronizeModal={setIsSynchronizeModal}
-                  setChangeData={setChangeData}
-                />
-              )}
-            </div>
+            <p className="apiDocsTitleText">{docInfo?.docsName}</p>
           </div>
           <div className="infoContainer">
             <div>
               <p>사이트 주소</p>
-              <p className="infoValue">http://localhost:8080</p>
+              <p className="infoValue">{docInfo?.serverUrl}</p>
             </div>
             <div>
               <p>공통 URI</p>
-              <p className="infoValue">/api</p>
+              <p className="infoValue">{docInfo?.contextUri}</p>
             </div>
           </div>
           <div className="tabContainer">
@@ -466,6 +429,97 @@ const CreateApi = () => {
                 </div>
               )}
           </div>
+        </div>
+        <div className="rightSideContainer">
+          <div className="buttonContainer">
+            <button
+              className="createApiButton"
+              onClick={() => {
+                const test = checkDataValidation(state.data);
+                // 데이터 확인용 로그
+                console.log(test);
+                dispatch(
+                  setApiDetail({
+                    encryptedUrl: localStorage.getItem("docId"),
+                    detailRequest: {
+                      detail: JSON.stringify({
+                        server: { dependencies: [] },
+                        controllers: state.data,
+                      }),
+                    },
+                  })
+                )
+                  .then((res: any) => {
+                    console.log(res);
+                  })
+                  .catch((err: any) => console.log(err));
+              }}
+            >
+              테스트
+            </button>
+            <button className="createApiButton">공유</button>
+            <button
+              className="createApiButton"
+              onClick={() => {
+                setIsSynchronizeModal(!isSynchronizeModal);
+              }}
+            >
+              동기화
+            </button>
+            <button
+              className="createApiButton"
+              type="button"
+              onClick={() =>
+                dispatch(
+                  apiDocsApiSlice.actions.setIsOpenExtractModal({
+                    isOpenExtractModal: true,
+                  })
+                )
+              }
+            >
+              추출
+            </button>
+            {isOpenExtractModal && (
+              <ExtractModal controllers={state.data}></ExtractModal>
+            )}
+            {isSynchronizeModal && (
+              <SynchronizeModal
+                setIsSynchronizeModal={setIsSynchronizeModal}
+                setChangeData={setChangeData}
+                setChangeCode={setChangeCode}
+              />
+            )}
+          </div>
+          {changeCode && changeCode.length > 0 && (
+            <>
+              <div className="createApiSynchronizeTitle">
+                <div className="createApiTabContainer">
+                  {changeCode.map((item: any, index: number) => (
+                    <div
+                      key={index}
+                      className={
+                        selectedChangeCode === index
+                          ? "createApiTabItem selectedTabItem"
+                          : "createApiTabItem"
+                      }
+                      onClick={() => setSelectedChangeCode(index)}
+                    >
+                      {item.name}
+                    </div>
+                  ))}
+                </div>
+                <button
+                  className="createApiCloseButton"
+                  onClick={() => setChangeCode(undefined)}
+                >
+                  <FontAwesomeIcon icon={faClose} />
+                </button>
+              </div>
+              <div className="createApiCodeBlockContainer">
+                <CodeBlock data={changeCode[selectedChangeCode].code} />
+              </div>
+            </>
+          )}
         </div>
       </div>
     );

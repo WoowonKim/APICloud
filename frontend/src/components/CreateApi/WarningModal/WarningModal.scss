@@ -23,6 +23,7 @@
   .warningModalText {
     font-size: 1.1em;
     font-weight: bold;
+    word-break: break-all;
   }
   .warningModalValidationResultContainer {
     display: flex;

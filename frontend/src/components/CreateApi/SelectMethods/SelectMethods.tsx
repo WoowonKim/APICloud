@@ -5,18 +5,18 @@ import "./SelectMethods.scss";
 const Item = styled.div`
   border: none;
   border-radius: 10px;
-  padding: 5px 10px;
+  padding: 3px 5px;
   margin-top: 5px;
-  font-size: 1em;
+  font-size: 0.7em;
   background-color: ${(props) => props.color};
 `;
 
 export const SelectedItem = styled.button`
   border: none;
   border-radius: 10px;
-  padding: 5px 10px;
+  padding: 3px 5px;
   margin-top: 5px;
-  font-size: 1em;
+  font-size: 0.7em;
   background-color: ${(props) => props.color};
 `;
 

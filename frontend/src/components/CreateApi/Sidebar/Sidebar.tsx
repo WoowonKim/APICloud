@@ -19,6 +19,7 @@ interface Props {
   selectedController: number;
   addedApiIndex: number;
   addedControllerIndex: number;
+  docInfo: any;
 }
 
 const Sidebar = ({
@@ -29,6 +30,7 @@ const Sidebar = ({
   selectedApi,
   selectedController,
   addedControllerIndex,
+  docInfo,
 }: Props) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editControllerIndex, setEditControllerIndex] = useState(-1);
@@ -53,7 +55,7 @@ const Sidebar = ({
       )}
       <div className="sidebar">
         <div className="sidebarTitleGroup">
-          <p className="sidebarTitle">ApiCloud Api 명세서</p>
+          <p className="sidebarTitle">{docInfo?.docsName}</p>
           <button
             className="sidebarTitleButton"
             onClick={() => {

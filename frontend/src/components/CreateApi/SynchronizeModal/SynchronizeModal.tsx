@@ -21,9 +21,14 @@ import "./SynchronizeModal.scss";
 interface Props {
   setIsSynchronizeModal: React.Dispatch<React.SetStateAction<boolean>>;
   setChangeData: React.Dispatch<React.SetStateAction<undefined>>;
+  setChangeCode: React.Dispatch<any>;
 }
 
-const SynchronizeModal = ({ setIsSynchronizeModal, setChangeData }: Props) => {
+const SynchronizeModal = ({
+  setIsSynchronizeModal,
+  setChangeData,
+  setChangeCode,
+}: Props) => {
   const state = useSyncedStore(store);
   const [isFileInputModal, setIsFileInputModal] = useState(false);
   const [selectedControllerName, setSelectedControllerName] = useState("");
@@ -31,7 +36,6 @@ const SynchronizeModal = ({ setIsSynchronizeModal, setChangeData }: Props) => {
   const [fileInfo, setFileInfo] = useState<any>();
   const [isWarningModal, setIsWarningModal] = useState(false);
   const [validationResult, setValidationResult] = useState<any>();
-  const [changeCode, setChangeCode] = useState<any>();
 
   const dispatch = useAppDispatch();
   const location = useLocation();
@@ -56,7 +60,6 @@ const SynchronizeModal = ({ setIsSynchronizeModal, setChangeData }: Props) => {
       .then((res: any) => {
         if (res.meta.requestStatus === "fulfilled") {
           setChangeData(res.payload);
-          console.log(res.payload);
         }
       })
       .catch((err: any) => {
@@ -76,7 +79,6 @@ const SynchronizeModal = ({ setIsSynchronizeModal, setChangeData }: Props) => {
       .then((res: any) => {
         if (res.meta.requestStatus === "fulfilled") {
           setChangeCode(res.payload);
-          console.log(res.payload);
         }
       })
       .catch((err: any) => {
@@ -182,7 +184,6 @@ const SynchronizeModal = ({ setIsSynchronizeModal, setChangeData }: Props) => {
             setIsWarningModal={setIsWarningModal}
             validationResult={validationResult}
             synchronizeApiDoc={synchronizeApiDoc}
-            changeCode={changeCode}
           />
         </div>
       )}
