@@ -18,6 +18,9 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Service
 public class CompareServiceImpl implements CompareService {
+
+    private static final String SUCCESS = "success";
+
     @Override
     public ControllerDTO compareControllerVO(ControllerVO original, ControllerVO controllerVO) {
         ControllerDTO controllerDTO = ControllerMapper.INSTANCE.ControllerVOToControllerDTO(controllerVO);
@@ -77,12 +80,17 @@ public class CompareServiceImpl implements CompareService {
     }
 
     private void compareResponseVO(Map<String, ResponseDTO> responses, Map<String, ResponseVO> original, Map<String, ResponseVO> responseVO) {
-        PropertyVO originalPropertyVO = original.get("success").getResponseBody();
-        PropertyVO responseVOPropertyVO = responseVO.get("success").getResponseBody();
-        PropertyDTO responseDTO = responses.get("success").getResponseBody();
+        if (original.get(SUCCESS) == null && responseVO.get(SUCCESS) == null) return;
+        if (original.get(SUCCESS) == null) {
+            responses.get(SUCCESS).setCreateFlag(true);
+            return;
+        }
+        PropertyVO originalPropertyVO = original.get(SUCCESS).getResponseBody();
+        PropertyVO responseVOPropertyVO = responseVO.get(SUCCESS).getResponseBody();
+        PropertyDTO responseDTO = responses.get(SUCCESS).getResponseBody();
         if (originalPropertyVO == null && responseVOPropertyVO == null) return;
         if (originalPropertyVO == null) {
-            responses.get("success").setCreateFlag(true);
+            responses.get(SUCCESS).setCreateFlag(true);
             return;
         }
         comparePropertyVO(responseDTO, originalPropertyVO, responseVOPropertyVO);

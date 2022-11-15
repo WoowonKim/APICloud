@@ -34,7 +34,6 @@ public class S3ServiceImpl implements S3Service {
 
     @Override
     public void uploadZip(MultipartFile file, String groupSecretKey) throws IOException {
-        System.out.println("uploadZip ==> ");
         File zipSource = FileUtils.convert(file);
         ZipFile zipFile = new ZipFile(zipSource);
 
