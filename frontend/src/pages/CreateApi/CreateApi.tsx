@@ -214,37 +214,59 @@ const CreateApi = () => {
   useEffect(() => {
     dispatch(getApiDetail({ docId: encryptedUrl })).then((res: any) => {
       if (res.meta.requestStatus === "fulfilled") {
-        const controllers = JSON.parse(res.payload.detail);
-        if (controllers && controllers.controllers.length > 0) {
-          if (state.data.length === 0) {
-            for (let item of controllers.controllers) {
-              state.data.push(item);
-            }
-          } else if (state.data.length !== controllers.controllers.length) {
-            dispatch(
-              setApiDetail({
-                encryptedUrl: localStorage.getItem("docId"),
-                detailRequest: {
-                  detail: JSON.stringify({
-                    server: { dependencies: [] },
-                    controllers: state.data,
-                  }),
-                },
-              })
-            )
-              .then((res: any) => {
-                const controllers2 = JSON.parse(res.payload.detail);
-                for (let item of controllers2.controllers) {
-                  state.data.push(item);
-                }
-              })
-              .catch((err: any) => console.log(err));
+        const detail = JSON.parse(res.payload.detail);
+        if (detail && detail.controllers.length > 0) {
+          state.data.splice(0);
+          for (let item of detail.controllers) {
+            state.data.push(item);
           }
+          console.log(JSON.parse(JSON.stringify(state.data)));
         }
       }
     });
     setIsSynchronizeModal(false);
   }, [changeCode]);
+
+  useEffect(() => {
+    dispatch(getApiDetail({ docId: encryptedUrl })).then((res: any) => {
+      if (res.meta.requestStatus === "fulfilled") {
+        const detail = JSON.parse(res.payload.detail);
+        if (detail && detail.controllers.length > 0) {
+          if (state.data.length !== 0) {
+            state.data.splice(0);
+          }
+          for (let item of detail.controllers) {
+            state.data.push(item);
+          }
+          console.log(JSON.parse(JSON.stringify(state.data)));
+        }
+      }
+    });
+    return () => {
+      dispatch(
+        setApiDetail({
+          encryptedUrl: localStorage.getItem("docId"),
+          detailRequest: {
+            detail: JSON.stringify({
+              server: { dependencies: [] },
+              controllers: state.data,
+            }),
+          },
+        })
+      )
+        .then((res: any) => {
+          const detail = JSON.parse(res.payload.detail);
+          if (detail && detail.controllers.length > 0) {
+            state.data.splice(0);
+            for (let item of detail.controllers) {
+              state.data.push(item);
+            }
+          }
+          console.log(JSON.parse(JSON.stringify(state.data)));
+        })
+        .catch((err: any) => console.log(err));
+    };
+  }, []);
 
   useEffect(() => {
     dispatch(getApiDoc({ docId: encryptedUrl })).then((res: any) => {
@@ -259,6 +281,22 @@ const CreateApi = () => {
       return;
     }
   }, [docInfo]);
+
+  const preventClose = (e: BeforeUnloadEvent) => {
+    e.preventDefault();
+    e.returnValue = ""; //Chrome에서 동작하도록; deprecated
+  };
+
+  useEffect(() => {
+    (() => {
+      window.addEventListener("beforeunload", preventClose);
+    })();
+
+    return () => {
+      console.log(JSON.parse(JSON.stringify(state.data)));
+      window.removeEventListener("beforeunload", preventClose);
+    };
+  }, []);
 
   if (authority === 0) {
     return (

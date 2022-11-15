@@ -60,6 +60,7 @@ const SynchronizeModal = ({
       .then((res: any) => {
         if (res.meta.requestStatus === "fulfilled") {
           setChangeData(res.payload);
+          console.log(res.payload);
         }
       })
       .catch((err: any) => {
