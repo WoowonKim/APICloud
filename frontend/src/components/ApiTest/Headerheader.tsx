@@ -19,7 +19,6 @@ export const HeaderListTitle = styled.p`
   font-size: 13px;
   margin: 13px 0px 20px 5px;
 `;
-
 export const HeaderListInput = styled.input`
   width: 300px;
   padding-top: 17px;
@@ -39,24 +38,21 @@ const Headerheader = ({ getInfo }: type) => {
   const [getDtoName, setGetDtoName] = useState("");
   const [getType, setGetType] = useState("");
   const [test, setTest] = useState("");
+  const [tokenInfo, setTokenInfo] = useState("");
   const dispatch = useAppDispatch();
+
   useEffect(() => {
     if (getInfo) {
       setGetCollection(getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].requestBody.collectionType);
       setGetDtoName(getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].requestBody.dtoName);
       setGetType(getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].requestBody.type);
     }
-  }, [getInfo, info.getControllerInfomation, info.getApisInfomation]);
-  // console.log("HEADER => ", getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].headers);
-  const [tokenInfo, setTokenInfo] = useState("");
-  useEffect(() => {
     getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].headers.map((it, idx) => {
       if (it.key === "token") {
         setTokenInfo(it.value);
       }
     });
   }, [getInfo, info.getControllerInfomation, info.getApisInfomation]);
-  console.log("TokenInfo => ", tokenInfo);
 
   return (
     <>
