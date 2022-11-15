@@ -69,8 +69,11 @@ sudo docker logs jenkins
 > **Jenkins 프로젝트 생성**
 
 - 메인페이지에서 `새로운 item` 을 클릭하여 새로운 프로젝트를 생성
+
   <img src="https://user-images.githubusercontent.com/93081720/191665108-876a7071-3160-469c-a7dd-0e3c911ced54.png" width="600"/>
+
 - 레포지토리 등록
+
   <img src="https://user-images.githubusercontent.com/93081720/191666699-c2ce269c-f271-4e12-95c2-60e41b08cd8d.png" width="600"/>
   <br>
 
@@ -147,29 +150,29 @@ sudo docker logs jenkins
 
   빌드 단계에 들어가서 Add build step을 누르고 Execute Shell을 선택하여 아래와 같이 입력
 
-```bash
-docker image prune -a --force
+  ```bash
+  docker image prune -a --force
 
-mkdir -p /var/jenkins_home/images_tar
+  mkdir -p /var/jenkins_home/images_tar
 
-cd /var/jenkins_home/workspace/ApiCloud/backend/apicloud/
-docker build -t springboot_deploy .
-docker save springboot_deploy > /var/jenkins_home/images_tar/springboot_deploy.tar
+  cd /var/jenkins_home/workspace/ApiCloud/backend/apicloud/
+  docker build -t springboot_deploy .
+  docker save springboot_deploy > /var/jenkins_home/images_tar/springboot_deploy.tar
 
-cd /var/jenkins_home/workspace/ApiCloud/frontend/
-docker build -t react_deploy .
-docker save react_deploy > /var/jenkins_home/images_tar/react_deploy.tar
+  cd /var/jenkins_home/workspace/ApiCloud/frontend/
+  docker build -t react_deploy .
+  docker save react_deploy > /var/jenkins_home/images_tar/react_deploy.tar
 
-ls /var/jenkins_home/images_tar
+  ls /var/jenkins_home/images_tar
 
-docker load < /var/jenkins_home/images_tar/springboot_deploy.tar
-docker load < /var/jenkins_home/images_tar/react_deploy.tar
+  docker load < /var/jenkins_home/images_tar/springboot_deploy.tar
+  docker load < /var/jenkins_home/images_tar/react_deploy.tar
 
-if (docker ps | grep "springboot_deploy"); then docker stop springboot_deploy; fi
-if (docker ps | grep "react_deploy"); then docker stop react_deploy; fi
+  if (docker ps | grep "springboot_deploy"); then docker stop springboot_deploy; fi
+  if (docker ps | grep "react_deploy"); then docker stop react_deploy; fi
 
-docker run -it -d --rm -p 8005:8005 --name springboot_deploy springboot_deploy
-echo "Run springboot_deploy"
-docker run -it -d --rm -p 3000:80 --name react_deploy react_deploy
-echo "Run react_deploy"
-```
+  docker run -it -d --rm -p 8005:8005 --name springboot_deploy springboot_deploy
+  echo "Run springboot_deploy"
+  docker run -it -d --rm -p 3000:80 --name react_deploy react_deploy
+  echo "Run react_deploy"
+  ```
