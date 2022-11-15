@@ -1,13 +1,13 @@
 # 06. Nginx, SSL 설정
 
-> **Nginx 설치**
+> ### **Nginx 설치**
 
 ```bash
 sudo apt update
 sudo apt install nginx
 ```
 
-> **SSL 설정**
+> ### **SSL 설정**
 
 - certbot 설치
 
@@ -31,7 +31,7 @@ sudo certbot --nginx -d [도메인]
 
 - 이메일 입력 후 2번 선택
 
-### **default.conf**
+> ### **default.conf**
 
 - /etc/nginx/sites-available 경로에서 default 파일 열기
 

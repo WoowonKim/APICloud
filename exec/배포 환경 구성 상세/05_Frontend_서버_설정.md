@@ -1,6 +1,6 @@
 # 05. Frontend 서버 설정
 
-> **Dockerfile**
+> ### **Dockerfile**
 
 ```dockerfile
 FROM node:16.15.0 as build-stage
@@ -38,7 +38,7 @@ CMD ["nginx", "-g","daemon off;"]
     - ※ EXPOSE는 컨테이너에 포트를 직접 연결해주는 기능을 하지 않고, 연결 포트가 무엇인지 알려주는 명시적인 역할을 할뿐 기능은 없다 => 실제 포트를 연결하는 것은 docker run에서 -p를 통해서 설정하는 것임
 12. nginx 환경 실행
 
-> **nginx.conf**
+> ### **nginx.conf**
 
 - nginx/default.conf
 

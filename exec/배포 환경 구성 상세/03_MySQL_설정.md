@@ -1,6 +1,6 @@
 # 03. MySQL 설정
 
-> **MySQL 설정**
+> ### **MySQL 설정**
 
 - EC2 서버 업데이트
 
@@ -14,7 +14,7 @@ sudo apt update
 sudo apt install mysql-server
 ```
 
-> **MySQL 계정 설정**
+> ### **MySQL 계정 설정**
 
 - root 계정 접속
 
@@ -56,7 +56,7 @@ create user '{userName}'@'%' identified by '{password}'
   grant all privileges on *.* to '{userName}'@'%' with grant option;
 ```
 
-> **외부 접속 허용하기**
+> ### **외부 접속 허용하기**
 
 - sudo vi /etc/mysql/mysql.conf.d/mysqld.cnf 로 접근
 
@@ -70,7 +70,7 @@ bind-address = 0.0.0.0
 sudo service mysql restart
 ```
 
-> **Workbench 설정**
+> ### **Workbench 설정**
 
 - 사용자 계정 생성<br>
   Users and Privileges -> Add Account 후 계정 생성
