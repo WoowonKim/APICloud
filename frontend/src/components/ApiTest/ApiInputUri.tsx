@@ -30,9 +30,11 @@ export type list = {
   setTestbodyInfo: Dispatch<SetStateAction<reBodyType | undefined>>;
   setParamsInfo: Dispatch<SetStateAction<reBodyType | undefined>>;
   paramsInfo: reBodyType | undefined;
+  queriesInfo: reBodyType | undefined;
+  setQueriesInfo: Dispatch<SetStateAction<reBodyType | undefined>>;
 };
 
-const ApiInputUri = ({ getInfo, testbodyInfo, setTestbodyInfo, paramsInfo, setParamsInfo }: list) => {
+const ApiInputUri = ({ getInfo, testbodyInfo, setTestbodyInfo, paramsInfo, setParamsInfo, queriesInfo, setQueriesInfo }: list) => {
   const [sendFlag, setSendFlag] = useState(false);
   const [headObj, setHeadObj] = useState({});
   const info = useSelector(selectTestApi);
@@ -62,8 +64,6 @@ const ApiInputUri = ({ getInfo, testbodyInfo, setTestbodyInfo, paramsInfo, setPa
   // 메소드 정보 받아오기
   const requestMethod = getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].method;
 
-  // console.log("HEAD =>", headObj); 헤더 정보
-  // console.log("testbodyInfo =>", testbodyInfo); 바디 정보
   let config = {
     headers: headObj,
   };
@@ -74,20 +74,40 @@ const ApiInputUri = ({ getInfo, testbodyInfo, setTestbodyInfo, paramsInfo, setPa
     param: paramsInfo,
   };
 
+  let data = {
+    params: paramsInfo,
+    queris: queriesInfo,
+  };
+
+  console.log("TOKEN", info.getToken);
+
   const submitRequest = () => {
     switch (requestMethod) {
       case "get":
         axios
           .get(testUri, {
-            params: params, //파람 작성한곳에서 불러올거임
+            headers: {
+              Authorization: `Bearer${info.getToken}`,
+            },
+            params: params,
           })
           .then((res) => {
             console.log("RES=>", res);
+          })
+          .catch((err) => {
+            console.log("ERR => ", err);
+            console.log("Params => ", params);
+            console.log("TestUri => ", testUri);
           });
         break;
       case "post":
         axios
-          .post(testUri, testbodyInfo)
+          .post(testUri, {
+            testbodyInfo,
+            headers: {
+              Authorization: `Bearer${info.getToken}`,
+            },
+          })
           .then((res) => {
             console.log("post 성공", res);
             console.log("postBody =>", testbodyInfo);
@@ -99,7 +119,12 @@ const ApiInputUri = ({ getInfo, testbodyInfo, setTestbodyInfo, paramsInfo, setPa
         break;
       case "put":
         axios
-          .put(testUri, testbodyInfo)
+          .put(testUri, {
+            testbodyInfo,
+            headers: {
+              Authorization: `Bearer${info.getToken}`,
+            },
+          })
           .then((res) => {
             console.log("put 성공 =>", res);
             console.log("putBody =>", testbodyInfo);
@@ -109,11 +134,25 @@ const ApiInputUri = ({ getInfo, testbodyInfo, setTestbodyInfo, paramsInfo, setPa
             console.log("putBody=>", testbodyInfo);
           });
         break;
-      // case "delete":
-      //   axios.delete(testUri, requestMethod).then(() => {
-      //     console.log("Delete Success");
-      //   });
-      //   break;
+      case "delete":
+        axios
+          .delete(testUri, {
+            data: {
+              data,
+            },
+            headers: {
+              Authorization: `Bearer${info.getToken}`,
+            },
+          })
+          .then((res) => {
+            console.log("Delete 성공=>", res);
+            console.log("DEL Data => ", data);
+          })
+          .catch((err) => {
+            console.log("ERR => ", err);
+            console.log("DEL Data => ", data);
+          });
+        break;
       // case "patch":
       //   console.log("PATCH");
       //   break;
@@ -137,22 +176,6 @@ const ApiInputUri = ({ getInfo, testbodyInfo, setTestbodyInfo, paramsInfo, setPa
   }, [sendFlag]);
 
   const [value, setValue] = useState(testUri);
-  const paramInfo = info.getParams;
-  const [mulumpyo, setMulumpyo] = useState("");
-  const [paramsValue, setParamsValue] = useState("");
-
-  // useEffect(() => {
-  //   const test = value + "?" + paramInfo;
-
-  //   if (paramInfo.length >= 1) {
-  //     setMulumpyo("?");
-  //     setParamsValue(paramInfo);
-  //   } else {
-  //     setMulumpyo("");
-  //     setParamsValue("");
-  //   }
-  //   // setValue(paramInfo);
-  // }, [paramInfo]);
 
   return (
     <div className="apiInputContainer">
@@ -161,7 +184,6 @@ const ApiInputUri = ({ getInfo, testbodyInfo, setTestbodyInfo, paramsInfo, setPa
       </span>
       <ApiInputUriSearch
         type="text"
-        // value={value + mulumpyo + paramsValue}
         value={value}
         onChange={(e) => {
           setValue(e.target.value);

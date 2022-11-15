@@ -49,18 +49,20 @@ const ApiBody = ({ getInfo, testbodyInfo, setTestbodyInfo }: type) => {
             <HeaderListTitleCon>
               <HeaderListTitle>{it.name}</HeaderListTitle>
             </HeaderListTitleCon>
-            <div className="headerListContent">
-              <form onSubmit={onSubmit}>
-                <HeaderListInput
-                  type="text"
-                  onChange={(e) => {
-                    setInputBody(e.target.value);
-                    setTest(it.name);
-                  }}
-                />
-                <button>저장</button>
-              </form>
-            </div>
+            {it.name && (
+              <div className="headerListContent">
+                <form onSubmit={onSubmit}>
+                  <HeaderListInput
+                    type="text"
+                    onChange={(e) => {
+                      setInputBody(e.target.value);
+                      setTest(it.name);
+                    }}
+                  />
+                  <button>저장</button>
+                </form>
+              </div>
+            )}
           </HeaderContatinerList>
         </div>
       ))}
