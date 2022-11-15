@@ -19,6 +19,7 @@ interface initType {
   getContextUrl: string;
   getParams: string;
   getParamsId: string;
+  getToken: string;
 }
 
 const initialState: initType = {
@@ -31,25 +32,26 @@ const initialState: initType = {
   getContextUrl: "",
   getParams: "",
   getParamsId: "",
+  getToken: "",
 };
 
 // API 조회 하기.
-export const getApiRequestInfo: any = createAsyncThunk(
-  "testApi/getApiRequestInfo",
-  async (args: any, { rejectWithValue }) => {
-    try {
-      const response = await axiosGet(`apis/${args.docId}`);
-      return response.data;
-    } catch (err: any) {
-      return rejectWithValue(err.response);
-    }
+export const getApiRequestInfo: any = createAsyncThunk("testApi/getApiRequestInfo", async (args: any, { rejectWithValue }) => {
+  try {
+    const response = await axiosGet(`apis/${args.docId}`);
+    return response.data;
+  } catch (err: any) {
+    return rejectWithValue(err.response);
   }
-);
+});
 
 const testApiSlice = createSlice({
   name: "testApi",
   initialState,
   reducers: {
+    getTokenInfo(state, action) {
+      state.getToken = action.payload;
+    },
     getParamsID(state, action) {
       console.log("ID ACION", action.payload);
       state.getParamsId = action.payload;
