@@ -88,6 +88,54 @@ export const setApiDetail: any = createAsyncThunk(
   }
 );
 
+// 사용자의 프로젝트 파일에서 변경된 값 조회
+export const getSynchronizeFile: any = createAsyncThunk(
+  "apiDocsApi/getSynchronizeFile",
+  async (args: any, { rejectWithValue }) => {
+    try {
+      const response = await axiosPost(
+        `synchronize/${args.docId}`,
+        args.formData
+      );
+      return response.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response);
+    }
+  }
+);
+
+// 사용자의 프로젝트 파일에서 변경된 값으로 db update
+export const updateSynchronizeData: any = createAsyncThunk(
+  "apiDocsApi/updateSynchronizeData",
+  async (args: any, { rejectWithValue }) => {
+    try {
+      const response = await axiosPut(`synchronize/${args.docId}`, {
+        controllerId: args.controllerId,
+        controllerDTO: args.controllerDTO,
+      });
+      return response.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response);
+    }
+  }
+);
+
+// api 명세를 파일로 변환
+export const getSynchronizeApiDoc: any = createAsyncThunk(
+  "apiDocsApi/getSynchronizeApiDoc",
+  async (args: any, { rejectWithValue }) => {
+    try {
+      const response = await axiosPost(
+        `synchronize/doc/${args.docId}`,
+        args.detailRequest
+      );
+      return response.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response);
+    }
+  }
+);
+
 const apiDocsApiSlice = createSlice({
   name: "mainApi",
   initialState,
@@ -134,6 +182,27 @@ const apiDocsApiSlice = createSlice({
     },
     [setApiDetail.rejected]: (state, action) => {
       console.log("setApiDetail rejected", action.payload);
+    },
+    [getSynchronizeFile.fulfilled]: (state, action) => {
+      if (action.meta.requestStatus === "fulfilled") {
+      }
+    },
+    [getSynchronizeFile.rejected]: (state, action) => {
+      console.log("getSynchronizeFile rejected", action.payload);
+    },
+    [updateSynchronizeData.fulfilled]: (state, action) => {
+      if (action.meta.requestStatus === "fulfilled") {
+      }
+    },
+    [updateSynchronizeData.rejected]: (state, action) => {
+      console.log("updateSynchronizeData rejected", action.payload);
+    },
+    [getSynchronizeApiDoc.fulfilled]: (state, action) => {
+      if (action.meta.requestStatus === "fulfilled") {
+      }
+    },
+    [getSynchronizeApiDoc.rejected]: (state, action) => {
+      console.log("getSynchronizeApiDoc rejected", action.payload);
     },
   },
 });
