@@ -176,8 +176,10 @@ public class SynchronizeDocServiceImpl implements SynchronizeDocService {
                 if (requestBody != -1) {
                     String[] tokens = request.split(" ");
                     apiDetail.setRequestBody(classParsingService.getBody(groupSecretKey, tokens[tokens.length - 2], "request"));
-                    apiDetail.getRequestBody().setRequired(parsingService.getRequired(request));
-                    apiDetail.getRequestBody().setName(tokens[tokens.length - 1].substring(0, tokens[tokens.length - 1].length() - 1));
+                    if (apiDetail.getRequestBody() != null) {
+                        apiDetail.getRequestBody().setRequired(parsingService.getRequired(request));
+                        apiDetail.getRequestBody().setName(tokens[tokens.length - 1].substring(0, tokens[tokens.length - 1].length() - 1));
+                    }
                 }
             }
         }

@@ -69,16 +69,6 @@
 
 // Start
 
-.startMain {
-  background-color: #e4effa;
-  display: flex;
-  justify-content: space-around;
-}
-.startImg {
-  margin-top: 10px;
-  width: 300px;
-  height: 300px;
-}
 .startText {
   margin-top: 120px;
 }
@@ -86,25 +76,8 @@
   font-weight: bold;
   font-size: 27px;
 }
-.startText > button {
-  width: 43%;
-  height: 23%;
-  margin-left: 20%;
-  margin-top: 15px;
-  border: none;
-  border-radius: 10px;
-  background-color: #bdd7ee;
-  font-weight: bold;
-  font-size: 20px;
-  cursor: pointer;
-}
 
 //ApiList
-.ApiList {
-  margin-left: 9%;
-  margin-right: 9%;
-  margin-top: 20px;
-}
 
 .ApiListTitle > span {
   margin-left: 10px;
