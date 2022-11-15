@@ -20,6 +20,10 @@ interface initType {
   getParams: string;
   getParamsId: string;
   getToken: string;
+  getResponseStatus: number;
+  getResponseData: any;
+  getResponseStatusText: string;
+  getResponseErroStatusMessage: string;
 }
 
 const initialState: initType = {
@@ -33,6 +37,10 @@ const initialState: initType = {
   getParams: "",
   getParamsId: "",
   getToken: "",
+  getResponseStatus: 0,
+  getResponseData: {},
+  getResponseStatusText: "",
+  getResponseErroStatusMessage: "",
 };
 
 // API 조회 하기.
@@ -49,6 +57,18 @@ const testApiSlice = createSlice({
   name: "testApi",
   initialState,
   reducers: {
+    getErrMessage(state, action) {
+      state.getResponseErroStatusMessage = action.payload;
+    },
+    getData(state, action) {
+      state.getResponseData = action.payload;
+    },
+    getStatus(state, action) {
+      state.getResponseStatus = action.payload;
+    },
+    getStatusTextInfo(state, action) {
+      state.getResponseStatusText = action.payload;
+    },
     getTokenInfo(state, action) {
       state.getToken = action.payload;
     },
