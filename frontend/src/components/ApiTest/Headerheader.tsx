@@ -1,11 +1,9 @@
-import React, { SetStateAction, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
-import { HeadersType, RequestTypeInfo } from "../../pages/CreateApi/ApisType";
-import testApiSlice, {
-  getApiRequestInfo,
-  selectTestApi,
-} from "../../Store/slice/testApi";
+import { RequestTypeInfo } from "../../pages/CreateApi/ApisType";
+import { useAppDispatch } from "../../Store/hooks";
+import testApiSlice, { selectTestApi } from "../../Store/slice/testApi";
 
 export const HeaderContatinerList = styled.div`
   display: flex;
@@ -17,7 +15,7 @@ export const HeaderListTitleCon = styled.div`
 `;
 export const HeaderListTitle = styled.p`
   font-weight: bold;
-  color: ${props => props.theme.color};
+  color: ${(props) => props.theme.color};
   font-size: 13px;
   margin: 13px 0px 20px 5px;
 `;
@@ -29,8 +27,8 @@ export const HeaderListInput = styled.input`
   border: none;
   font-size: 13px;
   border-bottom: 1px solid black;
-  background-color: ${props => props.theme.bgColor};
-  color: ${props => props.theme.color};
+  background-color: ${(props) => props.theme.bgColor};
+  color: ${(props) => props.theme.color};
 `;
 interface type {
   getInfo: RequestTypeInfo | undefined;
@@ -41,44 +39,47 @@ const Headerheader = ({ getInfo }: type) => {
   const [getDtoName, setGetDtoName] = useState("");
   const [getType, setGetType] = useState("");
   const [test, setTest] = useState("");
+  const dispatch = useAppDispatch();
   useEffect(() => {
     if (getInfo) {
-      setGetCollection(
-        getInfo?.controllers[info.getControllerInfomation].apis[
-          info.getApisInfomation
-        ].requestBody.collectionType
-      );
-      setGetDtoName(
-        getInfo?.controllers[info.getControllerInfomation].apis[
-          info.getApisInfomation
-        ].requestBody.dtoName
-      );
-      setGetType(
-        getInfo?.controllers[info.getControllerInfomation].apis[
-          info.getApisInfomation
-        ].requestBody.type
-      );
+      setGetCollection(getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].requestBody.collectionType);
+      setGetDtoName(getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].requestBody.dtoName);
+      setGetType(getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].requestBody.type);
     }
   }, [getInfo, info.getControllerInfomation, info.getApisInfomation]);
+  // console.log("HEADER => ", getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].headers);
+  const [tokenInfo, setTokenInfo] = useState("");
+  useEffect(() => {
+    getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].headers.map((it, idx) => {
+      if (it.key === "token") {
+        setTokenInfo(it.value);
+      }
+    });
+  }, [getInfo, info.getControllerInfomation, info.getApisInfomation]);
+  console.log("TokenInfo => ", tokenInfo);
 
   return (
     <>
-      {getInfo?.controllers[info.getControllerInfomation].apis[
-        info.getApisInfomation
-      ].headers.map((it, idx) => (
+      {getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].headers.map((it, idx) => (
         <>
           <HeaderContatinerList key={idx}>
             <HeaderListTitleCon>
               <HeaderListTitle>{it.key}</HeaderListTitle>
             </HeaderListTitleCon>
             <div className="headerListContent">
-              <HeaderListInput
-                type="text"
-                value={it.value}
-                onChange={e => {
-                  setGetCollection(e.target.value);
-                }}
-              />
+              {it.key !== "token" ? (
+                <HeaderListInput type="text" defaultValue={it.value} onChange={(e) => {}} />
+              ) : (
+                <HeaderListInput
+                  type="text"
+                  value={tokenInfo}
+                  onChange={(e) => {
+                    setTokenInfo(e.target.value);
+                    it.value = tokenInfo;
+                    dispatch(testApiSlice.actions.getTokenInfo(tokenInfo));
+                  }}
+                />
+              )}
             </div>
           </HeaderContatinerList>
         </>

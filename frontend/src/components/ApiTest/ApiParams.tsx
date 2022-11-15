@@ -1,24 +1,10 @@
-import React, {
-  Dispatch,
-  SetStateAction,
-  SyntheticEvent,
-  useEffect,
-  useState,
-} from "react";
+import React, { Dispatch, SetStateAction, SyntheticEvent, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import {
-  PropertiesType,
-  RequestTypeInfo,
-} from "../../pages/CreateApi/ApisType";
+import { PropertiesType, RequestTypeInfo } from "../../pages/CreateApi/ApisType";
 import { reBodyType } from "../../pages/TestApi";
 import { useAppDispatch } from "../../Store/hooks";
 import testApiSlice, { selectTestApi } from "../../Store/slice/testApi";
-import {
-  HeaderContatinerList,
-  HeaderListInput,
-  HeaderListTitle,
-  HeaderListTitleCon,
-} from "./Headerheader";
+import { HeaderContatinerList, HeaderListInput, HeaderListTitle, HeaderListTitleCon } from "./Headerheader";
 interface type {
   getInfo: RequestTypeInfo | undefined;
   setParamsInfo: Dispatch<SetStateAction<reBodyType | undefined>>;
@@ -29,11 +15,7 @@ const ApiParams = ({ getInfo, setParamsInfo, paramsInfo }: type) => {
   const [infoParams, setInfoParams] = useState<PropertiesType[]>();
   useEffect(() => {
     if (getInfo) {
-      setInfoParams(
-        getInfo?.controllers[info.getControllerInfomation].apis[
-          info.getApisInfomation
-        ].parameters
-      );
+      setInfoParams(getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].parameters);
     }
   }, [getInfo, info.getControllerInfomation, info.getApisInfomation]);
 
@@ -52,7 +34,6 @@ const ApiParams = ({ getInfo, setParamsInfo, paramsInfo }: type) => {
 
   const [inputParam, setInputParam] = useState("");
   const [newParams, setNewParams] = useState({});
-
   const [paramsId, setParamsId] = useState("");
 
   useEffect(() => {
@@ -80,18 +61,20 @@ const ApiParams = ({ getInfo, setParamsInfo, paramsInfo }: type) => {
             <HeaderListTitleCon>
               <HeaderListTitle>{it.name}</HeaderListTitle>
             </HeaderListTitleCon>
-            <div className="headerListContent">
-              <form onSubmit={onSubmit}>
-                <HeaderListInput
-                  type="text"
-                  onChange={e => {
-                    setInputParam(e.target.value);
-                    setParamsId(it.name);
-                  }}
-                />
-                <button>저장</button>
-              </form>
-            </div>
+            {it.name && (
+              <div className="headerListContent">
+                <form onSubmit={onSubmit}>
+                  <HeaderListInput
+                    type="text"
+                    onChange={(e) => {
+                      setInputParam(e.target.value);
+                      setParamsId(it.name);
+                    }}
+                  />
+                  <button>저장</button>
+                </form>
+              </div>
+            )}
           </HeaderContatinerList>
         </div>
       ))}

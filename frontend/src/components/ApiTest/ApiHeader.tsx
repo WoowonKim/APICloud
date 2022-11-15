@@ -3,9 +3,9 @@ import { RequestTypeInfo } from "../../pages/CreateApi/ApisType";
 import { reBodyType } from "../../pages/TestApi";
 import { NoChoiceText, ChoiceText } from "../main/ApiList";
 import ApiBody from "./ApiBody";
-// import ApiParams from "./ApiParams";
+import ApiParams from "./ApiParams";
 import Headerheader from "./Headerheader";
-import HeaderToken from "./HeaderToken";
+import HeaderQueries from "./HeaderQueries";
 
 interface type {
   getInfo: RequestTypeInfo | undefined;
@@ -13,9 +13,11 @@ interface type {
   testbodyInfo: reBodyType | undefined;
   setParamsInfo: Dispatch<SetStateAction<reBodyType | undefined>>;
   paramsInfo: reBodyType | undefined;
+  queriesInfo: reBodyType | undefined;
+  setQueriesInfo: Dispatch<SetStateAction<reBodyType | undefined>>;
 }
 
-const ApiHeader = ({ getInfo, testbodyInfo, setTestbodyInfo, paramsInfo, setParamsInfo }: type) => {
+const ApiHeader = ({ getInfo, testbodyInfo, setTestbodyInfo, paramsInfo, setParamsInfo, queriesInfo, setQueriesInfo }: type) => {
   const [headerTokenFlag, setHeaderTokenFlag] = useState<number | null>(0);
   return (
     <div className="requestInfosetting">
@@ -34,7 +36,7 @@ const ApiHeader = ({ getInfo, testbodyInfo, setTestbodyInfo, paramsInfo, setPara
                 setHeaderTokenFlag(1);
               }}
             >
-              Token
+              Queries
             </NoChoiceText>
             <NoChoiceText
               onClick={() => {
@@ -60,7 +62,7 @@ const ApiHeader = ({ getInfo, testbodyInfo, setTestbodyInfo, paramsInfo, setPara
                 setHeaderTokenFlag(1);
               }}
             >
-              Token
+              Queries
             </ChoiceText>
             <NoChoiceText
               onClick={() => {
@@ -69,7 +71,7 @@ const ApiHeader = ({ getInfo, testbodyInfo, setTestbodyInfo, paramsInfo, setPara
             >
               Params
             </NoChoiceText>
-            <HeaderToken />
+            <HeaderQueries getInfo={getInfo} queriesInfo={queriesInfo} setQueriesInfo={setQueriesInfo} />
           </>
         )}
         {headerTokenFlag === 2 && (
@@ -86,7 +88,7 @@ const ApiHeader = ({ getInfo, testbodyInfo, setTestbodyInfo, paramsInfo, setPara
                 setHeaderTokenFlag(1);
               }}
             >
-              Token
+              Queries
             </NoChoiceText>
             <ChoiceText
               onClick={() => {
@@ -96,11 +98,7 @@ const ApiHeader = ({ getInfo, testbodyInfo, setTestbodyInfo, paramsInfo, setPara
               Params
             </ChoiceText>
             {/* <Headerheader getInfo={getInfo} /> */}
-            {/* <ApiParams
-              getInfo={getInfo}
-              paramsInfo={paramsInfo}
-              setParamsInfo={setParamsInfo}
-            /> */}
+            <ApiParams getInfo={getInfo} paramsInfo={paramsInfo} setParamsInfo={setParamsInfo} />
           </>
         )}
       </div>
