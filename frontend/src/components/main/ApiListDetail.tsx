@@ -21,12 +21,24 @@ const ListContent = styled.div`
   justify-content: space-between;
   background-color: ${(props) => props.theme.listBgColor};
   color: black;
-  margin: 5px;
-  border-radius: 10px;
-  padding-left: 23px;
+  margin: 15px;
+  border-radius: 50px;
+  padding-left: 30px;
   padding-right: 10px;
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  box-shadow: 0 17px 15px -18px rgba(180, 180, 180, 1);
+`;
+
+const DocIcon = styled.img`
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+`;
+
+const DetailContent = styled.div`
+  cursor: pointer;
+  font-weight: bold;
 `;
 
 const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
@@ -61,31 +73,30 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
       {isOpenUpdateModal && <UpdateModal></UpdateModal>}
       {apiDocList?.map((it, idx) => (
         <ListContent key={idx}>
-          <p>{it.docId}</p>
-          <div
-            className="content"
+          {/* <p>{it.docId}</p> */}
+          <DetailContent
             onClick={() => {
               moveApidocs(it.encryptedUrl, false);
             }}
           >
             <p>{it.docName}</p>
-          </div>
+          </DetailContent>
           <div className="userSetting">
             <div className="userSettingSub">
-              <div className="member">
-                <FontAwesomeIcon icon={faUser} />
-                {it.groupUser.name}
-              </div>
-              <FontAwesomeIcon
-                className="DeatilIcon"
-                icon={faRightToBracket}
+              <DocIcon
+                alt="groupUserIcon"
+                src={require("../../assets/groupUserIcon.png")}
+              />
+              {/* {it.groupUser.name} */}
+
+              <DocIcon
+                alt="docSelectIcon"
                 onClick={() => moveApidocs(it.encryptedUrl, true, it)}
+                src={require("../../assets/docSelectIcon.png")}
               />
               {apiList === 0 ? (
                 <>
-                  <FontAwesomeIcon
-                    className="DeatilIcon"
-                    icon={faPenToSquare}
+                  <DocIcon
                     onClick={() => {
                       dispatch(
                         mainApiSlice.actions.setIsOpenUpdateModal({
@@ -102,11 +113,12 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
                       );
                       console.log("ApiListDetail DocId => ", it.docId);
                     }}
+                    src={require("../../assets/docUpdateIcon.png")}
                   />
-                  <FontAwesomeIcon
-                    className="DeatilIcon"
-                    icon={faTrash}
+                  <DocIcon
+                    alt="docSelectIcon"
                     onClick={() => dispatchDeleteDoc(it.docId)}
+                    src={require("../../assets/docDeleteIcon.png")}
                   />
                 </>
               ) : (
