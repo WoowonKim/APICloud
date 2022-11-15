@@ -20,8 +20,8 @@ const ApiInputUriSearch = styled.input`
   outline: none;
   font-weight: 500;
   font-size: 14px;
-  color: ${props => props.theme.color};
-  background-color: ${props => props.theme.bgColor};
+  color: ${(props) => props.theme.color};
+  background-color: ${(props) => props.theme.bgColor};
 `;
 
 export type list = {
@@ -32,13 +32,7 @@ export type list = {
   paramsInfo: reBodyType | undefined;
 };
 
-const ApiInputUri = ({
-  getInfo,
-  testbodyInfo,
-  setTestbodyInfo,
-  paramsInfo,
-  setParamsInfo,
-}: list) => {
+const ApiInputUri = ({ getInfo, testbodyInfo, setTestbodyInfo, paramsInfo, setParamsInfo }: list) => {
   const [sendFlag, setSendFlag] = useState(false);
   const [headObj, setHeadObj] = useState({});
   const info = useSelector(selectTestApi);
@@ -49,10 +43,7 @@ const ApiInputUri = ({
   }, [getInfo, info.getControllerInfomation, info.getApisInfomation]);
 
   // 헤더 정보 받아 오기.
-  const headReq =
-    getInfo?.controllers[info.getControllerInfomation].apis[
-      info.getApisInfomation
-    ].headers;
+  const headReq = getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].headers;
   useEffect(() => {
     let test = {};
     headReq?.map((it, idx) => {
@@ -69,10 +60,7 @@ const ApiInputUri = ({
   const testUri = server + context;
 
   // 메소드 정보 받아오기
-  const requestMethod =
-    getInfo?.controllers[info.getControllerInfomation].apis[
-      info.getApisInfomation
-    ].method;
+  const requestMethod = getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].method;
 
   // console.log("HEAD =>", headObj); 헤더 정보
   // console.log("testbodyInfo =>", testbodyInfo); 바디 정보
@@ -93,18 +81,18 @@ const ApiInputUri = ({
           .get(testUri, {
             params: params, //파람 작성한곳에서 불러올거임
           })
-          .then(res => {
+          .then((res) => {
             console.log("RES=>", res);
           });
         break;
       case "post":
         axios
           .post(testUri, testbodyInfo)
-          .then(res => {
+          .then((res) => {
             console.log("post 성공", res);
             console.log("postBody =>", testbodyInfo);
           })
-          .catch(err => {
+          .catch((err) => {
             console.log("ERR =>", err);
             console.log("postBody =>", testbodyInfo);
           });
@@ -112,11 +100,11 @@ const ApiInputUri = ({
       case "put":
         axios
           .put(testUri, testbodyInfo)
-          .then(res => {
+          .then((res) => {
             console.log("put 성공 =>", res);
             console.log("putBody =>", testbodyInfo);
           })
-          .catch(err => {
+          .catch((err) => {
             console.log("ERR => ", err);
             console.log("putBody=>", testbodyInfo);
           });
@@ -175,7 +163,7 @@ const ApiInputUri = ({
         type="text"
         // value={value + mulumpyo + paramsValue}
         value={value}
-        onChange={e => {
+        onChange={(e) => {
           setValue(e.target.value);
         }}
       />

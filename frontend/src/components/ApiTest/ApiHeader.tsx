@@ -3,7 +3,7 @@ import { RequestTypeInfo } from "../../pages/CreateApi/ApisType";
 import { reBodyType } from "../../pages/TestApi";
 import { NoChoiceText, ChoiceText } from "../main/ApiList";
 import ApiBody from "./ApiBody";
-import ApiParams from "./ApiParams";
+// import ApiParams from "./ApiParams";
 import Headerheader from "./Headerheader";
 import HeaderToken from "./HeaderToken";
 
@@ -15,13 +15,7 @@ interface type {
   paramsInfo: reBodyType | undefined;
 }
 
-const ApiHeader = ({
-  getInfo,
-  testbodyInfo,
-  setTestbodyInfo,
-  paramsInfo,
-  setParamsInfo,
-}: type) => {
+const ApiHeader = ({ getInfo, testbodyInfo, setTestbodyInfo, paramsInfo, setParamsInfo }: type) => {
   const [headerTokenFlag, setHeaderTokenFlag] = useState<number | null>(0);
   return (
     <div className="requestInfosetting">
@@ -102,21 +96,17 @@ const ApiHeader = ({
               Params
             </ChoiceText>
             {/* <Headerheader getInfo={getInfo} /> */}
-            <ApiParams
+            {/* <ApiParams
               getInfo={getInfo}
               paramsInfo={paramsInfo}
               setParamsInfo={setParamsInfo}
-            />
+            /> */}
           </>
         )}
       </div>
       <div className="requestInfoBodySetting">
         <ChoiceText>Body</ChoiceText>
-        <ApiBody
-          getInfo={getInfo}
-          testbodyInfo={testbodyInfo}
-          setTestbodyInfo={setTestbodyInfo}
-        ></ApiBody>
+        <ApiBody getInfo={getInfo} testbodyInfo={testbodyInfo} setTestbodyInfo={setTestbodyInfo}></ApiBody>
       </div>
     </div>
   );
