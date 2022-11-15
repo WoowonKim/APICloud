@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import Header from "../components/main/Header";
-import ApiBody from "../components/ApiTest/ApiBody";
 import ApiHeader from "../components/ApiTest/ApiHeader";
 import ApiInputUri from "../components/ApiTest/ApiInputUri";
 import ApiResponse from "../components/ApiTest/ApiResponse";
@@ -20,9 +19,9 @@ export type reBodyType = {};
 const TestSide = styled.div`
   width: 20%;
   height: 91vh;
-  background-color: ${props => props.theme.sideBgClodr};
-  border-top: 1px solid ${props => props.theme.border};
-  border-right: 2px solid ${props => props.theme.border};
+  background-color: ${(props) => props.theme.sideBgClodr};
+  border-top: 1px solid ${(props) => props.theme.border};
+  border-right: 2px solid ${(props) => props.theme.border};
 `;
 const TestApi = ({ isDarkMode, toggleDarkMode }: IHome) => {
   const [getInfo, setGetInfo] = useState<RequestTypeInfo>();
@@ -30,6 +29,7 @@ const TestApi = ({ isDarkMode, toggleDarkMode }: IHome) => {
   const getDocsId = useAppSelector(mainApi);
   const [testbodyInfo, setTestbodyInfo] = useState<reBodyType>();
   const [paramsInfo, setParamsInfo] = useState<reBodyType>();
+  const [queriesInfo, setQueriesInfo] = useState<reBodyType>();
 
   // 해당 API정보의 전체를 불러오기.
   useEffect(() => {
@@ -39,7 +39,6 @@ const TestApi = ({ isDarkMode, toggleDarkMode }: IHome) => {
       setGetInfo(obj);
     });
   }, [getDocsId.docId]);
-
   return (
     <div>
       <Header />
@@ -55,6 +54,8 @@ const TestApi = ({ isDarkMode, toggleDarkMode }: IHome) => {
               setTestbodyInfo={setTestbodyInfo}
               paramsInfo={paramsInfo}
               setParamsInfo={setParamsInfo}
+              queriesInfo={queriesInfo}
+              setQueriesInfo={setQueriesInfo}
             />
           </div>
           <p className="apiHeaderMainTitle">Request</p>
@@ -66,6 +67,8 @@ const TestApi = ({ isDarkMode, toggleDarkMode }: IHome) => {
                 setTestbodyInfo={setTestbodyInfo}
                 paramsInfo={paramsInfo}
                 setParamsInfo={setParamsInfo}
+                queriesInfo={queriesInfo}
+                setQueriesInfo={setQueriesInfo}
               />
             </div>
           </div>
