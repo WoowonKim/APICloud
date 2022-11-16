@@ -40,9 +40,9 @@ const CreateApi = () => {
   const [selectedControllerIndex, setSelectedControllerIndex] = useState(-1);
   const [isSynced, setIsSynced] = useState(0);
   // 데이터 확인용 로그
-  console.log(changeData);
-  console.log(syncData);
-  console.log(changeCode);
+  // console.log(changeData);
+  // console.log(syncData);
+  // console.log(changeCode);
 
   useEffect(() => {
     const checckAutority = async (encryptedUrl: string) => {
@@ -71,7 +71,7 @@ const CreateApi = () => {
     requestBody: {
       dtoName: "",
       name: "",
-      type: "String",
+      type: "Object",
       collectionType: "",
       properties: [],
       required: true,
@@ -186,6 +186,9 @@ const CreateApi = () => {
   // table의 row 추가 함수
   const addTableRow = (responseType?: "fail" | "success") => {
     if (activeTab === 1) {
+      if (state.data[selectedController].apis[selectedApi].headers === null) {
+        state.data[selectedController].apis[selectedApi].headers = [];
+      }
       state.data[selectedController].apis[selectedApi].headers.push({
         key: "",
         value: "",
@@ -312,7 +315,7 @@ const CreateApi = () => {
         })
         .catch((err: any) => console.log(err));
     };
-  }, [isSynced]);
+  }, [encryptedUrl]);
 
   useEffect(() => {
     dispatch(getApiDoc({ docId: encryptedUrl })).then((res: any) => {
@@ -320,7 +323,7 @@ const CreateApi = () => {
         setDocInfo(res.payload);
       }
     });
-  }, []);
+  }, [encryptedUrl]);
 
   useEffect(() => {
     if (!docInfo) {

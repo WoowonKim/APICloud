@@ -40,6 +40,7 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
     dispatch(mainApiSlice.actions.setDocId({ docId: docId }));
     localStorage.setItem("docId", docId.toString());
     if (isEdit && data) {
+      window.location.replace(`/createApi/${docId}`);
       navigate(`/createApi/${docId}`, { state: { data: data } });
     } else {
       navigate(`/apiDocs/${docId}`);
