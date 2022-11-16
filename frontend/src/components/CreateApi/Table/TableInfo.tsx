@@ -1,10 +1,8 @@
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { MappedTypeDescription } from "@syncedstore/core/types/doc";
 import { useSyncedStore } from "@syncedstore/react";
 import { store } from "../store";
 import React, { useState } from "react";
-import { ControllerType } from "../../../pages/CreateApi/ApisType";
 import SelectTypes from "../SelectTypes/SelectTypes";
 import { handleDtoProperties } from "../validationCheck";
 import "./Table.scss";
@@ -122,15 +120,12 @@ const TableInfo = ({
             </div>
             <div className="typeInputContainer">
               <p className="typeInputLabel">type</p>
-              {state.data[selectedController].apis[selectedApi].requestBody
-                .collectionType === "List" && (
-                <SelectTypes
-                  handleBasicInfo={handleBasicInfo}
-                  depth={1}
-                  isCollection={true}
-                />
-              )}
-              <SelectTypes handleBasicInfo={handleBasicInfo} depth={1} />
+              <p>
+                {
+                  state.data[selectedController].apis[selectedApi].requestBody
+                    .type
+                }
+              </p>
             </div>
             <div className="tableInfoInputGroup">
               <label
