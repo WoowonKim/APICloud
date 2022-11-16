@@ -337,7 +337,15 @@ const ApiTable = ({
         <thead>
           <tr>
             {headers.map((item, index) => (
-              <th key={index} style={{ width: "200px" }}>
+              <th
+                key={index}
+                style={{
+                  width:
+                    item === "delete" || item === "required"
+                      ? "100px"
+                      : "250px",
+                }}
+              >
                 {item}
               </th>
             ))}

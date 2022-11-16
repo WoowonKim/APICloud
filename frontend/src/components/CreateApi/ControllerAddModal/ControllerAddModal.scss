@@ -20,8 +20,8 @@
 }
 
 .modalInnerContainer {
-  width: 35rem;
-  min-height: 33rem;
+  width: 30rem;
+  min-height: 25rem;
   height: auto;
   background-color: white;
   position: absolute;
@@ -37,7 +37,7 @@
 }
 
 .modalTitleText {
-  font-size: 2em;
+  font-size: 1.6em;
   font-weight: bold;
   margin: 2rem 0;
   position: absolute;
@@ -45,16 +45,16 @@
 }
 
 .highlightText {
-  background-color: rgba(207, 244, 255, 0.69);
-  height: 1.5em;
-  width: 14em;
+  background-color: rgba(150, 234, 244, 0.5);
+  height: 1.2em;
+  width: 11em;
   position: absolute;
-  top: 4.2em;
+  top: 3.7em;
   left: 3.5em;
 }
 
 .controllerInfoItem {
-  margin: 2rem 0;
+  margin: 1.5rem 0;
 }
 
 .controllerLabel {
@@ -81,7 +81,7 @@
 .apiTitleGroup {
   display: flex;
   align-items: center;
-  margin-top: 2rem;
+  margin: 2rem 0 0 0;
 }
 
 .apiTitleText {
@@ -94,9 +94,9 @@
   @include button();
   background-color: rgb(207, 244, 255);
   border-radius: 100%;
-  font-size: 1em;
-  width: 28px;
-  height: 28px;
+  font-size: 0.8em;
+  width: 23px;
+  height: 23px;
   padding: 0;
 }
 
@@ -108,7 +108,7 @@
   color: tomato;
   font-size: 0.7em;
   padding-left: 0.5rem;
-  margin-top: 5px;
+  margin: 5px 0;
 }
 
 .modalCloseButton {
