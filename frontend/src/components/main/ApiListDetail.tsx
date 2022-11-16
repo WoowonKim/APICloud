@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import mainApiSlice, { deleteApiDoc } from "../../Store/slice/mainApi";
 import UpdateModal from "./UpdateModal";
+import GroupInfoModal from "./GroupInfoModal";
 import { RootState } from "../../Store/store";
 import styled from "styled-components";
 
@@ -47,6 +48,9 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
   const isOpenUpdateModal = useSelector(
     (state: RootState) => state.mainApi.isOpenUpdateModal
   );
+  const isGroupInfoModal = useSelector(
+    (state: RootState) => state.mainApi.isGroupInfoModal
+  );
 
   const moveApidocs: any = (docId: number, isEdit: boolean, data?: any) => {
     dispatch(mainApiSlice.actions.setDocId({ docId: docId }));
@@ -81,11 +85,21 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
           >
             <p>{it.docName}</p>
           </DetailContent>
+
           <div className="userSetting">
             <div className="userSettingSub">
+              {isGroupInfoModal && <GroupInfoModal></GroupInfoModal>}
+
               <DocIcon
                 alt="groupUserIcon"
                 src={require("../../assets/groupUserIcon.png")}
+                onClick={() => {
+                  dispatch(
+                    mainApiSlice.actions.setIsGroupInfoModal({
+                      isGroupInfoModal: true,
+                    })
+                  );
+                }}
               />
               {/* {it.groupUser.name} */}
 
@@ -116,7 +130,7 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
                     src={require("../../assets/docUpdateIcon.png")}
                   />
                   <DocIcon
-                    alt="docSelectIcon"
+                    alt="docDeleteIcon"
                     onClick={() => dispatchDeleteDoc(it.docId)}
                     src={require("../../assets/docDeleteIcon.png")}
                   />
