@@ -14,24 +14,107 @@
 .testInfo {
   width: 100%;
   margin-top: 7px;
-  background-color: yellow;
-  // height: 250px;
 }
 .testSetting {
   width: 100%;
+  height: 200px;
 }
 .testBodyInfo {
   width: 50%;
+}
+.headerList {
+  margin-top: 5px;
+  width: 100%;
+  display: flex;
+}
+.apiHeaderFirstTitle {
+  display: flex;
+}
+.apiKeyHeaderTitle {
+  width: 30%;
+}
+.apiKeyHeaderTitleValue {
+  width: 50%;
+}
+.apiKeyHeaderTitleCheck {
+  width: 20%;
+}
+.apiHeaderListSpan {
+  text-align: start;
+  font-size: 20px;
+  font-weight: bold;
+  border: 1px solid #000000;
+  padding: 5px 15px 5px 7px;
+}
+
+.headerListTitleisHeader {
+  display: flex;
+  margin-bottom: 1px;
+}
+.apiHeaderListPtag {
+  text-align: start;
+  font-size: 13px;
+  font-weight: bold;
+  border: 1px solid #000000;
+  padding: 5px 15px 5px 7px;
+}
+
+.apiKeyHeaderTitleValueSubmit {
+  width: 50%;
+}
+.apiHeaderListPtagInput {
+  text-align: start;
+  font-size: 13px;
+  font-weight: bold;
+  border: 1px solid #000000;
+  padding: 0px 0px 0px 0px;
+}
+.apiHeaderListPtagInput > input:focus {
+  outline: none;
+}
+.formApiHeader {
+  display: flex;
+  width: 70%;
+}
+.apiHeaderListInputTag {
+  border: none;
+  width: 80%;
+  padding: 5px 15px 2px 7px;
+}
+
+.apiHeaderListButtonTag {
+  text-align: center;
+  font-size: 13px;
+  font-weight: bold;
+  border: 1px solid #000000;
+  padding: 5px 15px 5px 7px;
+  cursor: pointer;
 }
 
 .testListNum {
   font-weight: bold;
   font-size: 15px;
   padding: 3px 13px 5px 13px;
+  cursor: pointer;
 }
 .testListNumsmall {
   font-size: 12px;
   padding: 3px 13px 5px 13px;
+  cursor: pointer;
+}
+.objectResponseResult {
+  display: flex;
+}
+.titleResponseResult {
+  padding-left: 20px;
+  font-weight: bold;
+  padding-bottom: 5px;
+}
+.errorResponseResult {
+  font-weight: bold;
+  font-size: 30px;
+  text-align: center;
+  margin: 20px;
 }
 // ApiSide
 .apiSide {
@@ -121,12 +204,11 @@
   color: #727070;
   cursor: pointer;
 }
-.headerList {
-  margin-top: 5px;
-  width: 100%;
-  height: 200px;
-  display: flex;
-}
+// .headerList {
+//   margin-top: 5px;
+//   width: 100%;
+//   display: flex;
+// }
 
 .bodyInputTitle {
   font-weight: bold;
@@ -186,10 +268,12 @@
 // ApiRespose
 .apiHeaderMainTitle {
   padding-bottom: 3px;
-  padding: 0px 0px 5px 5px;
+  padding: 10px 0px 10px 10px;
   margin: 0px;
+  margin-bottom: 2px;
   width: 100%;
   font-size: 20px;
+  font-weight: bold;
   border-bottom: 3px solid #000000;
 }
 .apiResponseContainer {
@@ -203,11 +287,20 @@
 }
 .apiResponseResult {
   margin-top: 11px;
-  background-color: #ffffff;
+  // background-color: #ffffff;
+  background-color: #f1f1f1;
   border: none;
   width: 100%;
-  height: 230px;
+  height: 50vh;
   overflow-y: scroll;
+}
+.resultResponseHeaderContent {
+  padding: 0px 10px;
+  font-weight: bold;
+  font-size: 15px;
+}
+.centercalcu {
+  padding: 10px 0px;
 }
 .apiResponseResult::-webkit-scrollbar {
   width: 5px; /* 스크롤바의 너비 */
@@ -226,9 +319,10 @@
   text-align: end;
   display: flex;
   justify-content: end;
+  padding: 15px 0px 5px 0px;
 }
 .apiResponseResultCommonState > p {
-  font-size: 12px;
+  font-size: 15px;
   padding: 0px 5px;
   font-weight: bold;
 }
@@ -265,6 +359,7 @@
 .resltResponseHeaderContainer {
   margin: 10px;
   display: flex;
+  // background-color: #3a00e5;
 }
 .resultResponseTitleContainer {
   width: 150px;

@@ -15,7 +15,7 @@ export const HeaderListTitleCon = styled.div`
 `;
 export const HeaderListTitle = styled.p`
   font-weight: bold;
-  color: ${(props) => props.theme.color};
+  color: ${props => props.theme.color};
   font-size: 13px;
   margin: 13px 0px 20px 5px;
 `;
@@ -26,8 +26,8 @@ export const HeaderListInput = styled.input`
   border: none;
   font-size: 13px;
   border-bottom: 1px solid black;
-  background-color: ${(props) => props.theme.bgColor};
-  color: ${(props) => props.theme.color};
+  background-color: ${props => props.theme.bgColor};
+  color: ${props => props.theme.color};
 `;
 interface type {
   getInfo: RequestTypeInfo | undefined;
@@ -43,11 +43,25 @@ const Headerheader = ({ getInfo }: type) => {
 
   useEffect(() => {
     if (getInfo) {
-      setGetCollection(getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].requestBody.collectionType);
-      setGetDtoName(getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].requestBody.dtoName);
-      setGetType(getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].requestBody.type);
+      setGetCollection(
+        getInfo?.controllers[info.getControllerInfomation].apis[
+          info.getApisInfomation
+        ].requestBody.collectionType
+      );
+      setGetDtoName(
+        getInfo?.controllers[info.getControllerInfomation].apis[
+          info.getApisInfomation
+        ].requestBody.dtoName
+      );
+      setGetType(
+        getInfo?.controllers[info.getControllerInfomation].apis[
+          info.getApisInfomation
+        ].requestBody.type
+      );
     }
-    getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].headers.map((it, idx) => {
+    getInfo?.controllers[info.getControllerInfomation].apis[
+      info.getApisInfomation
+    ].headers.map((it, idx) => {
       if (it.key === "token") {
         setTokenInfo(it.value);
       }
@@ -56,29 +70,40 @@ const Headerheader = ({ getInfo }: type) => {
 
   return (
     <>
-      {getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].headers.map((it, idx) => (
-        <>
-          <HeaderContatinerList key={idx}>
-            <HeaderListTitleCon>
-              <HeaderListTitle>{it.key}</HeaderListTitle>
-            </HeaderListTitleCon>
-            <div className="headerListContent">
+      {getInfo?.controllers[info.getControllerInfomation].apis[
+        info.getApisInfomation
+      ].headers.map((it, idx) => (
+        <div className="headerListTitleisHeader" key={idx}>
+          <div className="apiKeyHeaderTitle">
+            <p className="apiHeaderListPtag">{it.key}</p>
+          </div>
+          <div className="apiKeyHeaderTitleValue">
+            <p className="apiHeaderListPtagInput">
               {it.key !== "token" ? (
-                <HeaderListInput type="text" defaultValue={it.value} onChange={(e) => {}} />
+                <input
+                  className="apiHeaderListInputTag"
+                  type="text"
+                  defaultValue={it.value}
+                  onChange={e => {}}
+                />
               ) : (
-                <HeaderListInput
+                <input
+                  className="apiHeaderListInputTag"
                   type="text"
                   value={tokenInfo}
-                  onChange={(e) => {
+                  onChange={e => {
                     setTokenInfo(e.target.value);
                     it.value = tokenInfo;
                     dispatch(testApiSlice.actions.getTokenInfo(tokenInfo));
                   }}
                 />
               )}
-            </div>
-          </HeaderContatinerList>
-        </>
+            </p>
+          </div>
+          <div className="apiKeyHeaderTitleCheck">
+            <p className="apiHeaderListButtonTag">SAVE</p>
+          </div>
+        </div>
       ))}
     </>
   );

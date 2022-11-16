@@ -1,9 +1,17 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { PropertiesType, RequestTypeInfo } from "../../pages/CreateApi/ApisType";
+import {
+  PropertiesType,
+  RequestTypeInfo,
+} from "../../pages/CreateApi/ApisType";
 import { reBodyType } from "../../pages/TestApi";
 import { selectTestApi } from "../../Store/slice/testApi";
-import { HeaderContatinerList, HeaderListInput, HeaderListTitle, HeaderListTitleCon } from "./Headerheader";
+import {
+  HeaderContatinerList,
+  HeaderListInput,
+  HeaderListTitle,
+  HeaderListTitleCon,
+} from "./Headerheader";
 
 interface type {
   getInfo: RequestTypeInfo | undefined;
@@ -20,7 +28,11 @@ const HeaderQueries = ({ getInfo, queriesInfo, setQueriesInfo }: type) => {
 
   useEffect(() => {
     if (getInfo) {
-      setInfoQueries(getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].queries);
+      setInfoQueries(
+        getInfo?.controllers[info.getControllerInfomation].apis[
+          info.getApisInfomation
+        ].queries
+      );
       setQueriesInfo({});
     }
   }, [getInfo, info.getControllerInfomation, info.getApisInfomation]);
@@ -39,26 +51,34 @@ const HeaderQueries = ({ getInfo, queriesInfo, setQueriesInfo }: type) => {
   return (
     <>
       {infoQueries?.map((it, idx) => (
-        <div key={idx}>
-          <HeaderContatinerList>
-            <HeaderListTitleCon>
-              <HeaderListTitle>{it.name}</HeaderListTitle>
-            </HeaderListTitleCon>
-            {it.name && (
-              <div className="headerListContent">
-                <form onSubmit={onSubmit}>
-                  <HeaderListInput
-                    type="text"
-                    onChange={(e) => {
-                      setInputQueries(e.target.value);
-                      setQueriesId(it.name);
-                    }}
-                  />
-                  <button>저장</button>
-                </form>
-              </div>
-            )}
-          </HeaderContatinerList>
+        <div className="headerListTitleisHeader" key={idx}>
+          {it.name && (
+            <div className="apiKeyHeaderTitle">
+              <p className="apiHeaderListPtag">{it.name}</p>
+            </div>
+          )}
+
+          {it.name && (
+            <div className="apiKeyHeaderTitleValueSubmit">
+              <p className="apiHeaderListPtagInput">
+                <input
+                  className="apiHeaderListInputTag"
+                  type="text"
+                  onChange={e => {
+                    setInputQueries(e.target.value);
+                    setQueriesId(it.name);
+                  }}
+                  onBlur={onSubmit}
+                />
+              </p>
+            </div>
+          )}
+
+          {it.name && (
+            <div className="apiKeyHeaderTitleCheck">
+              <p className="apiHeaderListButtonTag">SAVE</p>
+            </div>
+          )}
         </div>
       ))}
     </>
