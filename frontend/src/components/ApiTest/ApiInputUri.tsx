@@ -58,6 +58,7 @@ const ApiInputUri = ({ getInfo, testbodyInfo, setTestbodyInfo, paramsInfo, setPa
     e.status && dispatch(testApiSlice.actions.getStatus(e.status));
     e.statusText && dispatch(testApiSlice.actions.getStatusTextInfo(e.statusText));
     e.data && dispatch(testApiSlice.actions.getData(e.data));
+    e.headers && dispatch(testApiSlice.actions.getSuccessHeader(e.headers));
   };
 
   // 실패시 Response 반환
@@ -74,7 +75,7 @@ const ApiInputUri = ({ getInfo, testbodyInfo, setTestbodyInfo, paramsInfo, setPa
         axios
           .get(testUri, {
             headers: {
-              Authorization: `Bearer ${info.getToken}`,
+              Authorization: token,
             },
             params: paramsInfo,
           })
@@ -92,11 +93,10 @@ const ApiInputUri = ({ getInfo, testbodyInfo, setTestbodyInfo, paramsInfo, setPa
       case "Post":
         axios
           .post(testUri, {
-            testbodyInfo,
+            data: testbodyInfo,
             headers: {
               Authorization: token,
             },
-            params: paramsInfo,
           })
           .then((res) => {
             console.log("post 성공", res);
@@ -114,7 +114,6 @@ const ApiInputUri = ({ getInfo, testbodyInfo, setTestbodyInfo, paramsInfo, setPa
             headers: {
               Authorization: token,
             },
-            params: paramsInfo,
           })
           .then((res) => {
             console.log("put 성공 =>", res);
@@ -142,16 +141,20 @@ const ApiInputUri = ({ getInfo, testbodyInfo, setTestbodyInfo, paramsInfo, setPa
             console.log("ERR => ", err);
           });
         break;
-      // case "patch":
-      //   console.log("PATCH");
-      //   break;
-      // case "options":
-      //   console.log("OPTIONS");
-      //   break;
-      // case "head":
-      //   console.log("HEAD");
-      //   break;
+      case "patch":
+        axios.patch(testUri, {
+          testbodyInfo,
+          headers: {
+            Authoriztion: token,
+          },
+          params: paramsInfo,
+        });
+        break;
+      case "head":
+        axios.head(testUri, testbodyInfo);
+        break;
       default:
+        axios.options(testUri);
         break;
     }
     setSendFlag(!sendFlag);
@@ -161,6 +164,7 @@ const ApiInputUri = ({ getInfo, testbodyInfo, setTestbodyInfo, paramsInfo, setPa
   useEffect(() => {
     setTestbodyInfo({});
     setParamsInfo({});
+    setQueriesInfo({});
   }, [sendFlag]);
 
   return (

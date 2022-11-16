@@ -24,6 +24,7 @@ interface initType {
   getResponseData: any;
   getResponseStatusText: string;
   getResponseErroStatusMessage: string;
+  getResponseSuccessHeader: any;
 }
 
 const initialState: initType = {
@@ -41,6 +42,7 @@ const initialState: initType = {
   getResponseData: {},
   getResponseStatusText: "",
   getResponseErroStatusMessage: "",
+  getResponseSuccessHeader: {},
 };
 
 // API 조회 하기.
@@ -57,6 +59,9 @@ const testApiSlice = createSlice({
   name: "testApi",
   initialState,
   reducers: {
+    getSuccessHeader(state, action) {
+      state.getResponseSuccessHeader = action.payload;
+    },
     getErrMessage(state, action) {
       state.getResponseErroStatusMessage = action.payload;
     },
