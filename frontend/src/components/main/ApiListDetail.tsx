@@ -89,7 +89,6 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
           <div className="userSetting">
             <div className="userSettingSub">
               {isGroupInfoModal && <GroupInfoModal></GroupInfoModal>}
-
               <DocIcon
                 alt="groupUserIcon"
                 src={require("../../assets/groupUserIcon.png")}

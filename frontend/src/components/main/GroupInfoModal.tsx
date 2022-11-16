@@ -41,10 +41,11 @@ const GroupInfoModal = () => {
 const ModalContainer = styled.div`
   // width: 100%;
   // height: 100%;
-  // display: flex;
+  margin-left: 20px;
+  display: flex;
   // align-items: center;
-  // justify-content: center;
-  // position: absolute;
+  justify-content: center;
+  position: absolute;
 `;
 
 const DialogBox = styled.dialog`
@@ -54,7 +55,7 @@ const DialogBox = styled.dialog`
   // flex-direction: column;
   // align-items: center;
   border: none;
-  border-radius: 20px;
+  border-radius: 15px;
   box-shadow: 0 0 5px rgba(30, 30, 30, 0.185);
   z-index: 10000;
   // margin-bottom: 530px;
