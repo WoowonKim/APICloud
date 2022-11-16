@@ -54,6 +54,14 @@ server.port = {port-number}
 ※ 배포 환경에서 변수 바인딩으로 위와 같이 설정해줄 경우, 배포 환경에서도 해당 변수 바인딩이 가능해야함
 <br>
 
-## **Node.js**
+> ### **Node**
 
-우원오빠가 채우기
+- node 백그라운드 실행
+
+  ```bash
+  sudo nohup node {server.js 경로} &
+  ```
+
+  ※ server.js 경로 :  y-webrtc/node_modules/y-webrtc/bin/server.js
+  
+  ※ root계정에 18버전 이상의 node가 설치되어 있어야함 
