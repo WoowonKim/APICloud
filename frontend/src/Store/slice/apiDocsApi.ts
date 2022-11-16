@@ -11,6 +11,7 @@ import {
 const initialState = {
   isOpenExtractModal: false,
   isOpenDependencyModal: false,
+  isPending: false,
 };
 
 // 특정 API DOC Detail 조회하기
@@ -149,8 +150,21 @@ export const connectNotion: any = createAsyncThunk(
   }
 );
 
+// 문서 권한 확인
+export const checkAuthority: any = createAsyncThunk(
+  "apiDocsApi/checkAuthority",
+  async (args: any, { rejectWithValue }) => {
+    try {
+      const response = await axiosGet(`/docs/authority/${args.encryptedUrl}`);
+      return response.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response);
+    }
+  }
+);
+
 const apiDocsApiSlice = createSlice({
-  name: "mainApi",
+  name: "apiDocsApi",
   initialState,
   reducers: {
     setIsOpenExtractModal(state, action) {
@@ -222,6 +236,16 @@ const apiDocsApiSlice = createSlice({
       }
     },
     [connectNotion.rejected]: (state, action) => {
+      console.log("connectNotion rejected", action.payload);
+    },
+    [checkAuthority.pending]: (state, action) => {
+      state.isPending = true;
+    },
+    [checkAuthority.fulfilled]: (state, action) => {
+      state.isPending = false;
+    },
+    [checkAuthority.rejected]: (state, action) => {
+      state.isPending = false;
       console.log("connectNotion rejected", action.payload);
     },
   },
