@@ -13,15 +13,26 @@
 }
 .testInfo {
   width: 100%;
+  margin-top: 7px;
+  background-color: yellow;
+  // height: 250px;
 }
 .testSetting {
   width: 100%;
-  display: flex;
 }
 .testBodyInfo {
   width: 50%;
 }
 
+.testListNum {
+  font-weight: bold;
+  font-size: 15px;
+  padding: 3px 13px 5px 13px;
+}
+.testListNumsmall {
+  font-size: 12px;
+  padding: 3px 13px 5px 13px;
+}
 // ApiSide
 .apiSide {
   display: flex;
@@ -175,10 +186,11 @@
 // ApiRespose
 .apiHeaderMainTitle {
   padding-bottom: 3px;
+  padding: 0px 0px 5px 5px;
   margin: 0px;
-  width: 100px;
+  width: 100%;
   font-size: 20px;
-  border-bottom: 2px solid #000000;
+  border-bottom: 3px solid #000000;
 }
 .apiResponseContainer {
   padding: 5px;
