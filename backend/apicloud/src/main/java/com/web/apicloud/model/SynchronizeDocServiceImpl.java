@@ -1,7 +1,9 @@
 package com.web.apicloud.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.web.apicloud.domain.dto.DetailRequest;
 import com.web.apicloud.domain.dto.SynchronizeRequest;
 import com.web.apicloud.domain.dto.SynchronizeUpdateRequest;
@@ -14,6 +16,7 @@ import com.web.apicloud.model.parsing.*;
 import com.web.apicloud.util.Message;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONObject;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 

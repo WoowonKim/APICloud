@@ -217,6 +217,7 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
                         if (stack.peek() == '(') stack.pop();
                         if (stack.isEmpty()) {
                             System.out.println("request ==> ");
+                            if (requestStr.equals("")) return;
                             requestStr = requestStr.substring(0, requestStr.length() - 1);
                             request.put(start, requestStr);
                             checkRequestDetail(request);
