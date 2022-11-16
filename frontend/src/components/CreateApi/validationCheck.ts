@@ -191,10 +191,13 @@ export function checkTypeValidation(item: any) {
   // checkList[1] - type object 여부
   // checkList[2] - properties 존재 여부
   const checkList = [0, 0, 0];
+  // 테스트용 로그
+  console.log(JSON.parse(JSON.stringify(item)));
+
   if (item && Object.keys(item).length === 0) {
     return "false";
   }
-  if (item?.dtoName.trim()) {
+  if (item?.dtoName && item.dtoName.trim()) {
     checkList[0] = 1;
   }
   if (item?.type === "Object") {

@@ -39,8 +39,10 @@ const CreateApi = () => {
   const [selectedControllerName, setSelectedControllerName] = useState("");
   const [selectedControllerIndex, setSelectedControllerIndex] = useState(-1);
   const [isSynced, setIsSynced] = useState(0);
+  // 데이터 확인용 로그
   console.log(changeData);
   console.log(syncData);
+  console.log(changeCode);
 
   useEffect(() => {
     const checckAutority = async (encryptedUrl: string) => {
@@ -227,8 +229,8 @@ const CreateApi = () => {
         controllerDTO: changeData,
       })
     ).then((res: any) => {
-      console.log(res.payload);
       if (res.meta.requestStatus === "fulfilled") {
+        console.log(res.payload);
         window.location.reload();
       }
     });
@@ -242,11 +244,13 @@ const CreateApi = () => {
         const detail = JSON.parse(res.payload.detail);
         if (detail && detail.controllers.length > 0) {
           if (
-            state.data.length === detail.controllers.length ||
-            state.data.length < detail.controllers.length
+            state.data &&
+            (state.data.length === detail.controllers.length ||
+              state.data.length < detail.controllers.length)
           ) {
             for (let idx = 0; idx < state.data.length; idx++) {
-              state.data[idx] = detail.controllers[idx];
+              state.data.splice(idx, 1);
+              state.data.splice(idx, 0, detail.controllers[idx]);
             }
             if (state.data.length < detail.controllers.length) {
               for (
@@ -283,11 +287,13 @@ const CreateApi = () => {
               const detail = JSON.parse(res.payload.detail);
               if (detail && detail.controllers.length > 0) {
                 if (
-                  state.data.length === detail.controllers.length ||
-                  state.data.length < detail.controllers.length
+                  state.data &&
+                  (state.data.length === detail.controllers.length ||
+                    state.data.length < detail.controllers.length)
                 ) {
                   for (let idx = 0; idx < state.data.length; idx++) {
-                    state.data[idx] = detail.controllers[idx];
+                    state.data.splice(idx, 1);
+                    state.data.splice(idx, 0, detail.controllers[idx]);
                   }
                   if (state.data.length < detail.controllers.length) {
                     for (
@@ -333,7 +339,6 @@ const CreateApi = () => {
     })();
 
     return () => {
-      console.log(JSON.parse(JSON.stringify(state.data)));
       window.removeEventListener("beforeunload", preventClose);
     };
   }, []);
@@ -442,6 +447,8 @@ const CreateApi = () => {
                     responseBody: propertiesData,
                   };
                 } else if (
+                  state.data[selectedController].apis[selectedApi].responses
+                    .success?.responseBody &&
                   JSON.stringify(
                     state.data[selectedController].apis[selectedApi].responses
                       .success.responseBody
@@ -451,6 +458,8 @@ const CreateApi = () => {
                     selectedApi
                   ].responses.success.responseBody = propertiesData;
                 } else if (
+                  state.data[selectedController].apis[selectedApi].responses
+                    .fail?.responseBody &&
                   JSON.stringify(
                     state.data[selectedController].apis[selectedApi].responses
                       .fail.responseBody
@@ -490,7 +499,9 @@ const CreateApi = () => {
               selectedController > -1 &&
               state?.data.length > 0 &&
               state.data[selectedController]?.apis.length > 0 &&
-              activeTab === 5 && (
+              activeTab === 5 &&
+              state.data[selectedController].apis[selectedApi].responses
+                ?.fail && (
                 <div className="apiTable">
                   <button
                     className="apiPlusButton"

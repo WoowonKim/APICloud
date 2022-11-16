@@ -64,8 +64,6 @@ export function checkChangedData(
       ];
       for (let idx = 0; idx < 3; idx++) {
         let key = idx === 0 ? "uri" : idx === 1 ? "name" : "method";
-        console.log(data.apis[apiIndex][key], flagList);
-
         if (flagList[idx]) {
           updateDto.push({
             root,
