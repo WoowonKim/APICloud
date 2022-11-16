@@ -13,11 +13,15 @@ import apiDocsApiSlice, {
   setApiDetail,
 } from "../../../Store/slice/apiDocsApi";
 import { RootState } from "../../../Store/store";
+import { checkDataValidation } from "../validationCheck";
+import WarningModal from "../WarningModal/WarningModal";
 import DependencyModal from "./DependencyModal";
 import "./ExtractModal.scss";
 
 type ExtractModalProps = {
   controllers: ControllerType[];
+  setIsWarningModal: React.Dispatch<React.SetStateAction<boolean>>;
+  isWarningModal: boolean;
 };
 
 type DetailType = {
@@ -37,7 +41,11 @@ const web = {
   fixed: true,
 } as DependencyType;
 
-const ExtractModal = ({ controllers }: ExtractModalProps) => {
+const ExtractModal = ({
+  controllers,
+  setIsWarningModal,
+  isWarningModal,
+}: ExtractModalProps) => {
   const isOpenExtractModal = useSelector(
     (state: RootState) => state.apiDocsApi.isOpenExtractModal
   );
@@ -49,6 +57,7 @@ const ExtractModal = ({ controllers }: ExtractModalProps) => {
   const [notionDBId, setNotionDBId] = useState("");
   const [notionToken, setNotionToken] = useState("");
   const [dependencies, setDependencies] = useState<DependencyType[]>([]);
+  const [validationResult, setValidationResult] = useState<any>();
 
   const isOpenDependencyModal = useSelector(
     (state: RootState) => state.apiDocsApi.isOpenDependencyModal
@@ -201,8 +210,9 @@ const ExtractModal = ({ controllers }: ExtractModalProps) => {
                     </button>
                     <button
                       onClick={() => {
-                        prepareExtraction(extractSpringBoot);
+                        setValidationResult(checkDataValidation(controllers));
                         setOpenIdx(0);
+                        setIsWarningModal(!isWarningModal);
                       }}
                     >
                       추출
@@ -270,6 +280,16 @@ const ExtractModal = ({ controllers }: ExtractModalProps) => {
           dependencies={dependencies}
           setDependencies={setDependencies}
         ></DependencyModal>
+      )}
+      {isWarningModal && (
+        <div className="synchronizeModalWarningModal">
+          <WarningModal
+            setIsWarningModal={setIsWarningModal}
+            validationResult={validationResult}
+            prepareExtraction={prepareExtraction}
+            extractSpringBoot={extractSpringBoot}
+          />
+        </div>
       )}
     </>
   );

@@ -1,11 +1,5 @@
-import {
-  ColumnDef,
-  useReactTable,
-  getCoreRowModel,
-  flexRender,
-  RowData,
-} from "@tanstack/react-table";
-import React, { useEffect, useMemo, useState } from "react";
+import { RowData } from "@tanstack/react-table";
+import React from "react";
 import { PropertiesType } from "../../../pages/CreateApi/ApisType";
 import "../ControllerAddModal/ControllerAddModal.scss";
 import { faInfo, faRemove } from "@fortawesome/free-solid-svg-icons";

@@ -6,20 +6,29 @@ import "./WarningModal.scss";
 interface Props {
   setIsWarningModal: React.Dispatch<React.SetStateAction<boolean>>;
   validationResult: any;
-  synchronizeApiDoc: () => void;
+  synchronizeApiDoc?: () => void;
+  synchronizeFile?: any;
+  prepareExtraction?: (extract: () => void) => void;
+  extractSpringBoot?: () => void;
+  errorMessage?: string;
+  setErrorMessage?: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const WarningModal = ({
   setIsWarningModal,
   validationResult,
   synchronizeApiDoc,
+  synchronizeFile,
+  prepareExtraction,
+  extractSpringBoot,
+  errorMessage,
+  setErrorMessage,
 }: Props) => {
   useEffect(() => {
     if (!validationResult) {
       return;
     }
   }, [validationResult]);
-
   return (
     <div className="warningModalContainer">
       <div className="warningModalInnerContainer">
@@ -91,14 +100,41 @@ const WarningModal = ({
             </div>
           )}
         </div>
+        {extractSpringBoot && prepareExtraction && (
+          <>
+            <p className="warningModalExtractText">
+              Type이 Object의 경우 DtoName이 없으면
+            </p>
+            <p className="warningModalExtractText">
+              프로젝트를 추출할 수 없습니다.
+            </p>
+          </>
+        )}
+        {errorMessage && (
+          <p className="warningModalExtractText">{errorMessage}</p>
+        )}
         <div className="warningModalButtonGroup">
-          <div className="warningModalButton" onClick={synchronizeApiDoc}>
-            동기화
+          <div
+            className="warningModalButton"
+            onClick={() => {
+              if (synchronizeFile) {
+                synchronizeFile();
+              } else if (synchronizeApiDoc) {
+                synchronizeApiDoc();
+              } else if (extractSpringBoot && prepareExtraction) {
+                prepareExtraction(extractSpringBoot);
+              }
+            }}
+          >
+            {synchronizeFile || synchronizeApiDoc ? "동기화" : "추출"}
           </div>
           <div
             className="warningModalButton1"
             onClick={() => {
               setIsWarningModal((curr) => !curr);
+              if (setErrorMessage) {
+                setErrorMessage("");
+              }
             }}
           >
             닫기
@@ -109,6 +145,9 @@ const WarningModal = ({
         className="warningModalCloseButton"
         onClick={() => {
           setIsWarningModal((curr) => !curr);
+          if (setErrorMessage) {
+            setErrorMessage("");
+          }
         }}
       />
     </div>

@@ -248,13 +248,18 @@ export function checkRequiredValueValidation(type: string, item: any) {
     return "false";
   }
   if (type === "headers" && item.key && item.value) {
-    if (!item["key"].trim() && !item["value"].trim()) {
+    if (
+      item["key"] &&
+      !item["key"].trim() &&
+      item["value"] &&
+      !item["value"].trim()
+    ) {
       return "delete";
     } else if (!item["key"].trim() || !item["value"].trim()) {
       return false;
     }
   } else if (type === "properties") {
-    if (item.name !== null && item.properties !== null) {
+    if (item.name && item.properties) {
       if (
         !item["name"].trim() &&
         item["properties"].length === 0 &&
@@ -382,7 +387,8 @@ export function checkDataValidation(data: ControllerType[]) {
               }
               if (
                 JSON.stringify(current[item]) !== "{}" &&
-                current[item]?.properties.length > 0
+                current[item]?.properties &&
+                current[item].properties?.length > 0
               ) {
                 for (
                   let requestBodyIdx = 0;
@@ -434,7 +440,8 @@ export function checkDataValidation(data: ControllerType[]) {
                   if (
                     JSON.stringify(current[item][status].responseBody) !==
                       "{}" &&
-                    current[item][status].responseBody?.properties.length > 0
+                    current[item][status].responseBody?.properties &&
+                    current[item][status].responseBody.properties?.length > 0
                   ) {
                     for (
                       let responseBodyIdx = 0;
