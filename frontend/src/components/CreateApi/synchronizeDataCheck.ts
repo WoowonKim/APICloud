@@ -52,7 +52,6 @@ export function checkChangedData(
     if (data.apis[apiIndex].createFlag) {
       updateDto.push({
         root: root,
-        // 키 값 변경하기
         value: { key: "api", value: data.apis[apiIndex] },
       });
       apiCreateFlag = true;
