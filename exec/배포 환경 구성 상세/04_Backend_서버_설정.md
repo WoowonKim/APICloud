@@ -59,7 +59,7 @@ server.port = {port-number}
 - node 백그라운드 실행
 
   ```bash
-  sudo nohup node {server.js 경로} &
+  sudo PORT=3333 nohup node {server.js 경로} &
   ```
 
   ※ server.js 경로 :  y-webrtc/node_modules/y-webrtc/bin/server.js
