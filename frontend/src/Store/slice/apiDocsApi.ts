@@ -136,6 +136,19 @@ export const getSynchronizeApiDoc: any = createAsyncThunk(
   }
 );
 
+// notion 연동
+export const connectNotion: any = createAsyncThunk(
+  "apiDocsApi/connectNotion",
+  async (args: any, { rejectWithValue }) => {
+    try {
+      const response = await axiosGet(`docs/notion/oauth/${args.code}`);
+      return response.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response);
+    }
+  }
+);
+
 const apiDocsApiSlice = createSlice({
   name: "mainApi",
   initialState,
@@ -203,6 +216,13 @@ const apiDocsApiSlice = createSlice({
     },
     [getSynchronizeApiDoc.rejected]: (state, action) => {
       console.log("getSynchronizeApiDoc rejected", action.payload);
+    },
+    [connectNotion.fulfilled]: (state, action) => {
+      if (action.meta.requestStatus === "fulfilled") {
+      }
+    },
+    [connectNotion.rejected]: (state, action) => {
+      console.log("connectNotion rejected", action.payload);
     },
   },
 });
