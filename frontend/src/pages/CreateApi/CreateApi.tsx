@@ -579,11 +579,8 @@ const CreateApi = () => {
           )}
           {changeData && syncData && (
             <SynchroinizeData
-              changeData={changeData}
               syncData={syncData}
               setSyncData={setSyncData}
-              selectedChangeCode={selectedChangeCode}
-              setSelectedChangeCode={setSelectedChangeCode}
               saveChangeData={saveChangeData}
             />
           )}

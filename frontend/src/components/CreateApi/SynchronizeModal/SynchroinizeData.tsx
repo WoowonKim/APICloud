@@ -3,10 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 
 interface Props {
-  changeData: any;
   syncData: any;
-  selectedChangeCode: number;
-  setSelectedChangeCode: React.Dispatch<React.SetStateAction<number>>;
   setSyncData: React.Dispatch<any>;
   saveChangeData: () => void;
 }
