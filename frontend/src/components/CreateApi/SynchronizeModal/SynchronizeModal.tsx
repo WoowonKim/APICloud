@@ -14,6 +14,7 @@ import {
   ModalContainer,
 } from "../ExtractModal/ExtractModal";
 import { store } from "../store";
+import { checkChangedData } from "../synchronizeDataCheck";
 import { checkDataValidation } from "../validationCheck";
 import WarningModal from "../WarningModal/WarningModal";
 import "./SynchronizeModal.scss";
@@ -22,17 +23,25 @@ interface Props {
   setIsSynchronizeModal: React.Dispatch<React.SetStateAction<boolean>>;
   setChangeData: React.Dispatch<React.SetStateAction<undefined>>;
   setChangeCode: React.Dispatch<any>;
+  setSyncData: React.Dispatch<any>;
+  setSelectedControllerName: React.Dispatch<React.SetStateAction<string>>;
+  selectedControllerName: string;
+  setSelectedControllerIndex: React.Dispatch<React.SetStateAction<number>>;
+  selectedControllerIndex: number;
 }
 
 const SynchronizeModal = ({
   setIsSynchronizeModal,
   setChangeData,
   setChangeCode,
+  setSyncData,
+  setSelectedControllerName,
+  setSelectedControllerIndex,
+  selectedControllerIndex,
+  selectedControllerName,
 }: Props) => {
   const state = useSyncedStore(store);
   const [isFileInputModal, setIsFileInputModal] = useState(false);
-  const [selectedControllerName, setSelectedControllerName] = useState("");
-  const [selectedControllerIndex, setSelectedControllerIndex] = useState(-1);
   const [fileInfo, setFileInfo] = useState<any>();
   const [isWarningModal, setIsWarningModal] = useState(false);
   const [validationResult, setValidationResult] = useState<any>();
@@ -60,6 +69,14 @@ const SynchronizeModal = ({
       .then((res: any) => {
         if (res.meta.requestStatus === "fulfilled") {
           setChangeData(res.payload);
+          const dto = checkChangedData(
+            res.payload,
+            selectedControllerName,
+            selectedControllerIndex,
+            state
+          );
+          setSyncData(dto);
+          setIsSynchronizeModal(false);
         }
       })
       .catch((err: any) => {
