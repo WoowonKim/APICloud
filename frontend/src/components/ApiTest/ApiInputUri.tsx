@@ -72,13 +72,14 @@ const ApiInputUri = ({ getInfo, testbodyInfo, setTestbodyInfo, paramsInfo, setPa
   const submitRequest = () => {
     switch (requestMethod) {
       case "Get":
-        axios
-          .get(testUri, {
-            headers: {
-              Authorization: token,
-            },
-            params: paramsInfo,
-          })
+        axios({
+          method: "get",
+          url: testUri,
+          headers: {
+            Authorization: token,
+          },
+          params: paramsInfo,
+        })
           .then((res) => {
             console.log("RES=>", res);
             responseAllInfo(res);
@@ -91,47 +92,54 @@ const ApiInputUri = ({ getInfo, testbodyInfo, setTestbodyInfo, paramsInfo, setPa
           });
         break;
       case "Post":
-        axios
-          .post(testUri, {
-            data: testbodyInfo,
-            headers: {
-              Authorization: token,
-            },
-          })
+        axios({
+          method: "post",
+          url: testUri,
+          data: testbodyInfo,
+          headers: {
+            Authorization: token,
+          },
+        })
           .then((res) => {
             console.log("post 성공", res);
             console.log("postBody =>", testbodyInfo);
+            responseAllInfo(res);
           })
           .catch((err) => {
             console.log("ERR =>", err);
             console.log("postBody =>", testbodyInfo);
+            errResponsAllInfo(err);
           });
         break;
       case "Put":
-        axios
-          .put(testUri, {
-            testbodyInfo,
-            headers: {
-              Authorization: token,
-            },
-          })
+        axios({
+          method: "put",
+          url: testUri,
+          data: testbodyInfo,
+          headers: {
+            Authorization: token,
+          },
+        })
           .then((res) => {
             console.log("put 성공 =>", res);
             console.log("putBody =>", testbodyInfo);
+            responseAllInfo(res);
           })
           .catch((err) => {
             console.log("ERR => ", err);
             console.log("putBody=>", testbodyInfo);
+            errResponsAllInfo(err);
           });
         break;
       case "Delete":
-        axios
-          .delete(testUri, {
-            headers: {
-              Authorization: token,
-            },
-            params: paramsInfo,
-          })
+        axios({
+          method: "delete",
+          url: testUri,
+          headers: {
+            Authorization: token,
+          },
+          params: paramsInfo,
+        })
           .then((res) => {
             responseAllInfo(res);
             console.log("Delete 성공=>", res);
