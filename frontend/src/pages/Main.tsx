@@ -4,6 +4,11 @@ import Header from "../components/main/Header";
 import Start from "../components/main/Start";
 import { useAppDispatch, useAppSelector } from "../Store/hooks";
 import { selectUser, fetchUser } from "../Store/slice/userSlice";
+import styled from "styled-components";
+
+const Bg = styled.div`
+  background: linear-gradient(#fff, ${(props) => props.theme.startBgColor});
+`;
 
 const Main = () => {
   const dispatch = useAppDispatch();
@@ -14,11 +19,11 @@ const Main = () => {
   }, []);
 
   return (
-    <div>
+    <Bg>
       <Header />
       <Start />
       <ApiList />
-    </div>
+    </Bg>
   );
 };
 
