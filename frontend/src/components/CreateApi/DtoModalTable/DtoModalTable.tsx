@@ -25,12 +25,14 @@ interface Props {
   propertiesIndexList: number[];
   setModalDepth: React.Dispatch<React.SetStateAction<number>>;
   final: PropertiesType | undefined;
+  modalDepth: number;
 }
 const DtoModalTable = ({
   setPropertiesIndexList,
   propertiesIndexList,
   setModalDepth,
   final,
+  modalDepth,
 }: Props) => {
   const headers = ["name", "type", "required", "delete"];
 
@@ -85,6 +87,7 @@ const DtoModalTable = ({
             handelCellValue={handelCellValue}
             index={index}
             isCollection={false}
+            modalDepth={modalDepth}
           />
           {item.type === "Object" && (
             <FontAwesomeIcon
