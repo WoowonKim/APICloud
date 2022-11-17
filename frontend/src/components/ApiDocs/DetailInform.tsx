@@ -71,113 +71,110 @@ const DetailInform = forwardRef<Ref, Props>(({ detail, scrollPosition }, menuRef
         </div>
         {detail &&
           detail.controllers.map((item: any, idx: any) => (
-            <div key={idx}>
-              <div className="titleContentWrapper">
-                <div className="iconTitleWrapper">
-                  &nbsp;
-                  <FontAwesomeIcon icon={faCircle} className="circleIcon" />
-                  <div
-                    ref={(el) => (refList.current[2] = el)}
-                    className={
-                      refList.current.length > 0 &&
-                      refList.current[2]?.offsetTop !== undefined &&
-                      scrollPosition - 1 <= refList.current[2]?.offsetTop &&
-                      refList.current[2]?.offsetTop < scrollPosition + 1
-                        ? "highLightedSubtitle"
-                        : "subtitle"
-                    }
-                  >
-                    &nbsp;name:
+            <div>
+              
+              <div key={idx}>
+                <div className="titleContentWrapper">
+                  <div className="iconTitleWrapper">
+                    &nbsp;
+                    <FontAwesomeIcon icon={faCircle} className="circleIcon" />
+                    <div
+                      ref={(el) => (refList.current[2] = el)}
+                      className={
+                        refList.current.length > 0 &&
+                        refList.current[2]?.offsetTop !== undefined &&
+                        scrollPosition - 1 <= refList.current[2]?.offsetTop &&
+                        refList.current[2]?.offsetTop < scrollPosition + 1
+                          ? "highLightedSubtitle"
+                          : "subtitle"
+                      }
+                    >
+                      &nbsp;name:
+                    </div>
                   </div>
-                </div>
-                <div className="content">{item.name}</div>
-              </div>
-              <div className="content">{item.commonUri}</div>
-            </div>
-            {item.apis.map((item: any, idx: any) => (
-              <div key={idx} ref={addToRefs}>
-                <div
-                  className={
-                    refList.current.length > 0 &&
-                    refList.current[idx + 2]?.offsetTop !== undefined &&
-                    scrollPosition - 1 <= refList.current[idx + 2]!.offsetTop &&
-                    refList.current[idx + 2]!.offsetTop < scrollPosition + 1
-                      ? "highLightedTitleContentWrapper"
-                      : "titleContentWrapper"
-                  }
-                >
-                  &nbsp;
-                  <FontAwesomeIcon icon={faCircle} className="circleIcon" />
-                  <div
-                    ref={(el) => (refList.current[3] = el)}
-                    className={
-                      refList.current.length > 0 &&
-                      refList.current[3]?.offsetTop !== undefined &&
-                      scrollPosition - 1 <= refList.current[3]?.offsetTop &&
-                      refList.current[3]?.offsetTop < scrollPosition + 1
-                        ? "highLightedSubtitle"
-                        : "subtitle"
-                    }
-                  >
-                    &nbsp;commonUri:
-                  </div>
+                  <div className="content">{item.name}</div>
                 </div>
                 <div className="content">{item.commonUri}</div>
               </div>
               {item.apis.map((item: any, idx: any) => (
-                <div key={idx} ref={addToRefs}>
-                  <div
-                    className={
-                      refList.current.length > 0 &&
-                      refList.current[idx + 4]?.offsetTop !== undefined &&
-                      scrollPosition - 1 <=
-                        refList.current[idx + 4]!.offsetTop &&
-                      refList.current[idx + 4]!.offsetTop < scrollPosition + 1
-                        ? "highLightedTitleContentWrapper"
-                        : "titleContentWrapper"
-                    }
-                  >
-                    &nbsp;
-                    <FontAwesomeIcon icon={faCircle} className="circleIcon" />
-                    &nbsp;apis
-                  </div>
-                  <div className="titleContentWrapper">
-                    <div className="iconTitleWrapper">
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <div>
+                  <div key={idx} ref={addToRefs}>
+                    <div
+                      className={
+                        refList.current.length > 0 &&
+                        refList.current[idx + 2]?.offsetTop !== undefined &&
+                        scrollPosition - 1 <= refList.current[idx + 2]!.offsetTop &&
+                        refList.current[idx + 2]!.offsetTop < scrollPosition + 1
+                          ? "highLightedTitleContentWrapper"
+                          : "titleContentWrapper"
+                      }
+                    >
+                      &nbsp;
                       <FontAwesomeIcon icon={faCircle} className="circleIcon" />
-                      &nbsp;name:
+                      <div
+                        ref={(el) => (refList.current[3] = el)}
+                        className={
+                          refList.current.length > 0 &&
+                          refList.current[3]?.offsetTop !== undefined &&
+                          scrollPosition - 1 <= refList.current[3]?.offsetTop &&
+                          refList.current[3]?.offsetTop < scrollPosition + 1
+                            ? "highLightedSubtitle"
+                            : "subtitle"
+                        }
+                      >
+                        &nbsp;commonUri:
+                      </div>
                     </div>
-                    <div className="content">{item.name}</div>
+                    <div className="content">{item.commonUri}</div>
                   </div>
-                  <div className="titleContentWrapper">
-                    <div className="iconTitleWrapper">
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                      <FontAwesomeIcon icon={faCircle} className="circleIcon" />
-                      &nbsp;uri:
-                    </div>
-                    <div className="content">{item.uri}</div>
-                  </div>
-                  <div className="titleContentWrapper">
-                    <div className="iconTitleWrapper">
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                      <FontAwesomeIcon icon={faCircle} className="circleIcon" />
-                      &nbsp;method:
-                    </div>
-                    <div className="content">{item.method}</div>
-                  </div>
-                  <div className="content">{item.method}</div>
+                  {item.apis.map((item: any, idx: any) => (
+                    <><div key={idx} ref={addToRefs}>
+                      <div
+                        className={refList.current.length > 0 &&
+                          refList.current[idx + 4]?.offsetTop !== undefined &&
+                          scrollPosition - 1 <=
+                          refList.current[idx + 4]!.offsetTop &&
+                          refList.current[idx + 4]!.offsetTop < scrollPosition + 1
+                          ? "highLightedTitleContentWrapper"
+                          : "titleContentWrapper"}
+                      >
+                        &nbsp;
+                        <FontAwesomeIcon icon={faCircle} className="circleIcon" />
+                        &nbsp;apis
+                      </div>
+                      <div className="titleContentWrapper">
+                        <div className="iconTitleWrapper">
+                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                          <FontAwesomeIcon icon={faCircle} className="circleIcon" />
+                          &nbsp;name:
+                        </div>
+                        <div className="content">{item.name}</div>
+                      </div>
+                      <div className="titleContentWrapper">
+                        <div className="iconTitleWrapper">
+                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                          <FontAwesomeIcon icon={faCircle} className="circleIcon" />
+                          &nbsp;uri:
+                        </div>
+                        <div className="content">{item.uri}</div>
+                      </div>
+                      <div className="titleContentWrapper">
+                        <div className="iconTitleWrapper">
+                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                          <FontAwesomeIcon icon={faCircle} className="circleIcon" />
+                          &nbsp;method:
+                        </div>
+                        <div className="content">{item.method}</div>
+                      </div>
+                      <div className="content">{item.method}</div>
+                    </div><RequestBody item={item} /><Parameters item={item} /><Queries item={item} /><Headers item={item} /><Responses item={item} /></>
+                  ))}
                 </div>
-                <RequestBody item={item} />
-                <Parameters item={item} />
-                <Queries item={item} />
-                <Headers item={item} />
-                <Responses item={item} />
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
         ))}
-    </div>
-  );
+      </div>
+    );
 });
 
 export default DetailInform;
