@@ -43,6 +43,29 @@ const TableInfo = ({
         "Object";
     }
   }, []);
+  useEffect(() => {
+    if (responseType === "fail" || responseType === "success") {
+      if (
+        !state.data[selectedController].apis[selectedApi].responses[
+          responseType
+        ]?.responseBody
+      ) {
+        state.data[selectedController].apis[selectedApi].responses[
+          responseType
+        ] = {
+          status: responseType === "fail" ? 400 : 200,
+          responseBody: {
+            dtoName: "",
+            name: "",
+            type: "String",
+            required: true,
+            collectionType: "",
+            properties: [],
+          },
+        };
+      }
+    }
+  }, []);
   return (
     <div>
       {activeTab === 4 ? (
@@ -173,7 +196,9 @@ const TableInfo = ({
             )}
         </>
       ) : activeTab === 5 &&
-        (responseType === "fail" || responseType === "success") ? (
+        (responseType === "fail" || responseType === "success") &&
+        state.data[selectedController].apis[selectedApi].responses[responseType]
+          ?.responseBody ? (
         <>
           <div className="responseTypeGroup">
             <p className="responseTypeLabel">{responseType}</p>
@@ -184,7 +209,7 @@ const TableInfo = ({
           </div>
           {state.data[selectedController].apis[selectedApi].responses[
             responseType
-          ].responseBody.type === "Object" && (
+          ]?.responseBody?.type === "Object" && (
             <div className="tableInfoInputGroup">
               <label htmlFor="successDtoName" className="tableInfoLabel">
                 dtoName
@@ -211,7 +236,7 @@ const TableInfo = ({
                   dtoData.dtoName ===
                     state.data[selectedController].apis[selectedApi].responses[
                       responseType
-                    ].responseBody.dtoName && (
+                    ]?.responseBody.dtoName && (
                     <FontAwesomeIcon
                       icon={faCheck}
                       className="dtoCheckIcon"
@@ -242,7 +267,7 @@ const TableInfo = ({
                     onClick={() => {
                       handleDtoProperties(
                         state.data[selectedController].apis[selectedApi]
-                          .responses[responseType].responseBody
+                          .responses[responseType]?.responseBody
                       );
                     }}
                   >
