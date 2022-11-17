@@ -19,9 +19,11 @@ const SideMenuList = styled.div`
 `;
 
 const SideContollerName = styled.p`
-  padding: 10px 5px 3px 5px;
-  border-bottom: 2px solid ${(props) => props.theme.color};
+  padding: 15px 10px;
   width: 80px;
+  color: #5d5d5d;
+  font-size: 18px;
+  font-weight: 600;
   text-color: ${(props) => props.theme.color};
 `;
 interface type {

@@ -15,7 +15,7 @@ export const HeaderListTitleCon = styled.div`
 `;
 export const HeaderListTitle = styled.p`
   font-weight: bold;
-  color: ${props => props.theme.color};
+  color: ${(props) => props.theme.color};
   font-size: 13px;
   margin: 13px 0px 20px 5px;
 `;
@@ -26,8 +26,8 @@ export const HeaderListInput = styled.input`
   border: none;
   font-size: 13px;
   border-bottom: 1px solid black;
-  background-color: ${props => props.theme.bgColor};
-  color: ${props => props.theme.color};
+  background-color: ${(props) => props.theme.bgColor};
+  color: ${(props) => props.theme.color};
 `;
 interface type {
   getInfo: RequestTypeInfo | undefined;
@@ -74,35 +74,41 @@ const Headerheader = ({ getInfo }: type) => {
         info.getApisInfomation
       ].headers.map((it, idx) => (
         <div className="headerListTitleisHeader" key={idx}>
-          <div className="apiKeyHeaderTitle">
-            <p className="apiHeaderListPtag">{it.key}</p>
-          </div>
-          <div className="apiKeyHeaderTitleValue">
-            <p className="apiHeaderListPtagInput">
-              {it.key !== "token" ? (
-                <input
-                  className="apiHeaderListInputTag"
-                  type="text"
-                  defaultValue={it.value}
-                  onChange={e => {}}
-                />
-              ) : (
-                <input
-                  className="apiHeaderListInputTag"
-                  type="text"
-                  value={tokenInfo}
-                  onChange={e => {
-                    setTokenInfo(e.target.value);
-                    it.value = tokenInfo;
-                    dispatch(testApiSlice.actions.getTokenInfo(tokenInfo));
-                  }}
-                />
-              )}
-            </p>
-          </div>
-          <div className="apiKeyHeaderTitleCheck">
-            <p className="apiHeaderListButtonTag">SAVE</p>
-          </div>
+          {it.key && (
+            <div className="apiKeyHeaderTitle">
+              <p className="apiHeaderListPtag">{it.key}</p>
+            </div>
+          )}
+          {it.key && (
+            <div className="apiKeyHeaderTitleValue">
+              <p className="apiHeaderListPtagInput">
+                {it.key !== "token" ? (
+                  <input
+                    className="apiHeaderListInputTag"
+                    type="text"
+                    defaultValue={it.value}
+                    onChange={(e) => {}}
+                  />
+                ) : (
+                  <input
+                    className="apiHeaderListInputTag"
+                    type="text"
+                    value={tokenInfo}
+                    onChange={(e) => {
+                      setTokenInfo(e.target.value);
+                      it.value = tokenInfo;
+                      dispatch(testApiSlice.actions.getTokenInfo(tokenInfo));
+                    }}
+                  />
+                )}
+              </p>
+            </div>
+          )}
+          {it.key && (
+            <div className="apiKeyHeaderTitleCheck">
+              <p className="apiHeaderListButtonTag">SAVE</p>
+            </div>
+          )}
         </div>
       ))}
     </>

@@ -7,6 +7,7 @@ import ApiBody from "./ApiBody";
 import ApiParams from "./ApiParams";
 import Headerheader from "./Headerheader";
 import HeaderQueries from "./HeaderQueries";
+import styled from "styled-components";
 
 interface type {
   getInfo: RequestTypeInfo | undefined;
@@ -18,15 +19,45 @@ interface type {
   setQueriesInfo: Dispatch<SetStateAction<reBodyType | undefined>>;
 }
 
-const ApiHeader = ({ getInfo, testbodyInfo, setTestbodyInfo, paramsInfo, setParamsInfo, queriesInfo, setQueriesInfo }: type) => {
+export const ApiDetail = styled.div`
+  margin-left: 14px;
+`;
+
+const ApiHeader = ({
+  getInfo,
+  testbodyInfo,
+  setTestbodyInfo,
+  paramsInfo,
+  setParamsInfo,
+  queriesInfo,
+  setQueriesInfo,
+}: type) => {
   const info = useAppSelector(selectTestApi);
   return (
-    <>
+    <ApiDetail>
       {info.getHeadListNumber === 0 && <Headerheader getInfo={getInfo} />}
-      {info.getHeadListNumber === 1 && <ApiBody getInfo={getInfo} testbodyInfo={testbodyInfo} setTestbodyInfo={setTestbodyInfo} />}
-      {info.getHeadListNumber === 2 && <HeaderQueries getInfo={getInfo} queriesInfo={queriesInfo} setQueriesInfo={setQueriesInfo} />}
-      {info.getHeadListNumber === 3 && <ApiParams getInfo={getInfo} paramsInfo={paramsInfo} setParamsInfo={setParamsInfo} />}
-    </>
+      {info.getHeadListNumber === 1 && (
+        <ApiBody
+          getInfo={getInfo}
+          testbodyInfo={testbodyInfo}
+          setTestbodyInfo={setTestbodyInfo}
+        />
+      )}
+      {info.getHeadListNumber === 2 && (
+        <HeaderQueries
+          getInfo={getInfo}
+          queriesInfo={queriesInfo}
+          setQueriesInfo={setQueriesInfo}
+        />
+      )}
+      {info.getHeadListNumber === 3 && (
+        <ApiParams
+          getInfo={getInfo}
+          paramsInfo={paramsInfo}
+          setParamsInfo={setParamsInfo}
+        />
+      )}
+    </ApiDetail>
   );
 };
 
