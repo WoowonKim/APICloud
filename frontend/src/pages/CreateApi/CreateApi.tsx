@@ -346,7 +346,7 @@ const CreateApi = () => {
   if (authority === 0) {
     return (
       <>
-        <ErrorPage></ErrorPage>
+        <ErrorPage code="403"></ErrorPage>
       </>
     );
   } else {

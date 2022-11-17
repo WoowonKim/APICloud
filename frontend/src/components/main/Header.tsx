@@ -70,12 +70,14 @@ const Header = () => {
 
       {/* 사용자 프로필 */}
       <div className="user">
-        <img
-          className="userImg"
-          src={userImg}
-          referrerPolicy="no-referrer"
-          onClick={handleClick}
-        />
+        {user && (
+          <img
+            className="userImg"
+            src={userImg}
+            referrerPolicy="no-referrer"
+            onClick={handleClick}
+          />
+        )}
         {modal && <LogoutPopUp onClick={handleLogOut}>Log Out</LogoutPopUp>}
       </div>
     </ApiMainHeader>

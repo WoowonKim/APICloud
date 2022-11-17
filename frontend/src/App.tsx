@@ -58,7 +58,7 @@ const App = () => {
                 />
               }
             />
-            <Route path="/*" element={<ErrorPage />} />
+            <Route path="/*" element={<ErrorPage code="404" />} />
           </Routes>
           <ModeChange
             onClick={() => {
@@ -78,7 +78,7 @@ const App = () => {
           path="/oauth2/redirect/"
           element={<OAuth2RedirectHandler />}
         ></Route>
-        <Route path="/*" element={<ErrorPage />} />
+        <Route path="/*" element={<ErrorPage code="404" />} />
       </Routes>
     );
   }
