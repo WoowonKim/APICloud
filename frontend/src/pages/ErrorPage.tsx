@@ -34,13 +34,13 @@ const ErrorPage = ({ code }: ErrorProps) => {
       setIsLoading(false);
     }, 3000);
   };
- 
-  if (code === "403" ) {
-    return (
-      {(isPending || isLoading) ?
-       <Loading>
+
+  if (code === "403") {
+    return isPending || isLoading ? (
+      <Loading>
         <InfinitySpin width="250" color="#6FC7D1" />
-      </Loading>    : 
+      </Loading>
+    ) : (
       <Bg>
         <Header />
         <Error>
@@ -50,7 +50,6 @@ const ErrorPage = ({ code }: ErrorProps) => {
           />
         </Error>
       </Bg>
-      }
     );
   } else {
     return (
@@ -65,6 +64,6 @@ const ErrorPage = ({ code }: ErrorProps) => {
       </Bg>
     );
   }
-
+};
 
 export default ErrorPage;
