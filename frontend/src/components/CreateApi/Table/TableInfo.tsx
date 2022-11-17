@@ -47,75 +47,72 @@ const TableInfo = ({
     <div>
       {activeTab === 4 ? (
         <>
-          <div className="tableInfoGroup">
-            {state.data[selectedController].apis[selectedApi].requestBody
-              .type === "Object" && (
-              <div className="tableInfoInputGroup">
-                <label
-                  htmlFor={`dtoName${activeTab}`}
-                  className="tableInfoLabel"
-                >
-                  dtoName
-                </label>
-                <div className="dtoInputGroup">
-                  <input
-                    className="dtoInput"
-                    type="text"
-                    id={`dtoName${activeTab}`}
-                    onChange={(e) => handleBasicInfo(e, "dtoName", 1, "")}
-                    value={
-                      state.data[selectedController].apis[selectedApi]
-                        .requestBody.dtoName !== null
-                        ? state.data[selectedController].apis[selectedApi]
-                            .requestBody.dtoName
-                        : ""
-                    }
-                  />
-                  {dtoExists &&
-                    dtoData &&
-                    dtoData.dtoName ===
-                      state.data[selectedController].apis[selectedApi]
-                        .requestBody.dtoName && (
-                      <FontAwesomeIcon
-                        icon={faCheck}
-                        className="dtoCheckIcon"
-                        onClick={() => setVisible(!visible)}
-                      />
-                    )}
-                </div>
-                {visible && dtoExists && dtoData && (
-                  <div className="tableInfoDtoContainer">
-                    {dtoData.dtoName}
-                    {dtoData.properties.length > 0 &&
-                      dtoData.properties.map((item: any, index: number) => (
-                        <div
-                          key={index}
-                          className="tableInfoDtoPropertiesContainer"
-                        >
-                          <span>{item.name}</span>
-                          {item.collectionType === "List" ? (
-                            <span>{`<List>${item.type}`}</span>
-                          ) : (
-                            <span>{item.type}</span>
-                          )}
-                          <span>{item.required}</span>
-                        </div>
-                      ))}
-                    <button
-                      className="tableInfoUseCurrentDtoButton"
-                      onClick={() => {
-                        handleDtoProperties(
-                          state.data[selectedController].apis[selectedApi]
-                            .requestBody
-                        );
-                      }}
-                    >
-                      {dtoData.dtoName} 사용하기
-                    </button>
-                  </div>
-                )}
+          {state.data[selectedController].apis[selectedApi].requestBody.type ===
+            "Object" && (
+            <div className="tableInfoInputGroup">
+              <label htmlFor={`dtoName${activeTab}`} className="tableInfoLabel">
+                dtoName
+              </label>
+              <div className="dtoInputGroup">
+                <input
+                  className="dtoInput"
+                  type="text"
+                  id={`dtoName${activeTab}`}
+                  onChange={(e) => handleBasicInfo(e, "dtoName", 1, "")}
+                  value={
+                    state.data[selectedController].apis[selectedApi].requestBody
+                      .dtoName !== null
+                      ? state.data[selectedController].apis[selectedApi]
+                          .requestBody.dtoName
+                      : ""
+                  }
+                />
+                {dtoExists &&
+                  dtoData &&
+                  dtoData.dtoName ===
+                    state.data[selectedController].apis[selectedApi].requestBody
+                      .dtoName && (
+                    <FontAwesomeIcon
+                      icon={faCheck}
+                      className="dtoCheckIcon"
+                      onClick={() => setVisible(!visible)}
+                    />
+                  )}
               </div>
-            )}
+              {visible && dtoExists && dtoData && (
+                <div className="tableInfoDtoContainer">
+                  {dtoData.dtoName}
+                  {dtoData.properties.length > 0 &&
+                    dtoData.properties.map((item: any, index: number) => (
+                      <div
+                        key={index}
+                        className="tableInfoDtoPropertiesContainer"
+                      >
+                        <span>{item.name}</span>
+                        {item.collectionType === "List" ? (
+                          <span>{`<List>${item.type}`}</span>
+                        ) : (
+                          <span>{item.type}</span>
+                        )}
+                        <span>{item.required}</span>
+                      </div>
+                    ))}
+                  <button
+                    className="tableInfoUseCurrentDtoButton"
+                    onClick={() => {
+                      handleDtoProperties(
+                        state.data[selectedController].apis[selectedApi]
+                          .requestBody
+                      );
+                    }}
+                  >
+                    {dtoData.dtoName} 사용하기
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+          <div className="tableInfoGroup">
             <div className="tableInfoInputGroup">
               <label htmlFor={`name${activeTab}`} className="tableInfoLabel">
                 name
@@ -151,7 +148,7 @@ const TableInfo = ({
                 required
               </label>
               <input
-                className="tableInfoInput"
+                className="apiTableCheckbox"
                 type="checkbox"
                 id={`required${activeTab}`}
                 onChange={(e) => handleBasicInfo(e, "required", 1, "")}
@@ -185,75 +182,77 @@ const TableInfo = ({
             </label>
             <p>{responseType === "success" ? 200 : 400}</p>
           </div>
-          <div className="tableInfoGroup">
-            {state.data[selectedController].apis[selectedApi].responses[
-              responseType
-            ].responseBody.type === "Object" && (
-              <div className="tableInfoInputGroup">
-                <label htmlFor="successDtoName" className="tableInfoLabel">
-                  dtoName
-                </label>
-                <div className="dtoInputGroup">
-                  <input
-                    className="dtoInput"
-                    type="text"
-                    id="successDtoName"
-                    onChange={(e) =>
-                      handleBasicInfo(e, "dtoName", 1, responseType)
-                    }
-                    value={
-                      state.data[selectedController].apis[selectedApi]
-                        .responses[responseType].responseBody.dtoName !== null
-                        ? state.data[selectedController].apis[selectedApi]
-                            .responses[responseType].responseBody.dtoName
-                        : ""
-                    }
-                  />
-                  {dtoExists &&
-                    dtoData &&
-                    dtoData.dtoName ===
-                      state.data[selectedController].apis[selectedApi]
-                        .responses[responseType].responseBody.dtoName && (
-                      <FontAwesomeIcon
-                        icon={faCheck}
-                        className="dtoCheckIcon"
-                        onClick={() => setVisible(!visible)}
-                      />
-                    )}
-                </div>
-                {visible && dtoExists && dtoData && (
-                  <div className="tableInfoDtoContainer">
-                    {dtoData.dtoName}
-                    {dtoData.properties.length > 0 &&
-                      dtoData.properties.map((item: any, index: number) => (
-                        <div
-                          key={index}
-                          className="tableInfoDtoPropertiesContainer"
-                        >
-                          <span>{item.name}</span>
-                          {item.collectionType === "List" ? (
-                            <span>{`<List>${item.type}`}</span>
-                          ) : (
-                            <span>{item.type}</span>
-                          )}
-                          <span>{item.required}</span>
-                        </div>
-                      ))}
-                    <button
-                      className="tableInfoUseCurrentDtoButton"
-                      onClick={() => {
-                        handleDtoProperties(
-                          state.data[selectedController].apis[selectedApi]
-                            .responses[responseType].responseBody
-                        );
-                      }}
-                    >
-                      {dtoData.dtoName} 사용하기
-                    </button>
-                  </div>
-                )}
+          {state.data[selectedController].apis[selectedApi].responses[
+            responseType
+          ].responseBody.type === "Object" && (
+            <div className="tableInfoInputGroup">
+              <label htmlFor="successDtoName" className="tableInfoLabel">
+                dtoName
+              </label>
+              <div className="dtoInputGroup">
+                <input
+                  className="dtoInput"
+                  type="text"
+                  id="successDtoName"
+                  onChange={(e) =>
+                    handleBasicInfo(e, "dtoName", 1, responseType)
+                  }
+                  value={
+                    state.data[selectedController].apis[selectedApi].responses[
+                      responseType
+                    ].responseBody.dtoName !== null
+                      ? state.data[selectedController].apis[selectedApi]
+                          .responses[responseType].responseBody.dtoName
+                      : ""
+                  }
+                />
+                {dtoExists &&
+                  dtoData &&
+                  dtoData.dtoName ===
+                    state.data[selectedController].apis[selectedApi].responses[
+                      responseType
+                    ].responseBody.dtoName && (
+                    <FontAwesomeIcon
+                      icon={faCheck}
+                      className="dtoCheckIcon"
+                      onClick={() => setVisible(!visible)}
+                    />
+                  )}
               </div>
-            )}
+              {visible && dtoExists && dtoData && (
+                <div className="tableInfoDtoContainer">
+                  {dtoData.dtoName}
+                  {dtoData.properties.length > 0 &&
+                    dtoData.properties.map((item: any, index: number) => (
+                      <div
+                        key={index}
+                        className="tableInfoDtoPropertiesContainer"
+                      >
+                        <span>{item.name}</span>
+                        {item.collectionType === "List" ? (
+                          <span>{`<List>${item.type}`}</span>
+                        ) : (
+                          <span>{item.type}</span>
+                        )}
+                        <span>{item.required}</span>
+                      </div>
+                    ))}
+                  <button
+                    className="tableInfoUseCurrentDtoButton"
+                    onClick={() => {
+                      handleDtoProperties(
+                        state.data[selectedController].apis[selectedApi]
+                          .responses[responseType].responseBody
+                      );
+                    }}
+                  >
+                    {dtoData.dtoName} 사용하기
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+          <div className="tableInfoGroup">
             <div className="tableInfoInputGroup">
               <label htmlFor="successName" className="tableInfoLabel">
                 name
@@ -289,6 +288,11 @@ const TableInfo = ({
                 handleBasicInfo={handleBasicInfo}
                 responseType={responseType}
                 depth={1}
+                value={
+                  state.data[selectedController].apis[selectedApi].responses[
+                    responseType
+                  ].responseBody.type
+                }
               />
             </div>
             <div className="tableInfoInputGroup">
@@ -301,6 +305,7 @@ const TableInfo = ({
                 onChange={(e) =>
                   handleBasicInfo(e, "required", 1, responseType)
                 }
+                className="apiTableCheckbox"
                 checked={
                   state.data[selectedController].apis[selectedApi].responses[
                     responseType

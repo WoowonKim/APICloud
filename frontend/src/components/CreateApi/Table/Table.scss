@@ -12,7 +12,7 @@ table,
 tr,
 .tr {
   width: fit-content;
-  height: 30px;
+  height: 40px;
 }
 
 th,
@@ -56,19 +56,18 @@ td,
   touch-action: none;
 }
 
-.resizer.isResizing {
-  background: #3a00e5;
-  opacity: 1;
+.apiTableDeleteItem {
+  border: none;
+  box-shadow: none;
+  padding: 7px;
 }
 
-@media (hover: hover) {
-  .resizer {
-    opacity: 0;
-  }
+.apiTableHeaderItem {
+  padding: 10px 0;
+}
 
-  *:hover > .resizer {
-    opacity: 1;
-  }
+.apiTableBodyItem {
+  padding: 10px;
 }
 
 .tableInput {
@@ -113,6 +112,23 @@ td,
   }
 }
 
+.tableInfoInputGroup {
+  display: flex;
+  align-items: flex-end;
+  .tableInfoLabel {
+    font-size: 1em;
+    font-weight: bold;
+    margin: 1rem 1rem 0 0;
+  }
+  .tableInfoInput {
+    outline: none;
+    border: none;
+    border-bottom: 1px solid black;
+    font-size: 1.1em;
+    margin: 1rem 1rem 0 0;
+  }
+}
+
 .responseTypeGroup {
   display: flex;
   align-items: flex-end;
@@ -148,6 +164,7 @@ td,
 }
 
 .typeInfoContainer {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -221,4 +238,10 @@ td,
     opacity: 0.7;
     transition: all 300ms ease-in;
   }
+}
+
+.apiTableCheckbox {
+  width: 15px;
+  height: 15px;
+  accent-color: #277fc3;
 }
