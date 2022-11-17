@@ -12,7 +12,7 @@ import java.util.List;
 @Service
 public class ParsingServiceImpl implements ParsingService {
 
-    private static final String[] type = {"String", "Long", "long", "Integer", "int", "float", "Float"};
+    private static final String[] type = {"String", "Long", "long", "Integer", "int", "float", "Float", "Double", "double", "Boolean", "boolean", "Character", "char", "Short", "short", "Byte", "byte", "Byte[]", "byte[]"};
     private static final String METHOD = "Mapping";
     private static final String VALUE = "value";
     private static final String REQUIRED = "required";
