@@ -31,14 +31,13 @@ const useForwardRef = <T,>(ref: ForwardedRef<T>, initialValue: any = null) => {
   return targetRef;
 };
 
-const DetailInform = forwardRef<Ref, Props>(
-  ({ detail, scrollPosition }, menuRef) => {
-    const refList = useForwardRef<Ref>(menuRef, []);
+const DetailInform = forwardRef<Ref, Props>(({ detail, scrollPosition }, menuRef) => {
+  const refList = useForwardRef<Ref>(menuRef, []);
 
-    // map 돌면서 refList에 ref 요소 할당 함수
-    const addToRefs = (el: never) => {
-      refList.current.push(el);
-    };
+  // map 돌면서 refList에 ref 요소 할당 함수
+  const addToRefs = (el: never) => {
+    refList.current.push(el);
+  };
 
     return (
       <div className="docPaper2Wrapper">
@@ -93,8 +92,20 @@ const DetailInform = forwardRef<Ref, Props>(
                 </div>
                 <div className="content">{item.name}</div>
               </div>
-              <div className="titleContentWrapper">
-                <div className="iconTitleWrapper">
+              <div className="content">{item.commonUri}</div>
+            </div>
+            {item.apis.map((item: any, idx: any) => (
+              <div key={idx} ref={addToRefs}>
+                <div
+                  className={
+                    refList.current.length > 0 &&
+                    refList.current[idx + 2]?.offsetTop !== undefined &&
+                    scrollPosition - 1 <= refList.current[idx + 2]!.offsetTop &&
+                    refList.current[idx + 2]!.offsetTop < scrollPosition + 1
+                      ? "highLightedTitleContentWrapper"
+                      : "titleContentWrapper"
+                  }
+                >
                   &nbsp;
                   <FontAwesomeIcon icon={faCircle} className="circleIcon" />
                   <div
@@ -154,18 +165,19 @@ const DetailInform = forwardRef<Ref, Props>(
                     </div>
                     <div className="content">{item.method}</div>
                   </div>
-                  <RequestBody item={item} />
-                  <Parameters item={item} />
-                  <Queries item={item} />
-                  <Headers item={item} />
-                  <Responses item={item} />
+                  <div className="content">{item.method}</div>
                 </div>
-              ))}
-            </div>
-          ))}
-      </div>
-    );
-  }
-);
+                <RequestBody item={item} />
+                <Parameters item={item} />
+                <Queries item={item} />
+                <Headers item={item} />
+                <Responses item={item} />
+              </div>
+            ))}
+          </div>
+        ))}
+    </div>
+  );
+});
 
 export default DetailInform;

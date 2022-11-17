@@ -9,6 +9,7 @@ const initialState = {
   encryptedUrl: "",
   isOpenCreateModal: false,
   isOpenUpdateModal: false,
+  isGroupInfoModal: false,
   isDocCreated: false,
   isDocUpdated: false,
 };
@@ -107,6 +108,9 @@ const mainApiSlice = createSlice({
     },
     setIsOpenUpdateModal(state, action) {
       state.isOpenUpdateModal = action.payload.isOpenUpdateModal;
+    },
+    setIsGroupInfoModal(state, action) {
+      state.isGroupInfoModal = action.payload.isGroupInfoModal;
     },
     setIsDocCreated(state, action) {
       state.isDocCreated = action.payload.isDocCreated;

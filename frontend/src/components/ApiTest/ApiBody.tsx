@@ -2,9 +2,7 @@ import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RequestBodyType, RequestTypeInfo } from "../../pages/CreateApi/ApisType";
 import { reBodyType } from "../../pages/TestApi";
-import { useAppDispatch } from "../../Store/hooks";
-import testApiSlice, { selectTestApi } from "../../Store/slice/testApi";
-import { ChoiceText } from "../main/ApiList";
+import { selectTestApi } from "../../Store/slice/testApi";
 import { HeaderContatinerList, HeaderListInput, HeaderListTitle, HeaderListTitleCon } from "./Headerheader";
 
 interface type {
@@ -15,28 +13,30 @@ interface type {
 
 const ApiBody = ({ getInfo, testbodyInfo, setTestbodyInfo }: type) => {
   const [requestBody, setRequestBody] = useState<RequestBodyType>();
-  const [test, setTest] = useState("");
-  const [bodyInfo, setBodyInfo] = useState({});
+
   const [inputBody, setInputBody] = useState("");
   const [newBodyInfo, setNewBodyInfo] = useState({});
+
+  const [test, setTest] = useState("");
   const info = useSelector(selectTestApi);
 
+  // RequestBody 작성 할 값 불러오기 및 기존 body값 초기화
   useEffect(() => {
     if (getInfo) {
       setRequestBody(getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].requestBody);
       setTestbodyInfo({});
-      setBodyInfo({});
     }
   }, [getInfo, info.getControllerInfomation, info.getApisInfomation]);
 
+  // 전송할 body값 객체화
   useEffect(() => {
     let key = test;
     setNewBodyInfo({ [key]: inputBody });
   }, [inputBody]);
 
+  // 저장 버튼 클릭 시 body값 갱신 및 객체화 하는 inputbody 초기화
   const onSubmit = (e: any) => {
     e.preventDefault();
-    setBodyInfo({ ...bodyInfo, ...newBodyInfo });
     setTestbodyInfo({ ...testbodyInfo, ...newBodyInfo });
     setInputBody("");
   };

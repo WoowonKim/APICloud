@@ -15,7 +15,6 @@ import java.util.Map;
 @AllArgsConstructor
 //@NoArgsConstructor
 @Data
-@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class PropertyVO {
     static final String DTO_CREATE_TYPE = "Object";
 

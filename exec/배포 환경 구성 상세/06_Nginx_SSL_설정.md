@@ -79,6 +79,22 @@ server  {
                 proxy_set_header X-Forwarded-Proto $scheme;
                 proxy_set_header X-NginX-Proxy true;
         }
+    
+        location /socket {
+                    proxy_set_header    HOST $http_host;
+                    proxy_set_header    X-Real-IP $remote_addr;
+                    proxy_set_header    X-Forwarded-For $proxy_add_x_forwarded_for;
+                    proxy_set_header    X-Forwarded-Proto $scheme;
+                    proxy_set_header    X-NginX-Proxy true;
+                    proxy_pass http://localhost:3333;
+                    proxy_redirect  off;
+                    charset utf-8;
+
+                    # WebSocket support
+                    proxy_http_version 1.1;
+                    proxy_set_header Upgrade $http_upgrade;
+                    proxy_set_header Connection "upgrade";
+            }
 }
 
 server {

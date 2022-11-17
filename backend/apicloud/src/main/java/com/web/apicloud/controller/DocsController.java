@@ -122,5 +122,8 @@ public class DocsController {
         return ResponseEntity.ok().body(new NotionExportResponse("https://www.notion.so/" + request.getDatabaseId()));
     }
 
-
+    @GetMapping("/notion/oauth/{code}")
+    public ResponseEntity<NotionTokenResponse> getNotionToken(@PathVariable("code") String code) {
+        return ResponseEntity.ok().body(notionService.getAccessToken(code));
+    }
 }

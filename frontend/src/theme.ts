@@ -4,7 +4,7 @@ export const darkTheme: DefaultTheme = {
   color: "#ffffff",
   bgColor: "#514D4D",
   border: "#e4effa",
-  startBgColor: "none",
+  startBgColor: "#514D4D",
   listBgColor: "#e4effa",
   sideBgClodr: "none",
 };

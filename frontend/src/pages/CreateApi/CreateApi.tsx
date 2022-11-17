@@ -5,23 +5,25 @@ import Sidebar from "../../components/CreateApi/Sidebar/Sidebar";
 import { useSyncedStore } from "@syncedstore/react";
 import { connectDoc, store } from "../../components/CreateApi/store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClose, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Store/store";
 import apiDocsApiSlice, {
   getApiDetail,
   setApiDetail,
+  updateSynchronizeData,
 } from "../../Store/slice/apiDocsApi";
 import ExtractModal from "../../components/CreateApi/ExtractModal/ExtractModal";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { axiosGet } from "../../util/axiosUtil";
 import ErrorPage from "../ErrorPage";
 import { useAppDispatch } from "../../Store/hooks";
 import { checkDataValidation } from "../../components/CreateApi/validationCheck";
 import ApiTable from "../../components/CreateApi/ApiTable/ApiTable";
 import SynchronizeModal from "../../components/CreateApi/SynchronizeModal/SynchronizeModal";
-import CodeBlock from "../../components/CreateApi/WarningModal/CodeBlock";
 import { getApiDoc } from "../../Store/slice/mainApi";
+import SynchronizeCode from "../../components/CreateApi/SynchronizeModal/SynchronizeCode";
+import SynchroinizeData from "../../components/CreateApi/SynchronizeModal/SynchroinizeData";
 
 const CreateApi = () => {
   const dispatch = useAppDispatch();
@@ -33,6 +35,14 @@ const CreateApi = () => {
   const [changeCode, setChangeCode] = useState<any>();
   const [selectedChangeCode, setSelectedChangeCode] = useState(0);
   const [docInfo, setDocInfo] = useState<any>();
+  const [syncData, setSyncData] = useState<any>();
+  const [selectedControllerName, setSelectedControllerName] = useState("");
+  const [selectedControllerIndex, setSelectedControllerIndex] = useState(-1);
+  const [isSynced, setIsSynced] = useState(0);
+  // 데이터 확인용 로그
+  console.log(changeData);
+  console.log(syncData);
+  console.log(changeCode);
 
   useEffect(() => {
     const checckAutority = async (encryptedUrl: string) => {
@@ -209,42 +219,100 @@ const CreateApi = () => {
     setSelectedApi(idx);
     setActiveTab(1);
   };
+
+  const location = useLocation();
+  const saveChangeData = () => {
+    dispatch(
+      updateSynchronizeData({
+        docId: location.state?.data.docId,
+        controllerId: selectedControllerIndex,
+        controllerDTO: changeData,
+      })
+    ).then((res: any) => {
+      if (res.meta.requestStatus === "fulfilled") {
+        console.log(res.payload);
+        window.location.reload();
+      }
+    });
+    setIsSynced((curr) => curr++);
+  };
   // 데이터 확인 용 로그
   console.log(JSON.parse(JSON.stringify(state.data)));
   useEffect(() => {
     dispatch(getApiDetail({ docId: encryptedUrl })).then((res: any) => {
       if (res.meta.requestStatus === "fulfilled") {
-        const controllers = JSON.parse(res.payload.detail);
-        if (controllers && controllers.controllers.length > 0) {
-          if (state.data.length === 0) {
-            for (let item of controllers.controllers) {
-              state.data.push(item);
+        const detail = JSON.parse(res.payload.detail);
+        if (detail && detail.controllers.length > 0) {
+          if (
+            state.data &&
+            (state.data.length === detail.controllers.length ||
+              state.data.length < detail.controllers.length)
+          ) {
+            for (let idx = 0; idx < state.data.length; idx++) {
+              state.data.splice(idx, 1);
+              state.data.splice(idx, 0, detail.controllers[idx]);
             }
-          } else if (state.data.length !== controllers.controllers.length) {
-            dispatch(
-              setApiDetail({
-                encryptedUrl: localStorage.getItem("docId"),
-                detailRequest: {
-                  detail: JSON.stringify({
-                    server: { dependencies: [] },
-                    controllers: state.data,
-                  }),
-                },
-              })
-            )
-              .then((res: any) => {
-                const controllers2 = JSON.parse(res.payload.detail);
-                for (let item of controllers2.controllers) {
-                  state.data.push(item);
-                }
-              })
-              .catch((err: any) => console.log(err));
+            if (state.data.length < detail.controllers.length) {
+              for (
+                let idx = state.data.length === 0 ? 0 : state.data.length - 1;
+                idx < detail.controllers.length;
+                idx++
+              ) {
+                state.data.push(detail.controllers[idx]);
+              }
+            }
           }
         }
       }
     });
     setIsSynchronizeModal(false);
-  }, [changeCode]);
+  }, [changeCode, isSynced]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(
+        setApiDetail({
+          encryptedUrl: localStorage.getItem("docId"),
+          detailRequest: {
+            detail: JSON.stringify({
+              server: { dependencies: [] },
+              controllers: state.data,
+            }),
+          },
+        })
+      )
+        .then((res: any) => {
+          dispatch(getApiDetail({ docId: encryptedUrl })).then((res: any) => {
+            if (res.meta.requestStatus === "fulfilled") {
+              const detail = JSON.parse(res.payload.detail);
+              if (detail && detail.controllers.length > 0) {
+                if (
+                  state.data &&
+                  (state.data.length === detail.controllers.length ||
+                    state.data.length < detail.controllers.length)
+                ) {
+                  for (let idx = 0; idx < state.data.length; idx++) {
+                    state.data.splice(idx, 1);
+                    state.data.splice(idx, 0, detail.controllers[idx]);
+                  }
+                  if (state.data.length < detail.controllers.length) {
+                    for (
+                      let idx =
+                        state.data.length === 0 ? 0 : state.data.length - 1;
+                      idx < detail.controllers.length;
+                      idx++
+                    ) {
+                      state.data.push(detail.controllers[idx]);
+                    }
+                  }
+                }
+              }
+            }
+          });
+        })
+        .catch((err: any) => console.log(err));
+    };
+  }, [isSynced]);
 
   useEffect(() => {
     dispatch(getApiDoc({ docId: encryptedUrl })).then((res: any) => {
@@ -259,6 +327,21 @@ const CreateApi = () => {
       return;
     }
   }, [docInfo]);
+
+  const preventClose = (e: BeforeUnloadEvent) => {
+    e.preventDefault();
+    e.returnValue = "";
+  };
+
+  useEffect(() => {
+    (() => {
+      window.addEventListener("beforeunload", preventClose);
+    })();
+
+    return () => {
+      window.removeEventListener("beforeunload", preventClose);
+    };
+  }, []);
 
   if (authority === 0) {
     return (
@@ -364,6 +447,8 @@ const CreateApi = () => {
                     responseBody: propertiesData,
                   };
                 } else if (
+                  state.data[selectedController].apis[selectedApi].responses
+                    .success?.responseBody &&
                   JSON.stringify(
                     state.data[selectedController].apis[selectedApi].responses
                       .success.responseBody
@@ -373,6 +458,8 @@ const CreateApi = () => {
                     selectedApi
                   ].responses.success.responseBody = propertiesData;
                 } else if (
+                  state.data[selectedController].apis[selectedApi].responses
+                    .fail?.responseBody &&
                   JSON.stringify(
                     state.data[selectedController].apis[selectedApi].responses
                       .fail.responseBody
@@ -412,7 +499,9 @@ const CreateApi = () => {
               selectedController > -1 &&
               state?.data.length > 0 &&
               state.data[selectedController]?.apis.length > 0 &&
-              activeTab === 5 && (
+              activeTab === 5 &&
+              state.data[selectedController].apis[selectedApi].responses
+                ?.fail && (
                 <div className="apiTable">
                   <button
                     className="apiPlusButton"
@@ -438,21 +527,6 @@ const CreateApi = () => {
                 const test = checkDataValidation(state.data);
                 // 데이터 확인용 로그
                 console.log(test);
-                dispatch(
-                  setApiDetail({
-                    encryptedUrl: localStorage.getItem("docId"),
-                    detailRequest: {
-                      detail: JSON.stringify({
-                        server: { dependencies: [] },
-                        controllers: state.data,
-                      }),
-                    },
-                  })
-                )
-                  .then((res: any) => {
-                    console.log(res);
-                  })
-                  .catch((err: any) => console.log(err));
               }}
             >
               테스트
@@ -487,38 +561,28 @@ const CreateApi = () => {
                 setIsSynchronizeModal={setIsSynchronizeModal}
                 setChangeData={setChangeData}
                 setChangeCode={setChangeCode}
+                setSyncData={setSyncData}
+                setSelectedControllerName={setSelectedControllerName}
+                setSelectedControllerIndex={setSelectedControllerIndex}
+                selectedControllerIndex={selectedControllerIndex}
+                selectedControllerName={selectedControllerName}
               />
             )}
           </div>
           {changeCode && changeCode.length > 0 && (
-            <>
-              <div className="createApiSynchronizeTitle">
-                <div className="createApiTabContainer">
-                  {changeCode.map((item: any, index: number) => (
-                    <div
-                      key={index}
-                      className={
-                        selectedChangeCode === index
-                          ? "createApiTabItem selectedTabItem"
-                          : "createApiTabItem"
-                      }
-                      onClick={() => setSelectedChangeCode(index)}
-                    >
-                      {item.name}
-                    </div>
-                  ))}
-                </div>
-                <button
-                  className="createApiCloseButton"
-                  onClick={() => setChangeCode(undefined)}
-                >
-                  <FontAwesomeIcon icon={faClose} />
-                </button>
-              </div>
-              <div className="createApiCodeBlockContainer">
-                <CodeBlock data={changeCode[selectedChangeCode].code} />
-              </div>
-            </>
+            <SynchronizeCode
+              changeCode={changeCode}
+              selectedChangeCode={selectedChangeCode}
+              setSelectedChangeCode={setSelectedChangeCode}
+              setChangeCode={setChangeCode}
+            />
+          )}
+          {changeData && syncData && (
+            <SynchroinizeData
+              syncData={syncData}
+              setSyncData={setSyncData}
+              saveChangeData={saveChangeData}
+            />
           )}
         </div>
       </div>

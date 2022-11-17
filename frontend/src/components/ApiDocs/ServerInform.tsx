@@ -14,8 +14,6 @@ const ServerInform = ({ docInformArray }: Props) => {
     if (docInformArray) {
       docInformArray?.map((it, idx) => {
         if (it[0] === "serverUrl") {
-          console.log("it[1]=>", it[1]);
-
           dispatch(testApiSlice.actions.getURL({ url: it[1] }));
         }
         if (it[0] === "contextUri") {

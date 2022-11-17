@@ -22,13 +22,13 @@ const StartBtn = styled.button`
   background-color: #6fc7d1;
   width: 80%;
   height: 20%;
-  // margin-left: 20%;
   margin-top: 15px;
   border: none;
   border-radius: 10px;
-  font-weight: bold;
+  // font-weight: bold;
   font-size: 20px;
   cursor: pointer;
+  font-family: "NanumSquareNeo-Variable";
 `;
 
 const Start = () => {

@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { RequestTypeInfo } from "../../pages/CreateApi/ApisType";
 import { reBodyType } from "../../pages/TestApi";
 import { useAppDispatch } from "../../Store/hooks";
-import { selectTestApi } from "../../Store/slice/testApi";
+import testApiSlice, { selectTestApi } from "../../Store/slice/testApi";
 import MethodTest from "./MethodTest";
 
 const ApiInputUriSearch = styled.input`
@@ -36,76 +36,66 @@ export type list = {
 
 const ApiInputUri = ({ getInfo, testbodyInfo, setTestbodyInfo, paramsInfo, setParamsInfo, queriesInfo, setQueriesInfo }: list) => {
   const [sendFlag, setSendFlag] = useState(false);
-  const [headObj, setHeadObj] = useState({});
+  const [methodUri, setMethodUri] = useState<string | undefined>("");
   const info = useSelector(selectTestApi);
+  const dispatch = useAppDispatch();
 
-  // TEST 전용 UseEffect 추후 삭제 예정
-  useEffect(() => {
-    console.log("GETINFO LIST => ", getInfo);
-  }, [getInfo, info.getControllerInfomation, info.getApisInfomation]);
+  let token = info.getToken.length >= 1 ? `Bearer${info.getToken}` : "";
 
-  // 헤더 정보 받아 오기.
-  const headReq = getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].headers;
+  //해당 uri 받아오기
   useEffect(() => {
-    let test = {};
-    headReq?.map((it, idx) => {
-      const key = it.key;
-      const value = it.value;
-      test = { ...test, [key]: value };
-    });
-    setHeadObj(test);
-  }, [getInfo, info.getControllerInfomation, info.getApisInfomation]);
+    setMethodUri(getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].uri);
+  }, [getInfo, info.getApisInfomation, info.getControllerInfomation]);
 
   // 서버 주소 받아오기
   const server = Object.values(info.getServerUrl).toString();
   const context = Object.values(info.getContextUrl).toString();
-  const testUri = server + context;
+  const requestMaapingUri = getInfo?.controllers[info.getControllerInfomation].commonUri;
+  const testUri = server + context + requestMaapingUri + methodUri;
+
+  // 성공시 Response 반환
+  const responseAllInfo = (e: any) => {
+    e.status && dispatch(testApiSlice.actions.getStatus(e.status));
+    e.statusText && dispatch(testApiSlice.actions.getStatusTextInfo(e.statusText));
+    e.data && dispatch(testApiSlice.actions.getData(e.data));
+    e.headers && dispatch(testApiSlice.actions.getSuccessHeader(e.headers));
+  };
+
+  // 실패시 Response 반환
+  const errResponsAllInfo = (e: any) => {
+    e.response.status && dispatch(testApiSlice.actions.getStatus(e.response.status));
+    e.message && dispatch(testApiSlice.actions.getErrMessage(e.message));
+  };
 
   // 메소드 정보 받아오기
   const requestMethod = getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].method;
-
-  let config = {
-    headers: headObj,
-  };
-  console.log("body=>", testbodyInfo);
-  console.log("PRAMAL => ", paramsInfo);
-
-  let params = {
-    param: paramsInfo,
-  };
-
-  let data = {
-    params: paramsInfo,
-    queris: queriesInfo,
-  };
-
-  console.log("TOKEN", info.getToken);
-
   const submitRequest = () => {
     switch (requestMethod) {
-      case "get":
+      case "Get":
         axios
           .get(testUri, {
             headers: {
-              Authorization: `Bearer${info.getToken}`,
+              Authorization: token,
             },
-            params: params,
+            params: paramsInfo,
           })
           .then((res) => {
             console.log("RES=>", res);
+            responseAllInfo(res);
           })
           .catch((err) => {
+            errResponsAllInfo(err);
             console.log("ERR => ", err);
-            console.log("Params => ", params);
+            console.log("Params => ", paramsInfo);
             console.log("TestUri => ", testUri);
           });
         break;
-      case "post":
+      case "Post":
         axios
           .post(testUri, {
-            testbodyInfo,
+            data: testbodyInfo,
             headers: {
-              Authorization: `Bearer${info.getToken}`,
+              Authorization: token,
             },
           })
           .then((res) => {
@@ -117,12 +107,12 @@ const ApiInputUri = ({ getInfo, testbodyInfo, setTestbodyInfo, paramsInfo, setPa
             console.log("postBody =>", testbodyInfo);
           });
         break;
-      case "put":
+      case "Put":
         axios
           .put(testUri, {
             testbodyInfo,
             headers: {
-              Authorization: `Bearer${info.getToken}`,
+              Authorization: token,
             },
           })
           .then((res) => {
@@ -134,38 +124,39 @@ const ApiInputUri = ({ getInfo, testbodyInfo, setTestbodyInfo, paramsInfo, setPa
             console.log("putBody=>", testbodyInfo);
           });
         break;
-      case "delete":
+      case "Delete":
         axios
           .delete(testUri, {
-            data: {
-              data,
-            },
             headers: {
-              Authorization: `Bearer${info.getToken}`,
+              Authorization: token,
             },
+            params: paramsInfo,
           })
           .then((res) => {
+            responseAllInfo(res);
             console.log("Delete 성공=>", res);
-            console.log("DEL Data => ", data);
           })
           .catch((err) => {
+            errResponsAllInfo(err);
             console.log("ERR => ", err);
-            console.log("DEL Data => ", data);
           });
         break;
-      // case "patch":
-      //   console.log("PATCH");
-      //   break;
-      // case "options":
-      //   console.log("OPTIONS");
-      //   break;
-      // case "head":
-      //   console.log("HEAD");
-      //   break;
+      case "patch":
+        axios.patch(testUri, {
+          testbodyInfo,
+          headers: {
+            Authoriztion: token,
+          },
+          params: paramsInfo,
+        });
+        break;
+      case "head":
+        axios.head(testUri, testbodyInfo);
+        break;
       default:
+        axios.options(testUri);
         break;
     }
-
     setSendFlag(!sendFlag);
   };
 
@@ -173,22 +164,15 @@ const ApiInputUri = ({ getInfo, testbodyInfo, setTestbodyInfo, paramsInfo, setPa
   useEffect(() => {
     setTestbodyInfo({});
     setParamsInfo({});
+    setQueriesInfo({});
   }, [sendFlag]);
-
-  const [value, setValue] = useState(testUri);
 
   return (
     <div className="apiInputContainer">
       <span className="apiChoice">
         <MethodTest methodApiWord={requestMethod} />
       </span>
-      <ApiInputUriSearch
-        type="text"
-        value={value}
-        onChange={(e) => {
-          setValue(e.target.value);
-        }}
-      />
+      <ApiInputUriSearch type="text" value={testUri} />
       <button className="apiTestBtn" onClick={submitRequest}>
         send
       </button>

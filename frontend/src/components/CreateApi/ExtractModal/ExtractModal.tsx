@@ -25,9 +25,19 @@ type DetailType = {
   controllers: ControllerType[];
 };
 
+export type DependencyType = {
+  id: string;
+  name: string;
+  fixed: boolean;
+};
+
+const web = {
+  id: "web",
+  name: "Spring Web",
+  fixed: true,
+} as DependencyType;
+
 const ExtractModal = ({ controllers }: ExtractModalProps) => {
-  const NOTION_URL =
-    "https://great-haircut-17f.notion.site/APICloud-notion-template-24e0ac07d6e241f692aaaac2912b6732";
   const isOpenExtractModal = useSelector(
     (state: RootState) => state.apiDocsApi.isOpenExtractModal
   );
@@ -38,19 +48,47 @@ const ExtractModal = ({ controllers }: ExtractModalProps) => {
   const [openIdx, setOpenIdx] = useState(0);
   const [notionDBId, setNotionDBId] = useState("");
   const [notionToken, setNotionToken] = useState("");
-  const [dependencies, setDependencies] = useState<string[]>([]);
+  const [dependencies, setDependencies] = useState<DependencyType[]>([]);
 
   const isOpenDependencyModal = useSelector(
     (state: RootState) => state.apiDocsApi.isOpenDependencyModal
   );
 
   useEffect(() => {
-    const stringDependencies = localStorage.getItem("dependencies");
+    const stringDependencies = localStorage.getItem(
+      `${encryptedUrl}_dependencies`
+    );
+    const localDependencies: DependencyType[] = [];
     if (stringDependencies !== null) {
-      const localDependencies = JSON.parse(stringDependencies);
-      setDependencies(localDependencies);
+      localDependencies.push(JSON.parse(stringDependencies));
     }
+    if (localDependencies.every((dep: DependencyType) => dep.id !== web.id)) {
+      localDependencies.push(web);
+    }
+    setDependencies(localDependencies);
   }, []);
+
+  useEffect(() => {
+    const localNotionToken = localStorage.getItem(`${encryptedUrl}_notion`);
+    if (localNotionToken !== null) {
+      setNotionToken(localNotionToken);
+    }
+    const localNotionPageId = localStorage.getItem(
+      `${encryptedUrl}_notionPageId`
+    );
+    if (localNotionPageId !== null) {
+      setNotionDBId(localNotionPageId);
+    }
+  }, [localStorage]);
+
+  const connectNotion = () => {
+    if (encryptedUrl === undefined) {
+      console.log("잘못된 접근입니다.");
+      return;
+    }
+    const notionUrl = process.env.REACT_APP_NOTION_OAUTH2 + encryptedUrl;
+    window.location.replace(notionUrl);
+  };
 
   const prepareExtraction = (extract: () => void) => {
     const detail = {} as DetailType;
@@ -80,10 +118,14 @@ const ExtractModal = ({ controllers }: ExtractModalProps) => {
   };
 
   const extractSpringBoot = () => {
+    const listDependencies = Array.from(
+      dependencies,
+      (v: DependencyType) => v.id
+    );
     dispatch(
       getSpringBoot({
         encryptedUrl: encryptedUrl,
-        springExtractRequest: { dependencies: dependencies },
+        springExtractRequest: { dependencies: listDependencies },
       })
     ).then((res: any) => {
       if (res.meta.requestStatus !== "fulfilled") {
@@ -175,41 +217,26 @@ const ExtractModal = ({ controllers }: ExtractModalProps) => {
                 </li>
                 <div className={openIdx === 2 ? "open" : ""}>
                   <div>
-                    <div>
-                      1. template 복제
-                      <button onClick={() => window.open(NOTION_URL)}>
-                        template 복제
-                      </button>
-                    </div>
-                    <div>
-                      {/* TODO: 페이지 링크를 받아서 데이터베이스 찾아주기 */}
-                      {/* TODO: local storage에 저장 */}
-                      2. 데이터베이스 id
-                      <input
-                        type="text"
-                        value={notionDBId}
-                        onChange={(e) => setNotionDBId(e.target.value)}
-                      ></input>
-                    </div>
-                    <div>
-                      {/* TODO: secret key oauth로 받기 */}
-                      3. token
-                      <input
-                        type="text"
-                        value={notionToken}
-                        onChange={(e) => setNotionToken(e.target.value)}
-                      ></input>
-                    </div>
+                    <button type="button" onClick={() => connectNotion()}>
+                      연동
+                    </button>
+                    <button
+                      onClick={
+                        notionToken
+                          ? () => {
+                              prepareExtraction(extractNotion);
+                              setOpenIdx(0);
+                            }
+                          : () => {
+                              alert(
+                                "노션 연동이 되지 않았습니다. 연동 후 추출해주세요."
+                              );
+                            }
+                      }
+                    >
+                      추출
+                    </button>
                   </div>
-                  <button>도움말</button>
-                  <button
-                    onClick={() => {
-                      prepareExtraction(extractNotion);
-                      setOpenIdx(0);
-                    }}
-                  >
-                    추출
-                  </button>
                 </div>
                 <li
                   onClick={() => {

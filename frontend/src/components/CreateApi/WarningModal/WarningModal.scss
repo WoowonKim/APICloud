@@ -4,8 +4,8 @@
   position: fixed;
 }
 .warningModalInnerContainer {
-  width: 35rem;
-  min-height: 28rem;
+  width: 28rem;
+  min-height: 20rem;
   height: auto;
   background-color: white;
   position: absolute;
@@ -16,12 +16,12 @@
   padding: 1rem 3rem;
   box-shadow: 2px 2px 25px -12px rgba(0, 0, 0, 0.92);
   .warningModalTitle {
-    font-size: 2em;
+    font-size: 1.5em;
     font-weight: bold;
     margin: 20px 0;
   }
   .warningModalText {
-    font-size: 1.1em;
+    font-size: 1em;
     font-weight: bold;
     word-break: break-all;
   }
@@ -33,7 +33,7 @@
     .warningModalValidationResultText1 {
       display: flex;
       margin: 20px 20px 20px 0;
-      font-size: 1.1em;
+      font-size: 1em;
       .warningModalCloudIcon {
         margin: 0 10px 0 0;
         color: rgba(111, 199, 209, 0.8);
@@ -59,7 +59,7 @@
 }
 
 .warningModalButtonGroup {
-  margin: 30px 0;
+  margin: 0 0 20px 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
