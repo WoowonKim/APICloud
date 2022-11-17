@@ -201,7 +201,7 @@ const ApiInputUri = ({
       </span>
       <ApiInputUriSearch type="text" value={testUri} />
       <button className="apiTestBtn" onClick={submitRequest}>
-        send
+        SEND
       </button>
     </div>
   );

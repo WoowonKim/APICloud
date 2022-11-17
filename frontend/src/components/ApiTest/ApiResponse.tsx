@@ -62,7 +62,9 @@ const ApiResponse = ({ getInfo, testbodyInfo }: type) => {
               </div>
             ) : (
               <div>
-                <p className="errorResponseResult">{info.getResponseErroStatusMessage}...</p>
+                <p className="errorResponseResult">
+                  {info.getResponseErroStatusMessage}...
+                </p>
               </div>
             )}
           </div>
@@ -71,7 +73,9 @@ const ApiResponse = ({ getInfo, testbodyInfo }: type) => {
           <div>
             {getStatusInfo === 200 ? (
               <div>
-                {typeof getStatusData !== typeof "" && <p className="centercalcu">{"{"}</p>}
+                {typeof getStatusData !== typeof "" && (
+                  <p className="centercalcu">{"{"}</p>
+                )}
                 <div className="resltResponseHeaderContainer">
                   {typeof getStatusData !== typeof "" && (
                     <div>
@@ -89,11 +93,15 @@ const ApiResponse = ({ getInfo, testbodyInfo }: type) => {
                     </div>
                   )}
                 </div>
-                {typeof getStatusData !== typeof "" && <p className="centercalcu">{"}"}</p>}
+                {typeof getStatusData !== typeof "" && (
+                  <p className="centercalcu">{"}"}</p>
+                )}
               </div>
             ) : (
               <div>
-                <p className="errorResponseResult">{info.getResponseErroStatusMessage}...</p>
+                <p className="errorResponseResult">
+                  {info.getResponseErroStatusMessage}...
+                </p>
               </div>
             )}
           </div>
