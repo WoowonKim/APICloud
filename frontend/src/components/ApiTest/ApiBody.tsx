@@ -1,17 +1,9 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import {
-  RequestBodyType,
-  RequestTypeInfo,
-} from "../../pages/CreateApi/ApisType";
+import { RequestBodyType, RequestTypeInfo } from "../../pages/CreateApi/ApisType";
 import { reBodyType } from "../../pages/TestApi";
 import { selectTestApi } from "../../Store/slice/testApi";
-import {
-  HeaderContatinerList,
-  HeaderListInput,
-  HeaderListTitle,
-  HeaderListTitleCon,
-} from "./Headerheader";
+import { HeaderContatinerList, HeaderListInput, HeaderListTitle, HeaderListTitleCon } from "./Headerheader";
 
 interface type {
   getInfo: RequestTypeInfo | undefined;
@@ -31,11 +23,7 @@ const ApiBody = ({ getInfo, testbodyInfo, setTestbodyInfo }: type) => {
   // RequestBody 작성 할 값 불러오기 및 기존 body값 초기화
   useEffect(() => {
     if (getInfo) {
-      setRequestBody(
-        getInfo?.controllers[info.getControllerInfomation].apis[
-          info.getApisInfomation
-        ].requestBody
-      );
+      setRequestBody(getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].requestBody);
       setTestbodyInfo({});
     }
   }, [getInfo, info.getControllerInfomation, info.getApisInfomation]);
@@ -65,7 +53,7 @@ const ApiBody = ({ getInfo, testbodyInfo, setTestbodyInfo }: type) => {
               <input
                 className="apiHeaderListInputTag"
                 type="text"
-                onChange={e => {
+                onChange={(e) => {
                   setInputBody(e.target.value);
                   setTest(it.name);
                 }}
