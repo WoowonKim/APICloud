@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleUser } from "@fortawesome/free-solid-svg-icons";
 import { faLink } from "@fortawesome/free-solid-svg-icons";
-import { userDummy } from "./ListDummy";
 import { useDispatch, useSelector } from "react-redux";
 import mainApiSlice, {
   getApiCreationInfo,
@@ -12,7 +11,15 @@ import mainApiSlice, {
 } from "../../Store/slice/mainApi";
 import { RootState } from "../../Store/store";
 import "./CreateModal.scss";
+import { getGroupUsers } from "../../Store/slice/apiDocsApi";
+import { axiosGet, axiosPost, axiosPut } from "../../util/axiosUtil";
 
+type groupUser = {
+  name: string;
+  authority: number;
+  email: string;
+  userId: number;
+};
 const UpdateModal = () => {
   const [docsName, setDocsName] = useState("");
   const [serverUrl, setServerUrl] = useState("");
@@ -25,7 +32,8 @@ const UpdateModal = () => {
   const [packaging, setPackaging] = useState("");
   const [isDefaultAvailable, setIsCreationInfoAvailable] = useState(false);
   const [creationInfo, setCreationInfo] = useState({} as any);
-
+  const [groupUsers, setGroupUsers] = useState<groupUser[]>([]);
+  const [authority, setAuthority] = useState<number>();
   const docsNameInput: any = useRef();
 
   const docId = useSelector((state: RootState) => state.mainApi.docId);
@@ -107,6 +115,21 @@ const UpdateModal = () => {
     }
   }, []);
 
+  useEffect(() => {
+    console.log(groupUsers);
+    // groupUsers.map(() => {
+    //   return null;
+    // });
+  }, [groupUsers]);
+
+  useEffect(() => {
+    dispatch(getGroupUsers({ docId: docId })).then((res: any) => {
+      setGroupUsers(res.payload);
+    });
+    axiosGet("/docs/authority/" + encryptedUrl).then((res: any) => {
+      setAuthority(res.data);
+    });
+  }, []);
   const addCurrentVersion = (info: any, currentVersion: string) => {
     let isExists = false;
     for (let bootVersion of info.bootVersion.values) {
@@ -123,6 +146,19 @@ const UpdateModal = () => {
     }
   };
 
+  const handleAuthortyChange = (e: any, userId: number, idx: number) => {
+    const value = e.target.value;
+    axiosPut("/group/" + docId, {
+      userId: userId,
+      authority: value,
+    }).then((res) => {
+      console.log(res);
+      let copy = [...groupUsers];
+      console.log(e.target.value);
+      copy[idx].authority = value;
+      setGroupUsers(copy);
+    });
+  };
   return (
     <ModalContainer>
       <DialogBox>
@@ -278,17 +314,37 @@ const UpdateModal = () => {
               <p>그룹목록</p>
               <p>API 편집 권한이 있는 사용자</p>
               <div className="apiUser">
-                {userDummy.map((it, idx) => (
+                {groupUsers.map((it, idx) => (
                   <div className="apiUserList" key={idx}>
                     <FontAwesomeIcon
                       className="apiUserIcon"
                       icon={faCircleUser}
                     />
                     <div className="apiUserTitle">
-                      <p>{it.name}</p>
-                      <p>{it.id}</p>
+                      <div>{it.name}</div>
+                      <div>{it.email}</div>
                     </div>
-                    <p className="apiAuthority">{it.authority}</p>
+                    {it.authority != 1 && (
+                      <select
+                        onChange={(e) => {
+                          handleAuthortyChange(e, it.userId, idx);
+                        }}
+                        value={it.authority}
+                      >
+                        <option
+                          value="2"
+                          disabled={authority != 1 ? true : false}
+                        >
+                          editor
+                        </option>
+                        <option
+                          value="3"
+                          disabled={authority != 1 ? true : false}
+                        >
+                          viewer
+                        </option>
+                      </select>
+                    )}
                   </div>
                 ))}
               </div>

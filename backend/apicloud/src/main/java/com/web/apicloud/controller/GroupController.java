@@ -1,5 +1,7 @@
 package com.web.apicloud.controller;
 
+import com.web.apicloud.domain.dto.GroupResponse;
+import com.web.apicloud.domain.dto.UserAutorityResponse;
 import com.web.apicloud.domain.entity.Group;
 import com.web.apicloud.domain.entity.GroupUser;
 import com.web.apicloud.domain.entity.User;
@@ -15,6 +17,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -26,6 +31,18 @@ public class GroupController {
     private final DocsService docsService;
 
     private final UserService userService;
+
+    @GetMapping("/{docId}")
+    public ResponseEntity<Object> getGroup(@PathVariable Long docId) {
+        log.info("doc 참여 유저 목록 조회 API");
+        List<UserAutorityResponse> response = new ArrayList<>();
+        Group group = docsService.findByDocsId(docId).getGroup();
+        List<GroupUser> groupUsers = groupUserService.getGroupUserByGroup(group);
+        for(GroupUser groupUser: groupUsers) {
+            response.add(new UserAutorityResponse(groupUser.getUser(),groupUser.getAuthority()));
+        }
+        return ResponseEntity.ok().body(response);
+    }
 
     @PutMapping("/{docId}")
     public ResponseEntity<Object> changeAuthority(@CurrentUser UserPrincipal userPrincipal, @PathVariable Long docId, @RequestBody UserAuthorityVO userAuthorityVO) {
