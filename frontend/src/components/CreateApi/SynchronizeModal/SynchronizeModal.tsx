@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from "../../../Store/hooks";
 import {
   getSynchronizeApiDoc,
   getSynchronizeFile,
+  setApiDetail,
 } from "../../../Store/slice/apiDocsApi";
 import {
   Backdrop,
@@ -69,50 +70,79 @@ const SynchronizeModal = ({
     if (fileInfo) {
       formData.append("file", fileInfo);
     }
-    dispatch(getSynchronizeFile({ formData, docId: docInfo.docId }))
-      .then((res: any) => {
-        if (res.meta.requestStatus === "fulfilled") {
-          setChangeData(res.payload);
-          const dto = checkChangedData(
-            res.payload,
-            selectedControllerName,
-            selectedControllerIndex,
-            state
-          );
-          setSyncData(dto);
-          setIsSynchronizeModal(false);
-        }
+    dispatch(
+      setApiDetail({
+        encryptedUrl: localStorage.getItem("docId"),
+        detailRequest: {
+          detail: JSON.stringify({
+            server: { dependencies: [] },
+            controllers: state.data,
+          }),
+        },
       })
-      .catch((err: any) => {
-        console.log(err);
-      });
+    ).then((res: any) => {
+      if (res.meta.requestStatus === "fulfilled") {
+        dispatch(getSynchronizeFile({ formData, docId: docInfo.docId }))
+          .then((res: any) => {
+            if (res.meta.requestStatus === "fulfilled") {
+              setChangeData(res.payload);
+              const dto = checkChangedData(
+                res.payload,
+                selectedControllerName,
+                selectedControllerIndex,
+                state
+              );
+              setSyncData(dto);
+              setIsSynchronizeModal(false);
+            }
+          })
+          .catch((err: any) => {
+            console.log(err);
+          });
+      }
+    });
   };
 
   const synchronizeApiDoc = () => {
     dispatch(
-      getSynchronizeApiDoc({
-        docId: docInfo.docId,
+      setApiDetail({
+        encryptedUrl: localStorage.getItem("docId"),
         detailRequest: {
-          detail: JSON.stringify(state.data[selectedControllerIndex]),
+          detail: JSON.stringify({
+            server: { dependencies: [] },
+            controllers: state.data,
+          }),
         },
       })
-    )
-      .then((res: any) => {
-        if (res.meta.requestStatus === "fulfilled") {
-          setChangeCode(res.payload);
-        } else {
-          setErrorMessage(res.payload.data.message);
-        }
-      })
-      .catch((err: any) => {
-        console.log(err);
-      });
+    ).then((res: any) => {
+      if (res.meta.requestStatus === "fulfilled") {
+        dispatch(
+          getSynchronizeApiDoc({
+            docId: docInfo.docId,
+            detailRequest: {
+              detail: JSON.stringify(state.data[selectedControllerIndex]),
+            },
+          })
+        )
+          .then((res: any) => {
+            if (res.meta.requestStatus === "fulfilled") {
+              setChangeCode(res.payload);
+            } else {
+              setErrorMessage(res.payload.data.message);
+            }
+          })
+          .catch((err: any) => {
+            console.log(err);
+          });
+      }
+    });
   };
 
   useEffect(() => {
     setChangeCode(undefined);
     setIsWarningModal(false);
     setErrorMessage("");
+    setChangeData(undefined);
   }, []);
   return (
     <ModalContainer>

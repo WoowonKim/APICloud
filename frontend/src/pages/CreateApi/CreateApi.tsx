@@ -332,7 +332,7 @@ const CreateApi = () => {
     if (activeTab === 1) {
       if (
         rootPath.headers === null ||
-        JSON.stringify(rootPath.headers) === "{}"
+        JSON.stringify(rootPath.headers) === "[]"
       ) {
         rootPath.headers = [{ key: "", value: "" }];
       }
