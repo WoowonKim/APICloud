@@ -1,4 +1,4 @@
-import { faTurnUp } from "@fortawesome/free-solid-svg-icons";
+import { faCircle } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 
@@ -12,7 +12,7 @@ const Headers = ({ item }: Props) => {
       <div className="titleContentWrapper">
         <div className="iconTitleWrapper">
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          <FontAwesomeIcon icon={faTurnUp} rotation={90} />
+          <FontAwesomeIcon icon={faCircle} className="circleIcon" />
           &nbsp;headers
         </div>
       </div>

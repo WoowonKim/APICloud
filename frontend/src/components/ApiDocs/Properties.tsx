@@ -34,8 +34,8 @@ const Properties = ({item}: Props) => {
 								<div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'{item.required}'</div>
 							</div>
 							<div className="titleContentWrapper2">
-								{item.collectionType?.length && item.collectionType === 'List' && <Properties item={item.properties}/>}
-								{item.collectionType !== 'List' && <div>&nbsp;properties</div>}
+								{item.type && item.type === 'Object' && <Properties item={item.properties}/>}
+								{item.type !== 'Object' && <div>&nbsp;&nbsp;&nbsp;properties</div>}
 							</div>
 							<div>{"}"}</div>
             </div>

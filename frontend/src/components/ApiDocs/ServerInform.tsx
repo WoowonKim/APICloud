@@ -9,6 +9,7 @@ interface Props {
 
 const ServerInform = ({ docInformArray }: Props) => {
   const dispatch = useAppDispatch();
+
   useEffect(() => {
     if (docInformArray) {
       docInformArray?.map((it, idx) => {
@@ -23,6 +24,7 @@ const ServerInform = ({ docInformArray }: Props) => {
       });
     }
   }, [docInformArray]);
+
   return (
     <div className="apiDocTableWrapper">
       <table className="apiDocTable">

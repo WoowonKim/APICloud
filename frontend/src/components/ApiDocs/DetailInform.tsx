@@ -1,4 +1,4 @@
-import { faTurnUp } from "@fortawesome/free-solid-svg-icons";
+import { faCircle } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { ForwardedRef, forwardRef, useEffect, useRef } from "react";
 import "./DetailInform.scss";
@@ -42,32 +42,21 @@ const DetailInform = forwardRef<Ref, Props>(
 
     return (
       <div className="docPaper2Wrapper">
-        <h2 className="detailInformTitle">상세 정보</h2>
-        {detail && (
-          <div>
-            <div
-              ref={(el) => (refList.current[0] = el)}
-              className={
-                refList.current.length > 0 &&
-                refList.current[0]?.offsetTop !== undefined &&
-                scrollPosition - 1 <= refList.current[0]?.offsetTop &&
-                refList.current[0]?.offsetTop < scrollPosition + 1
-                  ? "highLightedSubtitle"
-                  : "subtitle"
-              }
-            >
-              server
-            </div>
-            <div className="titleContentWrapper">
-              <div>
-                &nbsp;
-                <FontAwesomeIcon icon={faTurnUp} rotation={90} />
-                &nbsp;dependencies:
-              </div>
-              <div>{detail.server.dependencies}</div>
-            </div>
+        <h2 className="detailInformTitle">
+          <div
+            ref={(el) => (refList.current[0] = el)}
+            className={
+              refList.current.length > 0 &&
+              refList.current[0]?.offsetTop !== undefined &&
+              scrollPosition - 1 <= refList.current[0]?.offsetTop &&
+              refList.current[0]?.offsetTop < scrollPosition + 1
+                ? "highLightedSubtitle"
+                : "subtitle"
+            }
+          >
+            상세정보
           </div>
-        )}
+        </h2>
         <div
           ref={(el) => (refList.current[1] = el)}
           className={
@@ -87,16 +76,40 @@ const DetailInform = forwardRef<Ref, Props>(
               <div className="titleContentWrapper">
                 <div className="iconTitleWrapper">
                   &nbsp;
-                  <FontAwesomeIcon icon={faTurnUp} rotation={90} />
-                  &nbsp;name:
+                  <FontAwesomeIcon icon={faCircle} className="circleIcon" />
+                  <div
+                    ref={(el) => (refList.current[2] = el)}
+                    className={
+                      refList.current.length > 0 &&
+                      refList.current[2]?.offsetTop !== undefined &&
+                      scrollPosition - 1 <= refList.current[2]?.offsetTop &&
+                      refList.current[2]?.offsetTop < scrollPosition + 1
+                        ? "highLightedSubtitle"
+                        : "subtitle"
+                    }
+                  >
+                    &nbsp;name:
+                  </div>
                 </div>
                 <div className="content">{item.name}</div>
               </div>
               <div className="titleContentWrapper">
                 <div className="iconTitleWrapper">
                   &nbsp;
-                  <FontAwesomeIcon icon={faTurnUp} rotation={90} />
-                  &nbsp;commonUri:
+                  <FontAwesomeIcon icon={faCircle} className="circleIcon" />
+                  <div
+                    ref={(el) => (refList.current[3] = el)}
+                    className={
+                      refList.current.length > 0 &&
+                      refList.current[3]?.offsetTop !== undefined &&
+                      scrollPosition - 1 <= refList.current[3]?.offsetTop &&
+                      refList.current[3]?.offsetTop < scrollPosition + 1
+                        ? "highLightedSubtitle"
+                        : "subtitle"
+                    }
+                  >
+                    &nbsp;commonUri:
+                  </div>
                 </div>
                 <div className="content">{item.commonUri}</div>
               </div>
@@ -105,22 +118,22 @@ const DetailInform = forwardRef<Ref, Props>(
                   <div
                     className={
                       refList.current.length > 0 &&
-                      refList.current[idx + 2]?.offsetTop !== undefined &&
+                      refList.current[idx + 4]?.offsetTop !== undefined &&
                       scrollPosition - 1 <=
-                        refList.current[idx + 2]!.offsetTop &&
-                      refList.current[idx + 2]!.offsetTop < scrollPosition + 1
+                        refList.current[idx + 4]!.offsetTop &&
+                      refList.current[idx + 4]!.offsetTop < scrollPosition + 1
                         ? "highLightedTitleContentWrapper"
                         : "titleContentWrapper"
                     }
                   >
                     &nbsp;
-                    <FontAwesomeIcon icon={faTurnUp} rotation={90} />
+                    <FontAwesomeIcon icon={faCircle} className="circleIcon" />
                     &nbsp;apis
                   </div>
                   <div className="titleContentWrapper">
                     <div className="iconTitleWrapper">
                       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                      <FontAwesomeIcon icon={faTurnUp} rotation={90} />
+                      <FontAwesomeIcon icon={faCircle} className="circleIcon" />
                       &nbsp;name:
                     </div>
                     <div className="content">{item.name}</div>
@@ -128,7 +141,7 @@ const DetailInform = forwardRef<Ref, Props>(
                   <div className="titleContentWrapper">
                     <div className="iconTitleWrapper">
                       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                      <FontAwesomeIcon icon={faTurnUp} rotation={90} />
+                      <FontAwesomeIcon icon={faCircle} className="circleIcon" />
                       &nbsp;uri:
                     </div>
                     <div className="content">{item.uri}</div>
@@ -136,7 +149,7 @@ const DetailInform = forwardRef<Ref, Props>(
                   <div className="titleContentWrapper">
                     <div className="iconTitleWrapper">
                       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                      <FontAwesomeIcon icon={faTurnUp} rotation={90} />
+                      <FontAwesomeIcon icon={faCircle} className="circleIcon" />
                       &nbsp;method:
                     </div>
                     <div className="content">{item.method}</div>

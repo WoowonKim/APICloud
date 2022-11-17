@@ -77,14 +77,14 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
                 {it.groupUser.name}
               </div>
               <FontAwesomeIcon
-                className="DeatilIcon"
+                className="DetailIcon"
                 icon={faRightToBracket}
                 onClick={() => moveApidocs(it.encryptedUrl, true, it)}
               />
               {apiList === 0 ? (
                 <>
                   <FontAwesomeIcon
-                    className="DeatilIcon"
+                    className="DetailIcon"
                     icon={faPenToSquare}
                     onClick={() => {
                       dispatch(
@@ -104,7 +104,7 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
                     }}
                   />
                   <FontAwesomeIcon
-                    className="DeatilIcon"
+                    className="DetailIcon"
                     icon={faTrash}
                     onClick={() => dispatchDeleteDoc(it.docId)}
                   />
