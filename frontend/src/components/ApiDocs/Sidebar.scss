@@ -1,3 +1,5 @@
+@import "../welcome/Welcome.scss";
+
 .openSidebar {
   z-index: 5;
   width: 18vw;
@@ -5,7 +7,8 @@
   position: absolute;
   left: 0px;
   transition: 0.5s ease;
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: rgb(244, 248, 248);
+  border-radius: 5px;
 }
 
 .closeSidebar {
@@ -16,17 +19,34 @@
   left: -200px;
   transition: 0.5s ease;
   background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 5px;
 }
 
 .closeButtonWrapper {
   padding: 10px;
 }
 
+.houseIconWrapper {
+  display: flex;
+  margin-left: 20px;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  cursor: pointer;
+}
+.houseIconWrapper:hover {
+  color: rgb(197, 33, 33);
+}
+
 .sidebarUl {
   .sidebarLi {
     margin-bottom: 20px;
     margin-left: 20px;
-    font-size: 25px;
+    font-size: 15px;
+    cursor: pointer;
+    margin-right: 50px;
+  }
+  .sidebarLi:hover {
+    color: rgb(197, 33, 33);
   }
   .sidebarLi2 {
     margin-bottom: 20px;
