@@ -27,7 +27,7 @@ export const ApiListTitle = styled.div`
 `;
 
 export const ChoiceText = styled.span`
-  background-color: #3a00e5;
+  background-color: #6fc7d1;
   border-radius: 10px;
   font-weight: bold;
   font-size: 13px;
@@ -38,8 +38,8 @@ export const ChoiceText = styled.span`
 `;
 
 export const NoChoiceText = styled.span`
-  background-color: #f7f5ff;
-  color: #3a00e5;
+  background-color: #f5f9ff;
+  color: #6fc7d1;
   border-radius: 10px;
   font-weight: bold;
   font-size: 12px;
