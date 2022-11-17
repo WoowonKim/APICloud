@@ -243,8 +243,16 @@ const CreateApi = () => {
     dispatch(getApiDetail({ docId: encryptedUrl })).then((res: any) => {
       if (res.meta.requestStatus === "fulfilled") {
         const detail = JSON.parse(res.payload.detail);
-        if (detail && detail.controllers.length > 0) {
-          state.data.splice(0);
+        console.log("test");
+        console.log(state.data.length);
+
+        if (state.data && state.data.length > 0) {
+          for (let i = 0; i < state.data.length; i++) {
+            state.data.pop();
+            console.log(JSON.parse(JSON.stringify(state.data)));
+          }
+        }
+        if (state.data.length > 0 && detail && detail.controllers.length > 0) {
           for (let idx = 0; idx < detail.controllers.length; idx++) {
             state.data.push(detail.controllers[idx]);
           }
@@ -269,32 +277,22 @@ const CreateApi = () => {
         dispatch(getApiDetail({ docId: encryptedUrl })).then((res: any) => {
           if (res.meta.requestStatus === "fulfilled") {
             const detail = JSON.parse(res.payload.detail);
+            console.log(3939);
+
+            for (let i = 0; i < state.data.length; i++) {
+              state.data.pop();
+              console.log(JSON.parse(JSON.stringify(state.data)));
+            }
             if (detail && detail.controllers.length > 0) {
-              if (
-                state.data &&
-                (state.data.length === detail.controllers.length ||
-                  state.data.length < detail.controllers.length)
-              ) {
-                for (let idx = 0; idx < state.data.length; idx++) {
-                  state.data.splice(idx, 1);
-                  state.data.splice(idx, 0, detail.controllers[idx]);
-                }
-                if (state.data.length < detail.controllers.length) {
-                  for (
-                    let idx =
-                      state.data.length === 0 ? 0 : state.data.length - 1;
-                    idx < detail.controllers.length;
-                    idx++
-                  ) {
-                    state.data.push(detail.controllers[idx]);
-                  }
-                }
+              for (let idx = 0; idx < detail.controllers.length; idx++) {
+                state.data.push(detail.controllers[idx]);
               }
             }
           }
         });
       })
       .catch((err: any) => console.log(err));
+    console.log(222);
   };
   useEffect(() => {
     handleGetApiDetail();
@@ -365,7 +363,7 @@ const CreateApi = () => {
           </Loading>
         ) : (
           <div>
-            <Header />
+            {/* <Header /> */}
             <div className="apiDocscontainer">
               <Sidebar
                 handleController={handleController}

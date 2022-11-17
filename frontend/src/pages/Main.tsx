@@ -20,7 +20,6 @@ const Main = () => {
 
   return (
     <Bg>
-      <Header />
       <Start />
       <ApiList />
     </Bg>
