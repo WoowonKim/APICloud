@@ -2,7 +2,7 @@ import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useSyncedStore } from "@syncedstore/react";
 import { store } from "../store";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SelectTypes from "../SelectTypes/SelectTypes";
 import { handleDtoProperties } from "../validationCheck";
 import "./Table.scss";
@@ -33,6 +33,16 @@ const TableInfo = ({
 }: Props) => {
   const state = useSyncedStore(store);
   const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    if (
+      state.data[selectedController].apis[selectedApi].requestBody.type !==
+      "Object"
+    ) {
+      state.data[selectedController].apis[selectedApi].requestBody.type =
+        "Object";
+    }
+  }, []);
   return (
     <div>
       {activeTab === 4 ? (
@@ -55,7 +65,10 @@ const TableInfo = ({
                     onChange={(e) => handleBasicInfo(e, "dtoName", 1, "")}
                     value={
                       state.data[selectedController].apis[selectedApi]
-                        .requestBody.dtoName
+                        .requestBody.dtoName !== null
+                        ? state.data[selectedController].apis[selectedApi]
+                            .requestBody.dtoName
+                        : ""
                     }
                   />
                   {dtoExists &&
@@ -114,7 +127,10 @@ const TableInfo = ({
                 onChange={(e) => handleBasicInfo(e, "name", 1, "")}
                 value={
                   state.data[selectedController].apis[selectedApi].requestBody
-                    .name
+                    .name !== null
+                    ? state.data[selectedController].apis[selectedApi]
+                        .requestBody.name
+                    : ""
                 }
               />
             </div>
@@ -187,7 +203,10 @@ const TableInfo = ({
                     }
                     value={
                       state.data[selectedController].apis[selectedApi]
-                        .responses[responseType].responseBody.dtoName
+                        .responses[responseType].responseBody.dtoName !== null
+                        ? state.data[selectedController].apis[selectedApi]
+                            .responses[responseType].responseBody.dtoName
+                        : ""
                     }
                   />
                   {dtoExists &&
@@ -247,7 +266,10 @@ const TableInfo = ({
                 value={
                   state.data[selectedController].apis[selectedApi].responses[
                     responseType
-                  ].responseBody.name
+                  ].responseBody.name !== null
+                    ? state.data[selectedController].apis[selectedApi]
+                        .responses[responseType].responseBody.name
+                    : ""
                 }
               />
             </div>

@@ -56,17 +56,17 @@ const DtoModalTable = ({
   const handleTableCell = (item: any, index: number) => {
     const rows = [];
     rows.push(
-      <td>
+      <td key={`${index}-1`}>
         <input
           type="text"
-          value={item.name}
+          value={item.name !== null ? item.name : ""}
           onChange={(e) => handelCellValue(e, "name", index)}
           className="tableInput"
         />
       </td>
     );
     rows.push(
-      <td>
+      <td key={`${index}-2`}>
         <div className="typeInfoContainer">
           {item.collectionType === "List" && (
             <SelectTypes
@@ -100,17 +100,17 @@ const DtoModalTable = ({
       </td>
     );
     rows.push(
-      <td>
+      <td key={`${index}-3`}>
         <input
           type="checkbox"
-          checked={item.required}
+          checked={item.required !== null ? item.name : ""}
           onChange={(e) => handelCellValue(e, "required", index)}
         />
       </td>
     );
 
     rows.push(
-      <td>
+      <td key={`${index}-4`}>
         <FontAwesomeIcon
           icon={faRemove}
           className="removeIcon"

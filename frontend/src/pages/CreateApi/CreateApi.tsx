@@ -43,10 +43,6 @@ const CreateApi = () => {
   const [isSynced, setIsSynced] = useState(0);
   const [isWarningModal, setIsWarningModal] = useState(false);
   const [isLodaing, setIsLoading] = useState(true);
-  // 데이터 확인용 로그
-  // console.log(changeData);
-  // console.log(syncData);
-  // console.log(changeCode);
 
   useEffect(() => {
     if (!encryptedUrl) {
@@ -244,7 +240,8 @@ const CreateApi = () => {
   };
   // 데이터 확인 용 로그
   console.log(JSON.parse(JSON.stringify(state.data)));
-  useEffect(() => {
+
+  const handleGetApiDetail = () => {
     dispatch(getApiDetail({ docId: encryptedUrl })).then((res: any) => {
       if (res.meta.requestStatus === "fulfilled") {
         const detail = JSON.parse(res.payload.detail);
@@ -271,6 +268,53 @@ const CreateApi = () => {
         }
       }
     });
+  };
+
+  const handleSetApiDetail = () => {
+    dispatch(
+      setApiDetail({
+        encryptedUrl: localStorage.getItem("docId"),
+        detailRequest: {
+          detail: JSON.stringify({
+            server: { dependencies: [] },
+            controllers: state.data,
+          }),
+        },
+      })
+    )
+      .then((res: any) => {
+        dispatch(getApiDetail({ docId: encryptedUrl })).then((res: any) => {
+          if (res.meta.requestStatus === "fulfilled") {
+            const detail = JSON.parse(res.payload.detail);
+            if (detail && detail.controllers.length > 0) {
+              if (
+                state.data &&
+                (state.data.length === detail.controllers.length ||
+                  state.data.length < detail.controllers.length)
+              ) {
+                for (let idx = 0; idx < state.data.length; idx++) {
+                  state.data.splice(idx, 1);
+                  state.data.splice(idx, 0, detail.controllers[idx]);
+                }
+                if (state.data.length < detail.controllers.length) {
+                  for (
+                    let idx =
+                      state.data.length === 0 ? 0 : state.data.length - 1;
+                    idx < detail.controllers.length;
+                    idx++
+                  ) {
+                    state.data.push(detail.controllers[idx]);
+                  }
+                }
+              }
+            }
+          }
+        });
+      })
+      .catch((err: any) => console.log(err));
+  };
+  useEffect(() => {
+    handleGetApiDetail();
     if (encryptedUrl) {
       connectDoc(encryptedUrl);
     }
@@ -279,47 +323,7 @@ const CreateApi = () => {
 
   useEffect(() => {
     return () => {
-      dispatch(
-        setApiDetail({
-          encryptedUrl: localStorage.getItem("docId"),
-          detailRequest: {
-            detail: JSON.stringify({
-              server: { dependencies: [] },
-              controllers: state.data,
-            }),
-          },
-        })
-      )
-        .then((res: any) => {
-          dispatch(getApiDetail({ docId: encryptedUrl })).then((res: any) => {
-            if (res.meta.requestStatus === "fulfilled") {
-              const detail = JSON.parse(res.payload.detail);
-              if (detail && detail.controllers.length > 0) {
-                if (
-                  state.data &&
-                  (state.data.length === detail.controllers.length ||
-                    state.data.length < detail.controllers.length)
-                ) {
-                  for (let idx = 0; idx < state.data.length; idx++) {
-                    state.data.splice(idx, 1);
-                    state.data.splice(idx, 0, detail.controllers[idx]);
-                  }
-                  if (state.data.length < detail.controllers.length) {
-                    for (
-                      let idx =
-                        state.data.length === 0 ? 0 : state.data.length - 1;
-                      idx < detail.controllers.length;
-                      idx++
-                    ) {
-                      state.data.push(detail.controllers[idx]);
-                    }
-                  }
-                }
-              }
-            }
-          });
-        })
-        .catch((err: any) => console.log(err));
+      handleSetApiDetail();
     };
   }, [encryptedUrl]);
 
@@ -340,6 +344,7 @@ const CreateApi = () => {
   const preventClose = (e: BeforeUnloadEvent) => {
     e.preventDefault();
     e.returnValue = "";
+    handleSetApiDetail();
   };
 
   useEffect(() => {
@@ -407,16 +412,6 @@ const CreateApi = () => {
                     </div>
                   </div>
                   <div className="buttonContainer">
-                    <button
-                      className="createApiButton"
-                      onClick={() => {
-                        const test = checkDataValidation(state.data);
-                        // 데이터 확인용 로그
-                        console.log(test);
-                      }}
-                    >
-                      테스트
-                    </button>
                     <button className="createApiButton">공유</button>
                     <button
                       className="createApiButton"
