@@ -379,10 +379,9 @@ const UpdateModal = () => {
 const ModalContainer = styled.div`
   width: 100%;
   height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
+  position: fixed;
+  top: 0;
+  left: 0;
 `;
 
 const DialogBox = styled.dialog`
@@ -397,8 +396,7 @@ const DialogBox = styled.dialog`
   box-sizing: border-box;
   background-color: white;
   z-index: 10000;
-  margin-bottom: 530px;
-  margin-right: 550px;
+  margin: 20px auto;
 `;
 
 const Backdrop = styled.div`

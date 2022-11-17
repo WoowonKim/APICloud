@@ -69,7 +69,7 @@ const DependencyModal = (props: PropType) => {
       <DialogBox>
         <div className="modalContainer">
           <div className="modalMain">
-            <div>
+            <div className="dependencyModal">
               <p className="dependencyModal-modalTitle">Dependency 선택</p>
               <div className="dependencyModal-selectedList">
                 {selectedDependencies &&
