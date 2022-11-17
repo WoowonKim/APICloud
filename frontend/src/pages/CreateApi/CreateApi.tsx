@@ -9,21 +9,24 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Store/store";
 import apiDocsApiSlice, {
+  checkAuthority,
   getApiDetail,
   setApiDetail,
   updateSynchronizeData,
 } from "../../Store/slice/apiDocsApi";
 import ExtractModal from "../../components/CreateApi/ExtractModal/ExtractModal";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { axiosGet } from "../../util/axiosUtil";
 import ErrorPage from "../ErrorPage";
-import { useAppDispatch } from "../../Store/hooks";
+import { useAppDispatch, useAppSelector } from "../../Store/hooks";
 import { checkDataValidation } from "../../components/CreateApi/validationCheck";
 import ApiTable from "../../components/CreateApi/ApiTable/ApiTable";
 import SynchronizeModal from "../../components/CreateApi/SynchronizeModal/SynchronizeModal";
 import { getApiDoc } from "../../Store/slice/mainApi";
 import SynchronizeCode from "../../components/CreateApi/SynchronizeModal/SynchronizeCode";
 import SynchroinizeData from "../../components/CreateApi/SynchronizeModal/SynchroinizeData";
+import Header from "../../components/main/Header";
+import { InfinitySpin } from "react-loader-spinner";
+import styled from "styled-components";
 
 const CreateApi = () => {
   const dispatch = useAppDispatch();
@@ -39,27 +42,24 @@ const CreateApi = () => {
   const [selectedControllerName, setSelectedControllerName] = useState("");
   const [selectedControllerIndex, setSelectedControllerIndex] = useState(-1);
   const [isSynced, setIsSynced] = useState(0);
-  // 데이터 확인용 로그
-  console.log(changeData);
-  console.log(syncData);
-  console.log(changeCode);
+  const [isWarningModal, setIsWarningModal] = useState(false);
+  const [isLodaing, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const checckAutority = async (encryptedUrl: string) => {
-      return await axiosGet(`/docs/authority/${encryptedUrl}`);
-    };
-    if (encryptedUrl) {
-      checckAutority(encryptedUrl)
-        .then((res) => {
-          setAuthority(res.data);
-        })
-        .catch((err) => {
-          console.log(err.response.data);
-          setAuthority(0);
-        });
-      connectDoc(encryptedUrl);
+    if (!encryptedUrl) {
+      return;
     }
+    dispatch(checkAuthority({ encryptedUrl }))
+      .then((res: any) => {
+        setAuthority(res.data);
+      })
+      .catch((err: any) => {
+        console.log(err.response.data);
+        setAuthority(0);
+      });
+    connectDoc(encryptedUrl);
   }, [encryptedUrl]);
+
   const isOpenExtractModal = useSelector(
     (state: RootState) => state.apiDocsApi.isOpenExtractModal
   );
@@ -71,7 +71,7 @@ const CreateApi = () => {
     requestBody: {
       dtoName: "",
       name: "",
-      type: "String",
+      type: "Object",
       collectionType: "",
       properties: [],
       required: true,
@@ -186,6 +186,9 @@ const CreateApi = () => {
   // table의 row 추가 함수
   const addTableRow = (responseType?: "fail" | "success") => {
     if (activeTab === 1) {
+      if (state.data[selectedController].apis[selectedApi].headers === null) {
+        state.data[selectedController].apis[selectedApi].headers = [];
+      }
       state.data[selectedController].apis[selectedApi].headers.push({
         key: "",
         value: "",
@@ -238,7 +241,8 @@ const CreateApi = () => {
   };
   // 데이터 확인 용 로그
   console.log(JSON.parse(JSON.stringify(state.data)));
-  useEffect(() => {
+
+  const handleGetApiDetail = () => {
     dispatch(getApiDetail({ docId: encryptedUrl })).then((res: any) => {
       if (res.meta.requestStatus === "fulfilled") {
         const detail = JSON.parse(res.payload.detail);
@@ -265,54 +269,64 @@ const CreateApi = () => {
         }
       }
     });
+  };
+
+  const handleSetApiDetail = () => {
+    dispatch(
+      setApiDetail({
+        encryptedUrl: localStorage.getItem("docId"),
+        detailRequest: {
+          detail: JSON.stringify({
+            server: { dependencies: [] },
+            controllers: state.data,
+          }),
+        },
+      })
+    )
+      .then((res: any) => {
+        dispatch(getApiDetail({ docId: encryptedUrl })).then((res: any) => {
+          if (res.meta.requestStatus === "fulfilled") {
+            const detail = JSON.parse(res.payload.detail);
+            if (detail && detail.controllers.length > 0) {
+              if (
+                state.data &&
+                (state.data.length === detail.controllers.length ||
+                  state.data.length < detail.controllers.length)
+              ) {
+                for (let idx = 0; idx < state.data.length; idx++) {
+                  state.data.splice(idx, 1);
+                  state.data.splice(idx, 0, detail.controllers[idx]);
+                }
+                if (state.data.length < detail.controllers.length) {
+                  for (
+                    let idx =
+                      state.data.length === 0 ? 0 : state.data.length - 1;
+                    idx < detail.controllers.length;
+                    idx++
+                  ) {
+                    state.data.push(detail.controllers[idx]);
+                  }
+                }
+              }
+            }
+          }
+        });
+      })
+      .catch((err: any) => console.log(err));
+  };
+  useEffect(() => {
+    handleGetApiDetail();
+    if (encryptedUrl) {
+      connectDoc(encryptedUrl);
+    }
     setIsSynchronizeModal(false);
   }, [changeCode, isSynced]);
 
   useEffect(() => {
     return () => {
-      dispatch(
-        setApiDetail({
-          encryptedUrl: localStorage.getItem("docId"),
-          detailRequest: {
-            detail: JSON.stringify({
-              server: { dependencies: [] },
-              controllers: state.data,
-            }),
-          },
-        })
-      )
-        .then((res: any) => {
-          dispatch(getApiDetail({ docId: encryptedUrl })).then((res: any) => {
-            if (res.meta.requestStatus === "fulfilled") {
-              const detail = JSON.parse(res.payload.detail);
-              if (detail && detail.controllers.length > 0) {
-                if (
-                  state.data &&
-                  (state.data.length === detail.controllers.length ||
-                    state.data.length < detail.controllers.length)
-                ) {
-                  for (let idx = 0; idx < state.data.length; idx++) {
-                    state.data.splice(idx, 1);
-                    state.data.splice(idx, 0, detail.controllers[idx]);
-                  }
-                  if (state.data.length < detail.controllers.length) {
-                    for (
-                      let idx =
-                        state.data.length === 0 ? 0 : state.data.length - 1;
-                      idx < detail.controllers.length;
-                      idx++
-                    ) {
-                      state.data.push(detail.controllers[idx]);
-                    }
-                  }
-                }
-              }
-            }
-          });
-        })
-        .catch((err: any) => console.log(err));
+      handleSetApiDetail();
     };
-  }, [isSynced]);
+  }, [encryptedUrl]);
 
   useEffect(() => {
     dispatch(getApiDoc({ docId: encryptedUrl })).then((res: any) => {
@@ -320,7 +334,7 @@ const CreateApi = () => {
         setDocInfo(res.payload);
       }
     });
-  }, []);
+  }, [encryptedUrl]);
 
   useEffect(() => {
     if (!docInfo) {
@@ -331,6 +345,7 @@ const CreateApi = () => {
   const preventClose = (e: BeforeUnloadEvent) => {
     e.preventDefault();
     e.returnValue = "";
+    handleSetApiDetail();
   };
 
   useEffect(() => {
@@ -342,6 +357,16 @@ const CreateApi = () => {
       window.removeEventListener("beforeunload", preventClose);
     };
   }, []);
+  const isPending = useAppSelector((state) => state.apiDocsApi.isPending);
+  const handleStart = () => {
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
+  };
+
+  useEffect(() => {
+    handleStart();
+  }, []);
 
   if (authority === 0) {
     return (
@@ -351,243 +376,284 @@ const CreateApi = () => {
     );
   } else {
     return (
-      <div className="apiDocscontainer">
-        <Sidebar
-          handleController={handleController}
-          addApi={addApi}
-          state={state}
-          handleSidebarApi={handleSidebarApi}
-          selectedApi={selectedApi}
-          selectedController={selectedController}
-          addedApiIndex={addedApiIndex}
-          addedControllerIndex={addedControllerIndex}
-          docInfo={docInfo}
-        />
-        <div className="apiDocsMaincontainer">
-          <div className="titleContainer">
-            <p className="apiDocsTitleText">{docInfo?.docsName}</p>
-          </div>
-          <div className="infoContainer">
-            <div>
-              <p>사이트 주소</p>
-              <p className="infoValue">{docInfo?.serverUrl}</p>
-            </div>
-            <div>
-              <p>공통 URI</p>
-              <p className="infoValue">{docInfo?.contextUri}</p>
-            </div>
-          </div>
-          <div className="tabContainer">
-            <div
-              className={activeTab === 1 ? "tabItem active" : "tabItem"}
-              onClick={() => setActiveTab(1)}
-            >
-              headers
-            </div>
-            <div
-              className={activeTab === 2 ? "tabItem active" : "tabItem"}
-              onClick={() => setActiveTab(2)}
-            >
-              parameters
-            </div>
-            <div
-              className={activeTab === 3 ? "tabItem active" : "tabItem"}
-              onClick={() => setActiveTab(3)}
-            >
-              queries
-            </div>
-            <div
-              className={activeTab === 4 ? "tabItem active" : "tabItem"}
-              onClick={() => {
-                if (
-                  JSON.stringify(
-                    state.data[selectedController].apis[selectedApi].requestBody
-                  ) === "{}"
-                ) {
-                  state.data[selectedController].apis[selectedApi].requestBody =
-                    propertiesData;
-                }
-                setActiveTab(4);
-              }}
-            >
-              requestBody
-            </div>
-            <div
-              className={activeTab === 5 ? "tabItem active" : "tabItem"}
-              onClick={() => {
-                if (
-                  JSON.stringify(
-                    state.data[selectedController].apis[selectedApi].responses
-                  ) === "{}"
-                ) {
-                  state.data[selectedController].apis[selectedApi].responses =
-                    responsesData;
-                } else if (
-                  JSON.stringify(
-                    state.data[selectedController].apis[selectedApi].responses
-                      .fail
-                  ) === "{}"
-                ) {
-                  state.data[selectedController].apis[
-                    selectedApi
-                  ].responses.fail = {
-                    status: 400,
-                    responseBody: propertiesData,
-                  };
-                } else if (
-                  JSON.stringify(
-                    state.data[selectedController].apis[selectedApi].responses
-                      .success
-                  ) === "{}"
-                ) {
-                  state.data[selectedController].apis[
-                    selectedApi
-                  ].responses.success = {
-                    status: 200,
-                    responseBody: propertiesData,
-                  };
-                } else if (
-                  state.data[selectedController].apis[selectedApi].responses
-                    .success?.responseBody &&
-                  JSON.stringify(
-                    state.data[selectedController].apis[selectedApi].responses
-                      .success.responseBody
-                  ) === "{}"
-                ) {
-                  state.data[selectedController].apis[
-                    selectedApi
-                  ].responses.success.responseBody = propertiesData;
-                } else if (
-                  state.data[selectedController].apis[selectedApi].responses
-                    .fail?.responseBody &&
-                  JSON.stringify(
-                    state.data[selectedController].apis[selectedApi].responses
-                      .fail.responseBody
-                  ) === "{}"
-                ) {
-                  state.data[selectedController].apis[
-                    selectedApi
-                  ].responses.fail.responseBody = propertiesData;
-                }
-                setActiveTab(5);
-              }}
-            >
-              responses
-            </div>
-          </div>
-          <div className="tableContainer">
-            {selectedApi > -1 &&
-              selectedController > -1 &&
-              state?.data.length > 0 &&
-              state.data[selectedController]?.apis.length > 0 && (
-                <div className="apiTable">
-                  <button
-                    className="apiPlusButton"
-                    onClick={() => addTableRow("success")}
-                  >
-                    <FontAwesomeIcon icon={faPlus} className="plusIcon" />
-                  </button>
-                  <ApiTable
-                    activeTab={activeTab}
-                    selectedController={selectedController}
-                    selectedApi={selectedApi}
-                    responseType={"success"}
-                  />
-                </div>
-              )}
-            {selectedApi > -1 &&
-              selectedController > -1 &&
-              state?.data.length > 0 &&
-              state.data[selectedController]?.apis.length > 0 &&
-              activeTab === 5 &&
-              state.data[selectedController].apis[selectedApi].responses
-                ?.fail && (
-                <div className="apiTable">
-                  <button
-                    className="apiPlusButton"
-                    onClick={() => addTableRow("fail")}
-                  >
-                    <FontAwesomeIcon icon={faPlus} className="plusIcon" />
-                  </button>
-                  <ApiTable
-                    activeTab={activeTab}
-                    selectedController={selectedController}
-                    selectedApi={selectedApi}
-                    responseType={"fail"}
-                  />
-                </div>
-              )}
-          </div>
-        </div>
-        <div className="rightSideContainer">
-          <div className="buttonContainer">
-            <button
-              className="createApiButton"
-              onClick={() => {
-                const test = checkDataValidation(state.data);
-                // 데이터 확인용 로그
-                console.log(test);
-              }}
-            >
-              테스트
-            </button>
-            <button className="createApiButton">공유</button>
-            <button
-              className="createApiButton"
-              onClick={() => {
-                setIsSynchronizeModal(!isSynchronizeModal);
-              }}
-            >
-              동기화
-            </button>
-            <button
-              className="createApiButton"
-              type="button"
-              onClick={() =>
-                dispatch(
-                  apiDocsApiSlice.actions.setIsOpenExtractModal({
-                    isOpenExtractModal: true,
-                  })
-                )
-              }
-            >
-              추출
-            </button>
-            {isOpenExtractModal && (
-              <ExtractModal controllers={state.data}></ExtractModal>
-            )}
-            {isSynchronizeModal && (
-              <SynchronizeModal
-                setIsSynchronizeModal={setIsSynchronizeModal}
-                setChangeData={setChangeData}
-                setChangeCode={setChangeCode}
-                setSyncData={setSyncData}
-                setSelectedControllerName={setSelectedControllerName}
-                setSelectedControllerIndex={setSelectedControllerIndex}
-                selectedControllerIndex={selectedControllerIndex}
-                selectedControllerName={selectedControllerName}
+      <>
+        {isPending || isLodaing ? (
+          <Loading
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+            }}
+          >
+            <InfinitySpin width="250" color="#6FC7D1" />
+          </Loading>
+        ) : (
+          <div>
+            <Header />
+            <div className="apiDocscontainer">
+              <Sidebar
+                handleController={handleController}
+                addApi={addApi}
+                state={state}
+                handleSidebarApi={handleSidebarApi}
+                selectedApi={selectedApi}
+                selectedController={selectedController}
+                addedApiIndex={addedApiIndex}
+                addedControllerIndex={addedControllerIndex}
+                docInfo={docInfo}
               />
-            )}
+              <div className="apiDocsMaincontainer">
+                <div className="titleGridContainer">
+                  <div className="titleContainer">
+                    <p className="apiDocsTitleText">{docInfo?.docsName}</p>
+                    <div className="infoContainer">
+                      <p className="infoValue">{docInfo?.serverUrl}</p>
+                      <p className="infoValue">{docInfo?.contextUri}</p>
+                    </div>
+                  </div>
+                  <div className="buttonContainer">
+                    <button className="createApiButton">공유</button>
+                    <button
+                      className="createApiButton"
+                      onClick={() => {
+                        setIsSynchronizeModal(!isSynchronizeModal);
+                      }}
+                    >
+                      동기화
+                    </button>
+                    <button
+                      className="createApiButton"
+                      type="button"
+                      onClick={() =>
+                        dispatch(
+                          apiDocsApiSlice.actions.setIsOpenExtractModal({
+                            isOpenExtractModal: true,
+                          })
+                        )
+                      }
+                    >
+                      추출
+                    </button>
+                    {isOpenExtractModal && (
+                      <ExtractModal
+                        controllers={state.data}
+                        isWarningModal={isWarningModal}
+                        setIsWarningModal={setIsWarningModal}
+                      />
+                    )}
+                    {isSynchronizeModal && (
+                      <SynchronizeModal
+                        setIsSynchronizeModal={setIsSynchronizeModal}
+                        setChangeData={setChangeData}
+                        setChangeCode={setChangeCode}
+                        setSyncData={setSyncData}
+                        setSelectedControllerName={setSelectedControllerName}
+                        setSelectedControllerIndex={setSelectedControllerIndex}
+                        selectedControllerIndex={selectedControllerIndex}
+                        selectedControllerName={selectedControllerName}
+                        isWarningModal={isWarningModal}
+                        setIsWarningModal={setIsWarningModal}
+                      />
+                    )}
+                  </div>
+                </div>
+                <div className="bodyGridContainer">
+                  <div>
+                    <div className="tabContainer">
+                      <div
+                        className={
+                          activeTab === 1 ? "tabItem active" : "tabItem"
+                        }
+                        onClick={() => setActiveTab(1)}
+                      >
+                        headers
+                      </div>
+                      <div
+                        className={
+                          activeTab === 2 ? "tabItem active" : "tabItem"
+                        }
+                        onClick={() => setActiveTab(2)}
+                      >
+                        parameters
+                      </div>
+                      <div
+                        className={
+                          activeTab === 3 ? "tabItem active" : "tabItem"
+                        }
+                        onClick={() => setActiveTab(3)}
+                      >
+                        queries
+                      </div>
+                      <div
+                        className={
+                          activeTab === 4 ? "tabItem active" : "tabItem"
+                        }
+                        onClick={() => {
+                          if (
+                            JSON.stringify(
+                              state.data[selectedController].apis[selectedApi]
+                                .requestBody
+                            ) === "{}"
+                          ) {
+                            state.data[selectedController].apis[
+                              selectedApi
+                            ].requestBody = propertiesData;
+                          }
+                          setActiveTab(4);
+                        }}
+                      >
+                        requestBody
+                      </div>
+                      <div
+                        className={
+                          activeTab === 5 ? "tabItem active" : "tabItem"
+                        }
+                        onClick={() => {
+                          if (
+                            JSON.stringify(
+                              state.data[selectedController].apis[selectedApi]
+                                .responses
+                            ) === "{}"
+                          ) {
+                            state.data[selectedController].apis[
+                              selectedApi
+                            ].responses = responsesData;
+                          } else if (
+                            JSON.stringify(
+                              state.data[selectedController].apis[selectedApi]
+                                .responses.fail
+                            ) === "{}"
+                          ) {
+                            state.data[selectedController].apis[
+                              selectedApi
+                            ].responses.fail = {
+                              status: 400,
+                              responseBody: propertiesData,
+                            };
+                          } else if (
+                            JSON.stringify(
+                              state.data[selectedController].apis[selectedApi]
+                                .responses.success
+                            ) === "{}"
+                          ) {
+                            state.data[selectedController].apis[
+                              selectedApi
+                            ].responses.success = {
+                              status: 200,
+                              responseBody: propertiesData,
+                            };
+                          } else if (
+                            state.data[selectedController].apis[selectedApi]
+                              .responses.success?.responseBody &&
+                            JSON.stringify(
+                              state.data[selectedController].apis[selectedApi]
+                                .responses.success.responseBody
+                            ) === "{}"
+                          ) {
+                            state.data[selectedController].apis[
+                              selectedApi
+                            ].responses.success.responseBody = propertiesData;
+                          } else if (
+                            state.data[selectedController].apis[selectedApi]
+                              .responses.fail?.responseBody &&
+                            JSON.stringify(
+                              state.data[selectedController].apis[selectedApi]
+                                .responses.fail.responseBody
+                            ) === "{}"
+                          ) {
+                            state.data[selectedController].apis[
+                              selectedApi
+                            ].responses.fail.responseBody = propertiesData;
+                          }
+                          setActiveTab(5);
+                        }}
+                      >
+                        responses
+                      </div>
+                    </div>
+                    <div className="tableContainer">
+                      {selectedApi > -1 &&
+                        selectedController > -1 &&
+                        state?.data.length > 0 &&
+                        state.data[selectedController]?.apis.length > 0 && (
+                          <div className="apiTable">
+                            <button
+                              className="apiPlusButton"
+                              onClick={() => addTableRow("success")}
+                            >
+                              <FontAwesomeIcon
+                                icon={faPlus}
+                                className="plusIcon"
+                              />
+                            </button>
+                            <ApiTable
+                              activeTab={activeTab}
+                              selectedController={selectedController}
+                              selectedApi={selectedApi}
+                              responseType={"success"}
+                            />
+                          </div>
+                        )}
+                      {selectedApi > -1 &&
+                        selectedController > -1 &&
+                        state?.data.length > 0 &&
+                        state.data[selectedController]?.apis.length > 0 &&
+                        activeTab === 5 &&
+                        state.data[selectedController].apis[selectedApi]
+                          .responses?.fail && (
+                          <div className="apiTable">
+                            <button
+                              className="apiPlusButton"
+                              onClick={() => addTableRow("fail")}
+                            >
+                              <FontAwesomeIcon
+                                icon={faPlus}
+                                className="plusIcon"
+                              />
+                            </button>
+                            <ApiTable
+                              activeTab={activeTab}
+                              selectedController={selectedController}
+                              selectedApi={selectedApi}
+                              responseType={"fail"}
+                            />
+                          </div>
+                        )}
+                    </div>
+                  </div>
+                  <div className="rightSideContainer">
+                    {changeCode && changeCode.length > 0 && (
+                      <SynchronizeCode
+                        changeCode={changeCode}
+                        selectedChangeCode={selectedChangeCode}
+                        setSelectedChangeCode={setSelectedChangeCode}
+                        setChangeCode={setChangeCode}
+                      />
+                    )}
+                    {changeData && syncData && (
+                      <SynchroinizeData
+                        syncData={syncData}
+                        setSyncData={setSyncData}
+                        saveChangeData={saveChangeData}
+                      />
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          {changeCode && changeCode.length > 0 && (
-            <SynchronizeCode
-              changeCode={changeCode}
-              selectedChangeCode={selectedChangeCode}
-              setSelectedChangeCode={setSelectedChangeCode}
-              setChangeCode={setChangeCode}
-            />
-          )}
-          {changeData && syncData && (
-            <SynchroinizeData
-              syncData={syncData}
-              setSyncData={setSyncData}
-              saveChangeData={saveChangeData}
-            />
-          )}
-        </div>
-      </div>
+        )}
+      </>
     );
   }
 };
+
+export const Loading = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+`;
 
 export default CreateApi;

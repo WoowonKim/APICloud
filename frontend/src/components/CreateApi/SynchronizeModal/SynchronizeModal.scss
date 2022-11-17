@@ -108,8 +108,21 @@
 .synchronizeModalFile {
   border-bottom: 1px solid black;
   padding: 5px;
-  margin-top: 10px;
+  margin-top: 20px;
   font-size: 0.8em;
+}
+
+.synchronizeModalFileSyncButton {
+  background-color: #277fc3;
+  color: white;
+  width: 100%;
+  height: 30px;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  padding: 5px 10px;
+  border-radius: 10px;
+  cursor: pointer;
 }
 
 .synchronizeModalWarningModal {

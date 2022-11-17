@@ -41,6 +41,10 @@ const Sidebar = ({
     setEditControllerIndex(-1);
     setDtoInfoVisible(false);
   }, []);
+
+  useEffect(() => {
+    setIsModalVisible(false);
+  }, []);
   return (
     <>
       {isModalVisible && (
@@ -59,6 +63,7 @@ const Sidebar = ({
           <button
             className="sidebarTitleButton"
             onClick={() => {
+              setEditControllerIndex(-1);
               handleController("add");
               setIsModalVisible(!isModalVisible);
             }}

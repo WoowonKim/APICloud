@@ -1,13 +1,9 @@
 import { faCheck, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { MappedTypeDescription } from "@syncedstore/core/types/doc";
 import { useSyncedStore } from "@syncedstore/react";
 import { store } from "../store";
 import React, { useEffect, useState } from "react";
-import {
-  ControllerType,
-  PropertiesType,
-} from "../../../pages/CreateApi/ApisType";
+import { PropertiesType } from "../../../pages/CreateApi/ApisType";
 import DtoModalTable from "../DtoModalTable/DtoModalTable";
 import { handleDtoProperties } from "../validationCheck";
 import "./DtoInputModal.scss";
@@ -98,6 +94,10 @@ const DtoInputModal = ({
     } else if (activeTab === 4 || activeTab === 5) {
       copy = copy.properties[propertiesIndex];
     }
+
+    if (copy.properties === null) {
+      copy.properties = [];
+    }
     setFinal(copy);
   }, [modalDepth, path, final]);
 
@@ -177,6 +177,7 @@ const DtoInputModal = ({
               propertiesIndexList={propertiesIndexList}
               setModalDepth={setModalDepth}
               final={final}
+              modalDepth={modalDepth}
             />
           </div>
         )}

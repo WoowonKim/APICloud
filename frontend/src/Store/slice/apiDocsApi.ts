@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
-import { access } from "fs";
+
 import {
   axiosGet,
   axiosGetFile,
@@ -12,6 +12,8 @@ import {
 const initialState = {
   isOpenExtractModal: false,
   isOpenDependencyModal: false,
+  isPending: false,
+  isSyncPending: false,
 };
 
 // 특정 API DOC Detail 조회하기
@@ -150,6 +152,19 @@ export const connectNotion: any = createAsyncThunk(
   }
 );
 
+// 문서 권한 확인
+export const checkAuthority: any = createAsyncThunk(
+  "apiDocsApi/checkAuthority",
+  async (args: any, { rejectWithValue }) => {
+    try {
+      const response = await axiosGet(`/docs/authority/${args.encryptedUrl}`);
+      return response.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response);
+    }
+  }
+);
+
 export const getGroupUsers: any = createAsyncThunk(
   "apiDocsApi/getGroupUsers",
   async (args: any, { rejectWithValue }) => {
@@ -161,8 +176,9 @@ export const getGroupUsers: any = createAsyncThunk(
     }
   }
 );
+
 const apiDocsApiSlice = createSlice({
-  name: "mainApi",
+  name: "apiDocsApi",
   initialState,
   reducers: {
     setIsOpenExtractModal(state, action) {
@@ -208,11 +224,14 @@ const apiDocsApiSlice = createSlice({
     [setApiDetail.rejected]: (state, action) => {
       console.log("setApiDetail rejected", action.payload);
     },
+    [getSynchronizeFile.pending]: (state, action) => {
+      state.isSyncPending = true;
+    },
     [getSynchronizeFile.fulfilled]: (state, action) => {
-      if (action.meta.requestStatus === "fulfilled") {
-      }
+      state.isSyncPending = false;
     },
     [getSynchronizeFile.rejected]: (state, action) => {
+      state.isSyncPending = false;
       console.log("getSynchronizeFile rejected", action.payload);
     },
     [updateSynchronizeData.fulfilled]: (state, action) => {
@@ -234,6 +253,16 @@ const apiDocsApiSlice = createSlice({
       }
     },
     [connectNotion.rejected]: (state, action) => {
+      console.log("connectNotion rejected", action.payload);
+    },
+    [checkAuthority.pending]: (state, action) => {
+      state.isPending = true;
+    },
+    [checkAuthority.fulfilled]: (state, action) => {
+      state.isPending = false;
+    },
+    [checkAuthority.rejected]: (state, action) => {
+      state.isPending = false;
       console.log("connectNotion rejected", action.payload);
     },
     [getGroupUsers.fulfilled]: (state, action) => {},

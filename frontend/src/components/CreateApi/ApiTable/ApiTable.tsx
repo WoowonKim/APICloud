@@ -133,20 +133,20 @@ const ApiTable = ({
     const rows = [];
     if (activeTab === 1) {
       rows.push(
-        <td>
+        <td key={`${index}-1`}>
           <input
             type="text"
-            value={item.key}
+            value={item.key !== null ? item.key : ""}
             onChange={(e) => handelCellValue(e, "key", index)}
             className="tableInput"
           />
         </td>
       );
       rows.push(
-        <td>
+        <td key={`${index}-2`}>
           <input
             type="text"
-            value={item.value}
+            value={item.value !== null ? item.value : ""}
             onChange={(e) => handelCellValue(e, "value", index)}
             className="tableInput"
           />
@@ -154,17 +154,17 @@ const ApiTable = ({
       );
     } else {
       rows.push(
-        <td>
+        <td key={`${index}-3`}>
           <input
             type="text"
-            value={item.name}
+            value={item.name !== null ? item.name : ""}
             onChange={(e) => handelCellValue(e, "name", index)}
             className="tableInput"
           />
         </td>
       );
       rows.push(
-        <td>
+        <td key={`${index}-4`}>
           <div className="typeInfoContainer">
             {item.collectionType === "List" && (
               <SelectTypes
@@ -198,17 +198,17 @@ const ApiTable = ({
         </td>
       );
       rows.push(
-        <td>
+        <td key={`${index}-5`}>
           <input
             type="checkbox"
-            checked={item.required}
+            checked={item.required !== null ? item.required : ""}
             onChange={(e) => handelCellValue(e, "required", index)}
           />
         </td>
       );
     }
     rows.push(
-      <td>
+      <td key={`${index}-6`}>
         <FontAwesomeIcon
           icon={faRemove}
           className="removeIcon"
@@ -337,7 +337,15 @@ const ApiTable = ({
         <thead>
           <tr>
             {headers.map((item, index) => (
-              <th key={index} style={{ width: "200px" }}>
+              <th
+                key={index}
+                style={{
+                  width:
+                    item === "delete" || item === "required"
+                      ? "100px"
+                      : "250px",
+                }}
+              >
                 {item}
               </th>
             ))}

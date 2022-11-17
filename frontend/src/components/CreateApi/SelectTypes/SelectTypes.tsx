@@ -69,7 +69,7 @@ const SelectTypes = ({
   // String, List, Map, Byte, Character, Boolean, Integer, Long, Short, Float, Double, Object
   const typeList = isCollection
     ? ["List", "X"]
-    : modalDepth && modalDepth >= 2
+    : modalDepth && modalDepth > 2
     ? [
         "String",
         "Boolean",

@@ -56,7 +56,9 @@ const ControllerAddModal = ({
       let checkController = checkControllerApiValidation(
         state.data,
         [controllerName, value],
-        "controller"
+        "controller",
+        editControllerIndex > -1 ? true : false,
+        editControllerIndex
       );
       setControllerValidation(checkController);
     } else {
@@ -64,7 +66,9 @@ const ControllerAddModal = ({
       let checkController = checkControllerApiValidation(
         state.data,
         [value, controllerUri],
-        "controller"
+        "controller",
+        editControllerIndex > -1 ? true : false,
+        editControllerIndex
       );
       setControllerValidation(checkController);
     }
@@ -231,7 +235,9 @@ const ControllerAddModal = ({
                   : addedControllerIndex
               ].apis,
               [],
-              "api"
+              "api",
+              editControllerIndex > -1 ? true : false,
+              editControllerIndex
             );
             setApiValidation(checkApi);
             if (checkApi[0] === -1 && checkApi[1] === -1) {

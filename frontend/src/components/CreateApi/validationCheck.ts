@@ -24,7 +24,7 @@ export function checkDtoNameValidation(
         if (JSON.stringify(checkData) !== JSON.stringify(current)) {
           existsData[1] = current;
         }
-        if (cnt >= 2 && current.properties.length > 0) {
+        if (cnt >= 2 && current.properties && current.properties.length > 0) {
           return existsData;
         }
       }
@@ -34,14 +34,16 @@ export function checkDtoNameValidation(
         for (item in current) {
           if (
             (item === "parameters" || item === "queries") &&
+            current[item] &&
             current[item].length > 0
           ) {
             for (let property of current[item]) {
               queue.push(property);
               if (
+                property?.dtoName &&
                 property.dtoName.trim() &&
                 property.type === "Object" &&
-                property.properties.length > 0
+                property.properties?.length > 0
               ) {
                 allDtos.push(property);
               }
@@ -55,14 +57,20 @@ export function checkDtoNameValidation(
               if (JSON.stringify(checkData) !== JSON.stringify(current[item])) {
                 existsData[1] = current[item];
               }
-              if (cnt >= 2 && current[item].properties.length > 0) {
+              if (
+                cnt >= 2 &&
+                current[item].properties &&
+                current[item].properties.length > 0
+              ) {
                 return existsData;
               }
             }
             if (
               flag &&
+              current[item].dtoName &&
               current[item].dtoName.trim() &&
               current[item].type === "Object" &&
+              current[item].properties &&
               current[item].properties.length > 0
             ) {
               allDtos.push(current[item]);
@@ -74,7 +82,11 @@ export function checkDtoNameValidation(
             item === "responses" &&
             JSON.stringify(current[item] !== "{}")
           ) {
-            if (current[item].fail.responseBody?.dtoName === value && !flag) {
+            if (
+              current[item]?.fail &&
+              current[item].fail.responseBody?.dtoName === value &&
+              !flag
+            ) {
               cnt++;
               if (
                 JSON.stringify(checkData) !==
@@ -89,6 +101,7 @@ export function checkDtoNameValidation(
                 return existsData;
               }
             } else if (
+              current[item]?.success &&
               current[item].success.responseBody?.dtoName === value &&
               !flag
             ) {
@@ -108,16 +121,24 @@ export function checkDtoNameValidation(
             }
             for (let i = 0; i < 2; i++) {
               let status = i === 0 ? "fail" : "success";
-              for (let property of current[item][status].responseBody
-                .properties) {
-                queue.push(property);
-                if (
-                  flag &&
-                  current[item][status].responseBody.dtoName.trim() &&
-                  current[item][status].responseBody.type === "Object" &&
-                  current[item][status].responseBody.properties.length > 0
-                ) {
-                  allDtos.push(current[item][status].responseBody);
+              if (
+                current[item]?.[status] &&
+                current[item][status]?.responseBody &&
+                current[item][status].responseBody?.properties &&
+                current[item][status].responseBody.properties.length > 0
+              ) {
+                for (let property of current[item][status].responseBody
+                  .properties) {
+                  queue.push(property);
+                  if (
+                    flag &&
+                    current[item][status].responseBody.dtoName &&
+                    current[item][status].responseBody.dtoName.trim() &&
+                    current[item][status].responseBody.type === "Object" &&
+                    current[item][status].responseBody.properties.length > 0
+                  ) {
+                    allDtos.push(current[item][status].responseBody);
+                  }
                 }
               }
             }
@@ -163,7 +184,7 @@ export function checkNameValidation(type: string, data: any[]) {
   }
 
   const key = type === "headers" ? "key" : "name";
-  if (type !== "name" && type !== "api") {
+  if (type !== "name" && type !== "api" && data) {
     for (let item of data) {
       nameList.push(item[key]);
     }
@@ -171,10 +192,12 @@ export function checkNameValidation(type: string, data: any[]) {
     nameList = data;
   }
 
-  const result = nameList.reduce((accu, curr) => {
-    accu[curr] = (accu[curr] || 0) + 1;
-    return accu;
-  }, {});
+  const result =
+    nameList &&
+    nameList.reduce((accu, curr) => {
+      accu[curr] = (accu[curr] || 0) + 1;
+      return accu;
+    }, {});
 
   let cnt = 0;
   for (let item in result) {
@@ -191,9 +214,6 @@ export function checkTypeValidation(item: any) {
   // checkList[1] - type object 여부
   // checkList[2] - properties 존재 여부
   const checkList = [0, 0, 0];
-  // 테스트용 로그
-  console.log(JSON.parse(JSON.stringify(item)));
-
   if (item && Object.keys(item).length === 0) {
     return "false";
   }
@@ -203,7 +223,7 @@ export function checkTypeValidation(item: any) {
   if (item?.type === "Object") {
     checkList[1] = 1;
   }
-  if (item?.properties.length > 0) {
+  if (item?.properties && item?.properties.length > 0) {
     checkList[2] = 1;
   }
 
@@ -227,22 +247,29 @@ export function checkRequiredValueValidation(type: string, item: any) {
   if (item && Object.keys(item).length === 0) {
     return "false";
   }
-  if (type === "headers") {
-    if (!item["key"].trim() && !item["value"].trim()) {
+  if (type === "headers" && item.key && item.value) {
+    if (
+      item["key"] &&
+      !item["key"].trim() &&
+      item["value"] &&
+      !item["value"].trim()
+    ) {
       return "delete";
     } else if (!item["key"].trim() || !item["value"].trim()) {
       return false;
     }
   } else if (type === "properties") {
-    if (
-      !item["name"].trim() &&
-      item["properties"].length === 0 &&
-      !item["collectionType"] &&
-      item["type"] === "string"
-    ) {
-      return "delete";
-    } else if (!item["name"].trim()) {
-      return false;
+    if (item.name && item.properties) {
+      if (
+        !item["name"].trim() &&
+        item["properties"].length === 0 &&
+        !item["collectionType"] &&
+        item["type"] === "string"
+      ) {
+        return "delete";
+      } else if (!item["name"].trim()) {
+        return false;
+      }
     }
   }
 
@@ -279,28 +306,34 @@ export function checkDataValidation(data: ControllerType[]) {
                 "headers",
                 current[item]
               );
-              for (
-                let headerIdx = 0;
-                headerIdx < current[item].length;
-                headerIdx++
-              ) {
-                let headerValidation = checkRequiredValueValidation(
-                  "headers",
-                  current[item][headerIdx]
-                );
-                if (headerValidation === "delete") {
-                  current[item].splice(headerIdx, 1);
-                } else if (!headerValidation) {
-                  requiredValueInvalidCount++;
+              if (current[item]) {
+                for (
+                  let headerIdx = 0;
+                  headerIdx < current[item].length;
+                  headerIdx++
+                ) {
+                  let headerValidation = checkRequiredValueValidation(
+                    "headers",
+                    current[item][headerIdx]
+                  );
+                  if (headerValidation === "delete") {
+                    current[item].splice(headerIdx, 1);
+                  } else if (!headerValidation) {
+                    requiredValueInvalidCount++;
+                  }
                 }
               }
-            } else if (item === "queries" || item === "parameters") {
+            } else if (
+              (item === "queries" || item === "parameters") &&
+              current[item]
+            ) {
               for (
                 let queryIdx = 0;
                 queryIdx < current[item].length;
                 queryIdx++
               ) {
-                current[item][queryIdx].name.trim() &&
+                current[item][queryIdx].name &&
+                  current[item][queryIdx].name.trim() &&
                   checkNameList.push(current[item][queryIdx].name);
                 let queryValueValidation = checkRequiredValueValidation(
                   "properties",
@@ -319,6 +352,7 @@ export function checkDataValidation(data: ControllerType[]) {
                 }
                 if (
                   current[item].length > 0 &&
+                  current[item][queryIdx]?.properties &&
                   current[item][queryIdx].properties.length > 0
                 ) {
                   for (
@@ -353,7 +387,8 @@ export function checkDataValidation(data: ControllerType[]) {
               }
               if (
                 JSON.stringify(current[item]) !== "{}" &&
-                current[item]?.properties.length > 0
+                current[item]?.properties &&
+                current[item].properties?.length > 0
               ) {
                 for (
                   let requestBodyIdx = 0;
@@ -377,61 +412,69 @@ export function checkDataValidation(data: ControllerType[]) {
             ) {
               for (let responseIdx = 0; responseIdx < 2; responseIdx++) {
                 let status = responseIdx === 0 ? "fail" : "success";
-                let responsesValueValidation = checkRequiredValueValidation(
-                  "properties",
-                  current[item][status].responseBody
-                );
-                if (!responsesValueValidation) {
-                  requiredValueInvalidCount++;
-                }
                 if (
-                  current[item][status].responseBody?.name &&
-                  current[item][status].responseBody.name.trim()
+                  current[item]?.[status] &&
+                  current[item][status]?.responseBody
                 ) {
-                  checkNameList.push(current[item][status].responseBody?.name);
-                }
-                let responsesTypeCheck = checkTypeValidation(
-                  current[item][status].responseBody
-                );
-                if (!responsesTypeCheck) {
-                  typeInvalidCount++;
-                }
-
-                if (
-                  JSON.stringify(current[item][status].responseBody) !== "{}" &&
-                  current[item][status].responseBody?.properties.length > 0
-                ) {
-                  for (
-                    let responseBodyIdx = 0;
-                    responseBodyIdx <
-                    current[item][status].responseBody.properties.length;
-                    responseBodyIdx++
+                  let responsesValueValidation = checkRequiredValueValidation(
+                    "properties",
+                    current[item][status].responseBody
+                  );
+                  if (!responsesValueValidation) {
+                    requiredValueInvalidCount++;
+                  }
+                  if (
+                    current[item][status].responseBody?.name &&
+                    current[item][status].responseBody.name.trim()
                   ) {
-                    if (
-                      Object.keys(
-                        current[item][status].responseBody.properties[
-                          responseBodyIdx
-                        ]
-                      ).length !== 0
+                    checkNameList.push(
+                      current[item][status].responseBody?.name
+                    );
+                  }
+                  let responsesTypeCheck = checkTypeValidation(
+                    current[item][status].responseBody
+                  );
+                  if (!responsesTypeCheck) {
+                    typeInvalidCount++;
+                  }
+                  if (
+                    JSON.stringify(current[item][status].responseBody) !==
+                      "{}" &&
+                    current[item][status].responseBody?.properties &&
+                    current[item][status].responseBody.properties?.length > 0
+                  ) {
+                    for (
+                      let responseBodyIdx = 0;
+                      responseBodyIdx <
+                      current[item][status].responseBody.properties.length;
+                      responseBodyIdx++
                     ) {
-                      let responseBodyPropertyValue =
-                        checkRequiredValueValidation(
-                          "properties",
+                      if (
+                        Object.keys(
                           current[item][status].responseBody.properties[
                             responseBodyIdx
                           ]
-                        );
-                      if (responseBodyPropertyValue === "delete") {
-                        current[item][status].responseBody.properties.splice(
-                          responseBodyIdx,
-                          1
-                        );
-                      } else {
-                        queue.push(
-                          current[item][status].responseBody.properties[
-                            responseBodyIdx
-                          ]
-                        );
+                        ).length !== 0
+                      ) {
+                        let responseBodyPropertyValue =
+                          checkRequiredValueValidation(
+                            "properties",
+                            current[item][status].responseBody.properties[
+                              responseBodyIdx
+                            ]
+                          );
+                        if (responseBodyPropertyValue === "delete") {
+                          current[item][status].responseBody.properties.splice(
+                            responseBodyIdx,
+                            1
+                          );
+                        } else {
+                          queue.push(
+                            current[item][status].responseBody.properties[
+                              responseBodyIdx
+                            ]
+                          );
+                        }
                       }
                     }
                   }
@@ -491,7 +534,9 @@ export function checkDataValidation(data: ControllerType[]) {
 export function checkControllerApiValidation(
   data: any,
   value: any,
-  type: string
+  type: string,
+  isEdit: boolean,
+  editControllerIndex: number
 ) {
   const dataLength = data.length;
   const checkList = [-1, -1]; // name, uri
@@ -500,10 +545,10 @@ export function checkControllerApiValidation(
   for (let idx = 0; idx < dataLength; idx++) {
     if (type === "controller") {
       if (value[0].trim() && data[idx].name === value[0]) {
-        checkList[0] = 1;
+        checkList[0] += 1;
       }
       if (value[1].trim() && data[idx].commonUri === value[1]) {
-        checkList[1] = 1;
+        checkList[1] += 1;
       }
     } else {
       nameList.push(data[idx].name);
@@ -516,6 +561,24 @@ export function checkControllerApiValidation(
       checkList[0] = 1;
     }
     if (checkNameValidation("api", uriList) > 0) {
+      checkList[1] = 1;
+    }
+  }
+  if (isEdit && type === "controller") {
+    if (data[editControllerIndex].name === value[0] && checkList[0] > -1) {
+      checkList[0] -= 1;
+    } else if (
+      data[editControllerIndex].name !== value[0] &&
+      checkList[0] > -1
+    ) {
+      checkList[0] = 1;
+    }
+    if (data[editControllerIndex].commonUri === value[1] && checkList[1] > 0) {
+      checkList[1] -= 1;
+    } else if (
+      data[editControllerIndex].commonUri !== value[1] &&
+      checkList[1] > -1
+    ) {
       checkList[1] = 1;
     }
   }
