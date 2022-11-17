@@ -84,10 +84,8 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
 
         codeList.add(CodeResponse.builder().name(detailVO.getName()).importPackage(key).code(lines).build());
         importList.add(new HashMap<>());
-        System.out.println("1: " + detailVO);
         getUpdateCode(detailVO);
         getUpdateImport();
-        System.out.println(codeList);
         return codeList;
     }
 
@@ -247,7 +245,7 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
                                     }
                                 }
                             }
-                            codeList.get(0).getCode().set(start, codeList.get(0).getCode().get(start).replace(", ) {", ") {"));
+                            codeList.get(0).getCode().set(start, codeList.get(0).getCode().get(start).replace(", )", ")"));
                             codeList.get(0).getCode().set(start, codeList.get(0).getCode().get(start).replace(",)", ")"));
                             return;
                         }
