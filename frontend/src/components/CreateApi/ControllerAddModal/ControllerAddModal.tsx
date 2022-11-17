@@ -164,8 +164,8 @@ const ControllerAddModal = ({
               setIsControllerAdd(true);
             }}
             disabled={
-              (controllerValidation[0] === 1 &&
-                controllerValidation[1] === 1) ||
+              controllerValidation[0] === 1 ||
+              controllerValidation[1] === 1 ||
               !controllerName.trim() ||
               !controllerUri.trim()
             }

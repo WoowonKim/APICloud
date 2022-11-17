@@ -24,9 +24,17 @@ interface Props {
   onBlur?: (temp?: string) => void;
   setValue?: React.Dispatch<React.SetStateAction<string>>;
   value?: string;
+  handelCellValue?: (e: any, header: string, index: number) => void;
+  index?: number;
 }
 
-const SelectMethods = ({ onBlur, setValue, value }: Props) => {
+const SelectMethods = ({
+  onBlur,
+  setValue,
+  value,
+  handelCellValue,
+  index,
+}: Props) => {
   const [visible, setVisible] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState(value ? value : "GET");
 
@@ -37,6 +45,15 @@ const SelectMethods = ({ onBlur, setValue, value }: Props) => {
         eventTarget.innerText.substring(1).toLocaleLowerCase()
     );
     setVisible(!visible);
+
+    if (value && handelCellValue && typeof index === "number") {
+      handelCellValue(
+        eventTarget.innerText[0] +
+          eventTarget.innerText.substring(1).toLocaleLowerCase(),
+        "method",
+        index
+      );
+    }
     // Props에 해당 값이 있을 경우 함수 호출
     if (setValue && onBlur) {
       setValue(
