@@ -89,27 +89,63 @@ const Sidebar = forwardRef<Ref, Props>(
           <li className="sidebarLi" onClick={() => scrollMove(ref, 0)}>
             상세 정보
           </li>
-          <li className="sidebarLi" onClick={() => scrollMove(ref, 1)}>
-            &nbsp;&nbsp;controllers
-          </li>
-          <li className="sidebarLi" onClick={() => scrollMove(ref, 2)}>
-            &nbsp;&nbsp;&nbsp;&nbsp;name
-          </li>
-          <li className="sidebarLi" onClick={() => scrollMove(ref, 3)}>
-            &nbsp;&nbsp;&nbsp;&nbsp;commonUri
-          </li>
         </ul>
         <ul className="sidebarUl">
-          <li className="sidebarLi">&nbsp;&nbsp;&nbsp;&nbsp;Apis</li>
           {detail &&
-            detail.controllers[0].apis.map((item: any, idx: any) => (
-              <li
-                key={idx}
-                className="sidebarLi"
-                onClick={() => scrollMove(ref, idx + 4)}
-              >
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{item.name} API
-              </li>
+            detail.controllers.map((controller: any, controllerIdx: any) => (
+              <div key={controllerIdx}>
+                <li
+                  className="sidebarLi"
+                  onClick={() =>
+                    scrollMove(
+                      ref,
+                      (3 + controller.apis.length) * controllerIdx + 1
+                    )
+                  }
+                >
+                  &nbsp;&nbsp;controllers
+                </li>
+                <li
+                  className="sidebarLi"
+                  onClick={() =>
+                    scrollMove(
+                      ref,
+                      (3 + controller.apis.length) * controllerIdx + 2
+                    )
+                  }
+                >
+                  &nbsp;&nbsp;&nbsp;&nbsp;name
+                </li>
+                <li
+                  className="sidebarLi"
+                  onClick={() =>
+                    scrollMove(
+                      ref,
+                      (3 + controller.apis.length) * controllerIdx + 3
+                    )
+                  }
+                >
+                  &nbsp;&nbsp;&nbsp;&nbsp;commonUri
+                </li>
+                <li className="sidebarLi">&nbsp;&nbsp;&nbsp;&nbsp;Apis</li>
+                {controller.apis.map((api: any, apiIdx: any) => (
+                  <li
+                    key={apiIdx}
+                    className="sidebarLi"
+                    onClick={() =>
+                      scrollMove(
+                        ref,
+                        (3 + controller.apis.length) * controllerIdx +
+                          3 +
+                          apiIdx +
+                          4
+                      )
+                    }
+                  >
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{api.name} API
+                  </li>
+                ))}
+              </div>
             ))}
         </ul>
       </div>
