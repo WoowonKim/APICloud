@@ -69,7 +69,9 @@ const ExtractModal = ({
     );
     const localDependencies: DependencyType[] = [];
     if (stringDependencies !== null) {
-      localDependencies.push(JSON.parse(stringDependencies));
+      JSON.parse(stringDependencies).forEach((dependency: DependencyType) => {
+        localDependencies.push(dependency);
+      });
     }
     if (localDependencies.every((dep: DependencyType) => dep.id !== web.id)) {
       localDependencies.push(web);
