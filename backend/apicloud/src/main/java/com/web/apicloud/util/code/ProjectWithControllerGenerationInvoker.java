@@ -85,7 +85,7 @@ public class ProjectWithControllerGenerationInvoker<R extends ProjectRequest> {
                 projectGenerationContext.registerBean(ControllerContributor.class, () -> new ControllerContributor(CustomJavaSourceCode::new,
                     new CustomJavaSourceCodeWriter(this.indentingWriterFactory),
                     doc));
-                projectGenerationContext.registerBean(ApplicationPropertiesContextUriContributor.class, () -> new ApplicationPropertiesContextUriContributor(doc.getServer().getContextUri()));
+                projectGenerationContext.registerBean(ApplicationPropertiesContextUriContributor.class, () -> new ApplicationPropertiesContextUriContributor(doc.getServer()));
                 customizeProjectGenerationContext(projectGenerationContext, metadata);
             });
             ProjectWithControllerGenerationResult result = projectGenerator.generate(description,

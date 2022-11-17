@@ -1,5 +1,6 @@
 package com.web.apicloud.domain.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -38,4 +39,7 @@ public class ServerVO {
     private List<String> dependencies;
 
     private String contextUri;
+
+    @JsonIgnore
+    private String serverUrl;
 }
