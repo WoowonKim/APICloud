@@ -1,11 +1,5 @@
-import {
-  ColumnDef,
-  useReactTable,
-  getCoreRowModel,
-  flexRender,
-  RowData,
-} from "@tanstack/react-table";
-import React, { useEffect, useMemo, useState } from "react";
+import { RowData } from "@tanstack/react-table";
+import React from "react";
 import { PropertiesType } from "../../../pages/CreateApi/ApisType";
 import "../ControllerAddModal/ControllerAddModal.scss";
 import { faInfo, faRemove } from "@fortawesome/free-solid-svg-icons";
@@ -25,12 +19,14 @@ interface Props {
   propertiesIndexList: number[];
   setModalDepth: React.Dispatch<React.SetStateAction<number>>;
   final: PropertiesType | undefined;
+  modalDepth: number;
 }
 const DtoModalTable = ({
   setPropertiesIndexList,
   propertiesIndexList,
   setModalDepth,
   final,
+  modalDepth,
 }: Props) => {
   const headers = ["name", "type", "required", "delete"];
 
@@ -60,17 +56,17 @@ const DtoModalTable = ({
   const handleTableCell = (item: any, index: number) => {
     const rows = [];
     rows.push(
-      <td>
+      <td key={`${index}-1`}>
         <input
           type="text"
-          value={item.name}
+          value={item.name !== null ? item.name : ""}
           onChange={(e) => handelCellValue(e, "name", index)}
           className="tableInput"
         />
       </td>
     );
     rows.push(
-      <td>
+      <td key={`${index}-2`}>
         <div className="typeInfoContainer">
           {item.collectionType === "List" && (
             <SelectTypes
@@ -85,6 +81,7 @@ const DtoModalTable = ({
             handelCellValue={handelCellValue}
             index={index}
             isCollection={false}
+            modalDepth={modalDepth}
           />
           {item.type === "Object" && (
             <FontAwesomeIcon
@@ -103,17 +100,17 @@ const DtoModalTable = ({
       </td>
     );
     rows.push(
-      <td>
+      <td key={`${index}-3`}>
         <input
           type="checkbox"
-          checked={item.required}
+          checked={item.required !== null ? item.name : ""}
           onChange={(e) => handelCellValue(e, "required", index)}
         />
       </td>
     );
 
     rows.push(
-      <td>
+      <td key={`${index}-4`}>
         <FontAwesomeIcon
           icon={faRemove}
           className="removeIcon"

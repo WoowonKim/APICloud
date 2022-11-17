@@ -1,3 +1,5 @@
+import { faHouse } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, {
   Dispatch,
   forwardRef,
@@ -64,6 +66,14 @@ const Sidebar = forwardRef<Ref, Props>(
             X
           </div>
         </div>
+        <div className="houseIconWrapper">
+          <FontAwesomeIcon
+            icon={faHouse}
+            onClick={() => {
+              navigate("/");
+            }}
+          />
+        </div>
         <ul className="sidebarUl">
           <li
             className="sidebarLi"
@@ -71,28 +81,34 @@ const Sidebar = forwardRef<Ref, Props>(
               navigate("/testApi");
             }}
           >
-            API TEST 페이지
+            <div className="sidebarLi1">API TEST 페이지</div>
           </li>
           <li className="sidebarLi" onClick={scrollUp}>
             server 정보
           </li>
           <li className="sidebarLi" onClick={() => scrollMove(ref, 0)}>
-            server
+            상세 정보
           </li>
           <li className="sidebarLi" onClick={() => scrollMove(ref, 1)}>
-            controllers
+            &nbsp;&nbsp;controllers
+          </li>
+          <li className="sidebarLi" onClick={() => scrollMove(ref, 2)}>
+            &nbsp;&nbsp;&nbsp;&nbsp;name
+          </li>
+          <li className="sidebarLi" onClick={() => scrollMove(ref, 3)}>
+            &nbsp;&nbsp;&nbsp;&nbsp;commonUri
           </li>
         </ul>
         <ul className="sidebarUl">
-          <li className="sidebarLi">Apis</li>
+          <li className="sidebarLi">&nbsp;&nbsp;&nbsp;&nbsp;Apis</li>
           {detail &&
             detail.controllers[0].apis.map((item: any, idx: any) => (
               <li
                 key={idx}
                 className="sidebarLi"
-                onClick={() => scrollMove(ref, idx + 2)}
+                onClick={() => scrollMove(ref, idx + 4)}
               >
-                {item.name}
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{item.name} API
               </li>
             ))}
         </ul>

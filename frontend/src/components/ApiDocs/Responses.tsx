@@ -1,4 +1,4 @@
-import { faTurnUp } from "@fortawesome/free-solid-svg-icons";
+import { faCircle } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import Properties from "./Properties";
@@ -13,26 +13,28 @@ const Responses = ({ item }: Props) => {
       <div className="titleContentWrapper">
         <div className="iconTitleWrapper">
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          <FontAwesomeIcon icon={faTurnUp} rotation={90} />
+          <FontAwesomeIcon icon={faCircle} className="circleIcon" />
           &nbsp;responses
         </div>
       </div>
-      <div className="iconTitleWrapper">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <FontAwesomeIcon icon={faTurnUp} rotation={90} />
-        &nbsp;fail
+      <div className="titleContentWrapper">
+        <div className="iconTitleWrapper">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <FontAwesomeIcon icon={faCircle} className="circleIcon" />
+          &nbsp;fail
+        </div>
       </div>
       <div className="titleContentWrapper">
         <div className="iconTitleWrapper">
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          <FontAwesomeIcon icon={faTurnUp} rotation={90} />
+          <FontAwesomeIcon icon={faCircle} className="circleIcon" />
           &nbsp;status:
         </div>
         <div className="content">{item.responses.fail.status}</div>
       </div>
       <div className="iconTitleWrapper">
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <FontAwesomeIcon icon={faTurnUp} rotation={90} />
+        <FontAwesomeIcon icon={faCircle} className="circleIcon" />
         &nbsp;responseBody
       </div>
       <div className="contentBox2">
@@ -65,22 +67,24 @@ const Responses = ({ item }: Props) => {
         <Properties item={item.responses.fail.responseBody.properties} />
         <div>{"}"}</div>
       </div>
-			<div className="iconTitleWrapper">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <FontAwesomeIcon icon={faTurnUp} rotation={90} />
-        &nbsp;success
+      <div className="titleContentWrapper">
+        <div className="iconTitleWrapper">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <FontAwesomeIcon icon={faCircle} className="circleIcon" />
+          &nbsp;success
+        </div>
       </div>
       <div className="titleContentWrapper">
         <div className="iconTitleWrapper">
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          <FontAwesomeIcon icon={faTurnUp} rotation={90} />
+          <FontAwesomeIcon icon={faCircle} className="circleIcon" />
           &nbsp;status:
         </div>
         <div className="content">{item.responses.success.status}</div>
       </div>
       <div className="iconTitleWrapper">
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <FontAwesomeIcon icon={faTurnUp} rotation={90} />
+        <FontAwesomeIcon icon={faCircle} className="circleIcon" />
         &nbsp;responseBody
       </div>
       <div className="contentBox2">
@@ -92,12 +96,14 @@ const Responses = ({ item }: Props) => {
         </div>
         <div className="titleContentWrapper2">
           <div>&nbsp;&nbsp;&nbsp;name:</div>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'{item.responses.success.responseBody.name}
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+          {item.responses.success.responseBody.name}
           ',
         </div>
         <div className="titleContentWrapper2">
           <div>&nbsp;&nbsp;&nbsp;type:</div>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'{item.responses.success.responseBody.type}
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+          {item.responses.success.responseBody.type}
           ',
         </div>
         <div className="titleContentWrapper2">

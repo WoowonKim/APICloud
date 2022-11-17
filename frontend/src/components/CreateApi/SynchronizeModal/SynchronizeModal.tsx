@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useSyncedStore } from "@syncedstore/react";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { useAppDispatch } from "../../../Store/hooks";
+import { useAppDispatch, useAppSelector } from "../../../Store/hooks";
 import {
   getSynchronizeApiDoc,
   getSynchronizeFile,
@@ -28,6 +28,8 @@ interface Props {
   selectedControllerName: string;
   setSelectedControllerIndex: React.Dispatch<React.SetStateAction<number>>;
   selectedControllerIndex: number;
+  setIsWarningModal: React.Dispatch<React.SetStateAction<boolean>>;
+  isWarningModal: boolean;
 }
 
 const SynchronizeModal = ({
@@ -39,12 +41,16 @@ const SynchronizeModal = ({
   setSelectedControllerIndex,
   selectedControllerIndex,
   selectedControllerName,
+  setIsWarningModal,
+  isWarningModal,
 }: Props) => {
   const state = useSyncedStore(store);
   const [isFileInputModal, setIsFileInputModal] = useState(false);
   const [fileInfo, setFileInfo] = useState<any>();
-  const [isWarningModal, setIsWarningModal] = useState(false);
   const [validationResult, setValidationResult] = useState<any>();
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const isPending = useAppSelector((state) => state.apiDocsApi.isSyncPending);
 
   const dispatch = useAppDispatch();
   const location = useLocation();
@@ -96,6 +102,8 @@ const SynchronizeModal = ({
       .then((res: any) => {
         if (res.meta.requestStatus === "fulfilled") {
           setChangeCode(res.payload);
+        } else {
+          setErrorMessage(res.payload.data.message);
         }
       })
       .catch((err: any) => {
@@ -106,6 +114,7 @@ const SynchronizeModal = ({
   useEffect(() => {
     setChangeCode(undefined);
     setIsWarningModal(false);
+    setErrorMessage("");
   }, []);
   return (
     <ModalContainer>
@@ -155,6 +164,9 @@ const SynchronizeModal = ({
                         setIsFileInputModal(!isFileInputModal);
                         setSelectedControllerIndex(index);
                         setSelectedControllerName(controller.name);
+                        setValidationResult(
+                          checkDataValidation([state.data[index]])
+                        );
                       }}
                     />
                   </div>
@@ -186,8 +198,15 @@ const SynchronizeModal = ({
                 }
               }}
             />
+            <div
+              className="synchronizeModalFileSyncButton"
+              onClick={() => {
+                setIsWarningModal(!isWarningModal);
+              }}
+            >
+              파일 동기화
+            </div>
           </div>
-          <button onClick={synchronizeFile}>파일 동기화</button>
         </DialogBox>
       )}
       <Backdrop
@@ -201,6 +220,19 @@ const SynchronizeModal = ({
             setIsWarningModal={setIsWarningModal}
             validationResult={validationResult}
             synchronizeApiDoc={synchronizeApiDoc}
+            errorMessage={errorMessage}
+            setErrorMessage={setErrorMessage}
+          />
+        </div>
+      )}
+      {isWarningModal && isFileInputModal && (
+        <div className="synchronizeModalWarningModal">
+          <WarningModal
+            setIsWarningModal={setIsWarningModal}
+            validationResult={validationResult}
+            synchronizeApiDoc={synchronizeApiDoc}
+            synchronizeFile={synchronizeFile}
+            isPending={isPending}
           />
         </div>
       )}

@@ -34,10 +34,6 @@
       display: flex;
       margin: 20px 20px 20px 0;
       font-size: 1em;
-      .warningModalCloudIcon {
-        margin: 0 10px 0 0;
-        color: rgba(111, 199, 209, 0.8);
-      }
       &:hover {
         cursor: pointer;
       }
@@ -64,26 +60,6 @@
   justify-content: space-between;
   align-items: center;
   .warningModalButton {
-    background-color: #6fc7d1;
-    color: white;
-    width: 45%;
-    text-align: center;
-    padding: 10px;
-    border-radius: 20px;
-    font-family: "twayair";
-    &:hover {
-      opacity: 0.7;
-      transition: all 300ms ease-in;
-    }
-  }
-  .warningModalButton1 {
-    border: 1px solid #6fc7d1;
-    color: #6fc7d1;
-    width: 45%;
-    text-align: center;
-    padding: 10px;
-    border-radius: 20px;
-    font-family: "twayair";
     &:hover {
       opacity: 0.7;
       transition: all 300ms ease-in;
@@ -95,4 +71,9 @@
   width: 100%;
   height: 100%;
   z-index: 10001;
+}
+
+.warningModalExtractText {
+  font-size: 0.8em;
+  margin: 10px 0;
 }

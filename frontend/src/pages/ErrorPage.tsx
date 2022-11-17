@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Header from "../components/main/Header";
+import { useAppSelector } from "../Store/hooks";
+import { InfinitySpin } from "react-loader-spinner";
+import { Loading } from "./CreateApi/CreateApi";
 
 const Bg = styled.div`
   height: 100vh;
@@ -20,9 +23,36 @@ type ErrorProps = {
 };
 
 const ErrorPage = ({ code }: ErrorProps) => {
-  console.log(code);
+  const isPending = useAppSelector((state) => state.apiDocsApi.isPending);
+  const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+    handleStart();
+  }, []);
 
-  if (code === "404") {
+  const handleStart = () => {
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
+  };
+ 
+  if (code === "403" ) {
+    return (
+      {(isPending || isLoading) ?
+       <Loading>
+        <InfinitySpin width="250" color="#6FC7D1" />
+      </Loading>    : 
+      <Bg>
+        <Header />
+        <Error>
+          <ErrorImg
+            alt="ErrorImg403"
+            src={require("../assets/ErrorImg403.png")}
+          />
+        </Error>
+      </Bg>
+      }
+    );
+  } else {
     return (
       <Bg>
         <Header />
@@ -34,19 +64,7 @@ const ErrorPage = ({ code }: ErrorProps) => {
         </Error>
       </Bg>
     );
-  } else {
-    return (
-      <Bg>
-        <Header />
-        <Error>
-          <ErrorImg
-            alt="ErrorImg403"
-            src={require("../assets/ErrorImg403.png")}
-          />
-        </Error>
-      </Bg>
-    );
   }
-};
+
 
 export default ErrorPage;

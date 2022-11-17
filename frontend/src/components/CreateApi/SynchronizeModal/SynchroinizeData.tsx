@@ -1,6 +1,7 @@
-import { faClose } from "@fortawesome/free-solid-svg-icons";
+import { faClose, faInfo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
+import { CopyBlock, atomOneDark, a11yLight } from "react-code-blocks";
 
 interface Props {
   syncData: any;
@@ -25,9 +26,36 @@ const SynchroinizeData = ({ syncData, setSyncData, saveChangeData }: Props) => {
             <p className="createApiSynchronizeRootText">{item.root}</p>
             <div className="createApiSynchronizeTextContainer">
               <p className="createApiSynchronizeKeyText">{item.value.key}</p>
-              <p className="createApiSynchronizeValueText">
-                {JSON.stringify(item.value.value)}
-              </p>
+              <div className="createApiSynchronizeValueText">
+                {typeof item.value.value !== "object" ? (
+                  <span>{item.value.value}</span>
+                ) : item.value.value === null ? (
+                  <span>null</span>
+                ) : (
+                  <>
+                    <span>
+                      <FontAwesomeIcon
+                        icon={faInfo}
+                        className="createApiSynchronizeDataIcon"
+                      />
+                    </span>
+                    <div className="createApiSynchronizeCodeBlock">
+                      <CopyBlock
+                        language="JSON"
+                        text={JSON.stringify(item.value.value).replaceAll(
+                          ",",
+                          `\n`
+                        )}
+                        showLineNumbers={false}
+                        theme={a11yLight}
+                        wrapLines={false}
+                        codeBlock
+                      />
+                      {}
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         ))}

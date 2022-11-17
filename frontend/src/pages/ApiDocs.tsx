@@ -68,14 +68,11 @@ const ApiDocs = () => {
   useEffect(() => {
     dispatchGetApiDetail();
     dispatchGetApiDoc();
-    return () => {
-      localStorage.removeItem("docId");
-    };
   }, []);
 
   useEffect(() => {
     window.addEventListener("scroll", updateScroll);
-  }, [])
+  }, []);
 
   useEffect(() => {
     if (docInform) {
@@ -113,7 +110,7 @@ const ApiDocs = () => {
                   {docInform?.docsName} 문서
                 </h1>
               </div>
-              <h2 className='serverInformTitle'>Server 정보</h2>
+              <h2 className="serverInformTitle">Server 정보</h2>
               <ServerInform docInformArray={docInformArray} />
             </div>
             <div className="doc2">

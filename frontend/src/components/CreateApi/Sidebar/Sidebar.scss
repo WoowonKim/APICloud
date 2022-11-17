@@ -24,7 +24,8 @@
     }
     .sidebarTitleButton {
       @include buttonStyle();
-      background-color: rgb(207, 244, 255);
+      background-color: #e6f8fc;
+      color: #40adb9;
       border-radius: 100%;
       width: 25px;
       height: 25px;

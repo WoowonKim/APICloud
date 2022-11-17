@@ -78,6 +78,8 @@ td,
   font-size: 15px;
   border: none;
   z-index: 1;
+  background-color: transparent;
+  padding: 5px;
 }
 
 .commonUri {
@@ -199,6 +201,7 @@ td,
   color: tomato;
   font-size: 0.7em;
   font-weight: bold;
+  margin: 0 0 10px 10px;
 }
 
 .tableInfoUseCurrentDtoButton {
