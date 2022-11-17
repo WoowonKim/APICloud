@@ -20,8 +20,8 @@ const ApiInputUriSearch = styled.input`
   outline: none;
   font-weight: 500;
   font-size: 14px;
-  color: ${(props) => props.theme.color};
-  background-color: ${(props) => props.theme.bgColor};
+  color: ${props => props.theme.color};
+  background-color: ${props => props.theme.bgColor};
 `;
 
 export type list = {
@@ -90,6 +90,7 @@ const ApiInputUri = ({
   const submitRequest = () => {
     switch (requestMethod) {
       case "Get":
+        //path랑 나눠야함.
         axios({
           method: "get",
           url: testUri,
@@ -98,11 +99,11 @@ const ApiInputUri = ({
           },
           params: paramsInfo,
         })
-          .then((res) => {
+          .then(res => {
             console.log("RES=>", res);
             responseAllInfo(res);
           })
-          .catch((err) => {
+          .catch(err => {
             errResponsAllInfo(err);
             console.log("ERR => ", err);
             console.log("Params => ", paramsInfo);
@@ -118,12 +119,12 @@ const ApiInputUri = ({
             Authorization: token,
           },
         })
-          .then((res) => {
+          .then(res => {
             console.log("post 성공", res);
             console.log("postBody =>", testbodyInfo);
             responseAllInfo(res);
           })
-          .catch((err) => {
+          .catch(err => {
             console.log("ERR =>", err);
             console.log("postBody =>", testbodyInfo);
             errResponsAllInfo(err);
@@ -138,12 +139,12 @@ const ApiInputUri = ({
             Authorization: token,
           },
         })
-          .then((res) => {
+          .then(res => {
             console.log("put 성공 =>", res);
             console.log("putBody =>", testbodyInfo);
             responseAllInfo(res);
           })
-          .catch((err) => {
+          .catch(err => {
             console.log("ERR => ", err);
             console.log("putBody=>", testbodyInfo);
             errResponsAllInfo(err);
@@ -158,11 +159,11 @@ const ApiInputUri = ({
           },
           params: paramsInfo,
         })
-          .then((res) => {
+          .then(res => {
             responseAllInfo(res);
             console.log("Delete 성공=>", res);
           })
-          .catch((err) => {
+          .catch(err => {
             errResponsAllInfo(err);
             console.log("ERR => ", err);
           });
