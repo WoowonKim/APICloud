@@ -68,9 +68,6 @@ const ApiDocs = () => {
   useEffect(() => {
     dispatchGetApiDetail();
     dispatchGetApiDoc();
-  }, []);
-
-  useEffect(() => {
     window.addEventListener("scroll", updateScroll);
   }, []);
 
@@ -81,6 +78,8 @@ const ApiDocs = () => {
     }
   }, [docInform]);
 
+  useEffect(() => {}, [docInformArray, detail]);
+
   return (
     <div className="apiDocContainer">
       <FontAwesomeIcon
@@ -89,41 +88,43 @@ const ApiDocs = () => {
         size="3x"
         onClick={scrollUp}
       />
-      <div className="sidebarDocWrapper">
-        <div className="sidebarBox">
-          <div onClick={toggleSide} className="sidebarButton">
-            <FontAwesomeIcon icon={faBars} size="2x" />
+      {docInformArray && detail && (
+        <div className="sidebarDocWrapper">
+          <div className="sidebarBox">
+            <div onClick={toggleSide} className="sidebarButton">
+              <FontAwesomeIcon icon={faBars} size="2x" />
+            </div>
+            <Sidebar
+              isOpen={isOpen}
+              setIsOpen={setIsOpen}
+              detail={detail}
+              scrollUp={scrollUp}
+              ref={menuRef}
+            />
           </div>
-          <Sidebar
-            isOpen={isOpen}
-            setIsOpen={setIsOpen}
-            detail={detail}
-            scrollUp={scrollUp}
-            ref={menuRef}
-          />
-        </div>
-        <div className="docBox">
-          <div className="pdfDocArea">
-            <div className="doc1">
-              <div className="docTitleWrapper">
-                <h1 className="docTitle" ref={serverInformRef}>
-                  {docInform?.docsName} 문서
-                </h1>
+          <div className="docBox">
+            <div className="pdfDocArea">
+              <div className="doc1">
+                <div className="docTitleWrapper">
+                  <h1 className="docTitle" ref={serverInformRef}>
+                    {docInform?.docsName} 문서
+                  </h1>
+                </div>
+                <h2 className="serverInformTitle">Server 정보</h2>
+                <ServerInform docInformArray={docInformArray} />
               </div>
-              <h2 className="serverInformTitle">Server 정보</h2>
-              <ServerInform docInformArray={docInformArray} />
+              <div className="doc2">
+                <DetailInform
+                  detail={detail}
+                  scrollPosition={scrollPosition}
+                  ref={menuRef}
+                />
+              </div>
             </div>
-            <div className="doc2">
-              <DetailInform
-                detail={detail}
-                scrollPosition={scrollPosition}
-                ref={menuRef}
-              />
-            </div>
+            <button onClick={(e) => converToPDF(e)}>pdf로 변환</button>
           </div>
-          <button onClick={(e) => converToPDF(e)}>pdf로 변환</button>
         </div>
-      </div>
+      )}
     </div>
   );
 };
