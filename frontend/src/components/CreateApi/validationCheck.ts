@@ -259,17 +259,15 @@ export function checkRequiredValueValidation(type: string, item: any) {
       return false;
     }
   } else if (type === "properties") {
-    if (item.name && item.properties) {
-      if (
-        !item["name"].trim() &&
-        item["properties"].length === 0 &&
-        !item["collectionType"] &&
-        item["type"] === "string"
-      ) {
-        return "delete";
-      } else if (!item["name"].trim()) {
-        return false;
-      }
+    if (
+      item["name"] === null ||
+      item["properties"] === null ||
+      !item["name"]?.trim() ||
+      item["properties"].length === 0
+    ) {
+      return "delete";
+    } else if (!item["name"].trim()) {
+      return false;
     }
   }
 

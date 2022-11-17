@@ -50,7 +50,8 @@
     }
   }
   .buttonContainer {
-    button {
+    padding: 0 20px;
+    .createApiButton {
       border: none;
       outline: none;
       background-color: #e6f8fc;
@@ -67,6 +68,11 @@
       }
     }
   }
+}
+
+.createApiTitleButtonGroup {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .bodyGridContainer {

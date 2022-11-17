@@ -28,7 +28,7 @@ const WarningModal = ({
   setErrorMessage,
   isPending,
 }: Props) => {
-  const [isLodaing, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (!validationResult) {
@@ -40,7 +40,7 @@ const WarningModal = ({
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
-    }, 3000);
+    }, 2000);
   };
   return (
     <div className="warningModalContainer">
@@ -138,14 +138,8 @@ const WarningModal = ({
             }}
           >
             {synchronizeFile || synchronizeApiDoc ? (
-              isPending && isLodaing ? (
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
+              isPending && isLoading ? (
+                <div className="warningModalLoading">
                   <ThreeDots
                     height="20"
                     width="50"

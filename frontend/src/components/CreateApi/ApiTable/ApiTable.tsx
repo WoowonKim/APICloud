@@ -24,9 +24,7 @@ const ApiTable = ({
 }: Props) => {
   const state = useSyncedStore(store);
   const headers =
-    activeTab === 1
-      ? ["key", "value", "delete"]
-      : ["name", "type", "required", "delete"];
+    activeTab === 1 ? ["key", "value"] : ["name", "type", "required"];
 
   const rootPath =
     activeTab === 5 && (responseType === "fail" || responseType === "success")
@@ -133,7 +131,7 @@ const ApiTable = ({
     const rows = [];
     if (activeTab === 1) {
       rows.push(
-        <td key={`${index}-1`}>
+        <td key={`${index}-1`} className="apiTableBodyItem">
           <input
             type="text"
             value={item.key !== null ? item.key : ""}
@@ -143,7 +141,7 @@ const ApiTable = ({
         </td>
       );
       rows.push(
-        <td key={`${index}-2`}>
+        <td key={`${index}-2`} className="apiTableBodyItem">
           <input
             type="text"
             value={item.value !== null ? item.value : ""}
@@ -154,7 +152,7 @@ const ApiTable = ({
       );
     } else {
       rows.push(
-        <td key={`${index}-3`}>
+        <td key={`${index}-3`} className="apiTableBodyItem">
           <input
             type="text"
             value={item.name !== null ? item.name : ""}
@@ -164,7 +162,7 @@ const ApiTable = ({
         </td>
       );
       rows.push(
-        <td key={`${index}-4`}>
+        <td key={`${index}-4`} className="apiTableBodyItem">
           <div className="typeInfoContainer">
             {item.collectionType === "List" && (
               <SelectTypes
@@ -198,9 +196,10 @@ const ApiTable = ({
         </td>
       );
       rows.push(
-        <td key={`${index}-5`}>
+        <td key={`${index}-5`} className="apiTableBodyItem">
           <input
             type="checkbox"
+            className="apiTableCheckbox"
             checked={item.required !== null ? item.required : ""}
             onChange={(e) => handelCellValue(e, "required", index)}
           />
@@ -208,7 +207,7 @@ const ApiTable = ({
       );
     }
     rows.push(
-      <td key={`${index}-6`}>
+      <td key={`${index}-6`} className="apiTableDeleteItem">
         <FontAwesomeIcon
           icon={faRemove}
           className="removeIcon"
@@ -345,10 +344,12 @@ const ApiTable = ({
                       ? "100px"
                       : "250px",
                 }}
+                className="apiTableHeaderItem"
               >
                 {item}
               </th>
             ))}
+            <th className="apiTableDeleteItem"></th>
           </tr>
         </thead>
         <tbody>

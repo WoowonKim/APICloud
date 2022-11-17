@@ -2,7 +2,6 @@ import { faCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useSyncedStore } from "@syncedstore/react";
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../Store/hooks";
 import {
   getSynchronizeApiDoc,
@@ -30,6 +29,7 @@ interface Props {
   selectedControllerIndex: number;
   setIsWarningModal: React.Dispatch<React.SetStateAction<boolean>>;
   isWarningModal: boolean;
+  docInfo: any;
 }
 
 const SynchronizeModal = ({
@@ -43,6 +43,7 @@ const SynchronizeModal = ({
   selectedControllerName,
   setIsWarningModal,
   isWarningModal,
+  docInfo,
 }: Props) => {
   const state = useSyncedStore(store);
   const [isFileInputModal, setIsFileInputModal] = useState(false);
@@ -53,7 +54,6 @@ const SynchronizeModal = ({
   const isPending = useAppSelector((state) => state.apiDocsApi.isSyncPending);
 
   const dispatch = useAppDispatch();
-  const location = useLocation();
   const synchronizeFile = () => {
     const formData = new FormData();
 
@@ -69,9 +69,7 @@ const SynchronizeModal = ({
     if (fileInfo) {
       formData.append("file", fileInfo);
     }
-    dispatch(
-      getSynchronizeFile({ formData, docId: location.state?.data.docId })
-    )
+    dispatch(getSynchronizeFile({ formData, docId: docInfo.docId }))
       .then((res: any) => {
         if (res.meta.requestStatus === "fulfilled") {
           setChangeData(res.payload);
@@ -93,7 +91,7 @@ const SynchronizeModal = ({
   const synchronizeApiDoc = () => {
     dispatch(
       getSynchronizeApiDoc({
-        docId: location.state?.data.docId,
+        docId: docInfo.docId,
         detailRequest: {
           detail: JSON.stringify(state.data[selectedControllerIndex]),
         },

@@ -6,7 +6,7 @@
 }
 
 .dtoModalContainer {
-  width: 23rem;
+  width: 28rem;
   min-height: 14rem;
   height: auto;
   background-color: white;
@@ -14,7 +14,7 @@
   left: 50%;
   transform: translate(-100%, -50%);
   border-radius: 1rem;
-  padding: 1rem 2rem;
+  padding: 1rem 0 1rem 1rem;
   box-shadow: 2px 2px 25px -12px rgba(0, 0, 0, 0.92);
 }
 
@@ -34,7 +34,6 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  border-bottom: 1px solid #dadada;
   padding: 0 5px 0 0;
   #dtoModalDtoName {
     width: 100%;
