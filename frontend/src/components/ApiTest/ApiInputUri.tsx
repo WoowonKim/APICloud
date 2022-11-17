@@ -20,8 +20,8 @@ const ApiInputUriSearch = styled.input`
   outline: none;
   font-weight: 500;
   font-size: 14px;
-  color: ${props => props.theme.color};
-  background-color: ${props => props.theme.bgColor};
+  color: ${(props) => props.theme.color};
+  background-color: ${(props) => props.theme.bgColor};
 `;
 
 export type list = {
@@ -34,15 +34,7 @@ export type list = {
   setQueriesInfo: Dispatch<SetStateAction<reBodyType | undefined>>;
 };
 
-const ApiInputUri = ({
-  getInfo,
-  testbodyInfo,
-  setTestbodyInfo,
-  paramsInfo,
-  setParamsInfo,
-  queriesInfo,
-  setQueriesInfo,
-}: list) => {
+const ApiInputUri = ({ getInfo, testbodyInfo, setTestbodyInfo, paramsInfo, setParamsInfo, queriesInfo, setQueriesInfo }: list) => {
   const [sendFlag, setSendFlag] = useState(false);
   const [methodUri, setMethodUri] = useState<string | undefined>("");
   const info = useSelector(selectTestApi);
@@ -52,41 +44,31 @@ const ApiInputUri = ({
 
   //해당 uri 받아오기
   useEffect(() => {
-    setMethodUri(
-      getInfo?.controllers[info.getControllerInfomation].apis[
-        info.getApisInfomation
-      ].uri
-    );
+    setMethodUri(getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].uri);
   }, [getInfo, info.getApisInfomation, info.getControllerInfomation]);
 
   // 서버 주소 받아오기
   const server = Object.values(info.getServerUrl).toString();
   const context = Object.values(info.getContextUrl).toString();
-  const requestMaapingUri =
-    getInfo?.controllers[info.getControllerInfomation].commonUri;
+  const requestMaapingUri = getInfo?.controllers[info.getControllerInfomation].commonUri;
   const testUri = server + context + requestMaapingUri + methodUri;
 
   // 성공시 Response 반환
   const responseAllInfo = (e: any) => {
     e.status && dispatch(testApiSlice.actions.getStatus(e.status));
-    e.statusText &&
-      dispatch(testApiSlice.actions.getStatusTextInfo(e.statusText));
+    e.statusText && dispatch(testApiSlice.actions.getStatusTextInfo(e.statusText));
     e.data && dispatch(testApiSlice.actions.getData(e.data));
     e.headers && dispatch(testApiSlice.actions.getSuccessHeader(e.headers));
   };
 
   // 실패시 Response 반환
   const errResponsAllInfo = (e: any) => {
-    e.response.status &&
-      dispatch(testApiSlice.actions.getStatus(e.response.status));
+    e.response.status && dispatch(testApiSlice.actions.getStatus(e.response.status));
     e.message && dispatch(testApiSlice.actions.getErrMessage(e.message));
   };
 
   // 메소드 정보 받아오기
-  const requestMethod =
-    getInfo?.controllers[info.getControllerInfomation].apis[
-      info.getApisInfomation
-    ].method;
+  const requestMethod = getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].method;
   const submitRequest = () => {
     switch (requestMethod) {
       case "Get":
@@ -98,11 +80,11 @@ const ApiInputUri = ({
           },
           params: paramsInfo,
         })
-          .then(res => {
+          .then((res) => {
             console.log("RES=>", res);
             responseAllInfo(res);
           })
-          .catch(err => {
+          .catch((err) => {
             errResponsAllInfo(err);
             console.log("ERR => ", err);
             console.log("Params => ", paramsInfo);
@@ -118,12 +100,12 @@ const ApiInputUri = ({
             Authorization: token,
           },
         })
-          .then(res => {
+          .then((res) => {
             console.log("post 성공", res);
             console.log("postBody =>", testbodyInfo);
             responseAllInfo(res);
           })
-          .catch(err => {
+          .catch((err) => {
             console.log("ERR =>", err);
             console.log("postBody =>", testbodyInfo);
             errResponsAllInfo(err);
@@ -138,12 +120,12 @@ const ApiInputUri = ({
             Authorization: token,
           },
         })
-          .then(res => {
+          .then((res) => {
             console.log("put 성공 =>", res);
             console.log("putBody =>", testbodyInfo);
             responseAllInfo(res);
           })
-          .catch(err => {
+          .catch((err) => {
             console.log("ERR => ", err);
             console.log("putBody=>", testbodyInfo);
             errResponsAllInfo(err);
@@ -158,11 +140,11 @@ const ApiInputUri = ({
           },
           params: paramsInfo,
         })
-          .then(res => {
+          .then((res) => {
             responseAllInfo(res);
             console.log("Delete 성공=>", res);
           })
-          .catch(err => {
+          .catch((err) => {
             errResponsAllInfo(err);
             console.log("ERR => ", err);
           });
@@ -184,6 +166,7 @@ const ApiInputUri = ({
         break;
     }
     setSendFlag(!sendFlag);
+    dispatch(testApiSlice.actions.getFlagResponse(!sendFlag));
   };
 
   // body정보 초기화 하기

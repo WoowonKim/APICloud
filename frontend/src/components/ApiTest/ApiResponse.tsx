@@ -1,26 +1,36 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RequestTypeInfo } from "../../pages/CreateApi/ApisType";
+import { reBodyType } from "../../pages/TestApi";
 import { selectTestApi } from "../../Store/slice/testApi";
 
 interface type {
   getInfo: RequestTypeInfo | undefined;
+  testbodyInfo: reBodyType | undefined;
 }
-const ApiResponse = ({ getInfo }: type) => {
+const ApiResponse = ({ getInfo, testbodyInfo }: type) => {
   const info = useSelector(selectTestApi);
 
   const [getStatusInfo, setGetStatusInfo] = useState<number>();
   const [getStatusData, setGetStatusData] = useState<any>();
-
-  console.log("getDATE => ", getStatusData);
+  const [bodyDataFlag, setBodyDataFlag] = useState(false);
+  const [bodyData, setBodyData] = useState<[string, string][]>();
+  const [arr, setArr] = useState<[string, string][]>();
+  const [typeFlag, setTypeFlag] = useState(false);
+  // Response Body 불러와서 객체형태로 뿌려주기
+  useEffect(() => {
+    if (getStatusData !== undefined && typeof getStatusData !== typeof "") {
+      setBodyData(Object.entries(getStatusData));
+    }
+  }, [info.getFlag, bodyDataFlag]);
 
   // Response 정보 갖고 오기.
   useEffect(() => {
     setGetStatusInfo(info.getResponseStatus);
     setGetStatusData(info.getResponseData);
+    setBodyDataFlag(!bodyDataFlag);
   }, [info]);
 
-  const [arr, setArr] = useState<[string, string][]>();
   useEffect(() => {
     setArr(Object.entries(info.getResponseSuccessHeader));
   }, [getInfo]);
@@ -46,15 +56,13 @@ const ApiResponse = ({ getInfo }: type) => {
                         </div>
                       ))}
                     </div>
-                    <p className="centercalcu">{"}"}</p>
+                    <p className="centercalcu">{"}"}</p>{" "}
                   </div>
                 </div>
               </div>
             ) : (
               <div>
-                <p className="errorResponseResult">
-                  {info.getResponseErroStatusMessage}...
-                </p>
+                <p className="errorResponseResult">{info.getResponseErroStatusMessage}...</p>
               </div>
             )}
           </div>
@@ -63,21 +71,29 @@ const ApiResponse = ({ getInfo }: type) => {
           <div>
             {getStatusInfo === 200 ? (
               <div>
+                {typeof getStatusData !== typeof "" && <p className="centercalcu">{"{"}</p>}
                 <div className="resltResponseHeaderContainer">
-                  <div>
-                    <p className="centercalcu">{"{"}</p>
-                    <span className="resultResponseHeaderContent">
-                      {getStatusData && JSON.stringify(getStatusData)}
-                    </span>
-                    <p className="centercalcu">{"}"}</p>
-                  </div>
+                  {typeof getStatusData !== typeof "" && (
+                    <div>
+                      {bodyData?.map((it, idx) => (
+                        <div className="objectResponseResult">
+                          <p className="titleResponseResult">"{it[0]} : "</p>
+                          <p className="titleResponseResult">"{it[1]}",</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {typeof getStatusData === typeof "" && (
+                    <div>
+                      <p>{getStatusData}</p>
+                    </div>
+                  )}
                 </div>
+                {typeof getStatusData !== typeof "" && <p className="centercalcu">{"}"}</p>}
               </div>
             ) : (
               <div>
-                <p className="errorResponseResult">
-                  {info.getResponseErroStatusMessage}...
-                </p>
+                <p className="errorResponseResult">{info.getResponseErroStatusMessage}...</p>
               </div>
             )}
           </div>

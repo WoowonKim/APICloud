@@ -27,6 +27,7 @@ interface initType {
   getResponseSuccessHeader: any;
   getHeadListNumber: number;
   getResponseListNumber: number;
+  getFlag: boolean;
 }
 
 const initialState: initType = {
@@ -47,25 +48,26 @@ const initialState: initType = {
   getResponseSuccessHeader: {},
   getHeadListNumber: 1,
   getResponseListNumber: 1,
+  getFlag: false,
 };
 
 // API 조회 하기.
-export const getApiRequestInfo: any = createAsyncThunk(
-  "testApi/getApiRequestInfo",
-  async (args: any, { rejectWithValue }) => {
-    try {
-      const response = await axiosGet(`apis/${args.docId}`);
-      return response.data;
-    } catch (err: any) {
-      return rejectWithValue(err.response);
-    }
+export const getApiRequestInfo: any = createAsyncThunk("testApi/getApiRequestInfo", async (args: any, { rejectWithValue }) => {
+  try {
+    const response = await axiosGet(`apis/${args.docId}`);
+    return response.data;
+  } catch (err: any) {
+    return rejectWithValue(err.response);
   }
-);
+});
 
 const testApiSlice = createSlice({
   name: "testApi",
   initialState,
   reducers: {
+    getFlagResponse(state, action) {
+      state.getFlag = action.payload;
+    },
     getResNum(state, action) {
       state.getResponseListNumber = action.payload;
     },

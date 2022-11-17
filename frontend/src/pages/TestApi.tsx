@@ -22,9 +22,9 @@ export type reBodyType = {};
 const TestSide = styled.div`
   width: 20%;
   height: 91vh;
-  background-color: ${props => props.theme.startBgColor};
-  border-top: 1px solid ${props => props.theme.border};
-  border-right: 2px solid ${props => props.theme.border};
+  background-color: ${(props) => props.theme.startBgColor};
+  border-top: 1px solid ${(props) => props.theme.border};
+  border-right: 2px solid ${(props) => props.theme.border};
 `;
 const TestApi = ({ isDarkMode, toggleDarkMode }: IHome) => {
   const [getInfo, setGetInfo] = useState<RequestTypeInfo>();
@@ -78,7 +78,7 @@ const TestApi = ({ isDarkMode, toggleDarkMode }: IHome) => {
           <p className="apiHeaderMainTitle">Response</p>
           <div className="testSetting">
             <ApiResList />
-            <ApiResponse getInfo={getInfo} />
+            <ApiResponse getInfo={getInfo} testbodyInfo={testbodyInfo} />
           </div>
         </div>
       </div>

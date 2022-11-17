@@ -1,24 +1,10 @@
-import React, {
-  Dispatch,
-  SetStateAction,
-  SyntheticEvent,
-  useEffect,
-  useState,
-} from "react";
+import React, { Dispatch, SetStateAction, SyntheticEvent, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import {
-  PropertiesType,
-  RequestTypeInfo,
-} from "../../pages/CreateApi/ApisType";
+import { PropertiesType, RequestTypeInfo } from "../../pages/CreateApi/ApisType";
 import { reBodyType } from "../../pages/TestApi";
 import { useAppDispatch } from "../../Store/hooks";
 import testApiSlice, { selectTestApi } from "../../Store/slice/testApi";
-import {
-  HeaderContatinerList,
-  HeaderListInput,
-  HeaderListTitle,
-  HeaderListTitleCon,
-} from "./Headerheader";
+import { HeaderContatinerList, HeaderListInput, HeaderListTitle, HeaderListTitleCon } from "./Headerheader";
 interface type {
   getInfo: RequestTypeInfo | undefined;
   setParamsInfo: Dispatch<SetStateAction<reBodyType | undefined>>;
@@ -29,11 +15,7 @@ const ApiParams = ({ getInfo, setParamsInfo, paramsInfo }: type) => {
   const [infoParams, setInfoParams] = useState<PropertiesType[]>();
   useEffect(() => {
     if (getInfo) {
-      setInfoParams(
-        getInfo?.controllers[info.getControllerInfomation].apis[
-          info.getApisInfomation
-        ].parameters
-      );
+      setInfoParams(getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].parameters);
     }
   }, [getInfo, info.getControllerInfomation, info.getApisInfomation]);
 
@@ -75,25 +57,31 @@ const ApiParams = ({ getInfo, setParamsInfo, paramsInfo }: type) => {
     <>
       {infoParams?.map((it, idx) => (
         <div className="headerListTitleisHeader" key={idx}>
-          <div className="apiKeyHeaderTitle">
-            <p className="apiHeaderListPtag">{it.name}</p>
-          </div>
-          <div className="apiKeyHeaderTitleValueSubmit">
-            <p className="apiHeaderListPtagInput">
-              <input
-                className="apiHeaderListInputTag"
-                type="text"
-                onChange={e => {
-                  setInputParam(e.target.value);
-                  setParamsId(it.name);
-                }}
-                onBlur={onSubmit}
-              />
-            </p>
-          </div>
-          <div className="apiKeyHeaderTitleCheck">
-            <p className="apiHeaderListButtonTag">SAVE</p>
-          </div>
+          {it.name && (
+            <div className="apiKeyHeaderTitle">
+              <p className="apiHeaderListPtag">{it.name}</p>
+            </div>
+          )}
+          {it.name && (
+            <div className="apiKeyHeaderTitleValueSubmit">
+              <p className="apiHeaderListPtagInput">
+                <input
+                  className="apiHeaderListInputTag"
+                  type="text"
+                  onChange={(e) => {
+                    setInputParam(e.target.value);
+                    setParamsId(it.name);
+                  }}
+                  onBlur={onSubmit}
+                />
+              </p>
+            </div>
+          )}
+          {it.name && (
+            <div className="apiKeyHeaderTitleCheck">
+              <p className="apiHeaderListButtonTag">SAVE</p>
+            </div>
+          )}
         </div>
       ))}
     </>

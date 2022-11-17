@@ -18,40 +18,14 @@ interface type {
   setQueriesInfo: Dispatch<SetStateAction<reBodyType | undefined>>;
 }
 
-const ApiHeader = ({
-  getInfo,
-  testbodyInfo,
-  setTestbodyInfo,
-  paramsInfo,
-  setParamsInfo,
-  queriesInfo,
-  setQueriesInfo,
-}: type) => {
+const ApiHeader = ({ getInfo, testbodyInfo, setTestbodyInfo, paramsInfo, setParamsInfo, queriesInfo, setQueriesInfo }: type) => {
   const info = useAppSelector(selectTestApi);
   return (
     <>
       {info.getHeadListNumber === 0 && <Headerheader getInfo={getInfo} />}
-      {info.getHeadListNumber === 1 && (
-        <ApiBody
-          getInfo={getInfo}
-          testbodyInfo={testbodyInfo}
-          setTestbodyInfo={setTestbodyInfo}
-        />
-      )}
-      {info.getHeadListNumber === 2 && (
-        <HeaderQueries
-          getInfo={getInfo}
-          queriesInfo={queriesInfo}
-          setQueriesInfo={setQueriesInfo}
-        />
-      )}
-      {info.getHeadListNumber === 3 && (
-        <ApiParams
-          getInfo={getInfo}
-          paramsInfo={paramsInfo}
-          setParamsInfo={setParamsInfo}
-        />
-      )}
+      {info.getHeadListNumber === 1 && <ApiBody getInfo={getInfo} testbodyInfo={testbodyInfo} setTestbodyInfo={setTestbodyInfo} />}
+      {info.getHeadListNumber === 2 && <HeaderQueries getInfo={getInfo} queriesInfo={queriesInfo} setQueriesInfo={setQueriesInfo} />}
+      {info.getHeadListNumber === 3 && <ApiParams getInfo={getInfo} paramsInfo={paramsInfo} setParamsInfo={setParamsInfo} />}
     </>
   );
 };
