@@ -25,6 +25,7 @@ const TestSide = styled.div`
   background-color: ${(props) => props.theme.startBgColor};
   border-top: 1px solid ${(props) => props.theme.border};
   border-right: 2px solid ${(props) => props.theme.border};
+  height: 100vh;
 `;
 const TestApi = ({ isDarkMode, toggleDarkMode }: IHome) => {
   const [getInfo, setGetInfo] = useState<RequestTypeInfo>();
