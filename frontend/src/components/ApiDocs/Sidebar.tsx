@@ -136,7 +136,6 @@ const Sidebar = forwardRef<Ref, Props>(
                       scrollMove(
                         ref,
                         (3 + controller.apis.length) * controllerIdx +
-                          3 +
                           apiIdx +
                           4
                       )
