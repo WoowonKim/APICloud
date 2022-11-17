@@ -22,9 +22,9 @@ export type reBodyType = {};
 const TestSide = styled.div`
   width: 20%;
   height: 91vh;
-  background-color: ${(props) => props.theme.startBgColor};
-  border-top: 1px solid ${(props) => props.theme.border};
-  border-right: 2px solid ${(props) => props.theme.border};
+  background-color: ${props => props.theme.startBgColor};
+  border-top: 1px solid ${props => props.theme.border};
+  border-right: 2px solid ${props => props.theme.border};
   height: 100vh;
 `;
 const TestApi = ({ isDarkMode, toggleDarkMode }: IHome) => {

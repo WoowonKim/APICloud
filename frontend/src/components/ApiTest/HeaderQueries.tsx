@@ -6,12 +6,6 @@ import {
 } from "../../pages/CreateApi/ApisType";
 import { reBodyType } from "../../pages/TestApi";
 import { selectTestApi } from "../../Store/slice/testApi";
-import {
-  HeaderContatinerList,
-  HeaderListInput,
-  HeaderListTitle,
-  HeaderListTitleCon,
-} from "./Headerheader";
 
 interface type {
   getInfo: RequestTypeInfo | undefined;
@@ -25,6 +19,13 @@ const HeaderQueries = ({ getInfo, queriesInfo, setQueriesInfo }: type) => {
   const [inputQueries, setInputQueries] = useState("");
   const [newQueries, setNewQueries] = useState({});
   const [queriesId, setQueriesId] = useState("");
+  const [arrTest, setArrTest] = useState<[any, any][]>([]);
+
+  useEffect(() => {
+    if (queriesInfo) {
+      setArrTest(Object.entries(queriesInfo));
+    }
+  }, [queriesInfo]);
 
   useEffect(() => {
     if (getInfo) {
@@ -64,6 +65,7 @@ const HeaderQueries = ({ getInfo, queriesInfo, setQueriesInfo }: type) => {
                 <input
                   className="apiHeaderListInputTag"
                   type="text"
+                  defaultValue={arrTest.length > idx ? arrTest[idx][1] : ""}
                   onChange={e => {
                     setInputQueries(e.target.value);
                     setQueriesId(it.name);

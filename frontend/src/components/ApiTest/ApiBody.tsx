@@ -1,9 +1,18 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { RequestBodyType, RequestTypeInfo } from "../../pages/CreateApi/ApisType";
+import {
+  RequestBodyType,
+  RequestTypeInfo,
+} from "../../pages/CreateApi/ApisType";
 import { reBodyType } from "../../pages/TestApi";
+import { useAppSelector } from "../../Store/hooks";
 import { selectTestApi } from "../../Store/slice/testApi";
-import { HeaderContatinerList, HeaderListInput, HeaderListTitle, HeaderListTitleCon } from "./Headerheader";
+import {
+  HeaderContatinerList,
+  HeaderListInput,
+  HeaderListTitle,
+  HeaderListTitleCon,
+} from "./Headerheader";
 
 interface type {
   getInfo: RequestTypeInfo | undefined;
@@ -12,21 +21,30 @@ interface type {
 }
 
 const ApiBody = ({ getInfo, testbodyInfo, setTestbodyInfo }: type) => {
+  const info = useSelector(selectTestApi);
   const [requestBody, setRequestBody] = useState<RequestBodyType>();
-
   const [inputBody, setInputBody] = useState("");
   const [newBodyInfo, setNewBodyInfo] = useState({});
-
   const [test, setTest] = useState("");
-  const info = useSelector(selectTestApi);
+  const [arrTest, setArrTest] = useState<[any, any][]>([]);
 
   // RequestBody 작성 할 값 불러오기 및 기존 body값 초기화
   useEffect(() => {
     if (getInfo) {
-      setRequestBody(getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].requestBody);
+      setRequestBody(
+        getInfo?.controllers[info.getControllerInfomation].apis[
+          info.getApisInfomation
+        ].requestBody
+      );
       setTestbodyInfo({});
     }
   }, [getInfo, info.getControllerInfomation, info.getApisInfomation]);
+
+  useEffect(() => {
+    if (testbodyInfo) {
+      setArrTest(Object.entries(testbodyInfo));
+    }
+  }, [testbodyInfo]);
 
   // 전송할 body값 객체화
   useEffect(() => {
@@ -40,7 +58,6 @@ const ApiBody = ({ getInfo, testbodyInfo, setTestbodyInfo }: type) => {
     setTestbodyInfo({ ...testbodyInfo, ...newBodyInfo });
     setInputBody("");
   };
-
   return (
     <>
       {requestBody?.properties.map((it, idx) => (
@@ -53,7 +70,8 @@ const ApiBody = ({ getInfo, testbodyInfo, setTestbodyInfo }: type) => {
               <input
                 className="apiHeaderListInputTag"
                 type="text"
-                onChange={(e) => {
+                defaultValue={arrTest.length > idx ? arrTest[idx][1] : ""}
+                onChange={e => {
                   setInputBody(e.target.value);
                   setTest(it.name);
                 }}
