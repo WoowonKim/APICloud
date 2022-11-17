@@ -13,7 +13,6 @@ import io.spring.initializr.generator.language.java.JavaLanguage;
 import io.spring.initializr.generator.language.java.JavaReturnStatement;
 import io.spring.initializr.generator.project.contributor.ProjectContributor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Modifier;
@@ -67,10 +66,19 @@ public class ControllerContributor implements ProjectContributor {
                     .modifiers(Modifier.PUBLIC)
                     .returning(JavaType.builder().type("ResponseEntity").genericType(api.getReturnJavaType(false, makeDtoPackageName(controllerType.getName()))).build());
             addApiParameters(builder, api, controllerType.getName());
+
+            List<JavaArgument> arguments = new ArrayList<>();
+            JavaType javaType = api.getReturnJavaType(true, makeDtoPackageName(controllerType.getName()));
+            if(!"Void".equals(javaType.getType())) {
+                arguments.add(new JavaClassCreation(api.getReturnJavaType(true, makeDtoPackageName(controllerType.getName())), List.of()));
+            }
+            arguments.add(new JavaEnum("org.springframework.http.HttpStatus", "OK"));
             CustomJavaMethodDeclaration jmd = builder.body(new JavaReturnStatement(
-                    new JavaClassCreation(JavaType.builder().type("org.springframework.http.ResponseEntity").genericType(api.getReturnJavaType(false, makeDtoPackageName(controllerType.getName()))).build(),
-                            List.of(new JavaClassCreation(api.getReturnJavaType(true, makeDtoPackageName(controllerType.getName())), List.of()),
-                                    new JavaEnum("org.springframework.http.HttpStatus", "OK")))
+                    new JavaClassCreation(JavaType.builder()
+                            .type("org.springframework.http.ResponseEntity")
+                            .genericType(
+                                    api.getReturnJavaType(false, makeDtoPackageName(controllerType.getName()))
+                            ).build(), arguments)
             ));
 
             String methodMappingName = "org.springframework.web.bind.annotation."
@@ -112,7 +120,7 @@ public class ControllerContributor implements ProjectContributor {
     }
 
     private Optional<AnnotatableParameter> makeParameter(PropertyVO property, String annotationName, String controllerName) {
-        if (property == null || !StringUtils.hasText(property.getName())) {
+        if (property == null || !property.canMakeDto()) {
             return Optional.empty();
         }
         AnnotatableParameter parameter = new AnnotatableParameter(property.getJavaType(makeDtoPackageName(controllerName), false), property.getName());
@@ -132,6 +140,9 @@ public class ControllerContributor implements ProjectContributor {
     private void addDto(CustomJavaSourceCode sourceCode, Map<String, PropertyVO> dtos, String controllerName) {
         for (String dtoKey : dtos.keySet()) {
             PropertyVO dto = dtos.get(dtoKey);
+            if (dto == null || !dto.canMakeDto()) {
+                continue;
+            }
             CustomJavaTypeDeclaration dtoType = sourceCode.createCompilationUnit(makeDtoPackageName(controllerName), dto.getDtoName()).createTypeDeclaration(dto.getDtoName());
             dtoType.modifiers(Modifier.PUBLIC);
             if (dto.getProperties() != null) {
