@@ -57,33 +57,53 @@ const DetailInform = forwardRef<Ref, Props>(
             상세정보
           </div>
         </h2>
-        <div
-          ref={(el) => (refList.current[1] = el)}
-          className={
-            refList.current.length > 0 &&
-            refList.current[1]?.offsetTop !== undefined &&
-            scrollPosition - 1 <= refList.current[1]?.offsetTop &&
-            refList.current[1]?.offsetTop < scrollPosition + 1
-              ? "highLightedSubtitle"
-              : "subtitle"
-          }
-        >
-          controllers
-        </div>
         {detail &&
-          detail.controllers.map((item: any, idx: any) => (
-            <div key={idx}>
+          detail.controllers.map((controller: any, controllerIdx: any) => (
+            <div key={controllerIdx}>
+              <div
+                ref={(el) => (refList.current[1] = el)}
+                className={
+                  refList.current.length > 0 &&
+                  refList.current[
+                    (3 + controller.apis.length) * controllerIdx + 1
+                  ]?.offsetTop !== undefined &&
+                  scrollPosition - 1 <=
+                    refList.current[
+                      (3 + controller.apis.length) * controllerIdx + 1
+                    ]!.offsetTop &&
+                  refList.current[
+                    (3 + controller.apis.length) * controllerIdx + 1
+                  ]!.offsetTop <
+                    scrollPosition + 1
+                    ? "highLightedSubtitle"
+                    : "subtitle"
+                }
+              >
+                controllers
+              </div>
               <div className="titleContentWrapper">
                 <div className="iconTitleWrapper">
                   &nbsp;
                   <FontAwesomeIcon icon={faCircle} className="circleIcon" />
                   <div
-                    ref={(el) => (refList.current[2] = el)}
+                    ref={(el) =>
+                      (refList.current[
+                        (3 + controller.apis.length) * controllerIdx + 2
+                      ] = el)
+                    }
                     className={
                       refList.current.length > 0 &&
-                      refList.current[2]?.offsetTop !== undefined &&
-                      scrollPosition - 1 <= refList.current[2]?.offsetTop &&
-                      refList.current[2]?.offsetTop < scrollPosition + 1
+                      refList.current[
+                        (3 + controller.apis.length) * controllerIdx + 2
+                      ]?.offsetTop !== undefined &&
+                      scrollPosition - 1 <=
+                        refList.current[
+                          (3 + controller.apis.length) * controllerIdx + 2
+                        ]!.offsetTop &&
+                      refList.current[
+                        (3 + controller.apis.length) * controllerIdx + 2
+                      ]!.offsetTop <
+                        scrollPosition + 1
                         ? "highLightedSubtitle"
                         : "subtitle"
                     }
@@ -91,19 +111,31 @@ const DetailInform = forwardRef<Ref, Props>(
                     &nbsp;name:
                   </div>
                 </div>
-                <div className="content">{item.name}</div>
+                <div className="content">{controller.name}</div>
               </div>
               <div className="titleContentWrapper">
                 <div className="iconTitleWrapper">
                   &nbsp;
                   <FontAwesomeIcon icon={faCircle} className="circleIcon" />
                   <div
-                    ref={(el) => (refList.current[3] = el)}
+                    ref={(el) =>
+                      (refList.current[
+                        (3 + controller.apis.length) * controllerIdx + 3
+                      ] = el)
+                    }
                     className={
                       refList.current.length > 0 &&
-                      refList.current[3]?.offsetTop !== undefined &&
-                      scrollPosition - 1 <= refList.current[3]?.offsetTop &&
-                      refList.current[3]?.offsetTop < scrollPosition + 1
+                      refList.current[
+                        (3 + controller.apis.length) * controllerIdx + 3
+                      ]?.offsetTop !== undefined &&
+                      scrollPosition - 1 <=
+                        refList.current[
+                          (3 + controller.apis.length) * controllerIdx + 3
+                        ]!.offsetTop &&
+                      refList.current[
+                        (3 + controller.apis.length) * controllerIdx + 3
+                      ]!.offsetTop <
+                        scrollPosition + 1
                         ? "highLightedSubtitle"
                         : "subtitle"
                     }
@@ -111,17 +143,30 @@ const DetailInform = forwardRef<Ref, Props>(
                     &nbsp;commonUri:
                   </div>
                 </div>
-                <div className="content">{item.commonUri}</div>
+                <div className="content">{controller.commonUri}</div>
               </div>
-              {item.apis.map((item: any, idx: any) => (
-                <div key={idx} ref={addToRefs}>
+              {controller.apis.map((api: any, apiIdx: any) => (
+                <div key={apiIdx} ref={addToRefs}>
                   <div
                     className={
                       refList.current.length > 0 &&
-                      refList.current[idx + 4]?.offsetTop !== undefined &&
+                      refList.current[
+                        (3 + controller.apis.length) * controllerIdx +
+                          apiIdx +
+                          4
+                      ]?.offsetTop !== undefined &&
                       scrollPosition - 1 <=
-                        refList.current[idx + 4]!.offsetTop &&
-                      refList.current[idx + 4]!.offsetTop < scrollPosition + 1
+                        refList.current[
+                          (3 + controller.apis.length) * controllerIdx +
+                            apiIdx +
+                            4
+                        ]!.offsetTop &&
+                      refList.current[
+                        (3 + controller.apis.length) * controllerIdx +
+                          apiIdx +
+                          4
+                      ]!.offsetTop <
+                        scrollPosition + 1
                         ? "highLightedTitleContentWrapper"
                         : "titleContentWrapper"
                     }
@@ -136,7 +181,7 @@ const DetailInform = forwardRef<Ref, Props>(
                       <FontAwesomeIcon icon={faCircle} className="circleIcon" />
                       &nbsp;name:
                     </div>
-                    <div className="content">{item.name}</div>
+                    <div className="content">{api.name}</div>
                   </div>
                   <div className="titleContentWrapper">
                     <div className="iconTitleWrapper">
@@ -144,7 +189,7 @@ const DetailInform = forwardRef<Ref, Props>(
                       <FontAwesomeIcon icon={faCircle} className="circleIcon" />
                       &nbsp;uri:
                     </div>
-                    <div className="content">{item.uri}</div>
+                    <div className="content">{api.uri}</div>
                   </div>
                   <div className="titleContentWrapper">
                     <div className="iconTitleWrapper">
@@ -152,13 +197,13 @@ const DetailInform = forwardRef<Ref, Props>(
                       <FontAwesomeIcon icon={faCircle} className="circleIcon" />
                       &nbsp;method:
                     </div>
-                    <div className="content">{item.method}</div>
+                    <div className="content">{api.method}</div>
                   </div>
-                  <RequestBody item={item} />
-                  <Parameters item={item} />
-                  <Queries item={item} />
-                  <Headers item={item} />
-                  <Responses item={item} />
+                  <RequestBody item={api} />
+                  <Parameters item={api} />
+                  <Queries item={api} />
+                  <Headers item={api} />
+                  <Responses item={api} />
                 </div>
               ))}
             </div>
