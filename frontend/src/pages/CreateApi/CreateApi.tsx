@@ -18,7 +18,6 @@ import ExtractModal from "../../components/CreateApi/ExtractModal/ExtractModal";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import ErrorPage from "../ErrorPage";
 import { useAppDispatch, useAppSelector } from "../../Store/hooks";
-import { checkDataValidation } from "../../components/CreateApi/validationCheck";
 import ApiTable from "../../components/CreateApi/ApiTable/ApiTable";
 import SynchronizeModal from "../../components/CreateApi/SynchronizeModal/SynchronizeModal";
 import { getApiDoc } from "../../Store/slice/mainApi";
@@ -223,18 +222,16 @@ const CreateApi = () => {
     setActiveTab(1);
   };
 
-  const location = useLocation();
   const saveChangeData = () => {
     dispatch(
       updateSynchronizeData({
-        docId: location.state?.data.docId,
+        docId: docInfo.docId,
         controllerId: selectedControllerIndex,
         controllerDTO: changeData,
       })
     ).then((res: any) => {
       if (res.meta.requestStatus === "fulfilled") {
-        console.log(res.payload);
-        window.location.reload();
+        handleGetApiDetail();
       }
     });
     setIsSynced((curr) => curr++);
@@ -247,24 +244,9 @@ const CreateApi = () => {
       if (res.meta.requestStatus === "fulfilled") {
         const detail = JSON.parse(res.payload.detail);
         if (detail && detail.controllers.length > 0) {
-          if (
-            state.data &&
-            (state.data.length === detail.controllers.length ||
-              state.data.length < detail.controllers.length)
-          ) {
-            for (let idx = 0; idx < state.data.length; idx++) {
-              state.data.splice(idx, 1);
-              state.data.splice(idx, 0, detail.controllers[idx]);
-            }
-            if (state.data.length < detail.controllers.length) {
-              for (
-                let idx = state.data.length === 0 ? 0 : state.data.length - 1;
-                idx < detail.controllers.length;
-                idx++
-              ) {
-                state.data.push(detail.controllers[idx]);
-              }
-            }
+          state.data.splice(0);
+          for (let idx = 0; idx < detail.controllers.length; idx++) {
+            state.data.push(detail.controllers[idx]);
           }
         }
       }
@@ -378,14 +360,7 @@ const CreateApi = () => {
     return (
       <>
         {isPending || isLodaing ? (
-          <Loading
-            style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-            }}
-          >
+          <Loading>
             <InfinitySpin width="250" color="#6FC7D1" />
           </Loading>
         ) : (
@@ -413,49 +388,56 @@ const CreateApi = () => {
                     </div>
                   </div>
                   <div className="buttonContainer">
-                    <button className="createApiButton">공유</button>
-                    <button
-                      className="createApiButton"
-                      onClick={() => {
-                        setIsSynchronizeModal(!isSynchronizeModal);
-                      }}
-                    >
-                      동기화
-                    </button>
-                    <button
-                      className="createApiButton"
-                      type="button"
-                      onClick={() =>
-                        dispatch(
-                          apiDocsApiSlice.actions.setIsOpenExtractModal({
-                            isOpenExtractModal: true,
-                          })
-                        )
-                      }
-                    >
-                      추출
-                    </button>
-                    {isOpenExtractModal && (
-                      <ExtractModal
-                        controllers={state.data}
-                        isWarningModal={isWarningModal}
-                        setIsWarningModal={setIsWarningModal}
-                      />
-                    )}
-                    {isSynchronizeModal && (
-                      <SynchronizeModal
-                        setIsSynchronizeModal={setIsSynchronizeModal}
-                        setChangeData={setChangeData}
-                        setChangeCode={setChangeCode}
-                        setSyncData={setSyncData}
-                        setSelectedControllerName={setSelectedControllerName}
-                        setSelectedControllerIndex={setSelectedControllerIndex}
-                        selectedControllerIndex={selectedControllerIndex}
-                        selectedControllerName={selectedControllerName}
-                        isWarningModal={isWarningModal}
-                        setIsWarningModal={setIsWarningModal}
-                      />
-                    )}
+                    <div className="createApiTitleButtonGroup">
+                      <button className="createApiButton">공유</button>
+                      <button
+                        className="createApiButton"
+                        onClick={() => {
+                          setIsSynchronizeModal(!isSynchronizeModal);
+                        }}
+                      >
+                        동기화
+                      </button>
+                      <button
+                        className="createApiButton"
+                        type="button"
+                        onClick={() =>
+                          dispatch(
+                            apiDocsApiSlice.actions.setIsOpenExtractModal({
+                              isOpenExtractModal: true,
+                            })
+                          )
+                        }
+                      >
+                        추출
+                      </button>
+                    </div>
+                    <div className="createApiTitleModalGroup">
+                      {isOpenExtractModal && (
+                        <ExtractModal
+                          controllers={state.data}
+                          isWarningModal={isWarningModal}
+                          setIsWarningModal={setIsWarningModal}
+                        />
+                      )}
+                      {isSynchronizeModal && (
+                        <SynchronizeModal
+                          setIsSynchronizeModal={setIsSynchronizeModal}
+                          setChangeData={setChangeData}
+                          setChangeCode={setChangeCode}
+                          setSyncData={setSyncData}
+                          setSelectedControllerName={setSelectedControllerName}
+                          setSelectedControllerIndex={
+                            setSelectedControllerIndex
+                          }
+                          selectedControllerIndex={selectedControllerIndex}
+                          selectedControllerName={selectedControllerName}
+                          isWarningModal={isWarningModal}
+                          setIsWarningModal={setIsWarningModal}
+                          docInfo={docInfo}
+                        />
+                      )}
+                    </div>
                   </div>
                 </div>
                 <div className="bodyGridContainer">
@@ -498,7 +480,14 @@ const CreateApi = () => {
                           ) {
                             state.data[selectedController].apis[
                               selectedApi
-                            ].requestBody = propertiesData;
+                            ].requestBody = {
+                              dtoName: "",
+                              name: "",
+                              type: "Object",
+                              required: true,
+                              collectionType: "",
+                              properties: [],
+                            };
                           }
                           setActiveTab(4);
                         }}
