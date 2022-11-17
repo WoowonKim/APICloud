@@ -26,6 +26,7 @@ import SynchronizeCode from "../../components/CreateApi/SynchronizeModal/Synchro
 import SynchroinizeData from "../../components/CreateApi/SynchronizeModal/SynchroinizeData";
 import Header from "../../components/main/Header";
 import { InfinitySpin } from "react-loader-spinner";
+import styled from "styled-components";
 
 const CreateApi = () => {
   const dispatch = useAppDispatch();
@@ -377,7 +378,7 @@ const CreateApi = () => {
     return (
       <>
         {isPending || isLodaing ? (
-          <div
+          <Loading
             style={{
               position: "absolute",
               top: "50%",
@@ -386,7 +387,7 @@ const CreateApi = () => {
             }}
           >
             <InfinitySpin width="250" color="#6FC7D1" />
-          </div>
+          </Loading>
         ) : (
           <div>
             <Header />
@@ -647,5 +648,12 @@ const CreateApi = () => {
     );
   }
 };
+
+const Loading = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+`;
 
 export default CreateApi;
