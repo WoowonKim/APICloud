@@ -330,8 +330,8 @@ const CreateModal = () => {
                       icon={faCircleUser}
                     />
                     <div className="apiUserTitle">
-                      <p>{it.name}</p>
-                      <p>{it.email}</p>
+                      <div>{it.name}</div>
+                      <div>{it.email}</div>
                     </div>
                     <select
                       onChange={(e) => {

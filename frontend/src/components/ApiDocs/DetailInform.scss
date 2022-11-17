@@ -3,35 +3,46 @@
 	margin-top: 30px;
 	.detailInformTitle {
 		margin-bottom: 20px;
-		font-size: 25px;
+		font-size: 20px;
 		font-weight: bold;
 	}
 	.highLightedSubtitle {
-		background-color: yellow;
-		font-size: 25px;
+		color: rgb(246, 115, 115);
+		border-radius: 20px;
+		font-size: 20px;
 		margin-bottom: 15px;
 	}
 	.subtitle {
 		background-color: white;
-		font-size: 25px;
+		font-size: 20px;
 		margin-bottom: 15px;
 	}
 	.titleContentWrapper {
 		display: flex;
 		margin-bottom: 3%;
-		font-size: 23px;
-		.iconTitleWrppaer {
+		font-size: 20px;
+		.iconTitleWrapper {
 			display: flex;
+			font-size: 20px;
 		}
 		.content {
 			margin-left: 10px;
 		}
 	}
+	.circleIcon {
+		font-size: 8px;
+		margin-top: 8px;
+	}
+	.iconTitleWrapper {
+		display: flex;
+		font-size: 20px;
+	}
 	.highLightedTitleContentWrapper {
 		display: flex;
 		margin-bottom: 3%;
-		background-color: yellow;
-		font-size: 23px;
+		color: rgb(246, 115, 115);
+		border-radius: 20px;
+		font-size: 20px;
 	}		
 	.contentBox {
 		width: 90%;

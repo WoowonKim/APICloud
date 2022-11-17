@@ -1,5 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
+
 import {
   axiosGet,
   axiosGetFile,
@@ -164,6 +165,18 @@ export const checkAuthority: any = createAsyncThunk(
   }
 );
 
+export const getGroupUsers: any = createAsyncThunk(
+  "apiDocsApi/getGroupUsers",
+  async (args: any, { rejectWithValue }) => {
+    try {
+      const response = await axiosGet(`group/${args.docId}`);
+      return response.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response);
+    }
+  }
+);
+
 const apiDocsApiSlice = createSlice({
   name: "apiDocsApi",
   initialState,
@@ -252,6 +265,8 @@ const apiDocsApiSlice = createSlice({
       state.isPending = false;
       console.log("connectNotion rejected", action.payload);
     },
+    [getGroupUsers.fulfilled]: (state, action) => {},
+    [getGroupUsers.rejected]: (state, action) => {},
   },
 });
 
