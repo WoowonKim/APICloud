@@ -74,9 +74,9 @@ export function checkDtoNameValidation(
               current[item].properties.length > 0
             ) {
               allDtos.push(current[item]);
-            }
-            for (let property of current[item].properties) {
-              queue.push(property);
+              for (let property of current[item].properties) {
+                queue.push(property);
+              }
             }
           } else if (
             item === "responses" &&
@@ -262,8 +262,7 @@ export function checkRequiredValueValidation(type: string, item: any) {
     if (
       item["name"] === null ||
       item["properties"] === null ||
-      !item["name"]?.trim() ||
-      item["properties"].length === 0
+      !item["name"]?.trim()
     ) {
       return "delete";
     } else if (!item["name"].trim()) {
@@ -577,6 +576,13 @@ export function checkControllerApiValidation(
       data[editControllerIndex].commonUri !== value[1] &&
       checkList[1] > -1
     ) {
+      checkList[1] = 1;
+    }
+  } else {
+    if (checkList[0] > -1) {
+      checkList[0] = 1;
+    }
+    if (checkList[1] > -1) {
       checkList[1] = 1;
     }
   }

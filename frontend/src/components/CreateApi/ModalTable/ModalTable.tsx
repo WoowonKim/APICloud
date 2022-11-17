@@ -1,10 +1,4 @@
-import {
-  ColumnDef,
-  useReactTable,
-  getCoreRowModel,
-  flexRender,
-} from "@tanstack/react-table";
-import React, { useEffect, useMemo, useState } from "react";
+import React from "react";
 import { ApisType, ControllerType } from "../../../pages/CreateApi/ApisType";
 import SelectMethods from "../SelectMethods/SelectMethods";
 import "../ControllerAddModal/ControllerAddModal.scss";
@@ -27,169 +21,104 @@ const ModalTable = ({
   editControllerIndex,
   addedControllerIndex,
 }: Props) => {
-  const defaultColumn: Partial<ColumnDef<ApisType>> = {
-    cell: function Cell({ getValue, row: { index }, column: { id }, table }) {
-      const initialValue = getValue<string>();
-      const [value, setValue] = useState<string>(initialValue);
+  const headers = ["uri", "name", "method"];
 
-      const onBlur = (temp?: string) => {
-        table.options.meta?.updateData(index, id, temp ? temp : value);
-      };
-
-      const deleteApi = () => {
-        state.data[
-          editControllerIndex > -1 ? editControllerIndex : addedControllerIndex
-        ].apis.splice(index, 1);
-      };
-
-      useEffect(() => {
-        setValue(initialValue);
-      }, [initialValue]);
-
-      return id === "method" ? (
-        <SelectMethods onBlur={onBlur} setValue={setValue} value={value} />
-      ) : id === "delete" ? (
-        <FontAwesomeIcon
-          icon={faRemove}
-          className="removeIcon"
-          onClick={deleteApi}
-        />
-      ) : (
-        <input
-          value={(value as string) || ""}
-          onChange={(e) => setValue(e.target.value)}
-          onBlur={() => onBlur()}
-          className="modalTableInput"
-          placeholder={id === "uri" ? "/api" : "getApi"}
-        />
-      );
-    },
+  const deleteApi = (index: number) => {
+    state.data[
+      editControllerIndex > -1 ? editControllerIndex : addedControllerIndex
+    ].apis.splice(index, 1);
   };
 
-  const columns = useMemo<ColumnDef<ApisType>[]>(
-    () => [
-      {
-        accessorKey: "uri",
-        footer: (props) => props.column.id,
-      },
-      {
-        accessorKey: "name",
-        footer: (props) => props.column.id,
-      },
-      {
-        accessorKey: "method",
-        footer: (props) => props.column.id,
-      },
-      {
-        accessorKey: "delete",
-        footer: (props) => props.column.id,
-        size: 50,
-      },
-    ],
-    []
-  );
-
-  const table = useReactTable({
-    data,
-    columns,
-    defaultColumn,
-    getCoreRowModel: getCoreRowModel(),
-    meta: {
-      updateData: (rowIndex: string | number, columnId: any, value: any) => {
-        if (
-          state.data[
-            editControllerIndex > -1
-              ? editControllerIndex
-              : addedControllerIndex
-          ].apis.length > 0 &&
-          value
-        ) {
-          state.data[
-            editControllerIndex > -1
-              ? editControllerIndex
-              : addedControllerIndex
-          ].apis.map((row, idx) => {
-            if (idx === rowIndex) {
-              const type =
-                columnId === "uri"
-                  ? "uri"
-                  : columnId === "name"
-                  ? "name"
-                  : "method";
-              if (type === "method") {
-                state.data[
-                  editControllerIndex > -1
-                    ? editControllerIndex
-                    : addedControllerIndex
-                ].apis[rowIndex][type] = value;
-              }
-              state.data[
-                editControllerIndex > -1
-                  ? editControllerIndex
-                  : addedControllerIndex
-              ].apis[rowIndex][type] = value;
-            }
-          });
-        }
-      },
-    },
-    debugTable: true,
-  });
+  const handelCellValue = (e: any, header: string, index: number) => {
+    let path =
+      state.data[
+        editControllerIndex > -1 ? editControllerIndex : addedControllerIndex
+      ].apis;
+    const key =
+      header === "uri" ? "uri" : header === "name" ? "name" : "method";
+    if (state.data && path && path.length > 0) {
+      path[index][key] = e;
+    }
+  };
+  const handleTableCell = (item: any, index: number) => {
+    const rows = [];
+    rows.push(
+      <td key={`${index}-1`} className="apiTableBodyItem">
+        <input
+          type="text"
+          value={item.uri !== null ? item.uri : ""}
+          onChange={(e) => handelCellValue(e.target.value, "uri", index)}
+          className="tableInput"
+          placeholder="/api"
+        />
+      </td>
+    );
+    rows.push(
+      <td key={`${index}-2`} className="apiTableBodyItem">
+        <input
+          type="text"
+          value={item.name !== null ? item.name : ""}
+          onChange={(e) => handelCellValue(e.target.value, "name", index)}
+          className="tableInput"
+          placeholder="getApi"
+        />
+      </td>
+    );
+    rows.push(
+      <td key={`${index}-3`} className="apiTableBodyItem">
+        <div className="typeInfoContainer">
+          <SelectMethods
+            value={item.method}
+            handelCellValue={handelCellValue}
+            index={index}
+          />
+        </div>
+      </td>
+    );
+    rows.push(
+      <td
+        key={`${index}-4`}
+        className="apiTableDeleteItem"
+        onClick={() => {
+          deleteApi(index);
+        }}
+      >
+        <FontAwesomeIcon icon={faRemove} className="removeIcon" />
+      </td>
+    );
+    return rows;
+  };
 
   return (
-    <table className="modalTable">
-      <thead>
-        {table.getHeaderGroups().map((headerGroup) => (
-          <tr key={headerGroup.id}>
-            {headerGroup.headers.map((header) => {
-              return (
-                <th
-                  {...{
-                    key: header.id,
-                    colSpan: header.colSpan,
-                    style: {
-                      width: header.getSize(),
-                    },
-                  }}
-                  className="tableHeadText"
-                >
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                  <div
-                    {...{
-                      onMouseDown: header.getResizeHandler(),
-                      onTouchStart: header.getResizeHandler(),
-                      className: `resizer ${
-                        header.column.getIsResizing() ? "isResizing" : ""
-                      }`,
-                    }}
-                  />
-                </th>
-              );
-            })}
+    <div>
+      <table>
+        <thead>
+          <tr>
+            {headers.map((item, index) => (
+              <th key={index} className="apiTableHeaderItem">
+                {item}
+              </th>
+            ))}
+            <th className="apiTableDeleteItem"></th>
           </tr>
-        ))}
-      </thead>
-      <tbody>
-        {table.getRowModel().rows.map((row) => {
-          return (
-            <tr key={row.id}>
-              {row.getVisibleCells().map((cell) => {
-                return (
-                  <td key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                );
-              })}
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {state.data &&
+            state.data[
+              editControllerIndex > -1
+                ? editControllerIndex
+                : addedControllerIndex
+            ].apis?.length > 0 &&
+            state.data[
+              editControllerIndex > -1
+                ? editControllerIndex
+                : addedControllerIndex
+            ].apis.map((item, index) => (
+              <tr key={index}>{handleTableCell(item, index)}</tr>
+            ))}
+        </tbody>
+      </table>
+    </div>
   );
 };
 

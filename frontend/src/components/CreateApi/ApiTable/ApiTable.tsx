@@ -30,7 +30,7 @@ const ApiTable = ({
     activeTab === 5 && (responseType === "fail" || responseType === "success")
       ? state.data[selectedController].apis[selectedApi].responses?.[
           responseType
-        ]?.responseBody.properties
+        ]?.responseBody?.properties
       : activeTab === 4
       ? state.data[selectedController].apis[selectedApi].requestBody?.properties
       : activeTab === 3

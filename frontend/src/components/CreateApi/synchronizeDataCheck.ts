@@ -1,6 +1,10 @@
 export function checkFlag(path: any, root: any) {
   const result = [];
 
+  if (path === null) {
+    return [];
+  }
+
   const flagList = [
     path.dtoNameFlag,
     path.nameFlag,
@@ -186,6 +190,7 @@ export function checkChangedData(
               });
             }
             if (
+              data.apis[apiIndex][item][responseType].responseBody !== null &&
               data.apis[apiIndex][item][responseType].responseBody.createFlag
             ) {
               updateDto.push({
@@ -204,6 +209,9 @@ export function checkChangedData(
                 updateDto = [...updateDto, ...flagResult];
               }
               if (
+                data.apis[apiIndex][item][responseType].responseBody !== null &&
+                data.apis[apiIndex][item][responseType].responseBody
+                  ?.properties &&
                 data.apis[apiIndex][item][responseType].responseBody
                   .properties &&
                 data.apis[apiIndex][item][responseType].responseBody.properties
