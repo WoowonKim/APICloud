@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useSyncedStore } from "@syncedstore/react";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { useAppDispatch } from "../../../Store/hooks";
+import { useAppDispatch, useAppSelector } from "../../../Store/hooks";
 import {
   getSynchronizeApiDoc,
   getSynchronizeFile,
@@ -49,6 +49,8 @@ const SynchronizeModal = ({
   const [fileInfo, setFileInfo] = useState<any>();
   const [validationResult, setValidationResult] = useState<any>();
   const [errorMessage, setErrorMessage] = useState("");
+
+  const isPending = useAppSelector((state) => state.apiDocsApi.isSyncPending);
 
   const dispatch = useAppDispatch();
   const location = useLocation();
@@ -230,6 +232,7 @@ const SynchronizeModal = ({
             validationResult={validationResult}
             synchronizeApiDoc={synchronizeApiDoc}
             synchronizeFile={synchronizeFile}
+            isPending={isPending}
           />
         </div>
       )}

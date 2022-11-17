@@ -12,6 +12,7 @@ const initialState = {
   isOpenExtractModal: false,
   isOpenDependencyModal: false,
   isPending: false,
+  isSyncPending: false,
 };
 
 // 특정 API DOC Detail 조회하기
@@ -210,11 +211,14 @@ const apiDocsApiSlice = createSlice({
     [setApiDetail.rejected]: (state, action) => {
       console.log("setApiDetail rejected", action.payload);
     },
+    [getSynchronizeFile.pending]: (state, action) => {
+      state.isSyncPending = true;
+    },
     [getSynchronizeFile.fulfilled]: (state, action) => {
-      if (action.meta.requestStatus === "fulfilled") {
-      }
+      state.isSyncPending = false;
     },
     [getSynchronizeFile.rejected]: (state, action) => {
+      state.isSyncPending = false;
       console.log("getSynchronizeFile rejected", action.payload);
     },
     [updateSynchronizeData.fulfilled]: (state, action) => {
