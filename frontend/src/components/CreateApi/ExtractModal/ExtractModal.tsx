@@ -104,10 +104,16 @@ const ExtractModal = ({
   const prepareExtraction = (extract: () => void) => {
     const detail = {} as DetailType;
     detail.controllers = controllers;
+
     dispatch(
       setApiDetail({
         encryptedUrl: encryptedUrl,
-        detailRequest: { detail: JSON.stringify(detail) },
+        detailRequest: {
+          detail: JSON.stringify({
+            server: { dependencies: [] },
+            controllers: controllers,
+          }),
+        },
       })
     ).then((res: any) => {
       if (res.meta.requestStatus !== "fulfilled") {
