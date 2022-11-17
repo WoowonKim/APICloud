@@ -7,6 +7,8 @@ import { useAppSelector } from "../../Store/hooks";
 import { selectUser } from "../../Store/slice/userSlice";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { ListItemIcon, Menu, MenuItem } from "@mui/material";
+import { Logout } from "@mui/icons-material";
 
 const ApiMainHeader = styled.div`
   background-color: ${(props) => props.theme.bgColor};
@@ -16,24 +18,11 @@ const ApiMainHeader = styled.div`
   justify-content: space-between;
 `;
 
-const LogoutPopUp = styled.div`
-  background-color: white;
-  height: 40px;
-  z-index: 1;
-  width: 100px;
-  position: absolute;
-  top: 60px;
-  text-align: center;
-  line-height: 24px;
-  border: 8px solid;
-  border-color: orange;
-  border-radius: 10px;
-  cursor: pointer;
-`;
 const Header = () => {
   const navigate = useNavigate();
   const [userImg, setUserImg] = useState("");
-  const [modal, setModal] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
   const user = useAppSelector(selectUser);
   useEffect(() => {
     setUserImg(user?.imgUrl);
@@ -42,8 +31,11 @@ const Header = () => {
     window.localStorage.removeItem("token");
     window.location.reload();
   };
-  const handleClick = () => {
-    setModal(!modal);
+  const handleClick = (e: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(e.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
   };
   return (
     <ApiMainHeader>
@@ -76,7 +68,41 @@ const Header = () => {
           referrerPolicy="no-referrer"
           onClick={handleClick}
         />
-        {modal && <LogoutPopUp onClick={handleLogOut}>Log Out</LogoutPopUp>}
+        <Menu
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          onClick={handleClose}
+          PaperProps={{
+            elevation: 0,
+            sx: {
+              overflow: "visible",
+              filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+
+              "&:before": {
+                content: '""',
+                display: "block",
+                position: "absolute",
+                top: 0,
+                right: 14,
+                width: 10,
+                height: 10,
+                bgcolor: "background.paper",
+                transform: "translateY(-50%) rotate(45deg)",
+                zIndex: 0,
+              },
+            },
+          }}
+          transformOrigin={{ horizontal: "right", vertical: "top" }}
+          anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+        >
+          <MenuItem onClick={handleLogOut}>
+            <ListItemIcon>
+              <Logout fontSize="small" />
+            </ListItemIcon>
+            Logout
+          </MenuItem>
+        </Menu>
       </div>
     </ApiMainHeader>
   );
