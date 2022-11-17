@@ -10,6 +10,9 @@ import { mainApi } from "../Store/slice/mainApi";
 import { getApiRequestInfo } from "../Store/slice/testApi";
 import { RequestTypeInfo } from "./CreateApi/ApisType";
 import styled from "styled-components";
+import HeaderList from "../components/ApiTest/HeaderList";
+import ApiHeaderTitle from "../components/ApiTest/ApiHeaderTitle";
+import ApiResList from "../components/ApiTest/ApiResList";
 
 interface IHome {
   isDarkMode: boolean;
@@ -19,7 +22,7 @@ export type reBodyType = {};
 const TestSide = styled.div`
   width: 20%;
   height: 91vh;
-  background-color: ${(props) => props.theme.sideBgClodr};
+  background-color: ${(props) => props.theme.startBgColor};
   border-top: 1px solid ${(props) => props.theme.border};
   border-right: 2px solid ${(props) => props.theme.border};
 `;
@@ -60,20 +63,23 @@ const TestApi = ({ isDarkMode, toggleDarkMode }: IHome) => {
           </div>
           <p className="apiHeaderMainTitle">Request</p>
           <div className="testSetting">
-            <div className="testInfo">
-              <ApiHeader
-                getInfo={getInfo}
-                testbodyInfo={testbodyInfo}
-                setTestbodyInfo={setTestbodyInfo}
-                paramsInfo={paramsInfo}
-                setParamsInfo={setParamsInfo}
-                queriesInfo={queriesInfo}
-                setQueriesInfo={setQueriesInfo}
-              />
-            </div>
+            <HeaderList />
+            <ApiHeaderTitle />
+            <ApiHeader
+              getInfo={getInfo}
+              testbodyInfo={testbodyInfo}
+              setTestbodyInfo={setTestbodyInfo}
+              paramsInfo={paramsInfo}
+              setParamsInfo={setParamsInfo}
+              queriesInfo={queriesInfo}
+              setQueriesInfo={setQueriesInfo}
+            />
           </div>
           <p className="apiHeaderMainTitle">Response</p>
-          <ApiResponse getInfo={getInfo} />
+          <div className="testSetting">
+            <ApiResList />
+            <ApiResponse getInfo={getInfo} testbodyInfo={testbodyInfo} />
+          </div>
         </div>
       </div>
     </div>

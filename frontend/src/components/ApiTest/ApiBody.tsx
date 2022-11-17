@@ -1,9 +1,17 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { RequestBodyType, RequestTypeInfo } from "../../pages/CreateApi/ApisType";
+import {
+  RequestBodyType,
+  RequestTypeInfo,
+} from "../../pages/CreateApi/ApisType";
 import { reBodyType } from "../../pages/TestApi";
 import { selectTestApi } from "../../Store/slice/testApi";
-import { HeaderContatinerList, HeaderListInput, HeaderListTitle, HeaderListTitleCon } from "./Headerheader";
+import {
+  HeaderContatinerList,
+  HeaderListInput,
+  HeaderListTitle,
+  HeaderListTitleCon,
+} from "./Headerheader";
 
 interface type {
   getInfo: RequestTypeInfo | undefined;
@@ -23,7 +31,11 @@ const ApiBody = ({ getInfo, testbodyInfo, setTestbodyInfo }: type) => {
   // RequestBody 작성 할 값 불러오기 및 기존 body값 초기화
   useEffect(() => {
     if (getInfo) {
-      setRequestBody(getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].requestBody);
+      setRequestBody(
+        getInfo?.controllers[info.getControllerInfomation].apis[
+          info.getApisInfomation
+        ].requestBody
+      );
       setTestbodyInfo({});
     }
   }, [getInfo, info.getControllerInfomation, info.getApisInfomation]);
@@ -44,26 +56,26 @@ const ApiBody = ({ getInfo, testbodyInfo, setTestbodyInfo }: type) => {
   return (
     <>
       {requestBody?.properties.map((it, idx) => (
-        <div key={idx}>
-          <HeaderContatinerList>
-            <HeaderListTitleCon>
-              <HeaderListTitle>{it.name}</HeaderListTitle>
-            </HeaderListTitleCon>
-            {it.name && (
-              <div className="headerListContent">
-                <form onSubmit={onSubmit}>
-                  <HeaderListInput
-                    type="text"
-                    onChange={(e) => {
-                      setInputBody(e.target.value);
-                      setTest(it.name);
-                    }}
-                  />
-                  <button>저장</button>
-                </form>
-              </div>
-            )}
-          </HeaderContatinerList>
+        <div className="headerListTitleisHeader" key={idx}>
+          <div className="apiKeyHeaderTitle">
+            <p className="apiHeaderListPtag">{it.name}</p>
+          </div>
+          <div className="apiKeyHeaderTitleValueSubmit">
+            <p className="apiHeaderListPtagInput">
+              <input
+                className="apiHeaderListInputTag"
+                type="text"
+                onChange={e => {
+                  setInputBody(e.target.value);
+                  setTest(it.name);
+                }}
+                onBlur={onSubmit}
+              />
+            </p>
+          </div>
+          <div className="apiKeyHeaderTitleCheck">
+            <p className="apiHeaderListButtonTag">SAVE</p>
+          </div>
         </div>
       ))}
     </>

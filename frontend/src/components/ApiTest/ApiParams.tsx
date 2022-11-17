@@ -56,26 +56,32 @@ const ApiParams = ({ getInfo, setParamsInfo, paramsInfo }: type) => {
   return (
     <>
       {infoParams?.map((it, idx) => (
-        <div key={idx}>
-          <HeaderContatinerList>
-            <HeaderListTitleCon>
-              <HeaderListTitle>{it.name}</HeaderListTitle>
-            </HeaderListTitleCon>
-            {it.name && (
-              <div className="headerListContent">
-                <form onSubmit={onSubmit}>
-                  <HeaderListInput
-                    type="text"
-                    onChange={(e) => {
-                      setInputParam(e.target.value);
-                      setParamsId(it.name);
-                    }}
-                  />
-                  <button>저장</button>
-                </form>
-              </div>
-            )}
-          </HeaderContatinerList>
+        <div className="headerListTitleisHeader" key={idx}>
+          {it.name && (
+            <div className="apiKeyHeaderTitle">
+              <p className="apiHeaderListPtag">{it.name}</p>
+            </div>
+          )}
+          {it.name && (
+            <div className="apiKeyHeaderTitleValueSubmit">
+              <p className="apiHeaderListPtagInput">
+                <input
+                  className="apiHeaderListInputTag"
+                  type="text"
+                  onChange={(e) => {
+                    setInputParam(e.target.value);
+                    setParamsId(it.name);
+                  }}
+                  onBlur={onSubmit}
+                />
+              </p>
+            </div>
+          )}
+          {it.name && (
+            <div className="apiKeyHeaderTitleCheck">
+              <p className="apiHeaderListButtonTag">SAVE</p>
+            </div>
+          )}
         </div>
       ))}
     </>
