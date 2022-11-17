@@ -1,7 +1,8 @@
 import { faCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useSyncedStore } from "@syncedstore/react";
+import { MappedTypeDescription } from "@syncedstore/core/types/doc";
 import React, { useEffect, useState } from "react";
+import { ControllerType } from "../../../pages/CreateApi/ApisType";
 import { useAppDispatch, useAppSelector } from "../../../Store/hooks";
 import {
   getSynchronizeApiDoc,
@@ -13,7 +14,6 @@ import {
   DialogBox,
   ModalContainer,
 } from "../ExtractModal/ExtractModal";
-import { store } from "../store";
 import { checkChangedData } from "../synchronizeDataCheck";
 import { checkDataValidation } from "../validationCheck";
 import WarningModal from "../WarningModal/WarningModal";
@@ -31,6 +31,9 @@ interface Props {
   setIsWarningModal: React.Dispatch<React.SetStateAction<boolean>>;
   isWarningModal: boolean;
   docInfo: any;
+  state: MappedTypeDescription<{
+    data: ControllerType[];
+  }>;
 }
 
 const SynchronizeModal = ({
@@ -45,8 +48,8 @@ const SynchronizeModal = ({
   setIsWarningModal,
   isWarningModal,
   docInfo,
+  state,
 }: Props) => {
-  const state = useSyncedStore(store);
   const [isFileInputModal, setIsFileInputModal] = useState(false);
   const [fileInfo, setFileInfo] = useState<any>();
   const [validationResult, setValidationResult] = useState<any>();
@@ -127,6 +130,7 @@ const SynchronizeModal = ({
           .then((res: any) => {
             if (res.meta.requestStatus === "fulfilled") {
               setChangeCode(res.payload);
+              setIsSynchronizeModal(false);
             } else {
               setErrorMessage(res.payload.data.message);
             }
@@ -250,6 +254,7 @@ const SynchronizeModal = ({
             synchronizeApiDoc={synchronizeApiDoc}
             errorMessage={errorMessage}
             setErrorMessage={setErrorMessage}
+            state={state}
           />
         </div>
       )}
@@ -261,6 +266,7 @@ const SynchronizeModal = ({
             synchronizeApiDoc={synchronizeApiDoc}
             synchronizeFile={synchronizeFile}
             isPending={isPending}
+            state={state}
           />
         </div>
       )}

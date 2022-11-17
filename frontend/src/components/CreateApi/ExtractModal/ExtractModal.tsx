@@ -1,3 +1,4 @@
+import { MappedTypeDescription } from "@syncedstore/core/types/doc";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -22,6 +23,9 @@ type ExtractModalProps = {
   controllers: ControllerType[];
   setIsWarningModal: React.Dispatch<React.SetStateAction<boolean>>;
   isWarningModal: boolean;
+  state: MappedTypeDescription<{
+    data: ControllerType[];
+  }>;
 };
 
 type DetailType = {
@@ -45,6 +49,7 @@ const ExtractModal = ({
   controllers,
   setIsWarningModal,
   isWarningModal,
+  state,
 }: ExtractModalProps) => {
   const isOpenExtractModal = useSelector(
     (state: RootState) => state.apiDocsApi.isOpenExtractModal
@@ -296,6 +301,7 @@ const ExtractModal = ({
             validationResult={validationResult}
             prepareExtraction={prepareExtraction}
             extractSpringBoot={extractSpringBoot}
+            state={state}
           />
         </div>
       )}

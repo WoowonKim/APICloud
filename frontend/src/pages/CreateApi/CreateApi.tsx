@@ -232,6 +232,7 @@ const CreateApi = () => {
     ).then((res: any) => {
       if (res.meta.requestStatus === "fulfilled") {
         handleGetApiDetail();
+        setChangeData(undefined);
       }
     });
     setIsSynced((curr) => curr++);
@@ -363,7 +364,7 @@ const CreateApi = () => {
           {
             dtoName: "",
             name: "",
-            type: "Object",
+            type: "String",
             required: true,
             collectionType: "",
             properties: [],
@@ -486,6 +487,7 @@ const CreateApi = () => {
                           controllers={state.data}
                           isWarningModal={isWarningModal}
                           setIsWarningModal={setIsWarningModal}
+                          state={state}
                         />
                       )}
                       {isSynchronizeModal && (
@@ -503,6 +505,7 @@ const CreateApi = () => {
                           isWarningModal={isWarningModal}
                           setIsWarningModal={setIsWarningModal}
                           docInfo={docInfo}
+                          state={state}
                         />
                       )}
                     </div>
@@ -587,6 +590,7 @@ const CreateApi = () => {
                               selectedController={selectedController}
                               selectedApi={selectedApi}
                               responseType={"success"}
+                              state={state}
                             />
                           </div>
                         )}
@@ -612,6 +616,7 @@ const CreateApi = () => {
                               selectedController={selectedController}
                               selectedApi={selectedApi}
                               responseType={"fail"}
+                              state={state}
                             />
                           </div>
                         )}
