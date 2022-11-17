@@ -579,6 +579,13 @@ export function checkControllerApiValidation(
     ) {
       checkList[1] = 1;
     }
+  } else {
+    if (checkList[0] > -1) {
+      checkList[0] = 1;
+    }
+    if (checkList[1] > -1) {
+      checkList[1] = 1;
+    }
   }
   return checkList;
 }

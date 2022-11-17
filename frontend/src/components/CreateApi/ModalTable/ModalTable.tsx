@@ -159,15 +159,6 @@ const ModalTable = ({
                         header.column.columnDef.header,
                         header.getContext()
                       )}
-                  <div
-                    {...{
-                      onMouseDown: header.getResizeHandler(),
-                      onTouchStart: header.getResizeHandler(),
-                      className: `resizer ${
-                        header.column.getIsResizing() ? "isResizing" : ""
-                      }`,
-                    }}
-                  />
                 </th>
               );
             })}
