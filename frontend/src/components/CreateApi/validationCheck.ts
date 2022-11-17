@@ -338,8 +338,6 @@ export function checkDataValidation(data: ControllerType[]) {
                   current[item][queryIdx]
                 );
                 if (queryValueValidation === "delete") {
-                  console.log(JSON.parse(JSON.stringify(current[item])));
-
                   current[item].splice(queryIdx, 1);
                 } else if (!queryValueValidation) {
                   requiredValueInvalidCount++;
