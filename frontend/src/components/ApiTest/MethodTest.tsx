@@ -66,25 +66,25 @@ const MethodTest = ({ methodApiWord }: word) => {
         <div className="selectBoxContainer">
           <ul className="itemList">
             <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#fdecc8">GET</Item>
+              <Item color="#fdecc8">Get</Item>
             </li>
             <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#F5E0E9">POST</Item>
+              <Item color="#F5E0E9">Post</Item>
             </li>
             <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#F1F0EF">PUT</Item>
+              <Item color="#F1F0EF">Put</Item>
             </li>
             <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#D3E5EF">DELETE</Item>
+              <Item color="#D3E5EF">Delete</Item>
             </li>
             <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#E8DEEE">PATCH</Item>
+              <Item color="#E8DEEE">Patch</Item>
             </li>
             <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#FFE2DD">OPTIONS</Item>
+              <Item color="#FFE2DD">Options</Item>
             </li>
             <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#EEE0DA">HEAD</Item>
+              <Item color="#EEE0DA">Head</Item>
             </li>
           </ul>
         </div>
