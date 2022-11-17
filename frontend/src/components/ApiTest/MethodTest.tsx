@@ -7,8 +7,9 @@ import "../CreateApi/SelectMethods/SelectMethods.scss";
 const Item = styled.div`
   border: none;
   border-radius: 10px;
-  padding: 5px 10px;
+  padding: 7px 10px;
   margin-top: 5px;
+  margin-right: 10px;
   font-weight: bold;
   background-color: ${(props) => props.color};
 `;
