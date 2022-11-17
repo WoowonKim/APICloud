@@ -8,14 +8,16 @@ Spring Boot Framework 환경에서 Restful API를 개발할 시, 작성한 API �
 
 ## 주요기능
 
-1. 주어진 양식에 맞추어 API 명세를 작성하면 그에 맞는 Rest API, DTO를 생성한다.
-2. 작성된 API들의 요청값과 반환값을 미리 확인하고 테스트 할 수 있다.
-3. Google/Github 로그인을 통해 사용자 API 문서를 저장하고 그룹을 생성할 수 있다.
-4. 허용된 사용자들끼리 API 문서를 동시 작성/편집할 수 있다.
-5. 작성된 API 문서는 PDF, CSV, Notion으로 Export 할 수 있다.
-6. 코드를 API 문서로, API 문서를 코드로 동기화할 수 있다.
+1. 작성한 API 명세를 기반으로 SpringBoot 프로젝트, controller, DTO 생성
+2. 작성된 API들의 요청값과 반환값 확인 및 테스트
+3. Google/Github 로그인을 통해 사용자 API 문서를 저장 및 그룹 생성
+4. 그룹 API 문서 동시 작성/편집
+5. 작성된 API 문서를 PDF, CSV, Notion으로 Export
+6. 프로젝트, API 문서 간 동기화 기능
 
 ## 아키텍쳐
+
+![image](https://user-images.githubusercontent.com/105499985/202324997-0f7ffd20-c31f-43be-a0f3-81ec9d5fbfe6.png)
 
 ## 기능영상
 
@@ -40,11 +42,11 @@ Spring Boot Framework 환경에서 Restful API를 개발할 시, 작성한 API �
 
 ## 산출물
 
-- [기능명세서]()
-- [Mockup]()
-- [API]()
-- [ERD]()
-- [포팅메뉴얼]()
+- [기능명세서](https://great-haircut-17f.notion.site/8205cbddae5149f7a34d28369ca608ee)
+- [Mockup](https://www.notion.so/APICloud-a775f43b631e4acf82f9c37cac455fe9?p=67043fe082194a3c925677eefefb1de6&pm=s)
+- [API](https://great-haircut-17f.notion.site/API-DOCS-8beccf8f0520450a9e285bd06920a77f)
+- [ERD](https://great-haircut-17f.notion.site/ERD-d01c7ef3aa8a4accb3bfd3bce1a1b12c)
+- [포팅메뉴얼](https://lab.ssafy.com/s07-final/S07P31B205/-/blob/develop/exec/%ED%8F%AC%ED%8C%85%EB%A7%A4%EB%89%B4%EC%96%BC.md)
 
 ## 팀소개
 
@@ -59,4 +61,8 @@ Spring Boot Framework 환경에서 Restful API를 개발할 시, 작성한 API �
 
 ## 기여
 
+APICloud 프로젝트는 오픈소스이며, 개발자 분들의 참여를 환영합니다. APICloud에 Contributor로 참여하는 법은 [Contributor Guide](https://lab.ssafy.com/s07-final/S07P31B205/-/blob/develop/docs/ContributorGuide.md)를 참고해주세요.
+
 ## 라이선스
+
+Distributed under the SGPL license. See [License](https://lab.ssafy.com/s07-final/S07P31B205/-/blob/develop/LICENSE) for more information.
