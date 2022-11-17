@@ -16,6 +16,17 @@ import { AnyArray } from "immer/dist/internal";
 import "./CreateModal.scss";
 import { Loading } from "../../pages/CreateApi/CreateApi";
 import { InfinitySpin } from "react-loader-spinner";
+import {
+  Avatar,
+  IconButton,
+  InputBase,
+  List,
+  ListItem,
+  MenuItem,
+  Select,
+  Tooltip,
+} from "@mui/material";
+import { Search } from "@mui/icons-material";
 
 export type DocInformationType = {
   docId: number;
@@ -49,7 +60,6 @@ const CreateModal = () => {
   const [isDefaultAvailable, setIsCreationInfoAvailable] = useState(false);
   const [creationInfo, setCreationInfo] = useState({} as any);
 
-  const docId = useSelector((state: RootState) => state.mainApi.docId);
   const isOpenCreateModal = useSelector(
     (state: RootState) => state.mainApi.isOpenCreateModal
   );
@@ -118,6 +128,7 @@ const CreateModal = () => {
           alert("본인 이메일 입니다.");
           setSearchUserRes(undefined);
         } else {
+          console.log(res.data);
           setSearchUserRes(res.data);
         }
       })
@@ -129,9 +140,30 @@ const CreateModal = () => {
   const handleAuthortyChange = (e: any, idx: number) => {
     let copy = [...invitedUsers];
     copy[idx].authority = e.target.value;
+    console.log(copy);
     setInvitedUsers(copy);
   };
 
+  const handleUserAdd = () => {
+    let copy = [...invitedUsers];
+    const isIncluded = copy.find((ele) => {
+      if (ele.userId === searchUserRes.id) {
+        return true;
+      }
+    });
+    if (isIncluded) {
+      alert("이미 추가된 유저입니다.");
+      return;
+    }
+    copy.push({
+      userId: searchUserRes.id,
+      name: searchUserRes.name,
+      email: searchUserRes.email,
+      imgUrl: searchUserRes.imgUrl,
+      authority: 3,
+    });
+    setInvitedUsers(copy);
+  };
   return (
     <ModalContainer>
       <DialogBox>
@@ -287,75 +319,78 @@ const CreateModal = () => {
                 )}
               </div>
               <p>초대하기</p>
-              <input
-                className="groupMember"
-                type="text"
-                placeholder="추가할 사용자의 이메일을 작성해주세요"
-                onChange={(e) => {
-                  setSerchUser(e.target.value);
-                }}
-              />
-              <button
-                type="button"
-                onClick={() => {
-                  search(searcUser);
-                }}
-              >
-                검색하기
-              </button>
+              <div className="searchUser">
+                <input
+                  className="groupMember"
+                  type="text"
+                  placeholder="추가할 사용자의 이메일을 작성해주세요"
+                  onChange={(e) => {
+                    setSerchUser(e.target.value);
+                  }}
+                />
+                <IconButton
+                  type="button"
+                  sx={{ p: "10px" }}
+                  onClick={() => {
+                    search(searcUser);
+                  }}
+                >
+                  <Search />
+                </IconButton>
+              </div>
               {searchUserRes && (
-                <div>
+                <div className="searcedUser">
+                  <div onClick={handleUserAdd}>
+                    <Tooltip title={"Click! to add"}>
+                      <Avatar
+                        alt={searchUserRes.name}
+                        src={searchUserRes.imgUrl}
+                        sx={{ margin: "auto" }}
+                      ></Avatar>
+                    </Tooltip>
+                  </div>
                   <span>{searchUserRes.name}</span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      let copy = [...invitedUsers];
-                      const isIncluded = copy.find((ele) => {
-                        if (ele.userId === searchUserRes.id) {
-                          return true;
-                        }
-                      });
-                      if (isIncluded) {
-                        alert("이미 추가된 유저입니다.");
-                        return;
-                      }
-                      copy.push({
-                        userId: searchUserRes.id,
-                        name: searchUserRes.name,
-                        email: searchUserRes.email,
-                        authority: 3,
-                      });
-                      setInvitedUsers(copy);
-                    }}
-                  >
-                    추가하기
-                  </button>
                 </div>
               )}
-              {searchUserRes === null && <p>존재하지 않는 사용자 입니다.</p>}
+              {searchUserRes === null && (
+                <p className="searcedUser">존재하지 않는 사용자 입니다.</p>
+              )}
               <p>그룹목록</p>
               <div className="apiUser">
-                {invitedUsers.map((it, idx) => (
-                  <div className="apiUserList" key={idx}>
-                    <FontAwesomeIcon
-                      className="apiUserIcon"
-                      icon={faCircleUser}
-                    />
-                    <div className="apiUserTitle">
-                      <div>{it.name}</div>
-                      <div>{it.email}</div>
-                    </div>
-                    <select
-                      onChange={(e) => {
-                        handleAuthortyChange(e, idx);
-                      }}
-                      value={it.authority}
-                    >
-                      <option value="2">editor</option>
-                      <option value="3">viewer</option>
-                    </select>
-                  </div>
-                ))}
+                <List
+                  dense
+                  sx={{
+                    width: "100%",
+                  }}
+                >
+                  {invitedUsers.map((it, idx) => (
+                    <ListItem key={idx}>
+                      <Avatar
+                        alt={it.name}
+                        src={it.imgUrl}
+                        sx={{ mr: 1 }}
+                      ></Avatar>
+                      <p>
+                        {it.name}
+                        <br></br>
+                        {it.email}
+                      </p>
+                      <Select
+                        value={it.authority}
+                        onChange={(e) => {
+                          handleAuthortyChange(e, idx);
+                        }}
+                        sx={{ ml: "auto" }}
+                        MenuProps={{
+                          disableScrollLock: true,
+                        }}
+                      >
+                        <MenuItem value={2}>editor</MenuItem>
+                        <MenuItem value={3}>viewer</MenuItem>
+                      </Select>
+                    </ListItem>
+                  ))}
+                </List>
               </div>
               <div className="modalBtn">
                 <button className="copyBtn">
