@@ -1,4 +1,4 @@
-import { faCheck, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faClose, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { MappedTypeDescription } from "@syncedstore/core/types/doc";
 import React, { useEffect, useState } from "react";
@@ -132,23 +132,35 @@ const DtoInputModal = ({
             </div>
           )}
           {visible && dtoExists && dtoData && (
-            <div className="tableInfoDtoContainer">
-              {dtoData.dtoName}
+            <div className="dtoModalDtoContainer">
+              <div className="dtoModalCloseGroup">
+                <p className="dtoModalDtoUseInfoTitle">{dtoData.dtoName}</p>
+                <button
+                  className="dtoModalDtoCloseButton"
+                  onClick={() => setVisible(!visible)}
+                >
+                  <FontAwesomeIcon icon={faClose} />
+                </button>
+              </div>
               {dtoData.properties.length > 0 &&
                 dtoData.properties.map((item: any, index: number) => (
-                  <div key={index} className="tableInfoDtoPropertiesContainer">
-                    <span>{item.name}</span>
+                  <div key={index} className="dtoModalDtoPropertiesContainer">
+                    <span className="dtoModalDtoUseInfoText">{item.name}</span>
                     {item.collectionType === "List" ? (
-                      <span>{`<List>${item.type}`}</span>
+                      <span className="dtoModalDtoUseInfoText">{`<List>${item.type}`}</span>
                     ) : (
-                      <span>{item.type}</span>
+                      <span className="dtoModalDtoUseInfoText">
+                        {item.type}
+                      </span>
                     )}
-                    <span>{item.required}</span>
+                    <span className="dtoModalDtoUseInfoText">
+                      {item.required}
+                    </span>
                   </div>
                 ))}
               {final && (
                 <button
-                  className="tableInfoUseCurrentDtoButton"
+                  className="dtoModalUseCurrentDtoButton"
                   onClick={() => {
                     handleDtoProperties(currentDtoData);
                   }}

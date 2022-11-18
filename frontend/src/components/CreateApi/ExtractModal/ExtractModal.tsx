@@ -155,6 +155,7 @@ const ExtractModal = ({
         return;
       }
       downloadFile(res.payload);
+      setIsWarningModal(!isWarningModal);
     });
   };
 

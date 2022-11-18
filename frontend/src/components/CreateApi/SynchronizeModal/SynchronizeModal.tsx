@@ -152,10 +152,8 @@ const SynchronizeModal = ({
     <ModalContainer>
       {!isFileInputModal ? (
         <DialogBox>
-          <div>
-            <div className="synchronizeModalTitle">
-              동기화를 진행할 컨트롤러 선택
-            </div>
+          <div className="synchronizeModalTitleGroup">
+            <div className="synchronizeModalTitle">동기화할 컨트롤러 선택</div>
             <div className="synchronizeModalButtonGroup">
               <div className="synchronizeModalButton green">
                 <div>문서 to 코드</div>

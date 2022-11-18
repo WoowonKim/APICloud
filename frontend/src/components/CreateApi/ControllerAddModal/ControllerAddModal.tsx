@@ -212,7 +212,7 @@ const ControllerAddModal = ({
             />
           </div>
         </div>
-        {!isApiAddPossible && (
+        {!isApiAddPossible && isControllerAdd && (
           <p className="controllerInfoText">Api 정보를 모두 입력해주세요</p>
         )}
         {apiValidation[0] === 1 && (

@@ -1,4 +1,4 @@
-import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import SelectTypes from "../SelectTypes/SelectTypes";
@@ -67,8 +67,20 @@ const TableInfo = ({
           },
         };
       }
+      if (
+        !state.data[selectedController].apis[selectedApi].responses[
+          responseType
+        ]?.status ||
+        state.data[selectedController].apis[selectedApi].responses[responseType]
+          ?.status === null
+      ) {
+        const status = responseType === "fail" ? 400 : 200;
+        state.data[selectedController].apis[selectedApi].responses[
+          responseType
+        ].status = status;
+      }
     }
-  }, []);
+  }, [state.data[selectedController].apis[selectedApi].responses]);
   return (
     <div>
       {activeTab === 4 ? (
@@ -113,9 +125,17 @@ const TableInfo = ({
                   </div>
                   {visible && dtoExists && dtoData && (
                     <div className="tableInfoDtoContainer">
-                      <p className="tableInfoDtoUseInfoTitle">
-                        {dtoData.dtoName}
-                      </p>
+                      <div className="tableInfoDtoCloseButtonGroup">
+                        <p className="tableInfoDtoUseInfoTitle">
+                          {dtoData.dtoName}
+                        </p>
+                        <button
+                          className="tableInfoDtoCloseButton"
+                          onClick={() => setVisible(!visible)}
+                        >
+                          <FontAwesomeIcon icon={faClose} />
+                        </button>
+                      </div>
                       {dtoData.properties.length > 0 &&
                         dtoData.properties.map((item: any, index: number) => (
                           <div
@@ -144,6 +164,7 @@ const TableInfo = ({
                             state.data[selectedController].apis[selectedApi]
                               .requestBody
                           );
+                          setVisible(!visible);
                         }}
                       >
                         {dtoData.dtoName} 사용하기
@@ -270,9 +291,17 @@ const TableInfo = ({
                   </div>
                   {visible && dtoExists && dtoData && (
                     <div className="tableInfoDtoContainer">
-                      <p className="tableInfoDtoUseInfoTitle">
-                        {dtoData.dtoName}
-                      </p>
+                      <div className="tableInfoDtoCloseButtonGroup">
+                        <p className="tableInfoDtoUseInfoTitle">
+                          {dtoData.dtoName}
+                        </p>
+                        <button
+                          className="tableInfoDtoCloseButton"
+                          onClick={() => setVisible(!visible)}
+                        >
+                          <FontAwesomeIcon icon={faClose} />
+                        </button>
+                      </div>
                       {dtoData.properties.length > 0 &&
                         dtoData.properties.map((item: any, index: number) => (
                           <div
