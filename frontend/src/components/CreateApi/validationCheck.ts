@@ -6,7 +6,7 @@ export function checkDtoNameValidation(
   checkData: any,
   flag: boolean
 ) {
-  if (!value.trim()) {
+  if (value === null || !value.trim()) {
     return false;
   }
 
@@ -24,7 +24,7 @@ export function checkDtoNameValidation(
         if (JSON.stringify(checkData) !== JSON.stringify(current)) {
           existsData[1] = current;
         }
-        if (cnt >= 2 && current.properties && current.properties.length > 0) {
+        if (cnt >= 2 && current.properties) {
           return existsData;
         }
       }
@@ -57,12 +57,16 @@ export function checkDtoNameValidation(
               if (JSON.stringify(checkData) !== JSON.stringify(current[item])) {
                 existsData[1] = current[item];
               }
+              if (cnt >= 2 && current[item].properties) {
+                return existsData;
+              }
               if (
-                cnt >= 2 &&
-                current[item].properties &&
+                current[item]?.properties &&
                 current[item].properties.length > 0
               ) {
-                return existsData;
+                for (let property of current[item].properties) {
+                  queue.push(property);
+                }
               }
             }
             if (
@@ -74,7 +78,9 @@ export function checkDtoNameValidation(
               current[item].properties.length > 0
             ) {
               allDtos.push(current[item]);
+
               for (let property of current[item].properties) {
+                allDtos.push(property);
                 queue.push(property);
               }
             }
@@ -94,10 +100,7 @@ export function checkDtoNameValidation(
               ) {
                 existsData[1] = current[item].fail.responseBody;
               }
-              if (
-                cnt >= 2 &&
-                current[item].fail.responseBody.properties.length > 0
-              ) {
+              if (cnt >= 2 && current[item].fail.responseBody?.properties) {
                 return existsData;
               }
             } else if (
@@ -112,10 +115,7 @@ export function checkDtoNameValidation(
               ) {
                 existsData[1] = current[item].success.responseBody;
               }
-              if (
-                cnt >= 2 &&
-                current[item].success.responseBody.properties.length > 0
-              ) {
+              if (cnt >= 2 && current[item].success.responseBody?.properties) {
                 return existsData;
               }
             }
@@ -138,7 +138,41 @@ export function checkDtoNameValidation(
                     current[item][status].responseBody.properties.length > 0
                   ) {
                     allDtos.push(current[item][status].responseBody);
+                    if (
+                      property.dtoName &&
+                      property.dtoName.trim() &&
+                      property.type === "Object" &&
+                      property.properties.length > 0
+                    ) {
+                      allDtos.push(property);
+                    }
                   }
+                }
+              }
+            }
+          } else {
+            if (current?.properties && current.properties.length > 0) {
+              for (let property of current.properties) {
+                if (!flag) {
+                  if (JSON.stringify(checkData) !== JSON.stringify(property)) {
+                    existsData[1] = property;
+                  }
+                  if (
+                    cnt >= 2 &&
+                    property.properties &&
+                    property.properties.length > 0
+                  ) {
+                    return existsData;
+                  }
+                }
+                if (
+                  flag &&
+                  property?.dtoName &&
+                  property.dtoName.trim() &&
+                  property.type === "Object" &&
+                  property.properties?.length > 0
+                ) {
+                  allDtos.push(property);
                 }
               }
             }

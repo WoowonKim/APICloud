@@ -33,7 +33,7 @@ const ApiTable = ({
 
   const rootPath =
     activeTab === 5 && (responseType === "fail" || responseType === "success")
-      ? state.data[selectedController].apis[selectedApi].responses?.[
+      ? state.data[selectedController].apis[selectedApi]?.responses?.[
           responseType
         ]?.responseBody?.properties
       : activeTab === 4
@@ -303,6 +303,42 @@ const ApiTable = ({
     setModalDepth(2);
   }, []);
 
+  useEffect(() => {
+    if (activeTab === 4 || activeTab === 5) {
+      const value =
+        activeTab === 5 &&
+        (responseType === "fail" || responseType === "success")
+          ? state.data[selectedController].apis[selectedApi].responses[
+              responseType
+            ]?.responseBody?.dtoName
+          : state.data[selectedController].apis[selectedApi].requestBody
+              ?.dtoName;
+
+      const dtoPath =
+        activeTab === 5 &&
+        (responseType === "fail" || responseType === "success")
+          ? state.data[selectedController].apis[selectedApi].responses[
+              responseType
+            ]?.responseBody
+          : state.data[selectedController].apis[selectedApi].requestBody;
+
+      const checkDto = checkDtoNameValidation(
+        value,
+        state.data[selectedController].apis,
+        state.data[selectedController].apis.length,
+        dtoPath,
+        false
+      );
+
+      if (checkDto && typeof checkDto !== "boolean" && checkDto[1]) {
+        setDtoData(checkDto[1]);
+        setDtoExists(true);
+        setCurrentDtoData(checkDto[0]);
+      } else {
+        setDtoExists(false);
+      }
+    }
+  }, [activeTab, dtoExists]);
   return (
     <div>
       {isModalVisible && (
