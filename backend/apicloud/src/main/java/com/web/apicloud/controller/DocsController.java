@@ -54,6 +54,7 @@ public class DocsController {
     @PostMapping()
     public ResponseEntity<Object> createDoc(@RequestBody CreateDocRequest createDocRequest) {
         log.info("DOC 생성 API 호출");
+        System.out.println(createDocRequest);
         Long docId = docsService.saveDocGetDocId(createDocRequest);
         String encryptedUrl = docsService.encryptUrl(docId);
         Group group = docsService.findByDocsId(docId).getGroup();
