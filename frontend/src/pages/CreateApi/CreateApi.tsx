@@ -15,7 +15,7 @@ import apiDocsApiSlice, {
   updateSynchronizeData,
 } from "../../Store/slice/apiDocsApi";
 import ExtractModal from "../../components/CreateApi/ExtractModal/ExtractModal";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import ErrorPage from "../ErrorPage";
 import { useAppDispatch, useAppSelector } from "../../Store/hooks";
 import ApiTable from "../../components/CreateApi/ApiTable/ApiTable";
@@ -23,13 +23,11 @@ import SynchronizeModal from "../../components/CreateApi/SynchronizeModal/Synchr
 import { getApiDoc } from "../../Store/slice/mainApi";
 import SynchronizeCode from "../../components/CreateApi/SynchronizeModal/SynchronizeCode";
 import SynchroinizeData from "../../components/CreateApi/SynchronizeModal/SynchroinizeData";
-import Header from "../../components/main/Header";
 import { InfinitySpin } from "react-loader-spinner";
 import styled from "styled-components";
 
 const CreateApi = () => {
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
   const { encryptedUrl } = useParams();
   const [authority, setAuthority] = useState<number>(0);
   const [isSynchronizeModal, setIsSynchronizeModal] = useState(false);
@@ -458,7 +456,6 @@ const CreateApi = () => {
                   </div>
                   <div className="buttonContainer">
                     <div className="createApiTitleButtonGroup">
-                      <button className="createApiButton">공유</button>
                       <button
                         className="createApiButton"
                         onClick={() => {
