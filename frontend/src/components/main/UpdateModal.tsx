@@ -12,7 +12,7 @@ import mainApiSlice, {
 import { RootState } from "../../Store/store";
 import "./CreateModal.scss";
 import { getGroupUsers } from "../../Store/slice/apiDocsApi";
-import { axiosGet, axiosPost, axiosPut } from "../../util/axiosUtil";
+import { axiosGet, axiosPost, axiosPut, axiosDel } from "../../util/axiosUtil";
 import {
   Avatar,
   IconButton,
@@ -194,16 +194,36 @@ const UpdateModal = () => {
     if (isIncluded) {
       alert("이미 추가된 유저입니다.");
       return;
+    } else {
+      axiosPost("/group/" + docId, {
+        userId: searchUserRes.id,
+        authority: 3,
+      }).then((res) => {
+        copy.push({
+          userId: searchUserRes.id,
+          name: searchUserRes.name,
+          email: searchUserRes.email,
+          imgUrl: searchUserRes.imgUrl,
+          authority: 3,
+        });
+        setGroupUsers(copy);
+      });
     }
-    copy.push({
-      userId: searchUserRes.id,
-      name: searchUserRes.name,
-      email: searchUserRes.email,
-      imgUrl: searchUserRes.imgUrl,
-      authority: 3,
-    });
-    setGroupUsers(copy);
   };
+
+  const deleteUser = async (userId: number) => {
+    let copy = [...groupUsers];
+    const idx = copy.findIndex(function (ele) {
+      return ele.userId === userId;
+    });
+    if (idx > -1) {
+      axiosDel("/group/" + docId + "/" + userId).then((res) => {
+        copy.splice(idx, 1);
+        setGroupUsers(copy);
+      });
+    }
+  };
+
   return (
     <ModalContainer>
       <DialogBox>
@@ -409,19 +429,29 @@ const UpdateModal = () => {
                         {it.email}
                       </p>
                       {it.authority != 1 && (
-                        <Select
-                          value={it.authority}
-                          onChange={(e) => {
-                            handleAuthortyChange(e, it.userId, idx);
-                          }}
-                          sx={{ ml: "auto" }}
-                          MenuProps={{
-                            disableScrollLock: true,
-                          }}
-                        >
-                          <MenuItem value={2}>editor</MenuItem>
-                          <MenuItem value={3}>viewer</MenuItem>
-                        </Select>
+                        <>
+                          <Select
+                            value={it.authority}
+                            onChange={(e) => {
+                              handleAuthortyChange(e, it.userId, idx);
+                            }}
+                            sx={{ ml: "auto" }}
+                            MenuProps={{
+                              disableScrollLock: true,
+                            }}
+                          >
+                            <MenuItem value={2}>editor</MenuItem>
+                            <MenuItem value={3}>viewer</MenuItem>
+                          </Select>
+                          <UserDeleteButton
+                            type="button"
+                            onClick={() => {
+                              deleteUser(it.userId);
+                            }}
+                          >
+                            삭제
+                          </UserDeleteButton>
+                        </>
                       )}
                     </ListItem>
                   ))}
@@ -484,6 +514,12 @@ const Backdrop = styled.div`
   position: fixed;
   top: 0;
   z-index: 9999;
+`;
+
+const UserDeleteButton = styled.button`
+  border: none;
+  margin-left: 10px;
+  background-color: transparent;
 `;
 
 export default UpdateModal;

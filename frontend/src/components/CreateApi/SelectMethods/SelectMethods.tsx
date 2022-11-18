@@ -3,30 +3,37 @@ import styled from "styled-components";
 import "./SelectMethods.scss";
 
 const Item = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80%;
+  font-weight: bold;
   border: none;
   border-radius: 10px;
-  padding: 3px 5px;
+  padding: 8px 12px;
   margin-top: 5px;
   font-size: 0.7em;
   background-color: ${(props) => props.color};
 `;
 
 export const SelectedItem = styled.button`
+  width: 100%;
   border: none;
   border-radius: 10px;
-  padding: 3px 5px;
-  margin-top: 5px;
+  padding: 8px 12px;
   font-size: 0.7em;
+  font-weight: bold;
   background-color: ${(props) => props.color};
 `;
 
 interface Props {
-  onBlur?: (temp?: string) => void;
   setValue?: React.Dispatch<React.SetStateAction<string>>;
   value?: string;
+  handelCellValue?: (e: any, header: string, index: number) => void;
+  index?: number;
 }
 
-const SelectMethods = ({ onBlur, setValue, value }: Props) => {
+const SelectMethods = ({ setValue, value, handelCellValue, index }: Props) => {
   const [visible, setVisible] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState(value ? value : "GET");
 
@@ -37,13 +44,18 @@ const SelectMethods = ({ onBlur, setValue, value }: Props) => {
         eventTarget.innerText.substring(1).toLocaleLowerCase()
     );
     setVisible(!visible);
-    // Props에 해당 값이 있을 경우 함수 호출
-    if (setValue && onBlur) {
-      setValue(
+
+    if (value && handelCellValue && typeof index === "number") {
+      handelCellValue(
         eventTarget.innerText[0] +
-          eventTarget.innerText.substring(1).toLocaleLowerCase()
+          eventTarget.innerText.substring(1).toLocaleLowerCase(),
+        "method",
+        index
       );
-      onBlur(
+    }
+    // Props에 해당 값이 있을 경우 함수 호출
+    if (setValue) {
+      setValue(
         eventTarget.innerText[0] +
           eventTarget.innerText.substring(1).toLocaleLowerCase()
       );
@@ -73,7 +85,7 @@ const SelectMethods = ({ onBlur, setValue, value }: Props) => {
       </SelectedItem>
       {visible && (
         <div className="selectBoxContainer">
-          <ul className="itemList">
+          <ul className="methodItemList">
             <li className="item" onClick={(e) => handleSelect(e)}>
               <Item color="#fdecc8">GET</Item>
             </li>

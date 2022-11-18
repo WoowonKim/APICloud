@@ -18,7 +18,7 @@ public class ClassParsingServiceImpl implements ClassParsingService {
     private static final String LIST = "List";
     private static final String OBJECT = "Object";
     private static final String[] accessModifier = {"public", "protected", "private", "default", "static"};
-    private static final String[] type = {"String", "Long", "long", "Integer", "int", "float", "Float"};
+    private static final String[] type = {"String", "Long", "long", "Integer", "int", "float", "Float", "Double", "double", "Boolean", "boolean", "Character", "char", "Short", "short", "Byte", "byte", "Byte[]", "byte[]"};
 
     private static String groupSecretKey = "";
     public static ArrayList<String> useQuery = new ArrayList<>();
@@ -79,9 +79,7 @@ public class ClassParsingServiceImpl implements ClassParsingService {
         while (i < lines.size()) {
             if (!lines.get(i).equals("")) {
                 PropertyVO property = getProperty(lines.get(i), category);
-                if (property != null) {
-                    requestBody.getProperties().add(property);
-                }
+                if (property != null) requestBody.getProperties().add(property);
             }
             i++;
         }
@@ -110,6 +108,7 @@ public class ClassParsingServiceImpl implements ClassParsingService {
         if ((j + 1) >= tokens.length) return null;
         PropertyVO getPropertyVO = getBody(groupSecretKey, tokens[j], category);
         if (getPropertyVO == null) return null;
+
         return PropertyVO.builder()
                 .dtoName(getPropertyVO.getDtoName())
                 .name(tokens[j + 1])

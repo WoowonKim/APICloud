@@ -60,10 +60,29 @@ const ApiBody = ({ getInfo, testbodyInfo, setTestbodyInfo }: type) => {
   };
   return (
     <>
-      {requestBody?.properties.map((it, idx) => (
-        <div className="headerListTitleisHeader" key={idx}>
-          <div className="apiKeyHeaderTitle">
-            <p className="apiHeaderListPtag">{it.name}</p>
+      {requestBody?.properties &&
+        requestBody.properties.length > 0 &&
+        requestBody?.properties.map((it, idx) => (
+          <div className="headerListTitleisHeader" key={idx}>
+            <div className="apiKeyHeaderTitle">
+              <p className="apiHeaderListPtag">{it.name}</p>
+            </div>
+            <div className="apiKeyHeaderTitleValueSubmit">
+              <p className="apiHeaderListPtagInput">
+                <input
+                  className="apiHeaderListInputTag"
+                  type="text"
+                  onChange={(e) => {
+                    setInputBody(e.target.value);
+                    setTest(it.name);
+                  }}
+                  onBlur={onSubmit}
+                />
+              </p>
+            </div>
+            <div className="apiKeyHeaderTitleCheck">
+              <p className="apiHeaderListButtonTag">SAVE</p>
+            </div>
           </div>
           <div className="apiKeyHeaderTitleValueSubmit">
             <p className="apiHeaderListPtagInput">

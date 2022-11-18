@@ -25,9 +25,10 @@
 }
 
 .apiDocsMaincontainer {
+  padding-bottom: 200px;
   .titleGridContainer {
     display: grid;
-    grid-template-columns: 7fr 3fr;
+    grid-template-columns: 7fr 4fr;
     padding: 50px 30px 50px 90px;
     margin-bottom: 50px;
     border-bottom: 2px solid rgb(111, 199, 209);
@@ -51,6 +52,7 @@
   }
   .buttonContainer {
     padding: 0 20px;
+    position: relative;
     .createApiButton {
       border: none;
       outline: none;
@@ -77,7 +79,7 @@
 
 .bodyGridContainer {
   display: grid;
-  grid-template-columns: 7fr 3fr;
+  grid-template-columns: 7fr 4fr;
   margin-top: 30px;
 }
 
@@ -143,7 +145,11 @@
 }
 
 .rightSideContainer {
-  max-width: 25rem;
+  width: 100%;
+  overflow-x: scroll;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .createApiTitle {
@@ -169,7 +175,7 @@
   .createApiTabItem {
     font-size: 0.9em;
     padding: 7px 10px;
-    border: 1px solid rgb(39, 127, 195);
+    border: 1px solid rgba(39, 127, 195, 0.8);
     border-radius: 10px;
     margin: 0 3px;
     &:hover {
@@ -244,6 +250,10 @@
 .createApiSynchronizeCodeBlock {
   display: none;
 }
+.createApiCodeBlockContainer {
+  width: 100%;
+  font-size: 0.7em;
+}
 
 .createApiSynchronizeDataContainer {
   max-height: 50vh;
@@ -272,4 +282,9 @@
   padding: 10px 20px;
   border-radius: 20px;
   margin-top: 20px;
+}
+.createApiTitleModalGroup {
+  width: 330px;
+  position: relative;
+  left: 30%;
 }

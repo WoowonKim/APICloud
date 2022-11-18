@@ -45,7 +45,6 @@ const TestApi = ({ isDarkMode, toggleDarkMode }: IHome) => {
   }, [getDocsId.docId]);
   return (
     <div>
-      <Header />
       <div className="testContainer">
         <TestSide>
           <ApiSide getInfo={getInfo} />

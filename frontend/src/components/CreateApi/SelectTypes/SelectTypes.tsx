@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import "./SelectTypes.scss";
 
 interface Props {
-  onBlur?: (temp?: string) => void;
   setValue?: any;
   value?: string;
   handleBasicInfo?: (
@@ -26,7 +25,6 @@ interface Props {
 }
 
 const SelectTypes = ({
-  onBlur,
   setValue,
   value,
   handleBasicInfo,
@@ -57,9 +55,8 @@ const SelectTypes = ({
       handleBasicInfo(eventTarget.innerText, "type", depth, type);
     }
     // Props에 해당 값이 있을 경우 함수 호출
-    if (setValue && onBlur) {
+    if (setValue) {
       setValue(eventTarget.innerText);
-      onBlur(eventTarget.innerText);
     }
 
     if (handelCellValue && typeof index === "number") {
@@ -106,7 +103,7 @@ const SelectTypes = ({
             {selectedMethod !== "List" ? selectedMethod : "String"}
           </div>
         )}
-        <FontAwesomeIcon icon={faChevronDown} />
+        <FontAwesomeIcon icon={faChevronDown} className="selectTypeIcon" />
       </div>
       {visible && (
         <div className="selectBoxContainer">

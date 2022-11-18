@@ -125,7 +125,6 @@ public class NotionServiceImpl implements NotionService {
                 .defaultHeader("Content-Type", "application/json")
                 .build();
         Map<String, String> response = client.post().body(Mono.just(params), Map.class).retrieve().bodyToMono(Map.class).block();
-        System.out.println(response);
         return NotionTokenResponse.builder()
                 .token(response.get("access_token"))
                 .duplicatedTemplateId(response.get("duplicated_template_id")).build();

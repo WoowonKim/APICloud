@@ -32,8 +32,6 @@ public class SynchronizeDocServiceImpl implements SynchronizeDocService {
     private static final String REQUEST_BODY = "RequestBody";
     private static final String VALUE = "value";
 
-    private static String groupSecretKey = "";
-
     private static final String NOT_FOUND_CONTROLLER = "해당 Controller를 찾을 수 없습니다.";
 
     private final S3Service s3Service;
@@ -44,6 +42,7 @@ public class SynchronizeDocServiceImpl implements SynchronizeDocService {
     private final GroupService groupService;
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static String groupSecretKey = "";
 
     @Override
     public ControllerDTO getFile(Long docId, SynchronizeRequest synchronizeRequest, MultipartFile file) throws IOException {
@@ -61,11 +60,8 @@ public class SynchronizeDocServiceImpl implements SynchronizeDocService {
         while (i < lines.size()) {
             if (parsingService.KMP(lines.get(i), REQUEST_MAPPING) != -1) {
                 int target = parsingService.KMP(lines.get(i), VALUE);
-                if (target != -1) {
-                    value = parsingService.getValue(lines.get(i).substring(target + 1, lines.get(i).length()));
-                } else {
-                    value = parsingService.getValue(lines.get(i));
-                }
+                if (target != -1) value = parsingService.getValue(lines.get(i).substring(target + 1, lines.get(i).length()));
+                else value = parsingService.getValue(lines.get(i));
                 i++;
                 break;
             }
@@ -80,27 +76,21 @@ public class SynchronizeDocServiceImpl implements SynchronizeDocService {
                 ClassParsingServiceImpl.useRequest = new ArrayList<>();
                 ClassParsingServiceImpl.useResponse = new ArrayList<>();
                 ApiVO apiVO = apiParsing(api);
-                if (apiVO != null) {
-                    apis.add(apiVO);
-                }
+                if (apiVO != null) apis.add(apiVO);
                 api = new ArrayList<>();
             }
             api.add(lines.get(i++));
         }
         ApiVO apiVO = apiParsing(api);
-        if (apiVO != null) {
-            apis.add(apiVO);
-        }
+        if (apiVO != null) apis.add(apiVO);
 
         ControllerVO controllerVO = ControllerVO.builder()
                 .commonUri(value)
                 .apis(apis)
                 .build();
-        System.out.println("controllerVO => " + controllerVO);
 
         DocVO detailVO = objectMapper.readValue(doc.getDetail(), DocVO.class);
-        if (detailVO.getControllers().size() <= synchronizeRequest.getControllerId())
-            throw new NotFoundException(NOT_FOUND_CONTROLLER);
+        if (detailVO.getControllers().size() <= synchronizeRequest.getControllerId()) throw new NotFoundException(NOT_FOUND_CONTROLLER);
         ControllerVO original = detailVO.getControllers().get(synchronizeRequest.getControllerId());
         return compareService.compareControllerVO(original, controllerVO);
     }
@@ -109,13 +99,11 @@ public class SynchronizeDocServiceImpl implements SynchronizeDocService {
         if (api.size() == 0) return null;
         List<String> getMethod = parsingService.getMethod(api.get(0));
         if (getMethod == null) return null;
+
         String method = null, uri = null;
-        if (getMethod.size() > 0) {
-            method = getMethod.get(0);
-        }
-        if (getMethod.size() > 1) {
-            uri = getMethod.get(1);
-        }
+        if (getMethod.size() > 0) method = getMethod.get(0);
+        if (getMethod.size() > 1) uri = getMethod.get(1);
+
         ApiDetailVO apiDetail = null;
         for (int i = 1; i < api.size(); i++) {
             if (parsingService.KMP(api.get(i), RESPONSE_ENTITY) != -1) {
@@ -142,6 +130,82 @@ public class SynchronizeDocServiceImpl implements SynchronizeDocService {
                 .headers(apiDetail.getHeaders())
                 .build();
         return apiVO;
+    }
+
+    private ApiDetailVO getApi(int i, List<String> api) throws IOException {
+        Stack<Character> stack = new Stack<>();
+        boolean responseFlag = false;
+        boolean requestFlag = false;
+        boolean methodNameFlag = false;
+        String response = "";
+        String request = "";
+        String methodName = "";
+
+        ApiDetailVO apiDetail = new ApiDetailVO();
+
+        while (i < api.size()) {
+            for (int j = 0; j < api.get(i).length(); j++) {
+                if (requestFlag) request += api.get(i).charAt(j);
+                if (methodNameFlag) methodName += api.get(i).charAt(j);
+                switch (api.get(i).charAt(j)) {
+                    case '<':
+                        stack.push('<');
+                        if (!requestFlag) responseFlag = true;
+                        break;
+                    case '(':
+                        stack.push('(');
+                        if (methodNameFlag) {
+                            methodNameFlag = false;
+                            methodName = methodName.replaceAll(" ", "");
+                            apiDetail.setName(methodName.substring(0, methodName.length() - 1));
+                        }
+                        break;
+                    case '{':
+                        stack.push('{');
+                        break;
+                    case '[':
+                        stack.push('[');
+                        break;
+                    case '>':
+                        if (stack.peek() == '<') stack.pop();
+                        if (!requestFlag) {
+                            if (stack.isEmpty()) {
+                                responseFlag = false;
+                                getResponseDetail(apiDetail, response);
+                                methodNameFlag = true;
+                            }
+                        }
+                        break;
+                    case ')':
+                        if (stack.peek() == '(') stack.pop();
+                        if (stack.isEmpty()) {
+                            getRequestDetail(apiDetail, request);
+                            return apiDetail;
+                        }
+                        break;
+                    case '}':
+                        if (stack.peek() == '{') stack.pop();
+                        break;
+                    case ']':
+                        if (stack.peek() == '[') stack.pop();
+                        break;
+                    case '@':
+                        requestFlag = true;
+                        request += api.get(i).charAt(j);
+                        break;
+                    case ',':
+                        if (stack.size() != 1) break;
+                        getRequestDetail(apiDetail, request);
+                        request = "";
+                        requestFlag = false;
+                        break;
+                    default:
+                        if (responseFlag) response += api.get(i).charAt(j);
+                }
+            }
+            i++;
+        }
+        return apiDetail;
     }
 
     private void getRequestDetail(ApiDetailVO apiDetail, String request) throws IOException {
@@ -190,83 +254,6 @@ public class SynchronizeDocServiceImpl implements SynchronizeDocService {
         ResponseVO getResponse = ResponseVO.builder().responseBody(classParsingService.getBody(groupSecretKey, response, "response")).build();
         getResponseMap.put("success", getResponse);
         apiDetail.setResponses(getResponseMap);
-    }
-
-    private ApiDetailVO getApi(int i, List<String> api) throws IOException {
-        Stack<Character> stack = new Stack<>();
-        boolean responseFlag = false;
-        boolean requestFlag = false;
-        boolean methodNameFlag = false;
-        String response = "";
-        String request = "";
-        String methodName = "";
-
-        ApiDetailVO apiDetail = new ApiDetailVO();
-
-        while (i < api.size()) {
-            for (int j = 0; j < api.get(i).length(); j++) {
-                if (requestFlag) request += api.get(i).charAt(j);
-                if (methodNameFlag) methodName += api.get(i).charAt(j);
-
-                switch (api.get(i).charAt(j)) {
-                    case '<':
-                        stack.push('<');
-                        if (!requestFlag) responseFlag = true;
-                        break;
-                    case '(':
-                        stack.push('(');
-                        if (methodNameFlag) {
-                            methodNameFlag = false;
-                            methodName = methodName.replaceAll(" ", "");
-                            apiDetail.setName(methodName.substring(0, methodName.length() - 1));
-                        }
-                        break;
-                    case '{':
-                        stack.push('{');
-                        break;
-                    case '[':
-                        stack.push('[');
-                        break;
-                    case '>':
-                        if (stack.peek() == '<') stack.pop();
-                        if (!requestFlag) {
-                            if (stack.isEmpty()) {
-                                responseFlag = false;
-                                getResponseDetail(apiDetail, response);
-                                methodNameFlag = true;
-                            }
-                        }
-                        break;
-                    case ')':
-                        if (stack.peek() == '(') stack.pop();
-                        if (stack.isEmpty()) {
-                            getRequestDetail(apiDetail, request);
-                            return apiDetail;
-                        }
-                        break;
-                    case '}':
-                        if (stack.peek() == '}') stack.pop();
-                        break;
-                    case ']':
-                        if (stack.peek() == ']') stack.pop();
-                        break;
-                    case '@':
-                        requestFlag = true;
-                        request += api.get(i).charAt(j);
-                        break;
-                    case ',':
-                        if (stack.size() != 1) break;
-                        getRequestDetail(apiDetail, request);
-                        request = "";
-                        requestFlag = false;
-                        break;
-                    default:
-                        if (responseFlag) response += api.get(i).charAt(j);
-                }
-            }
-            i++;
-        }
-        return apiDetail;
     }
 
     @Override

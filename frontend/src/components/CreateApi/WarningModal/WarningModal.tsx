@@ -1,8 +1,10 @@
 import { faCloud } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { MappedTypeDescription } from "@syncedstore/core/types/doc";
 import React, { useEffect, useState } from "react";
 import { ThreeDots } from "react-loader-spinner";
 import styled from "styled-components";
+import { ControllerType } from "../../../pages/CreateApi/ApisType";
 import "./WarningModal.scss";
 
 interface Props {
@@ -15,6 +17,9 @@ interface Props {
   errorMessage?: string;
   setErrorMessage?: React.Dispatch<React.SetStateAction<string>>;
   isPending?: boolean;
+  state: MappedTypeDescription<{
+    data: ControllerType[];
+  }>;
 }
 
 const WarningModal = ({
@@ -27,8 +32,11 @@ const WarningModal = ({
   errorMessage,
   setErrorMessage,
   isPending,
+  state,
 }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isControllerNameValidation, setIsControllerNameValidation] =
+    useState(true);
 
   useEffect(() => {
     if (!validationResult) {
@@ -42,6 +50,40 @@ const WarningModal = ({
       setIsLoading(false);
     }, 2000);
   };
+
+  const checkControllerNameValidation = () => {
+    const checkNameList = [];
+    let cnt = 0;
+    if (state.data && state.data.length > 0) {
+      for (let item of state.data) {
+        if (item.name !== null && item.name.trim()) {
+          checkNameList.push(item.name);
+        }
+      }
+      const result =
+        checkNameList &&
+        checkNameList.reduce((accu: any, curr) => {
+          accu[curr] = (accu[curr] || 0) + 1;
+          return accu;
+        }, {});
+
+      for (let item in result) {
+        if (result[item] > 1) {
+          cnt += result[item] - 1;
+        }
+      }
+    }
+
+    return cnt;
+  };
+
+  useEffect(() => {
+    if (checkControllerNameValidation()) {
+      setIsControllerNameValidation(false);
+    } else {
+      setIsControllerNameValidation(true);
+    }
+  }, []);
   return (
     <div className="warningModalContainer">
       <div className="warningModalInnerContainer">
@@ -110,20 +152,21 @@ const WarningModal = ({
           )}
         </div>
         {extractSpringBoot && prepareExtraction && (
-          <>
-            <p className="warningModalExtractText">
-              Type이 Object의 경우 DtoName이 없으면
-            </p>
-            <p className="warningModalExtractText">
-              프로젝트를 추출할 수 없습니다.
-            </p>
-          </>
+          <p className="warningModalExtractText">
+            Type이 Object의 경우 DtoName이 없으면 프로젝트를 추출할 수 없습니다.
+          </p>
         )}
         {errorMessage && (
           <p className="warningModalExtractText">{errorMessage}</p>
         )}
+        {!isControllerNameValidation && (
+          <p className="warningModalExtractText">
+            Controller Name이 중복되었습니다.
+          </p>
+        )}
         <div className="warningModalButtonGroup">
           <WarningModalButton
+            disabled={!isControllerNameValidation}
             color={synchronizeFile ? "#277fc3" : "#6fc7d1"}
             className="warningModalButton"
             onClick={() => {
@@ -188,13 +231,15 @@ const CloudIcon = styled.div`
   color: ${(props) => props.color};
 `;
 
-const WarningModalButton = styled.div`
+const WarningModalButton = styled.button`
   background-color: ${(props) => props.color};
   color: white;
   width: 45%;
   text-align: center;
   padding: 10px;
   border-radius: 20px;
+  border: none;
+  outline: none;
 `;
 
 const WarningModalCloseButton = styled.div`

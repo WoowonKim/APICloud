@@ -1,18 +1,19 @@
 import { faCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useSyncedStore } from "@syncedstore/react";
+import { MappedTypeDescription } from "@syncedstore/core/types/doc";
 import React, { useEffect, useState } from "react";
+import { ControllerType } from "../../../pages/CreateApi/ApisType";
 import { useAppDispatch, useAppSelector } from "../../../Store/hooks";
 import {
   getSynchronizeApiDoc,
   getSynchronizeFile,
+  setApiDetail,
 } from "../../../Store/slice/apiDocsApi";
 import {
   Backdrop,
   DialogBox,
   ModalContainer,
 } from "../ExtractModal/ExtractModal";
-import { store } from "../store";
 import { checkChangedData } from "../synchronizeDataCheck";
 import { checkDataValidation } from "../validationCheck";
 import WarningModal from "../WarningModal/WarningModal";
@@ -30,6 +31,9 @@ interface Props {
   setIsWarningModal: React.Dispatch<React.SetStateAction<boolean>>;
   isWarningModal: boolean;
   docInfo: any;
+  state: MappedTypeDescription<{
+    data: ControllerType[];
+  }>;
 }
 
 const SynchronizeModal = ({
@@ -44,8 +48,8 @@ const SynchronizeModal = ({
   setIsWarningModal,
   isWarningModal,
   docInfo,
+  state,
 }: Props) => {
-  const state = useSyncedStore(store);
   const [isFileInputModal, setIsFileInputModal] = useState(false);
   const [fileInfo, setFileInfo] = useState<any>();
   const [validationResult, setValidationResult] = useState<any>();
@@ -69,59 +73,87 @@ const SynchronizeModal = ({
     if (fileInfo) {
       formData.append("file", fileInfo);
     }
-    dispatch(getSynchronizeFile({ formData, docId: docInfo.docId }))
-      .then((res: any) => {
-        if (res.meta.requestStatus === "fulfilled") {
-          setChangeData(res.payload);
-          const dto = checkChangedData(
-            res.payload,
-            selectedControllerName,
-            selectedControllerIndex,
-            state
-          );
-          setSyncData(dto);
-          setIsSynchronizeModal(false);
-        }
+    dispatch(
+      setApiDetail({
+        encryptedUrl: localStorage.getItem("docId"),
+        detailRequest: {
+          detail: JSON.stringify({
+            server: { dependencies: [] },
+            controllers: state.data,
+          }),
+        },
       })
-      .catch((err: any) => {
-        console.log(err);
-      });
+    ).then((res: any) => {
+      if (res.meta.requestStatus === "fulfilled") {
+        dispatch(getSynchronizeFile({ formData, docId: docInfo.docId }))
+          .then((res: any) => {
+            if (res.meta.requestStatus === "fulfilled") {
+              setChangeData(res.payload);
+              const dto = checkChangedData(
+                res.payload,
+                selectedControllerName,
+                selectedControllerIndex,
+                state
+              );
+              setSyncData(dto);
+              setIsSynchronizeModal(false);
+            }
+          })
+          .catch((err: any) => {
+            console.log(err);
+          });
+      }
+    });
   };
 
   const synchronizeApiDoc = () => {
     dispatch(
-      getSynchronizeApiDoc({
-        docId: docInfo.docId,
+      setApiDetail({
+        encryptedUrl: localStorage.getItem("docId"),
         detailRequest: {
-          detail: JSON.stringify(state.data[selectedControllerIndex]),
+          detail: JSON.stringify({
+            server: { dependencies: [] },
+            controllers: state.data,
+          }),
         },
       })
-    )
-      .then((res: any) => {
-        if (res.meta.requestStatus === "fulfilled") {
-          setChangeCode(res.payload);
-        } else {
-          setErrorMessage(res.payload.data.message);
-        }
-      })
-      .catch((err: any) => {
-        console.log(err);
-      });
+    ).then((res: any) => {
+      if (res.meta.requestStatus === "fulfilled") {
+        dispatch(
+          getSynchronizeApiDoc({
+            docId: docInfo.docId,
+            detailRequest: {
+              detail: JSON.stringify(state.data[selectedControllerIndex]),
+            },
+          })
+        )
+          .then((res: any) => {
+            if (res.meta.requestStatus === "fulfilled") {
+              setChangeCode(res.payload);
+              setIsSynchronizeModal(false);
+            } else {
+              setErrorMessage(res.payload.data.message);
+            }
+          })
+          .catch((err: any) => {
+            console.log(err);
+          });
+      }
+    });
   };
 
   useEffect(() => {
     setChangeCode(undefined);
     setIsWarningModal(false);
     setErrorMessage("");
+    setChangeData(undefined);
   }, []);
   return (
     <ModalContainer>
       {!isFileInputModal ? (
         <DialogBox>
-          <div>
-            <div className="synchronizeModalTitle">
-              동기화를 진행할 컨트롤러 선택
-            </div>
+          <div className="synchronizeModalTitleGroup">
+            <div className="synchronizeModalTitle">동기화할 컨트롤러 선택</div>
             <div className="synchronizeModalButtonGroup">
               <div className="synchronizeModalButton green">
                 <div>문서 to 코드</div>
@@ -220,6 +252,7 @@ const SynchronizeModal = ({
             synchronizeApiDoc={synchronizeApiDoc}
             errorMessage={errorMessage}
             setErrorMessage={setErrorMessage}
+            state={state}
           />
         </div>
       )}
@@ -231,6 +264,7 @@ const SynchronizeModal = ({
             synchronizeApiDoc={synchronizeApiDoc}
             synchronizeFile={synchronizeFile}
             isPending={isPending}
+            state={state}
           />
         </div>
       )}

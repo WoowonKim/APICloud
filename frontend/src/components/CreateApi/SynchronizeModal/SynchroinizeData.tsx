@@ -1,7 +1,7 @@
 import { faClose, faInfo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
-import { CopyBlock, atomOneDark, a11yLight } from "react-code-blocks";
+import { CopyBlock, a11yLight } from "react-code-blocks";
 
 interface Props {
   syncData: any;

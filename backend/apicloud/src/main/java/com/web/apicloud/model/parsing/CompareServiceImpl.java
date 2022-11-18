@@ -24,11 +24,8 @@ public class CompareServiceImpl implements CompareService {
     @Override
     public ControllerDTO compareControllerVO(ControllerVO original, ControllerVO controllerVO) {
         ControllerDTO controllerDTO = ControllerMapper.INSTANCE.ControllerVOToControllerDTO(controllerVO);
-        System.out.println("==> " + controllerDTO);
 
-        if (equals(original.getCommonUri(), controllerVO.getCommonUri())) {
-            controllerDTO.setCommonUriFlag(true);
-        }
+        if (equals(original.getCommonUri(), controllerVO.getCommonUri())) controllerDTO.setCommonUriFlag(true);
 
         if (controllerVO.getApis() == null) return controllerDTO;
         for (int i = 0; i < controllerVO.getApis().size(); i++) {
@@ -42,17 +39,9 @@ public class CompareServiceImpl implements CompareService {
     }
 
     private void compareApiVO(ApiDTO apiDTO, ApiVO original, ApiVO apiVO) {
-        if (equals(original.getName(), apiVO.getName())) {
-            apiDTO.setNameFlag(true);
-        }
-
-        if (equals(original.getMethod(), apiVO.getMethod())) {
-            apiDTO.setMethodFlag(true);
-        }
-
-        if (equals(original.getUri(), apiVO.getUri())) {
-            apiDTO.setUriFlag(true);
-        }
+        if (equals(original.getName(), apiVO.getName())) apiDTO.setNameFlag(true);
+        if (equals(original.getMethod(), apiVO.getMethod())) apiDTO.setMethodFlag(true);
+        if (equals(original.getUri(), apiVO.getUri())) apiDTO.setUriFlag(true);
 
         if (apiVO.getRequestBody() == null) return;
         comparePropertyVO(apiDTO.getRequestBody(), original.getRequestBody(), apiVO.getRequestBody());
@@ -85,6 +74,7 @@ public class CompareServiceImpl implements CompareService {
             responses.get(SUCCESS).setCreateFlag(true);
             return;
         }
+
         PropertyVO originalPropertyVO = original.get(SUCCESS).getResponseBody();
         PropertyVO responseVOPropertyVO = responseVO.get(SUCCESS).getResponseBody();
         PropertyDTO responseDTO = responses.get(SUCCESS).getResponseBody();
@@ -104,25 +94,11 @@ public class CompareServiceImpl implements CompareService {
             return;
         }
 
-        if (equals(original.getDtoName(), propertyVO.getDtoName())) {
-            propertyDTO.setDtoNameFlag(true);
-        }
-
-        if (equals(original.getName(), propertyVO.getName())) {
-            propertyDTO.setNameFlag(true);
-        }
-
-        if (equals(original.getType(), propertyVO.getType())) {
-            propertyDTO.setTypeFlag(true);
-        }
-
-        if (equals(original.getCollectionType(), propertyVO.getCollectionType())) {
-            propertyDTO.setCollectionTypeFlag(true);
-        }
-
-        if (original.isRequired() != propertyVO.isRequired()) {
-            propertyDTO.setRequiredFlag(true);
-        }
+        if (equals(original.getDtoName(), propertyVO.getDtoName())) propertyDTO.setDtoNameFlag(true);
+        if (equals(original.getName(), propertyVO.getName())) propertyDTO.setNameFlag(true);
+        if (equals(original.getType(), propertyVO.getType())) propertyDTO.setTypeFlag(true);
+        if (equals(original.getCollectionType(), propertyVO.getCollectionType())) propertyDTO.setCollectionTypeFlag(true);
+        if (original.isRequired() != propertyVO.isRequired()) propertyDTO.setRequiredFlag(true);
 
         if (propertyVO.getProperties() == null) return;
         for (int i = 0; i < propertyVO.getProperties().size(); i++) {

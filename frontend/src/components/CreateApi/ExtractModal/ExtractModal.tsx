@@ -1,3 +1,4 @@
+import { MappedTypeDescription } from "@syncedstore/core/types/doc";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -22,6 +23,9 @@ type ExtractModalProps = {
   controllers: ControllerType[];
   setIsWarningModal: React.Dispatch<React.SetStateAction<boolean>>;
   isWarningModal: boolean;
+  state: MappedTypeDescription<{
+    data: ControllerType[];
+  }>;
 };
 
 type DetailType = {
@@ -45,6 +49,7 @@ const ExtractModal = ({
   controllers,
   setIsWarningModal,
   isWarningModal,
+  state,
 }: ExtractModalProps) => {
   const isOpenExtractModal = useSelector(
     (state: RootState) => state.apiDocsApi.isOpenExtractModal
@@ -104,10 +109,16 @@ const ExtractModal = ({
   const prepareExtraction = (extract: () => void) => {
     const detail = {} as DetailType;
     detail.controllers = controllers;
+
     dispatch(
       setApiDetail({
         encryptedUrl: encryptedUrl,
-        detailRequest: { detail: JSON.stringify(detail) },
+        detailRequest: {
+          detail: JSON.stringify({
+            server: { dependencies: [] },
+            controllers: controllers,
+          }),
+        },
       })
     ).then((res: any) => {
       if (res.meta.requestStatus !== "fulfilled") {
@@ -144,6 +155,7 @@ const ExtractModal = ({
         return;
       }
       downloadFile(res.payload);
+      setIsWarningModal(!isWarningModal);
     });
   };
 
@@ -290,6 +302,7 @@ const ExtractModal = ({
             validationResult={validationResult}
             prepareExtraction={prepareExtraction}
             extractSpringBoot={extractSpringBoot}
+            state={state}
           />
         </div>
       )}
