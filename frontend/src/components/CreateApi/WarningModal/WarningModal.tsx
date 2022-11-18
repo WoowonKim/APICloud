@@ -1,10 +1,10 @@
 import { faCloud } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useSyncedStore } from "@syncedstore/react";
+import { MappedTypeDescription } from "@syncedstore/core/types/doc";
 import React, { useEffect, useState } from "react";
 import { ThreeDots } from "react-loader-spinner";
 import styled from "styled-components";
-import { store } from "../store";
+import { ControllerType } from "../../../pages/CreateApi/ApisType";
 import "./WarningModal.scss";
 
 interface Props {
@@ -17,6 +17,9 @@ interface Props {
   errorMessage?: string;
   setErrorMessage?: React.Dispatch<React.SetStateAction<string>>;
   isPending?: boolean;
+  state: MappedTypeDescription<{
+    data: ControllerType[];
+  }>;
 }
 
 const WarningModal = ({
@@ -29,8 +32,8 @@ const WarningModal = ({
   errorMessage,
   setErrorMessage,
   isPending,
+  state,
 }: Props) => {
-  const state = useSyncedStore(store);
   const [isLoading, setIsLoading] = useState(false);
   const [isControllerNameValidation, setIsControllerNameValidation] =
     useState(true);

@@ -1,5 +1,5 @@
 import React from "react";
-import { ApisType, ControllerType } from "../../../pages/CreateApi/ApisType";
+import { ControllerType } from "../../../pages/CreateApi/ApisType";
 import SelectMethods from "../SelectMethods/SelectMethods";
 import "../ControllerAddModal/ControllerAddModal.scss";
 import { MappedTypeDescription } from "@syncedstore/core/types/doc";
@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 // ControllerAddModal에서 받아오는 props의 type 설정
 interface Props {
-  data: ApisType[];
+  data: any;
   state: MappedTypeDescription<{
     data: ControllerType[];
   }>;
@@ -16,7 +16,6 @@ interface Props {
   addedControllerIndex: number;
 }
 const ModalTable = ({
-  data,
   state,
   editControllerIndex,
   addedControllerIndex,

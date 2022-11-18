@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { PropertiesType } from "../../../pages/CreateApi/ApisType";
 import "../ControllerAddModal/ControllerAddModal.scss";
 import { faInfo, faRemove } from "@fortawesome/free-solid-svg-icons";
@@ -96,7 +96,13 @@ const DtoModalTable = ({
       <td key={`${index}-3`} className="apiTableBodyItem">
         <input
           type="checkbox"
-          checked={item.required !== null ? item.name : ""}
+          checked={
+            item.required !== null
+              ? item.required === true
+                ? true
+                : false
+              : false
+          }
           onChange={(e) => handelCellValue(e, "required", index)}
           className="apiTableCheckbox"
         />

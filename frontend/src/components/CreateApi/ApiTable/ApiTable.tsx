@@ -1,11 +1,13 @@
 import { faInfo, faRemove } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useSyncedStore } from "@syncedstore/react";
+import { MappedTypeDescription } from "@syncedstore/core/types/doc";
 import React, { useEffect, useState } from "react";
-import { PropertiesType } from "../../../pages/CreateApi/ApisType";
+import {
+  ControllerType,
+  PropertiesType,
+} from "../../../pages/CreateApi/ApisType";
 import DtoInputModal from "../DtoInputModal/DtoInputModal";
 import SelectTypes from "../SelectTypes/SelectTypes";
-import { store } from "../store";
 import TableInfo from "../Table/TableInfo";
 import { checkDtoNameValidation, getDepth } from "../validationCheck";
 
@@ -14,6 +16,9 @@ interface Props {
   selectedController: number;
   selectedApi: number;
   responseType: string;
+  state: MappedTypeDescription<{
+    data: ControllerType[];
+  }>;
 }
 
 const ApiTable = ({
@@ -21,8 +26,8 @@ const ApiTable = ({
   selectedController,
   selectedApi,
   responseType,
+  state,
 }: Props) => {
-  const state = useSyncedStore(store);
   const headers =
     activeTab === 1 ? ["key", "value"] : ["name", "type", "required"];
 
@@ -321,6 +326,7 @@ const ApiTable = ({
           final={final}
           setModalDepth={setModalDepth}
           modalDepth={modalDepth}
+          state={state}
         />
       )}
       <TableInfo
@@ -331,6 +337,7 @@ const ApiTable = ({
         responseType={responseType}
         dtoData={dtoData}
         dtoExists={dtoExists}
+        state={state}
       />
       <table>
         <thead>
