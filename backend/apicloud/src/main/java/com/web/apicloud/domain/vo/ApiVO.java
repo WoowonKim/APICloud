@@ -39,7 +39,7 @@ public class ApiVO {
         PropertyVO success;
         if (responses == null || (response = responses.get("success")) == null
                 || (success = response.getResponseBody()) == null
-                || !success.canMakeDto()) {
+                || !success.hasType()) {
             return JavaType.builder().type("Void").build();
         } else {
             return responses.get("success").getResponseBody().getJavaType(packageName, isCreation);
@@ -47,7 +47,7 @@ public class ApiVO {
     }
 
     @JsonIgnore
-    public void getAvailableDTO(Map<String, PropertyVO> dtos) {
+    public void getAvailableDto(Map<String, PropertyVO> dtos) {
         if (requestBody != null) {
             requestBody.getDtos(dtos);
         }

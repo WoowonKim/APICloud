@@ -13,6 +13,7 @@ import io.spring.initializr.generator.language.java.JavaLanguage;
 import io.spring.initializr.generator.language.java.JavaReturnStatement;
 import io.spring.initializr.generator.project.contributor.ProjectContributor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Modifier;
@@ -60,7 +61,7 @@ public class ControllerContributor implements ProjectContributor {
 
     private Consumer<ApiVO> apiConsumer(CustomJavaTypeDeclaration controllerType, Map<String, PropertyVO> dtos) {
         return api -> {
-            api.getAvailableDTO(dtos);
+            api.getAvailableDto(dtos);
             CustomJavaMethodDeclaration.Builder builder = CustomJavaMethodDeclaration
                     .method(api.getName())
                     .modifiers(Modifier.PUBLIC)
@@ -120,7 +121,7 @@ public class ControllerContributor implements ProjectContributor {
     }
 
     private Optional<AnnotatableParameter> makeParameter(PropertyVO property, String annotationName, String controllerName) {
-        if (property == null || !property.canMakeDto()) {
+        if (property == null || !StringUtils.hasText(property.getName()) || !property.hasType()) {
             return Optional.empty();
         }
         AnnotatableParameter parameter = new AnnotatableParameter(property.getJavaType(makeDtoPackageName(controllerName), false), property.getName());
@@ -140,7 +141,7 @@ public class ControllerContributor implements ProjectContributor {
     private void addDto(CustomJavaSourceCode sourceCode, Map<String, PropertyVO> dtos, String controllerName) {
         for (String dtoKey : dtos.keySet()) {
             PropertyVO dto = dtos.get(dtoKey);
-            if (dto == null || !dto.canMakeDto()) {
+            if (dto == null || !StringUtils.hasText(dto.getDtoName())) {
                 continue;
             }
             CustomJavaTypeDeclaration dtoType = sourceCode.createCompilationUnit(makeDtoPackageName(controllerName), dto.getDtoName()).createTypeDeclaration(dto.getDtoName());
