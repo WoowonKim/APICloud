@@ -70,7 +70,7 @@ public class ControllerContributor implements ProjectContributor {
 
             List<JavaArgument> arguments = new ArrayList<>();
             JavaType javaType = api.getReturnJavaType(true, makeDtoPackageName(controllerType.getName()));
-            if(!"Void".equals(javaType.getType())) {
+            if (!"Void".equals(javaType.getType())) {
                 arguments.add(new JavaClassCreation(api.getReturnJavaType(true, makeDtoPackageName(controllerType.getName())), List.of()));
             }
             arguments.add(new JavaEnum("org.springframework.http.HttpStatus", "OK"));
@@ -93,28 +93,42 @@ public class ControllerContributor implements ProjectContributor {
     private void addApiParameters(CustomJavaMethodDeclaration.Builder builder, ApiVO api, String controllerName) {
         List<AnnotatableParameter> parameters = new ArrayList<>();
         // path에서 파라미터 추가
-        makeParameters(api.getParameters(), PATH_VARIABLE, controllerName).ifPresent(parameters::addAll);
+        makePathVariableParameters(api.getParameters(), controllerName).ifPresent(parameters::addAll);
 
         // query에서 파라미터 추가
-        makeParameters(api.getQueries(), null, controllerName).ifPresent(parameters::addAll);
+        makeQueryParameters(api.getQueries(), controllerName).ifPresent(parameters::addAll);
 
         // requestBody에서 파라미터 추가
         makeParameter(api.getRequestBody(), REQUEST_BODY, controllerName).ifPresent(parameters::add);
         builder.parameters(parameters.toArray(AnnotatableParameter[]::new));
     }
 
-    private Optional<List<AnnotatableParameter>> makeParameters(List<PropertyVO> properties, String annotationName, String controllerName) {
+    private Optional<List<AnnotatableParameter>> makeQueryParameters(List<PropertyVO> queries, String controllerName) {
+        if (queries == null) {
+            return Optional.empty();
+        }
+        return Optional.of(queries.stream()
+                .filter(q -> q.getType() != null)
+                .map(q -> {
+                            if ("Object".equals(q.getType())) {
+                                return makeParameter(q, "org.springframework.web.bind.annotation.ModelAttribute", controllerName).orElse(null);
+                            } else {
+                                return makeParameter(q, "org.springframework.web.bind.annotation.RequestParam", controllerName).orElse(null);
+                            }
+                        }
+                )
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList())
+        );
+    }
+
+    private Optional<List<AnnotatableParameter>> makePathVariableParameters(List<PropertyVO> properties, String controllerName) {
         if (properties == null) {
             return Optional.empty();
         }
         return Optional.of(properties.stream()
-                .map(p -> {
-                    if (annotationName == null) {
-                        return makeParameter(p, null, controllerName).orElse(null);
-                    } else {
-                        return makeParameter(p, annotationName, controllerName).orElse(null);
-                    }
-                })
+                .map(p -> makeParameter(p, ControllerContributor.PATH_VARIABLE, controllerName).orElse(null)
+                )
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList())
         );
