@@ -79,9 +79,7 @@ public class ClassParsingServiceImpl implements ClassParsingService {
         while (i < lines.size()) {
             if (!lines.get(i).equals("")) {
                 PropertyVO property = getProperty(lines.get(i), category);
-                if (property != null) {
-                    requestBody.getProperties().add(property);
-                }
+                if (property != null) requestBody.getProperties().add(property);
             }
             i++;
         }

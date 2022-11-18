@@ -86,21 +86,6 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
         return codeList;
     }
 
-    private void getUpdateImport() {
-        for (int i = 0; i < codeList.size(); i++) {
-            if (codeList.get(i).getUpdateImport().size() == 0) continue;
-            int j = 0;
-            while (j < codeList.get(i).getCode().size()) {
-                if (parsingService.KMP(codeList.get(i).getCode().get(j++), "package") != -1) break;
-            }
-            if (!codeList.get(i).getCode().get(j).equals("")) codeList.get(i).getCode().add(j, "");
-            j++;
-            codeList.get(i).getUpdateImport().add(0, "//[ApiCloud]를 통해 추가된 import 항목입니다.");
-            codeList.get(i).getUpdateImport().add("");
-            codeList.get(i).getCode().addAll(j, codeList.get(i).getUpdateImport());
-        }
-    }
-
     private void getUpdateCode(ControllerVO detailVO) throws IOException {
         int i = 0;
         while (i < codeList.get(0).getCode().size()) {
@@ -112,16 +97,13 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
             if (parsingService.KMP(codeList.get(0).getCode().get(i), REQUEST_MAPPING) != -1) {
                 int target = parsingService.KMP(codeList.get(0).getCode().get(i), VALUE);
                 String value = null;
-                if (target != -1) {
-                    value = parsingService.getValue(codeList.get(0).getCode().get(i).substring(target + 1, codeList.get(0).getCode().get(i).length()));
-                } else {
-                    value = parsingService.getValue(codeList.get(0).getCode().get(i));
-                }
+                if (target != -1) value = parsingService.getValue(codeList.get(0).getCode().get(i).substring(target + 1, codeList.get(0).getCode().get(i).length()));
+                else value = parsingService.getValue(codeList.get(0).getCode().get(i));
+
                 String commonUri = "";
                 if (detailVO.getCommonUri() != null) commonUri = detailVO.getCommonUri();
-                if (value == null) {
-                    codeList.get(0).getCode().set(i, codeList.get(0).getCode().get(i) + "(value = \"" + commonUri + "\")");
-                } else codeList.get(0).getCode().set(i, codeList.get(0).getCode().get(i).replace(value, commonUri));
+                if (value == null) codeList.get(0).getCode().set(i, codeList.get(0).getCode().get(i) + "(value = \"" + commonUri + "\")");
+                else codeList.get(0).getCode().set(i, codeList.get(0).getCode().get(i).replace(value, commonUri));
                 i++;
                 break;
             }
@@ -137,6 +119,21 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
             i++;
         }
         apiParsing(detailVO, start, i - 1);
+    }
+
+    private void getUpdateImport() {
+        for (int i = 0; i < codeList.size(); i++) {
+            if (codeList.get(i).getUpdateImport().size() == 0) continue;
+            int j = 0;
+            while (j < codeList.get(i).getCode().size()) {
+                if (parsingService.KMP(codeList.get(i).getCode().get(j++), "package") != -1) break;
+            }
+            if (!codeList.get(i).getCode().get(j).equals("")) codeList.get(i).getCode().add(j, "");
+            j++;
+            codeList.get(i).getUpdateImport().add(0, "//[ApiCloud]를 통해 추가된 import 항목입니다.");
+            codeList.get(i).getUpdateImport().add("");
+            codeList.get(i).getCode().addAll(j, codeList.get(i).getUpdateImport());
+        }
     }
 
     private void apiParsing(ControllerVO detailVO, int start, int end) throws IOException {
@@ -372,6 +369,7 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
     private boolean updateMethodAndUri(ControllerVO detailVO, int start) {
         List<String> getMethod = parsingService.getMethod(codeList.get(0).getCode().get(start));
         if (getMethod == null) return false;
+
         if (getMethod.size() > 0) {
             String methodImport = IMPORT_ANNOTATION_COMMON + detailVO.getApis().get(count).getMethod() + "Mapping";
             if (importList.get(0).get(methodImport) == null) {
@@ -380,6 +378,7 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
             }
             codeList.get(0).getCode().set(start, codeList.get(0).getCode().get(start).replace(getMethod.get(0), detailVO.getApis().get(count).getMethod()));
         }
+
         if (getMethod.size() > 1) {
             if (detailVO.getApis().get(count).getUri() == null) {
                 codeList.get(0).getCode().set(start, codeList.get(0).getCode().get(start).replace(getMethod.get(1), ""));

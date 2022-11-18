@@ -79,6 +79,7 @@ public class ClassUpdateServiceImpl implements ClassUpdateService {
         for (int j = remove.size() - 1; j >= 0; j--) {
             SynchronizeCodeServiceImpl.codeList.get(index).getCode().remove(remove.get(j).intValue());
         }
+
         List<String> body = makeBody(groupSecretKey, property, index);
         if (body != null) SynchronizeCodeServiceImpl.codeList.get(index).getCode().addAll(startIndex, body);
     }
@@ -96,6 +97,7 @@ public class ClassUpdateServiceImpl implements ClassUpdateService {
                 type = propertyDetail.getDtoName();
                 updateObject(groupSecretKey, propertyDetail, index);
             } else type = propertyDetail.getType();
+
             if (propertyDetail.getCollectionType() != null) {
                 propertyBody += "List<" + type + ">";
                 if (SynchronizeCodeServiceImpl.importList.get(index).get(IMPORT_UTIL) == null && SynchronizeCodeServiceImpl.importList.get(index).get(IMPORT_LIST) == null) {
@@ -103,6 +105,7 @@ public class ClassUpdateServiceImpl implements ClassUpdateService {
                     SynchronizeCodeServiceImpl.codeList.get(index).getUpdateImport().add(IMPORT + " " + IMPORT_LIST + ";");
                 }
             } else propertyBody += type;
+
             propertyBody += " " + propertyDetail.getName() + ";";
             body.add(propertyBody);
         }

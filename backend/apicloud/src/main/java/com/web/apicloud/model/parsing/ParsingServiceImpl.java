@@ -33,9 +33,7 @@ public class ParsingServiceImpl implements ParsingService {
                 if (idx == patternLength - 1) {
                     idx = table[idx];
                     return i;
-                } else {
-                    idx += 1;
-                }
+                } else idx += 1;
             }
         }
         return -1;

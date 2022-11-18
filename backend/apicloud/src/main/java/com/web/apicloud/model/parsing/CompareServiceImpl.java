@@ -25,9 +25,7 @@ public class CompareServiceImpl implements CompareService {
     public ControllerDTO compareControllerVO(ControllerVO original, ControllerVO controllerVO) {
         ControllerDTO controllerDTO = ControllerMapper.INSTANCE.ControllerVOToControllerDTO(controllerVO);
 
-        if (equals(original.getCommonUri(), controllerVO.getCommonUri())) {
-            controllerDTO.setCommonUriFlag(true);
-        }
+        if (equals(original.getCommonUri(), controllerVO.getCommonUri())) controllerDTO.setCommonUriFlag(true);
 
         if (controllerVO.getApis() == null) return controllerDTO;
         for (int i = 0; i < controllerVO.getApis().size(); i++) {
@@ -76,6 +74,7 @@ public class CompareServiceImpl implements CompareService {
             responses.get(SUCCESS).setCreateFlag(true);
             return;
         }
+
         PropertyVO originalPropertyVO = original.get(SUCCESS).getResponseBody();
         PropertyVO responseVOPropertyVO = responseVO.get(SUCCESS).getResponseBody();
         PropertyDTO responseDTO = responses.get(SUCCESS).getResponseBody();
