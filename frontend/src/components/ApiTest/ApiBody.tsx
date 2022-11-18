@@ -5,6 +5,7 @@ import {
   RequestTypeInfo,
 } from "../../pages/CreateApi/ApisType";
 import { reBodyType } from "../../pages/TestApi";
+import { useAppSelector } from "../../Store/hooks";
 import { selectTestApi } from "../../Store/slice/testApi";
 import {
   HeaderContatinerList,
@@ -20,13 +21,12 @@ interface type {
 }
 
 const ApiBody = ({ getInfo, testbodyInfo, setTestbodyInfo }: type) => {
+  const info = useSelector(selectTestApi);
   const [requestBody, setRequestBody] = useState<RequestBodyType>();
-
   const [inputBody, setInputBody] = useState("");
   const [newBodyInfo, setNewBodyInfo] = useState({});
-
   const [test, setTest] = useState("");
-  const info = useSelector(selectTestApi);
+  const [arrTest, setArrTest] = useState<[any, any][]>([]);
 
   // RequestBody 작성 할 값 불러오기 및 기존 body값 초기화
   useEffect(() => {
@@ -40,6 +40,12 @@ const ApiBody = ({ getInfo, testbodyInfo, setTestbodyInfo }: type) => {
     }
   }, [getInfo, info.getControllerInfomation, info.getApisInfomation]);
 
+  useEffect(() => {
+    if (testbodyInfo) {
+      setArrTest(Object.entries(testbodyInfo));
+    }
+  }, [testbodyInfo]);
+
   // 전송할 body값 객체화
   useEffect(() => {
     let key = test;
@@ -52,7 +58,6 @@ const ApiBody = ({ getInfo, testbodyInfo, setTestbodyInfo }: type) => {
     setTestbodyInfo({ ...testbodyInfo, ...newBodyInfo });
     setInputBody("");
   };
-
   return (
     <>
       {requestBody?.properties &&
@@ -79,7 +84,25 @@ const ApiBody = ({ getInfo, testbodyInfo, setTestbodyInfo }: type) => {
               <p className="apiHeaderListButtonTag">SAVE</p>
             </div>
           </div>
-        ))}
+          <div className="apiKeyHeaderTitleValueSubmit">
+            <p className="apiHeaderListPtagInput">
+              <input
+                className="apiHeaderListInputTag"
+                type="text"
+                defaultValue={arrTest.length > idx ? arrTest[idx][1] : ""}
+                onChange={e => {
+                  setInputBody(e.target.value);
+                  setTest(it.name);
+                }}
+                onBlur={onSubmit}
+              />
+            </p>
+          </div>
+          <div className="apiKeyHeaderTitleCheck">
+            <p className="apiHeaderListButtonTag">SAVE</p>
+          </div>
+        </div>
+      ))}
     </>
   );
 };

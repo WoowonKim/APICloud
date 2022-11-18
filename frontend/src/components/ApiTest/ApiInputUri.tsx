@@ -1,8 +1,12 @@
 import axios from "axios";
+import { ignoredYellowBox } from "console";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
-import { RequestTypeInfo } from "../../pages/CreateApi/ApisType";
+import {
+  PropertiesType,
+  RequestTypeInfo,
+} from "../../pages/CreateApi/ApisType";
 import { reBodyType } from "../../pages/TestApi";
 import { useAppDispatch } from "../../Store/hooks";
 import testApiSlice, { selectTestApi } from "../../Store/slice/testApi";
@@ -12,16 +16,13 @@ const ApiInputUriSearch = styled.input`
   width: 80%;
   border: none;
   border-bottom: 2px solid #dadada;
-  // border-right: 2px solid #000000;
-  // border-top: 1px solid #000000;
   border-top-right-radius: 15px;
-  // border-bottom-right-radius: 15px;
   padding: 1px 50px 1px 10px;
   outline: none;
   font-weight: 500;
   font-size: 14px;
-  color: ${(props) => props.theme.color};
-  background-color: ${(props) => props.theme.bgColor};
+  color: ${props => props.theme.color};
+  background-color: ${props => props.theme.bgColor};
 `;
 
 export type list = {
@@ -64,7 +65,50 @@ const ApiInputUri = ({
   const context = Object.values(info.getContextUrl).toString();
   const requestMaapingUri =
     getInfo?.controllers[info.getControllerInfomation].commonUri;
-  const testUri = server + context + requestMaapingUri + methodUri;
+  // const testUri = server + context + requestMaapingUri + methodUri;
+  // useEffect(() => {
+  //   let querVal: string[] = [];
+  //   if (queriesInfo) {
+  //     querVal = Object.values(queriesInfo);
+  //   }
+  //   querVal.length === 0
+  //     ? setTestUri(server + context + requestMaapingUri + methodUri)
+  //     : setTestUri(
+  //         server + context + requestMaapingUri + methodUri + `/${querVal[0]}`
+  //       );
+  // }, [queriesInfo]);
+
+  const [testUri, setTestUri] = useState("");
+  useEffect(() => {
+    setTestUri(server + context + requestMaapingUri + methodUri);
+  }, [requestMaapingUri, methodUri]);
+  const [querArr, setQuerArr] = useState<[any, any][]>([]);
+  useEffect(() => {
+    if (queriesInfo) {
+      setQuerArr(Object.entries(queriesInfo));
+    }
+  }, [queriesInfo]);
+
+  const [realQuery, setRealQuery] = useState<string[]>([]);
+  const [queryText, setQueryText] = useState("");
+  useEffect(() => {
+    querArr.map((it, idx) => {
+      const querText = "/" + it[1];
+      it[1].length > 0 ? setQueryText(querText) : setQueryText("");
+      setRealQuery([...realQuery, querText]);
+    });
+  }, [querArr]);
+
+  const [querString, setQuerString] = useState("");
+  useEffect(() => {
+    const querText = realQuery.toString().replace(",", "");
+    console.log("REALQUERY => ", realQuery);
+    console.log("QUER TEXT => ", querText);
+
+    querText.length === 0
+      ? setTestUri(server + context + requestMaapingUri + methodUri)
+      : setTestUri(server + context + requestMaapingUri + methodUri + querText);
+  }, [realQuery]);
 
   // 성공시 Response 반환
   const responseAllInfo = (e: any) => {
@@ -87,6 +131,7 @@ const ApiInputUri = ({
     getInfo?.controllers[info.getControllerInfomation].apis[
       info.getApisInfomation
     ].method;
+
   const submitRequest = () => {
     switch (requestMethod) {
       case "Get":
@@ -98,11 +143,11 @@ const ApiInputUri = ({
           },
           params: paramsInfo,
         })
-          .then((res) => {
+          .then(res => {
             console.log("RES=>", res);
             responseAllInfo(res);
           })
-          .catch((err) => {
+          .catch(err => {
             errResponsAllInfo(err);
             console.log("ERR => ", err);
             console.log("Params => ", paramsInfo);
@@ -118,12 +163,12 @@ const ApiInputUri = ({
             Authorization: token,
           },
         })
-          .then((res) => {
+          .then(res => {
             console.log("post 성공", res);
             console.log("postBody =>", testbodyInfo);
             responseAllInfo(res);
           })
-          .catch((err) => {
+          .catch(err => {
             console.log("ERR =>", err);
             console.log("postBody =>", testbodyInfo);
             errResponsAllInfo(err);
@@ -138,12 +183,12 @@ const ApiInputUri = ({
             Authorization: token,
           },
         })
-          .then((res) => {
+          .then(res => {
             console.log("put 성공 =>", res);
             console.log("putBody =>", testbodyInfo);
             responseAllInfo(res);
           })
-          .catch((err) => {
+          .catch(err => {
             console.log("ERR => ", err);
             console.log("putBody=>", testbodyInfo);
             errResponsAllInfo(err);
@@ -158,11 +203,11 @@ const ApiInputUri = ({
           },
           params: paramsInfo,
         })
-          .then((res) => {
+          .then(res => {
             responseAllInfo(res);
             console.log("Delete 성공=>", res);
           })
-          .catch((err) => {
+          .catch(err => {
             errResponsAllInfo(err);
             console.log("ERR => ", err);
           });
@@ -192,14 +237,54 @@ const ApiInputUri = ({
     setTestbodyInfo({});
     setParamsInfo({});
     setQueriesInfo({});
+    setTestUri(server + context + requestMaapingUri + methodUri);
+    setRealQuery([]);
   }, [sendFlag]);
+
+  // console.log("URI => ", testUri.includes("?"));
+  console.log("URI => ", testUri.includes("?"));
+  const [reqArr, setReqArr] = useState<string[]>([]);
+  const [infoParams, setInfoParams] = useState<PropertiesType[]>();
+  useEffect(() => {
+    if (getInfo) {
+      setInfoParams(
+        getInfo?.controllers[info.getControllerInfomation].apis[
+          info.getApisInfomation
+        ].parameters
+      );
+    }
+  }, [getInfo, info.getControllerInfomation, info.getApisInfomation]);
+  useEffect(() => {
+    if (infoParams) {
+      infoParams?.map((it, idx) => {
+        setReqArr([...reqArr, it.name]);
+      });
+    }
+  }, [infoParams]);
+  const [reqUri, setReqUri] = useState("");
+  useEffect(() => {
+    setReqUri(reqArr.toString().replace(",", "=,"));
+  }, [reqArr]);
+  const uriFlag = testUri.includes("?");
+  useEffect(() => {
+    if (uriFlag) {
+      const sum = testUri + reqUri;
+      setTestUri(sum);
+    }
+  }, [uriFlag]);
 
   return (
     <div className="apiInputContainer">
       <span className="apiChoice">
         <MethodTest methodApiWord={requestMethod} />
       </span>
-      <ApiInputUriSearch type="text" value={testUri} />
+      <ApiInputUriSearch
+        type="text"
+        value={testUri}
+        onChange={e => {
+          setTestUri(e.target.value);
+        }}
+      />
       <button className="apiTestBtn" onClick={submitRequest}>
         SEND
       </button>
