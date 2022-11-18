@@ -145,6 +145,7 @@ public class SynchronizeDocServiceImpl implements SynchronizeDocService {
     }
 
     private void getRequestDetail(ApiDetailVO apiDetail, String request) throws IOException {
+        System.out.println("request: " + request);
         if (request.equals("")) return;
 
         int pathVariable = parsingService.KMP(request, PATH_VARIABLE);
@@ -207,7 +208,6 @@ public class SynchronizeDocServiceImpl implements SynchronizeDocService {
             for (int j = 0; j < api.get(i).length(); j++) {
                 if (requestFlag) request += api.get(i).charAt(j);
                 if (methodNameFlag) methodName += api.get(i).charAt(j);
-
                 switch (api.get(i).charAt(j)) {
                     case '<':
                         stack.push('<');
@@ -245,10 +245,10 @@ public class SynchronizeDocServiceImpl implements SynchronizeDocService {
                         }
                         break;
                     case '}':
-                        if (stack.peek() == '}') stack.pop();
+                        if (stack.peek() == '{') stack.pop();
                         break;
                     case ']':
-                        if (stack.peek() == ']') stack.pop();
+                        if (stack.peek() == '[') stack.pop();
                         break;
                     case '@':
                         requestFlag = true;

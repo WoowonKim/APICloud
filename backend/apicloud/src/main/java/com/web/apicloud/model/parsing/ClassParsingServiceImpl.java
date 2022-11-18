@@ -18,7 +18,7 @@ public class ClassParsingServiceImpl implements ClassParsingService {
     private static final String LIST = "List";
     private static final String OBJECT = "Object";
     private static final String[] accessModifier = {"public", "protected", "private", "default", "static"};
-    private static final String[] type = {"String", "Long", "long", "Integer", "int", "float", "Float"};
+    private static final String[] type = {"String", "Long", "long", "Integer", "int", "float", "Float", "Double", "double", "Boolean", "boolean", "Character", "char", "Short", "short", "Byte", "byte", "Byte[]", "byte[]"};
 
     private static String groupSecretKey = "";
     public static ArrayList<String> useQuery = new ArrayList<>();
