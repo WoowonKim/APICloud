@@ -164,6 +164,18 @@ const CreateModal = () => {
     });
     setInvitedUsers(copy);
   };
+
+  const deleteUser = async (userId: number) => {
+    let copy = [...invitedUsers];
+    const idx = copy.findIndex(function (ele) {
+      return ele.userId === userId;
+    });
+    if (idx > -1) {
+      copy.splice(idx, 1);
+      setInvitedUsers(copy);
+    }
+  };
+
   return (
     <ModalContainer>
       <DialogBox>
@@ -388,6 +400,14 @@ const CreateModal = () => {
                         <MenuItem value={2}>editor</MenuItem>
                         <MenuItem value={3}>viewer</MenuItem>
                       </Select>
+                      <UserDeleteButton
+                        type="button"
+                        onClick={() => {
+                          deleteUser(it.userId);
+                        }}
+                      >
+                        삭제
+                      </UserDeleteButton>
                     </ListItem>
                   ))}
                 </List>
@@ -448,5 +468,9 @@ const Backdrop = styled.div`
   top: 0;
   z-index: 9999;
 `;
-
+const UserDeleteButton = styled.button`
+  border: none;
+  margin-left: 10px;
+  background-color: transparent;
+`;
 export default CreateModal;
