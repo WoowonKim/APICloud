@@ -368,9 +368,7 @@ export function checkDataValidation(data: ControllerType[]) {
                 "properties",
                 current[item]
               );
-              if (requestBodyValueValidation === "delete") {
-                current[item] = {};
-              } else if (!requestBodyValueValidation) {
+              if (!requestBodyValueValidation) {
                 requiredValueInvalidCount++;
               }
               if (current[item]?.name && current[item].name.trim()) {

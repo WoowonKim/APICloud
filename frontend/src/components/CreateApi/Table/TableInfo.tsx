@@ -45,7 +45,7 @@ const TableInfo = ({
       state.data[selectedController].apis[selectedApi].requestBody.type =
         "Object";
     }
-  }, []);
+  }, [state.data[selectedController].apis[selectedApi].requestBody.type]);
   useEffect(() => {
     if (responseType === "fail" || responseType === "success") {
       if (
