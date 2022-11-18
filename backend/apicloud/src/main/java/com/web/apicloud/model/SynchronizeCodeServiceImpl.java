@@ -40,7 +40,6 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
     private static final String IMPORT_REQUEST_BODY = "org.springframework.web.bind.annotation.RequestBody";
     private static final String IMPORT_ANNOTATION = "org.springframework.web.bind.annotation.*";
     private static final String IMPORT_ANNOTATION_COMMON = "org.springframework.web.bind.annotation.";
-
     private static final String IMPORT_LIST = "java.util.List";
     private static final String IMPORT_UTIL = "java.util.*";
 
@@ -62,7 +61,6 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
     private boolean etcFlag = false;
     private static String groupSecretKey = "";
 
-
     @Override
     public List<CodeResponse> updateCode(Long docId, DetailRequest detailRequest) throws IOException {
         codeList = new ArrayList<>();
@@ -79,7 +77,6 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
         if (getFileCode == null) throw new NotFoundException(NOT_FOUND_FILE);
         List<String> lines = getFileCode.get("code");
         String key = StringUtils.removeStart(StringUtils.removeEnd(String.valueOf(getFileCode.get(IMPORT)), "]"), "[");
-        System.out.println(lines);
         if (lines == null) throw new NotFoundException(NOT_FOUND_FILE);
 
         codeList.add(CodeResponse.builder().name(detailVO.getName()).importPackage(key).code(lines).build());
@@ -87,23 +84,6 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
         getUpdateCode(detailVO);
         getUpdateImport();
         return codeList;
-    }
-
-    private void getUpdateImport() {
-        for (int i = 0; i < codeList.size(); i++) {
-            if (codeList.get(i).getUpdateImport().size() == 0) continue;
-            int j = 0;
-            while (j < codeList.get(i).getCode().size()) {
-                if (parsingService.KMP(codeList.get(i).getCode().get(j++), "package") != -1) break;
-            }
-            if (!codeList.get(i).getCode().get(j).equals("")) codeList.get(i).getCode().add(j, "");
-            j++;
-            codeList.get(i).getUpdateImport().add(0, "//[ApiCloud]를 통해 추가된 import 항목입니다.");
-            codeList.get(i).getUpdateImport().add("");
-
-            System.out.println(codeList.get(i).getUpdateImport());
-            codeList.get(i).getCode().addAll(j, codeList.get(i).getUpdateImport());
-        }
     }
 
     private void getUpdateCode(ControllerVO detailVO) throws IOException {
@@ -117,22 +97,18 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
             if (parsingService.KMP(codeList.get(0).getCode().get(i), REQUEST_MAPPING) != -1) {
                 int target = parsingService.KMP(codeList.get(0).getCode().get(i), VALUE);
                 String value = null;
-                if (target != -1) {
-                    value = parsingService.getValue(codeList.get(0).getCode().get(i).substring(target + 1, codeList.get(0).getCode().get(i).length()));
-                } else {
-                    value = parsingService.getValue(codeList.get(0).getCode().get(i));
-                }
+                if (target != -1) value = parsingService.getValue(codeList.get(0).getCode().get(i).substring(target + 1, codeList.get(0).getCode().get(i).length()));
+                else value = parsingService.getValue(codeList.get(0).getCode().get(i));
+
                 String commonUri = "";
                 if (detailVO.getCommonUri() != null) commonUri = detailVO.getCommonUri();
-                if (value == null) {
-                    codeList.get(0).getCode().set(i, codeList.get(0).getCode().get(i) + "(value = \"" + commonUri + "\")");
-                } else codeList.get(0).getCode().set(i, codeList.get(0).getCode().get(i).replace(value, commonUri));
+                if (value == null) codeList.get(0).getCode().set(i, codeList.get(0).getCode().get(i) + "(value = \"" + commonUri + "\")");
+                else codeList.get(0).getCode().set(i, codeList.get(0).getCode().get(i).replace(value, commonUri));
                 i++;
                 break;
             }
             i++;
         }
-        System.out.println(importList);
 
         int start = i;
         while (i < codeList.get(0).getCode().size()) {
@@ -143,6 +119,21 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
             i++;
         }
         apiParsing(detailVO, start, i - 1);
+    }
+
+    private void getUpdateImport() {
+        for (int i = 0; i < codeList.size(); i++) {
+            if (codeList.get(i).getUpdateImport().size() == 0) continue;
+            int j = 0;
+            while (j < codeList.get(i).getCode().size()) {
+                if (parsingService.KMP(codeList.get(i).getCode().get(j++), "package") != -1) break;
+            }
+            if (!codeList.get(i).getCode().get(j).equals("")) codeList.get(i).getCode().add(j, "");
+            j++;
+            codeList.get(i).getUpdateImport().add(0, "//[ApiCloud]를 통해 추가된 import 항목입니다.");
+            codeList.get(i).getUpdateImport().add("");
+            codeList.get(i).getCode().addAll(j, codeList.get(i).getUpdateImport());
+        }
     }
 
     private void apiParsing(ControllerVO detailVO, int start, int end) throws IOException {
@@ -214,7 +205,6 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
                                     else name = responseBody.getResponseBody().getType();
                                     codeList.get(0).getCode().set(start, codeList.get(0).getCode().get(start).replace(response, name));
                                 }
-                                // TODO : response CLass 바꾸러 가기,  import 추가
                                 classUpdateService.updateObject(groupSecretKey, responseBody.getResponseBody(), 0);
                                 methodNameFlag = true;
                             }
@@ -223,7 +213,6 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
                     case ')':
                         if (stack.peek() == '(') stack.pop();
                         if (stack.isEmpty()) {
-                            System.out.println("request ==> ");
                             if (requestStr.equals("")) return;
                             requestStr = requestStr.substring(0, requestStr.length() - 1);
                             request.put(start, requestStr);
@@ -342,7 +331,6 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
 
                 String type;
                 if (query.getType().equals("Object")) {
-                    // TODO: property 업데이트 하러 가기, import 추가
                     classUpdateService.updateObject(groupSecretKey, query, 0);
                     type = query.getDtoName();
                 } else type = query.getType();
@@ -372,7 +360,6 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
                 requestStr += detailApiVO.getRequestBody().getCollectionType() + "<" + detailApiVO.getRequestBody().getDtoName() + ">";
             } else requestStr += detailApiVO.getRequestBody().getDtoName();
             requestStr += " " + detailApiVO.getRequestBody().getName() + ", ";
-            // TODO : 리퀘스트 바디 업데이트 하러가기
             classUpdateService.updateObject(groupSecretKey, detailApiVO.getRequestBody(), 0);
             api += requestStr;
         }
@@ -382,6 +369,7 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
     private boolean updateMethodAndUri(ControllerVO detailVO, int start) {
         List<String> getMethod = parsingService.getMethod(codeList.get(0).getCode().get(start));
         if (getMethod == null) return false;
+
         if (getMethod.size() > 0) {
             String methodImport = IMPORT_ANNOTATION_COMMON + detailVO.getApis().get(count).getMethod() + "Mapping";
             if (importList.get(0).get(methodImport) == null) {
@@ -390,6 +378,7 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
             }
             codeList.get(0).getCode().set(start, codeList.get(0).getCode().get(start).replace(getMethod.get(0), detailVO.getApis().get(count).getMethod()));
         }
+
         if (getMethod.size() > 1) {
             if (detailVO.getApis().get(count).getUri() == null) {
                 codeList.get(0).getCode().set(start, codeList.get(0).getCode().get(start).replace(getMethod.get(1), ""));

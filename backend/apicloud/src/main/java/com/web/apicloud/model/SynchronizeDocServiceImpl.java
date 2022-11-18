@@ -32,8 +32,6 @@ public class SynchronizeDocServiceImpl implements SynchronizeDocService {
     private static final String REQUEST_BODY = "RequestBody";
     private static final String VALUE = "value";
 
-    private static String groupSecretKey = "";
-
     private static final String NOT_FOUND_CONTROLLER = "해당 Controller를 찾을 수 없습니다.";
 
     private final S3Service s3Service;
@@ -44,6 +42,7 @@ public class SynchronizeDocServiceImpl implements SynchronizeDocService {
     private final GroupService groupService;
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static String groupSecretKey = "";
 
     @Override
     public ControllerDTO getFile(Long docId, SynchronizeRequest synchronizeRequest, MultipartFile file) throws IOException {
@@ -61,11 +60,8 @@ public class SynchronizeDocServiceImpl implements SynchronizeDocService {
         while (i < lines.size()) {
             if (parsingService.KMP(lines.get(i), REQUEST_MAPPING) != -1) {
                 int target = parsingService.KMP(lines.get(i), VALUE);
-                if (target != -1) {
-                    value = parsingService.getValue(lines.get(i).substring(target + 1, lines.get(i).length()));
-                } else {
-                    value = parsingService.getValue(lines.get(i));
-                }
+                if (target != -1) value = parsingService.getValue(lines.get(i).substring(target + 1, lines.get(i).length()));
+                else value = parsingService.getValue(lines.get(i));
                 i++;
                 break;
             }
@@ -80,27 +76,21 @@ public class SynchronizeDocServiceImpl implements SynchronizeDocService {
                 ClassParsingServiceImpl.useRequest = new ArrayList<>();
                 ClassParsingServiceImpl.useResponse = new ArrayList<>();
                 ApiVO apiVO = apiParsing(api);
-                if (apiVO != null) {
-                    apis.add(apiVO);
-                }
+                if (apiVO != null) apis.add(apiVO);
                 api = new ArrayList<>();
             }
             api.add(lines.get(i++));
         }
         ApiVO apiVO = apiParsing(api);
-        if (apiVO != null) {
-            apis.add(apiVO);
-        }
+        if (apiVO != null) apis.add(apiVO);
 
         ControllerVO controllerVO = ControllerVO.builder()
                 .commonUri(value)
                 .apis(apis)
                 .build();
-        System.out.println("controllerVO => " + controllerVO);
 
         DocVO detailVO = objectMapper.readValue(doc.getDetail(), DocVO.class);
-        if (detailVO.getControllers().size() <= synchronizeRequest.getControllerId())
-            throw new NotFoundException(NOT_FOUND_CONTROLLER);
+        if (detailVO.getControllers().size() <= synchronizeRequest.getControllerId()) throw new NotFoundException(NOT_FOUND_CONTROLLER);
         ControllerVO original = detailVO.getControllers().get(synchronizeRequest.getControllerId());
         return compareService.compareControllerVO(original, controllerVO);
     }
@@ -109,13 +99,11 @@ public class SynchronizeDocServiceImpl implements SynchronizeDocService {
         if (api.size() == 0) return null;
         List<String> getMethod = parsingService.getMethod(api.get(0));
         if (getMethod == null) return null;
+
         String method = null, uri = null;
-        if (getMethod.size() > 0) {
-            method = getMethod.get(0);
-        }
-        if (getMethod.size() > 1) {
-            uri = getMethod.get(1);
-        }
+        if (getMethod.size() > 0) method = getMethod.get(0);
+        if (getMethod.size() > 1) uri = getMethod.get(1);
+
         ApiDetailVO apiDetail = null;
         for (int i = 1; i < api.size(); i++) {
             if (parsingService.KMP(api.get(i), RESPONSE_ENTITY) != -1) {
@@ -142,55 +130,6 @@ public class SynchronizeDocServiceImpl implements SynchronizeDocService {
                 .headers(apiDetail.getHeaders())
                 .build();
         return apiVO;
-    }
-
-    private void getRequestDetail(ApiDetailVO apiDetail, String request) throws IOException {
-        System.out.println("request: " + request);
-        if (request.equals("")) return;
-
-        int pathVariable = parsingService.KMP(request, PATH_VARIABLE);
-        if (pathVariable != -1) {
-            String str = request.substring(pathVariable + 1, request.length());
-            String value = parsingService.getValue(str);
-            if (value == null) value = parsingService.getName(str);
-            PropertyVO parameter = PropertyVO.builder().name(value).type(parsingService.getType(request)).required(parsingService.getRequired(str)).build();
-            apiDetail.getParameters().add(parameter);
-        } else {
-            int requestParam = parsingService.KMP(request, REQUEST_PARAM);
-            if (requestParam != -1) {
-                String str = request.substring(requestParam + 1, request.length());
-                String value = parsingService.getValue(str);
-                if (value == null) value = parsingService.getName(str);
-                String type = parsingService.getParamType(request);
-                PropertyVO query = classParsingService.getBody(groupSecretKey, type, "query");
-                apiDetail.getQueries().add(PropertyVO.builder()
-                        .dtoName(query.getDtoName())
-                        .collectionType(query.getCollectionType())
-                        .required(parsingService.getRequired(str))
-                        .properties(query.getProperties())
-                        .name(value)
-                        .type(query.getType())
-                        .build());
-            } else {
-                int requestBody = parsingService.KMP(request, REQUEST_BODY);
-                if (requestBody != -1) {
-                    String[] tokens = request.split(" ");
-                    apiDetail.setRequestBody(classParsingService.getBody(groupSecretKey, tokens[tokens.length - 2], "request"));
-                    if (apiDetail.getRequestBody() != null) {
-                        apiDetail.getRequestBody().setRequired(parsingService.getRequired(request));
-                        apiDetail.getRequestBody().setName(tokens[tokens.length - 1].substring(0, tokens[tokens.length - 1].length() - 1));
-                    }
-                }
-            }
-        }
-    }
-
-    private void getResponseDetail(ApiDetailVO apiDetail, String response) throws IOException {
-        if (response.equals("")) return;
-        Map<String, ResponseVO> getResponseMap = new HashMap<>();
-        ResponseVO getResponse = ResponseVO.builder().responseBody(classParsingService.getBody(groupSecretKey, response, "response")).build();
-        getResponseMap.put("success", getResponse);
-        apiDetail.setResponses(getResponseMap);
     }
 
     private ApiDetailVO getApi(int i, List<String> api) throws IOException {
@@ -267,6 +206,54 @@ public class SynchronizeDocServiceImpl implements SynchronizeDocService {
             i++;
         }
         return apiDetail;
+    }
+
+    private void getRequestDetail(ApiDetailVO apiDetail, String request) throws IOException {
+        if (request.equals("")) return;
+
+        int pathVariable = parsingService.KMP(request, PATH_VARIABLE);
+        if (pathVariable != -1) {
+            String str = request.substring(pathVariable + 1, request.length());
+            String value = parsingService.getValue(str);
+            if (value == null) value = parsingService.getName(str);
+            PropertyVO parameter = PropertyVO.builder().name(value).type(parsingService.getType(request)).required(parsingService.getRequired(str)).build();
+            apiDetail.getParameters().add(parameter);
+        } else {
+            int requestParam = parsingService.KMP(request, REQUEST_PARAM);
+            if (requestParam != -1) {
+                String str = request.substring(requestParam + 1, request.length());
+                String value = parsingService.getValue(str);
+                if (value == null) value = parsingService.getName(str);
+                String type = parsingService.getParamType(request);
+                PropertyVO query = classParsingService.getBody(groupSecretKey, type, "query");
+                apiDetail.getQueries().add(PropertyVO.builder()
+                        .dtoName(query.getDtoName())
+                        .collectionType(query.getCollectionType())
+                        .required(parsingService.getRequired(str))
+                        .properties(query.getProperties())
+                        .name(value)
+                        .type(query.getType())
+                        .build());
+            } else {
+                int requestBody = parsingService.KMP(request, REQUEST_BODY);
+                if (requestBody != -1) {
+                    String[] tokens = request.split(" ");
+                    apiDetail.setRequestBody(classParsingService.getBody(groupSecretKey, tokens[tokens.length - 2], "request"));
+                    if (apiDetail.getRequestBody() != null) {
+                        apiDetail.getRequestBody().setRequired(parsingService.getRequired(request));
+                        apiDetail.getRequestBody().setName(tokens[tokens.length - 1].substring(0, tokens[tokens.length - 1].length() - 1));
+                    }
+                }
+            }
+        }
+    }
+
+    private void getResponseDetail(ApiDetailVO apiDetail, String response) throws IOException {
+        if (response.equals("")) return;
+        Map<String, ResponseVO> getResponseMap = new HashMap<>();
+        ResponseVO getResponse = ResponseVO.builder().responseBody(classParsingService.getBody(groupSecretKey, response, "response")).build();
+        getResponseMap.put("success", getResponse);
+        apiDetail.setResponses(getResponseMap);
     }
 
     @Override

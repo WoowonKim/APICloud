@@ -79,9 +79,7 @@ public class ClassParsingServiceImpl implements ClassParsingService {
         while (i < lines.size()) {
             if (!lines.get(i).equals("")) {
                 PropertyVO property = getProperty(lines.get(i), category);
-                if (property != null) {
-                    requestBody.getProperties().add(property);
-                }
+                if (property != null) requestBody.getProperties().add(property);
             }
             i++;
         }
@@ -110,6 +108,7 @@ public class ClassParsingServiceImpl implements ClassParsingService {
         if ((j + 1) >= tokens.length) return null;
         PropertyVO getPropertyVO = getBody(groupSecretKey, tokens[j], category);
         if (getPropertyVO == null) return null;
+
         return PropertyVO.builder()
                 .dtoName(getPropertyVO.getDtoName())
                 .name(tokens[j + 1])
