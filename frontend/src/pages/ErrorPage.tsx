@@ -33,7 +33,7 @@ const ErrorPage = ({ code }: ErrorProps) => {
   const handleStart = () => {
     setTimeout(() => {
       setIsLoading(false);
-    }, 2000);
+    }, 1000);
   };
 
   if (code === "403") {

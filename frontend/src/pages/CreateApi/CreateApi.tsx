@@ -319,7 +319,7 @@ const CreateApi = () => {
   const handleStart = () => {
     setTimeout(() => {
       setIsLoading(false);
-    }, 3000);
+    }, 2000);
   };
 
   useEffect(() => {
@@ -385,15 +385,23 @@ const CreateApi = () => {
             status: 400,
             responseBody: propertiesData,
           };
-        } else if (
-          !rootPath.responses.fail?.responseBody ||
-          rootPath.responses.fail.responseBody === null ||
-          JSON.stringify(rootPath.responses.fail.responseBody) === "{}"
-        ) {
-          rootPath.responses.fail = {
-            status: 400,
-            responseBody: propertiesData,
-          };
+        } else {
+          if (
+            !rootPath.responses.fail?.responseBody ||
+            rootPath.responses.fail.responseBody === null ||
+            JSON.stringify(rootPath.responses.fail.responseBody) === "{}"
+          ) {
+            rootPath.responses.fail = {
+              status: 400,
+              responseBody: propertiesData,
+            };
+          }
+          if (
+            !rootPath.responses.fail?.status ||
+            rootPath.responses.fail.status === null
+          ) {
+            rootPath.responses.fail.status = 400;
+          }
         }
         if (
           !rootPath.responses?.success ||
@@ -404,15 +412,23 @@ const CreateApi = () => {
             status: 200,
             responseBody: propertiesData,
           };
-        } else if (
-          !rootPath.responses.success?.responseBody ||
-          rootPath.responses.success.responseBody === null ||
-          JSON.stringify(rootPath.responses.success.responseBody) === "{}"
-        ) {
-          rootPath.responses.success = {
-            status: 200,
-            responseBody: propertiesData,
-          };
+        } else {
+          if (
+            !rootPath.responses.success?.responseBody ||
+            rootPath.responses.success.responseBody === null ||
+            JSON.stringify(rootPath.responses.success.responseBody) === "{}"
+          ) {
+            rootPath.responses.success = {
+              status: 200,
+              responseBody: propertiesData,
+            };
+          }
+          if (
+            !rootPath.responses.success?.status ||
+            rootPath.responses.success.status === null
+          ) {
+            rootPath.responses.success.status = 200;
+          }
         }
       }
     }
@@ -517,7 +533,9 @@ const CreateApi = () => {
                         }
                         onClick={() => {
                           setActiveTab(1);
-                          handleTableNullValue();
+                          if (selectedApi > -1 && selectedController > -1) {
+                            handleTableNullValue();
+                          }
                         }}
                       >
                         headers
@@ -528,7 +546,9 @@ const CreateApi = () => {
                         }
                         onClick={() => {
                           setActiveTab(2);
-                          handleTableNullValue();
+                          if (selectedApi > -1 && selectedController > -1) {
+                            handleTableNullValue();
+                          }
                         }}
                       >
                         parameters
@@ -539,7 +559,9 @@ const CreateApi = () => {
                         }
                         onClick={() => {
                           setActiveTab(3);
-                          handleTableNullValue();
+                          if (selectedApi > -1 && selectedController > -1) {
+                            handleTableNullValue();
+                          }
                         }}
                       >
                         queries
@@ -550,7 +572,9 @@ const CreateApi = () => {
                         }
                         onClick={() => {
                           setActiveTab(4);
-                          handleTableNullValue();
+                          if (selectedApi > -1 && selectedController > -1) {
+                            handleTableNullValue();
+                          }
                         }}
                       >
                         requestBody
@@ -561,7 +585,9 @@ const CreateApi = () => {
                         }
                         onClick={() => {
                           setActiveTab(5);
-                          handleTableNullValue();
+                          if (selectedApi > -1 && selectedController > -1) {
+                            handleTableNullValue();
+                          }
                         }}
                       >
                         responses
