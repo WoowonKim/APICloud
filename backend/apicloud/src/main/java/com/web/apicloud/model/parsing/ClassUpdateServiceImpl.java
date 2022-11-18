@@ -98,7 +98,7 @@ public class ClassUpdateServiceImpl implements ClassUpdateService {
                 updateObject(groupSecretKey, propertyDetail, index);
             } else type = propertyDetail.getType();
 
-            if (propertyDetail.getCollectionType() != null) {
+            if (propertyDetail.getCollectionType() != null && !propertyDetail.getCollectionType().equals("")) {
                 propertyBody += "List<" + type + ">";
                 if (SynchronizeCodeServiceImpl.importList.get(index).get(IMPORT_UTIL) == null && SynchronizeCodeServiceImpl.importList.get(index).get(IMPORT_LIST) == null) {
                     SynchronizeCodeServiceImpl.importList.get(index).put(IMPORT_LIST, IMPORT);

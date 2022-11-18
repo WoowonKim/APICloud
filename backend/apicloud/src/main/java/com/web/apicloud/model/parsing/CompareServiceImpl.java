@@ -83,6 +83,8 @@ public class CompareServiceImpl implements CompareService {
             responses.get(SUCCESS).setCreateFlag(true);
             return;
         }
+        responseVOPropertyVO.setName(originalPropertyVO.getName());
+        responseVOPropertyVO.setRequired(true);
         comparePropertyVO(responseDTO, originalPropertyVO, responseVOPropertyVO);
     }
 
@@ -97,7 +99,8 @@ public class CompareServiceImpl implements CompareService {
         if (equals(original.getDtoName(), propertyVO.getDtoName())) propertyDTO.setDtoNameFlag(true);
         if (equals(original.getName(), propertyVO.getName())) propertyDTO.setNameFlag(true);
         if (equals(original.getType(), propertyVO.getType())) propertyDTO.setTypeFlag(true);
-        if (equals(original.getCollectionType(), propertyVO.getCollectionType())) propertyDTO.setCollectionTypeFlag(true);
+        if (equals(original.getCollectionType(), propertyVO.getCollectionType()))
+            propertyDTO.setCollectionTypeFlag(true);
         if (original.isRequired() != propertyVO.isRequired()) propertyDTO.setRequiredFlag(true);
 
         if (propertyVO.getProperties() == null) return;
@@ -111,8 +114,8 @@ public class CompareServiceImpl implements CompareService {
     }
 
     private boolean equals(String original, String propertyVO) {
-        if (original == null && propertyVO == null) return false;
-        if (original == null || propertyVO == null) return true;
+        if ((original == null || original.equals("")) && (propertyVO == null || propertyVO.equals(""))) return false;
+        if (original == null || original.equals("") || propertyVO == null || propertyVO.equals("")) return true;
         if (!original.equals(propertyVO)) return true;
         return false;
     }

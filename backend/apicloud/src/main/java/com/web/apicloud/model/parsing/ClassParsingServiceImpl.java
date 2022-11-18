@@ -87,17 +87,20 @@ public class ClassParsingServiceImpl implements ClassParsingService {
     }
 
     public PropertyVO getProperty(String str, String category) throws IOException {
+        if (str.charAt(str.length() - 1) != ';') return null;
         str = str.strip();
         str = str.replaceAll(";", "");
         String[] tokens = str.split(" ");
         if (tokens.length <= 1) return null;
 
         int j = 0;
+        boolean accessFlag = false;
         while (j < tokens.length) {
             boolean state = false;
             for (int k = 0; k < accessModifier.length; k++) {
                 if (tokens[j].equals(accessModifier[k])) {
                     state = true;
+                    accessFlag= true;
                     break;
                 }
             }
@@ -105,6 +108,7 @@ public class ClassParsingServiceImpl implements ClassParsingService {
             j++;
         }
 
+        if (!accessFlag) return null;
         if ((j + 1) >= tokens.length) return null;
         PropertyVO getPropertyVO = getBody(groupSecretKey, tokens[j], category);
         if (getPropertyVO == null) return null;
@@ -114,6 +118,7 @@ public class ClassParsingServiceImpl implements ClassParsingService {
                 .name(tokens[j + 1])
                 .type(getPropertyVO.getType())
                 .collectionType(getPropertyVO.getCollectionType())
-                .properties(getPropertyVO.getProperties()).build();
+                .properties(getPropertyVO.getProperties())
+                .required(true).build();
     }
 }
