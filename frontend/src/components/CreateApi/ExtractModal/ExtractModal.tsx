@@ -1,5 +1,6 @@
 import { MappedTypeDescription } from "@syncedstore/core/types/doc";
 import React, { useEffect, useState } from "react";
+import { ThreeDots } from "react-loader-spinner";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
@@ -63,6 +64,7 @@ const ExtractModal = ({
   const [notionToken, setNotionToken] = useState("");
   const [dependencies, setDependencies] = useState<DependencyType[]>([]);
   const [validationResult, setValidationResult] = useState<any>();
+  const [isNotionExtracting, setIsNotionExtracting] = useState(false);
 
   const isOpenDependencyModal = useSelector(
     (state: RootState) => state.apiDocsApi.isOpenDependencyModal
@@ -168,6 +170,11 @@ const ExtractModal = ({
         },
       })
     ).then((res: any) => {
+      setIsNotionExtracting(false);
+      if (res.meta.requestStatus !== "fulfilled") {
+        alert("추출에 실패하였습니다.");
+        return;
+      }
       window.open(res.payload.notionUrl);
     });
   };
@@ -224,7 +231,6 @@ const ExtractModal = ({
                     <button
                       onClick={() => {
                         setValidationResult(checkDataValidation(controllers));
-                        setOpenIdx(0);
                         setIsWarningModal(!isWarningModal);
                       }}
                     >
@@ -246,10 +252,12 @@ const ExtractModal = ({
                     <button
                       onClick={
                         notionToken
-                          ? () => {
-                              prepareExtraction(extractNotion);
-                              setOpenIdx(0);
-                            }
+                          ? !isNotionExtracting
+                            ? () => {
+                                setIsNotionExtracting(true);
+                                prepareExtraction(extractNotion);
+                              }
+                            : () => {}
                           : () => {
                               alert(
                                 "노션 연동이 되지 않았습니다. 연동 후 추출해주세요."
@@ -257,14 +265,25 @@ const ExtractModal = ({
                             }
                       }
                     >
-                      추출
+                      {isNotionExtracting ? (
+                        <ThreeDots
+                          height="10"
+                          width="20"
+                          radius="9"
+                          color="#277fc3"
+                          ariaLabel="three-dots-loading"
+                          visible={true}
+                        />
+                      ) : (
+                        "추출"
+                      )}
                     </button>
                   </div>
                 </div>
                 <li
                   onClick={() => {
-                    prepareExtraction(extractCsv);
                     setOpenIdx(3);
+                    prepareExtraction(extractCsv);
                   }}
                   className={openIdx === 3 ? "selected" : ""}
                 >
