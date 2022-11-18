@@ -1,6 +1,6 @@
 # CodeConvention
 
-### ApiCloud에 Contribute를 하기 위한 Code Convention을 소개합니다. 아래 양식에 맞춰 진행해주세요.
+### APICloud에 Contribute를 하기 위한 Code Convention을 소개합니다. 아래 양식에 맞춰 진행해주세요.
 
 > ## Springboot
 
