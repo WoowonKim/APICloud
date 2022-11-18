@@ -110,6 +110,7 @@ public class ClassParsingServiceImpl implements ClassParsingService {
         if ((j + 1) >= tokens.length) return null;
         PropertyVO getPropertyVO = getBody(groupSecretKey, tokens[j], category);
         if (getPropertyVO == null) return null;
+
         return PropertyVO.builder()
                 .dtoName(getPropertyVO.getDtoName())
                 .name(tokens[j + 1])

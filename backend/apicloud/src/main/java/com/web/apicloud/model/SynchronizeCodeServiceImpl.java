@@ -40,7 +40,6 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
     private static final String IMPORT_REQUEST_BODY = "org.springframework.web.bind.annotation.RequestBody";
     private static final String IMPORT_ANNOTATION = "org.springframework.web.bind.annotation.*";
     private static final String IMPORT_ANNOTATION_COMMON = "org.springframework.web.bind.annotation.";
-
     private static final String IMPORT_LIST = "java.util.List";
     private static final String IMPORT_UTIL = "java.util.*";
 
@@ -62,7 +61,6 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
     private boolean etcFlag = false;
     private static String groupSecretKey = "";
 
-
     @Override
     public List<CodeResponse> updateCode(Long docId, DetailRequest detailRequest) throws IOException {
         codeList = new ArrayList<>();
@@ -79,7 +77,6 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
         if (getFileCode == null) throw new NotFoundException(NOT_FOUND_FILE);
         List<String> lines = getFileCode.get("code");
         String key = StringUtils.removeStart(StringUtils.removeEnd(String.valueOf(getFileCode.get(IMPORT)), "]"), "[");
-        System.out.println(lines);
         if (lines == null) throw new NotFoundException(NOT_FOUND_FILE);
 
         codeList.add(CodeResponse.builder().name(detailVO.getName()).importPackage(key).code(lines).build());
@@ -100,8 +97,6 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
             j++;
             codeList.get(i).getUpdateImport().add(0, "//[ApiCloud]를 통해 추가된 import 항목입니다.");
             codeList.get(i).getUpdateImport().add("");
-
-            System.out.println(codeList.get(i).getUpdateImport());
             codeList.get(i).getCode().addAll(j, codeList.get(i).getUpdateImport());
         }
     }
@@ -132,7 +127,6 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
             }
             i++;
         }
-        System.out.println(importList);
 
         int start = i;
         while (i < codeList.get(0).getCode().size()) {
@@ -214,7 +208,6 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
                                     else name = responseBody.getResponseBody().getType();
                                     codeList.get(0).getCode().set(start, codeList.get(0).getCode().get(start).replace(response, name));
                                 }
-                                // TODO : response CLass 바꾸러 가기,  import 추가
                                 classUpdateService.updateObject(groupSecretKey, responseBody.getResponseBody(), 0);
                                 methodNameFlag = true;
                             }
@@ -223,7 +216,6 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
                     case ')':
                         if (stack.peek() == '(') stack.pop();
                         if (stack.isEmpty()) {
-                            System.out.println("request ==> ");
                             if (requestStr.equals("")) return;
                             requestStr = requestStr.substring(0, requestStr.length() - 1);
                             request.put(start, requestStr);
@@ -342,7 +334,6 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
 
                 String type;
                 if (query.getType().equals("Object")) {
-                    // TODO: property 업데이트 하러 가기, import 추가
                     classUpdateService.updateObject(groupSecretKey, query, 0);
                     type = query.getDtoName();
                 } else type = query.getType();
@@ -372,7 +363,6 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
                 requestStr += detailApiVO.getRequestBody().getCollectionType() + "<" + detailApiVO.getRequestBody().getDtoName() + ">";
             } else requestStr += detailApiVO.getRequestBody().getDtoName();
             requestStr += " " + detailApiVO.getRequestBody().getName() + ", ";
-            // TODO : 리퀘스트 바디 업데이트 하러가기
             classUpdateService.updateObject(groupSecretKey, detailApiVO.getRequestBody(), 0);
             api += requestStr;
         }

@@ -32,8 +32,6 @@ public class SynchronizeDocServiceImpl implements SynchronizeDocService {
     private static final String REQUEST_BODY = "RequestBody";
     private static final String VALUE = "value";
 
-    private static String groupSecretKey = "";
-
     private static final String NOT_FOUND_CONTROLLER = "해당 Controller를 찾을 수 없습니다.";
 
     private final S3Service s3Service;
@@ -44,6 +42,7 @@ public class SynchronizeDocServiceImpl implements SynchronizeDocService {
     private final GroupService groupService;
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static String groupSecretKey = "";
 
     @Override
     public ControllerDTO getFile(Long docId, SynchronizeRequest synchronizeRequest, MultipartFile file) throws IOException {
@@ -96,7 +95,6 @@ public class SynchronizeDocServiceImpl implements SynchronizeDocService {
                 .commonUri(value)
                 .apis(apis)
                 .build();
-        System.out.println("controllerVO => " + controllerVO);
 
         DocVO detailVO = objectMapper.readValue(doc.getDetail(), DocVO.class);
         if (detailVO.getControllers().size() <= synchronizeRequest.getControllerId())
@@ -145,7 +143,6 @@ public class SynchronizeDocServiceImpl implements SynchronizeDocService {
     }
 
     private void getRequestDetail(ApiDetailVO apiDetail, String request) throws IOException {
-        System.out.println("request: " + request);
         if (request.equals("")) return;
 
         int pathVariable = parsingService.KMP(request, PATH_VARIABLE);
