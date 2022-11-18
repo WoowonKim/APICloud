@@ -96,6 +96,18 @@ export const getApiCreationInfo: any = createAsyncThunk(
   }
 );
 
+export const getGroupUserList: any = createAsyncThunk(
+  "mainApi/getGroupUserList",
+  async (args: any, { rejectWithValue }) => {
+    try {
+      const response = await axiosGet(`group/${args.docId}`);
+      return response.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response);
+    }
+  }
+);
+
 const mainApiSlice = createSlice({
   name: "mainApi",
   initialState,
@@ -153,6 +165,14 @@ const mainApiSlice = createSlice({
     },
     [getApiCreationInfo.rejected]: (state, action) => {
       console.log("getApiCreationInfo rejected", action.payload);
+    },
+    [getGroupUserList.fulfilled]: (state, action) => {
+      if (action.meta.requestStatus === "fulfilled") {
+        console.log("getGroupUserList fulfilled", action.payload);
+      }
+    },
+    [getGroupUserList.rejected]: (state, action) => {
+      console.log("getGroupUserList rejected", action.payload);
     },
   },
 });

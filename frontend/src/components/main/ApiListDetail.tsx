@@ -76,72 +76,119 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
   return (
     <div className="ApiListDetail">
       {isOpenUpdateModal && <UpdateModal></UpdateModal>}
-      {apiDocList?.map((it, idx) => (
-        <ListContent key={idx}>
-          {/* <p>{it.docId}</p> */}
-          <DetailContent
-            onClick={() => {
-              moveApidocs(it.encryptedUrl, false);
-            }}
-          >
-            <p>{it.docName}</p>
-          </DetailContent>
-
-          <div className="userSetting">
-            <div className="userSettingSub">
-              {isGroupInfoModal && <GroupInfoModal></GroupInfoModal>}
-              <DocIcon
-                alt="groupUserIcon"
-                src={require("../../assets/groupUserIcon.png")}
-                onClick={() => {
-                  dispatch(
-                    mainApiSlice.actions.setIsGroupInfoModal({
-                      isGroupInfoModal: true,
-                    })
-                  );
-                }}
-              />
-              {/* {it.groupUser.name} */}
-
-              <DocIcon
-                alt="docSelectIcon"
-                onClick={() => moveApidocs(it.encryptedUrl, true, it)}
-                src={require("../../assets/docSelectIcon.png")}
-              />
-              {apiList === 0 ? (
+      {apiList === 0 ? (
+        <>
+          {apiDocList?.map((it, idx) => (
+            <>
+              {it.authority === 1 ? (
                 <>
-                  <DocIcon
-                    onClick={() => {
-                      dispatch(
-                        mainApiSlice.actions.setIsOpenUpdateModal({
-                          isOpenUpdateModal: true,
-                        })
-                      );
-                      dispatch(
-                        mainApiSlice.actions.setEncryptedUrl({
-                          encryptedUrl: it.encryptedUrl,
-                        })
-                      );
-                      dispatch(
-                        mainApiSlice.actions.setDocId({ docId: it.docId })
-                      );
-                      console.log("ApiListDetail DocId => ", it.docId);
-                    }}
-                    src={require("../../assets/docUpdateIcon.png")}
-                  />
-                  <DocIcon
-                    alt="docDeleteIcon"
-                    onClick={() => dispatchDeleteDoc(it.docId)}
-                    src={require("../../assets/docDeleteIcon.png")}
-                  />
+                  <ListContent key={idx}>
+                    <DetailContent
+                      onClick={() => {
+                        moveApidocs(it.encryptedUrl, false);
+                      }}
+                    >
+                      <p>{it.docName}</p>
+                    </DetailContent>
+                    <div className="userSetting">
+                      <div className="userSettingSub">
+                        {isGroupInfoModal && (
+                          <GroupInfoModal docId={it.docId}></GroupInfoModal>
+                        )}
+                        <DocIcon
+                          alt="groupUserIcon"
+                          src={require("../../assets/groupUserIcon.png")}
+                          onClick={() => {
+                            dispatch(
+                              mainApiSlice.actions.setIsGroupInfoModal({
+                                isGroupInfoModal: true,
+                              })
+                            );
+                          }}
+                        />
+                        <DocIcon
+                          alt="docSelectIcon"
+                          onClick={() => moveApidocs(it.encryptedUrl, true, it)}
+                          src={require("../../assets/docSelectIcon.png")}
+                        />
+                        <DocIcon
+                          onClick={() => {
+                            dispatch(
+                              mainApiSlice.actions.setIsOpenUpdateModal({
+                                isOpenUpdateModal: true,
+                              })
+                            );
+                            dispatch(
+                              mainApiSlice.actions.setEncryptedUrl({
+                                encryptedUrl: it.encryptedUrl,
+                              })
+                            );
+                            dispatch(
+                              mainApiSlice.actions.setDocId({ docId: it.docId })
+                            );
+                            console.log("ApiListDetail DocId => ", it.docId);
+                          }}
+                          src={require("../../assets/docUpdateIcon.png")}
+                        />
+                        <DocIcon
+                          alt="docDeleteIcon"
+                          onClick={() => dispatchDeleteDoc(it.docId)}
+                          src={require("../../assets/docDeleteIcon.png")}
+                        />
+                      </div>
+                    </div>
+                  </ListContent>
                 </>
               ) : (
-                <div></div>
+                <></>
               )}
-            </div>
-          </div>
-        </ListContent>
-      ))}
+            </>
+          ))}
+        </>
+      ) : (
+        <>
+          {apiDocList?.map((it, idx) => (
+            <>
+              {it.authority !== 1 ? (
+                <>
+                  <ListContent key={idx}>
+                    <DetailContent
+                      onClick={() => {
+                        moveApidocs(it.encryptedUrl, false);
+                      }}
+                    >
+                      <p>{it.docName}</p>
+                    </DetailContent>
+                    <div className="userSettingView">
+                      <div className="userSettingSub">
+                        <GroupInfoModal docId={it.docId}></GroupInfoModal>
+                        <DocIcon
+                          alt="groupUserIcon"
+                          src={require("../../assets/groupUserIcon.png")}
+                          onClick={() => {
+                            dispatch(
+                              mainApiSlice.actions.setIsGroupInfoModal({
+                                isGroupInfoModal: true,
+                              })
+                            );
+                          }}
+                        />
+                        <DocIcon
+                          alt="docSelectIcon"
+                          onClick={() => moveApidocs(it.encryptedUrl, true, it)}
+                          src={require("../../assets/docSelectIcon.png")}
+                        />
+                      </div>
+                    </div>
+                  </ListContent>
+                </>
+              ) : (
+                <></>
+              )}
+            </>
+          ))}
+        </>
+      )}
     </div>
   );
 };

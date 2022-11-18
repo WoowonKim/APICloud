@@ -2,26 +2,39 @@ import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { userDummy } from "./ListDummy";
 import { useDispatch, useSelector } from "react-redux";
-import mainApiSlice, {
-  getApiCreationInfo,
-  getApiDoc,
-  updateApiDoc,
-} from "../../Store/slice/mainApi";
+import mainApiSlice, { getGroupUserList } from "../../Store/slice/mainApi";
 import { RootState } from "../../Store/store";
-
-const GroupInfoModal = () => {
-  const docId = useSelector((state: RootState) => state.mainApi.docId);
+import AvatarGroup from "@mui/material/AvatarGroup";
+import Avatar from "@mui/material/Avatar";
+type GroupProps = {
+  docId: number;
+};
+const GroupInfoModal = ({ docId }: GroupProps) => {
   const isGroupInfoModal = useSelector(
     (state: RootState) => state.mainApi.isGroupInfoModal
   );
 
   const dispatch = useDispatch();
+  const [groupUserList, setGroupUserList] = useState<any[]>([]);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    dispatch(getGroupUserList({ docId: docId })).then((res: any) => {
+      if (res.meta?.requestStatus === "fulfilled") {
+        setGroupUserList(res.payload);
+      }
+    });
+  }, []);
 
   return (
     <ModalContainer>
       <DialogBox>
+        {groupUserList && (
+          <AvatarGroup max={5}>
+            {groupUserList?.map((it, idx) => (
+              <Avatar alt="userImg" src={it.imgUrl} />
+            ))}
+          </AvatarGroup>
+        )}
         <Backdrop
           onClick={(e: React.MouseEvent) => {
             e.preventDefault();
@@ -49,8 +62,8 @@ const ModalContainer = styled.div`
 `;
 
 const DialogBox = styled.dialog`
-  width: 200px;
-  height: 100px;
+  // width: 200px;
+  // height: 100px;
   display: flex;
   // flex-direction: column;
   // align-items: center;
