@@ -17,6 +17,7 @@ interface type {
   paramsInfo: reBodyType | undefined;
   queriesInfo: reBodyType | undefined;
   setQueriesInfo: Dispatch<SetStateAction<reBodyType | undefined>>;
+  setBodyObject: Dispatch<SetStateAction<any>>;
 }
 
 export const ApiDetail = styled.div`
@@ -31,6 +32,7 @@ const ApiHeader = ({
   setParamsInfo,
   queriesInfo,
   setQueriesInfo,
+  setBodyObject,
 }: type) => {
   const info = useAppSelector(selectTestApi);
   return (
@@ -41,6 +43,7 @@ const ApiHeader = ({
           getInfo={getInfo}
           testbodyInfo={testbodyInfo}
           setTestbodyInfo={setTestbodyInfo}
+          setBodyObject={setBodyObject}
         />
       )}
       {info.getHeadListNumber === 2 && (

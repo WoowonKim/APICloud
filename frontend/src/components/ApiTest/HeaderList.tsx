@@ -39,10 +39,10 @@ const HeaderList = () => {
             Body
           </span>
           <span className="testListNumsmall" onClick={() => onClickBtn(2)}>
-            Queries
+            Query
           </span>
           <span className="testListNumsmall" onClick={() => onClickBtn(3)}>
-            Params
+            Path
           </span>
         </TestListNum>
       )}
@@ -55,10 +55,10 @@ const HeaderList = () => {
             Body
           </span>
           <span className="testListNum" onClick={() => onClickBtn(2)}>
-            Queries
+            Query
           </span>
           <span className="testListNumsmall" onClick={() => onClickBtn(3)}>
-            Params
+            Path
           </span>
         </TestListNum>
       )}
@@ -71,10 +71,10 @@ const HeaderList = () => {
             Body
           </span>
           <span className="testListNumsmall" onClick={() => onClickBtn(2)}>
-            Queries
+            Query
           </span>
           <span className="testListNum" onClick={() => onClickBtn(3)}>
-            Params
+            Path
           </span>
         </TestListNum>
       )}

@@ -43,6 +43,10 @@ const TestApi = ({ isDarkMode, toggleDarkMode }: IHome) => {
       setGetInfo(obj);
     });
   }, [getDocsId.docId]);
+
+  const [bodyObject, setBodyObject] = useState({});
+  console.log("bodyObject =>", bodyObject);
+
   return (
     <div>
       <div className="testContainer">
@@ -59,6 +63,7 @@ const TestApi = ({ isDarkMode, toggleDarkMode }: IHome) => {
               setParamsInfo={setParamsInfo}
               queriesInfo={queriesInfo}
               setQueriesInfo={setQueriesInfo}
+              bodyObject={bodyObject}
             />
           </div>
           <p className="apiHeaderMainTitle">Request</p>
@@ -73,6 +78,7 @@ const TestApi = ({ isDarkMode, toggleDarkMode }: IHome) => {
               setParamsInfo={setParamsInfo}
               queriesInfo={queriesInfo}
               setQueriesInfo={setQueriesInfo}
+              setBodyObject={setBodyObject}
             />
           </div>
           <p className="apiHeaderMainTitle">Response</p>
