@@ -33,6 +33,7 @@ export type list = {
   paramsInfo: reBodyType | undefined;
   queriesInfo: reBodyType | undefined;
   setQueriesInfo: Dispatch<SetStateAction<reBodyType | undefined>>;
+  bodyObject: any;
 };
 
 const ApiInputUri = ({
@@ -43,13 +44,30 @@ const ApiInputUri = ({
   setParamsInfo,
   queriesInfo,
   setQueriesInfo,
+  bodyObject,
 }: list) => {
   const [sendFlag, setSendFlag] = useState(false);
   const [methodUri, setMethodUri] = useState<string | undefined>("");
+  const [testUri, setTestUri] = useState("");
+  const [realParams, setRealParams] = useState<string[]>([]);
+  const [reqArr, setReqArr] = useState<string[]>([]);
+  const [infoQueries, setInfoQueries] = useState<PropertiesType[]>();
+  const [reqUri, setReqUri] = useState("");
+
   const info = useSelector(selectTestApi);
   const dispatch = useAppDispatch();
 
+  //토큰값 받아오기
   let token = info.getToken.length >= 1 ? `Bearer${info.getToken}` : "";
+
+  // 물을표 입력
+  const uriFlag = testUri.includes("?");
+
+  // 서버 주소 받아오기
+  const server = Object.values(info.getServerUrl).toString();
+  const context = Object.values(info.getContextUrl).toString();
+  const requestMaapingUri =
+    getInfo?.controllers[info.getControllerInfomation].commonUri;
 
   //해당 uri 받아오기
   useEffect(() => {
@@ -60,55 +78,62 @@ const ApiInputUri = ({
     );
   }, [getInfo, info.getApisInfomation, info.getControllerInfomation]);
 
-  // 서버 주소 받아오기
-  const server = Object.values(info.getServerUrl).toString();
-  const context = Object.values(info.getContextUrl).toString();
-  const requestMaapingUri =
-    getInfo?.controllers[info.getControllerInfomation].commonUri;
-  // const testUri = server + context + requestMaapingUri + methodUri;
-  // useEffect(() => {
-  //   let querVal: string[] = [];
-  //   if (queriesInfo) {
-  //     querVal = Object.values(queriesInfo);
-  //   }
-  //   querVal.length === 0
-  //     ? setTestUri(server + context + requestMaapingUri + methodUri)
-  //     : setTestUri(
-  //         server + context + requestMaapingUri + methodUri + `/${querVal[0]}`
-  //       );
-  // }, [queriesInfo]);
-
-  const [testUri, setTestUri] = useState("");
+  // URI 창에 Path 입력하기 위한 초기화
   useEffect(() => {
     setTestUri(server + context + requestMaapingUri + methodUri);
   }, [requestMaapingUri, methodUri]);
-  const [querArr, setQuerArr] = useState<[any, any][]>([]);
-  useEffect(() => {
-    if (queriesInfo) {
-      setQuerArr(Object.entries(queriesInfo));
-    }
-  }, [queriesInfo]);
 
-  const [realQuery, setRealQuery] = useState<string[]>([]);
-  const [queryText, setQueryText] = useState("");
+  // URI 창에 Path 입력하기 위한 초기화
   useEffect(() => {
-    querArr.map((it, idx) => {
-      const querText = "/" + it[1];
-      it[1].length > 0 ? setQueryText(querText) : setQueryText("");
-      setRealQuery([...realQuery, querText]);
-    });
-  }, [querArr]);
-
-  const [querString, setQuerString] = useState("");
-  useEffect(() => {
-    const querText = realQuery.toString().replace(",", "");
-    console.log("REALQUERY => ", realQuery);
-    console.log("QUER TEXT => ", querText);
-
-    querText.length === 0
+    const paramsText = realParams.toString().replace(",", "");
+    paramsText.length === 0
       ? setTestUri(server + context + requestMaapingUri + methodUri)
-      : setTestUri(server + context + requestMaapingUri + methodUri + querText);
-  }, [realQuery]);
+      : setTestUri(
+          server + context + requestMaapingUri + methodUri + paramsText
+        );
+  }, [realParams]);
+
+  // 쿼리 정보 받아오기
+  useEffect(() => {
+    if (getInfo) {
+      setInfoQueries(
+        getInfo?.controllers[info.getControllerInfomation].apis[
+          info.getApisInfomation
+        ].queries
+      );
+    }
+  }, [getInfo, info.getControllerInfomation, info.getApisInfomation]);
+
+  // 값 변할때 마다 쿼리 정보 초기화
+  useEffect(() => {
+    setReqArr([]);
+  }, [info.getApisInfomation, info.getControllerInfomation]);
+
+  // 쿼리문 받아오기
+  useEffect(() => {
+    let testARR: string[] = [];
+    if (infoQueries) {
+      infoQueries?.map((it, idx) => {
+        if (it.name.length > 0) {
+          testARR = [...testARR, it.name];
+        }
+        setReqArr([...reqArr, ...testARR]);
+      });
+    }
+  }, [infoQueries]);
+
+  // 쿼리문 문자열 변환
+  useEffect(() => {
+    setReqUri(reqArr.toString().replace(",", "=&") + "=");
+  }, [reqArr, uriFlag]);
+
+  // 변환된 문자열을 URI에 추가해주기.
+  useEffect(() => {
+    if (uriFlag) {
+      const sum = testUri + reqUri;
+      setTestUri(sum);
+    }
+  }, [uriFlag]);
 
   // 성공시 Response 반환
   const responseAllInfo = (e: any) => {
@@ -132,6 +157,7 @@ const ApiInputUri = ({
       info.getApisInfomation
     ].method;
 
+  // 서버 통신
   const submitRequest = () => {
     switch (requestMethod) {
       case "Get":
@@ -141,36 +167,29 @@ const ApiInputUri = ({
           headers: {
             Authorization: token,
           },
-          params: paramsInfo,
+          params: queriesInfo,
         })
           .then(res => {
-            console.log("RES=>", res);
             responseAllInfo(res);
           })
           .catch(err => {
             errResponsAllInfo(err);
-            console.log("ERR => ", err);
-            console.log("Params => ", paramsInfo);
-            console.log("TestUri => ", testUri);
           });
         break;
       case "Post":
         axios({
           method: "post",
           url: testUri,
-          data: testbodyInfo,
+          data: bodyObject,
           headers: {
             Authorization: token,
           },
+          params: queriesInfo,
         })
           .then(res => {
-            console.log("post 성공", res);
-            console.log("postBody =>", testbodyInfo);
             responseAllInfo(res);
           })
           .catch(err => {
-            console.log("ERR =>", err);
-            console.log("postBody =>", testbodyInfo);
             errResponsAllInfo(err);
           });
         break;
@@ -178,19 +197,16 @@ const ApiInputUri = ({
         axios({
           method: "put",
           url: testUri,
-          data: testbodyInfo,
+          data: bodyObject,
           headers: {
             Authorization: token,
           },
+          params: queriesInfo,
         })
           .then(res => {
-            console.log("put 성공 =>", res);
-            console.log("putBody =>", testbodyInfo);
             responseAllInfo(res);
           })
           .catch(err => {
-            console.log("ERR => ", err);
-            console.log("putBody=>", testbodyInfo);
             errResponsAllInfo(err);
           });
         break;
@@ -201,15 +217,13 @@ const ApiInputUri = ({
           headers: {
             Authorization: token,
           },
-          params: paramsInfo,
+          params: queriesInfo,
         })
           .then(res => {
             responseAllInfo(res);
-            console.log("Delete 성공=>", res);
           })
           .catch(err => {
             errResponsAllInfo(err);
-            console.log("ERR => ", err);
           });
         break;
       case "patch":
@@ -218,7 +232,7 @@ const ApiInputUri = ({
           headers: {
             Authoriztion: token,
           },
-          params: paramsInfo,
+          params: queriesInfo,
         });
         break;
       case "head":
@@ -232,46 +246,19 @@ const ApiInputUri = ({
     dispatch(testApiSlice.actions.getFlagResponse(!sendFlag));
   };
 
-  // body정보 초기화 하기
+  // send 입력시 모든값 초기화
   useEffect(() => {
     setTestbodyInfo({});
     setParamsInfo({});
     setQueriesInfo({});
     setTestUri(server + context + requestMaapingUri + methodUri);
-    setRealQuery([]);
+    setRealParams([]);
+    setReqUri("");
   }, [sendFlag]);
-
-  // console.log("URI => ", testUri.includes("?"));
-  console.log("URI => ", testUri.includes("?"));
-  const [reqArr, setReqArr] = useState<string[]>([]);
-  const [infoParams, setInfoParams] = useState<PropertiesType[]>();
-  useEffect(() => {
-    if (getInfo) {
-      setInfoParams(
-        getInfo?.controllers[info.getControllerInfomation].apis[
-          info.getApisInfomation
-        ].parameters
-      );
-    }
-  }, [getInfo, info.getControllerInfomation, info.getApisInfomation]);
-  useEffect(() => {
-    if (infoParams) {
-      infoParams?.map((it, idx) => {
-        setReqArr([...reqArr, it.name]);
-      });
-    }
-  }, [infoParams]);
-  const [reqUri, setReqUri] = useState("");
-  useEffect(() => {
-    setReqUri(reqArr.toString().replace(",", "=,"));
-  }, [reqArr]);
-  const uriFlag = testUri.includes("?");
-  useEffect(() => {
-    if (uriFlag) {
-      const sum = testUri + reqUri;
-      setTestUri(sum);
-    }
-  }, [uriFlag]);
+  const testString = `{"id":"test","pw":"1234"}`;
+  const testObj = JSON.parse(testString);
+  console.log("객체 =>", testObj);
+  console.log("객체 키 값 =>", Object.keys(testObj));
 
   return (
     <div className="apiInputContainer">
