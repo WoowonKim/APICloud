@@ -14,13 +14,14 @@ import { useAppDispatch, useAppSelector } from "./Store/hooks";
 import testApiSlice from "./Store/slice/testApi";
 import { selectUser } from "./Store/slice/userSlice";
 import { NotionOAuth2RedirectHandler } from "./components/CreateApi/NotionOAuth2RedirectHandler";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLightbulb } from "@fortawesome/free-solid-svg-icons";
 
 const ModeChange = styled.div`
   position: absolute;
-  border: 1px solid black;
   padding: 3px;
-  right: 5px;
-  bottom: 5px;
+  right: 3vw;
+  top: 1.3vh;
 `;
 
 const App = () => {
@@ -65,7 +66,11 @@ const App = () => {
               toggleDarkMode();
             }}
           >
-            {isDarkMode ? <p>라이트 모드</p> : <p>다크 모드</p>}
+            {isDarkMode ? (
+              <FontAwesomeIcon icon={faLightbulb} size="2x" />
+            ) : (
+              <FontAwesomeIcon icon={faLightbulb} size="2x" />
+            )}
           </ModeChange>
         </ThemeProvider>
       </>

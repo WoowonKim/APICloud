@@ -1,5 +1,4 @@
 .apiDocContainer {
-  background-color: #e7f7fe;
   height: 100vh;
   width: 100%;
   padding-bottom: 10vh;
@@ -11,63 +10,47 @@
     cursor: pointer;
   }
   .circleUpIcon:hover {
-    color: #3af6eb;
+    color: #78cbf7;
   }
-  .sidebarDocWrapper {
-    background-color: #e7f7fe;
-    .sidebarBox {
-      position: fixed;
-      .sidebarButton {
-        padding: 20px;
-        cursor: pointer;
+  .sidebarBox {
+    position: fixed;
+    .sidebarButton {
+      padding: 1vw;
+      cursor: pointer;
+    }
+  }
+  .pdfDocArea {
+    margin-left: 3vw;
+    .docTitleWrapper {
+      display: flex;
+      justify-content: center;
+      .docTitle {
+        margin-top: 15vh;
+        margin-bottom: 12vh;
+        font-size: 30px;
+        font-weight: bold;
       }
     }
-    .docBox {
-      margin: auto;
-      background-color: #e7f7fe;
-      width: 800px;
-      padding-top: 10vh;
-      .pdfDocArea {
-        margin-left: 50px;
-        .doc1 {
-          padding: 0px;
-          width: 800px;
-          background-color: white;
-          word-break: break-all;
-          .docTitleWrapper {
-            display: flex;
-            justify-content: center;
-            .docTitle {
-              margin-top: 120px;
-              margin-bottom: 100px;
-              font-size: 30px;
-              font-weight: bold;
-            }
-          }
-          .serverInformTitle {
-            margin-left: 90px;
-            margin-bottom: 30px;
-            font-size: 25px;
-            font-weight: bold;
-          }
-        }
-        .doc2 {
-          display: flex;
-          justify-content: center;
-          padding: 50px;
-          width: 800px;
-          background-color: white;
-          word-break: break-all;
-          .docTitleWrapper {
-            display: flex;
-            justify-content: center;
-            .docTitle {
-              align-items: center;
-            }
-          }
-        }
+    .serverInformTitle {
+      margin-left: 7vw;
+      margin-bottom: 5vh;
+      font-size: 25px;
+      font-weight: bold;
+    }
+    .docTitleWrapper {
+      display: flex;
+      justify-content: center;
+      .docTitle {
+        align-items: center;
       }
     }
+  }
+  .pdfButton {
+    margin-left: 90vw;
+    padding-top: 2vh;
+  }
+  .pdfButton:hover {
+    cursor: pointer;
   }
 }
 
