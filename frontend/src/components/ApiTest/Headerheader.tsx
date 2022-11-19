@@ -15,7 +15,7 @@ export const HeaderListTitleCon = styled.div`
 `;
 export const HeaderListTitle = styled.p`
   font-weight: bold;
-  color: ${props => props.theme.color};
+  color: ${(props) => props.theme.color};
   font-size: 13px;
   margin: 13px 0px 20px 5px;
 `;
@@ -26,8 +26,8 @@ export const HeaderListInput = styled.input`
   border: none;
   font-size: 13px;
   border-bottom: 1px solid black;
-  background-color: ${props => props.theme.bgColor};
-  color: ${props => props.theme.color};
+  background-color: ${(props) => props.theme.bgColor};
+  color: ${(props) => props.theme.color};
 `;
 interface type {
   getInfo: RequestTypeInfo | undefined;
@@ -41,64 +41,49 @@ const Headerheader = ({ getInfo }: type) => {
     if (
       getInfo &&
       getInfo?.controllers &&
-      getInfo.controllers.length > info.getControllerInfomation &&
       getInfo?.controllers[info.getControllerInfomation]?.apis &&
-      getInfo?.controllers[info.getControllerInfomation].apis.length >
+      getInfo.controllers[info.getControllerInfomation].apis[
         info.getApisInfomation
+      ]?.headers &&
+      getInfo.controllers[info.getControllerInfomation].apis[
+        info.getApisInfomation
+      ].headers.length > 0
     ) {
-      setGetCollection(
-        getInfo.controllers[info.getControllerInfomation].apis[
-          info.getApisInfomation
-        ]?.requestBody?.collectionType
-      );
-      setGetDtoName(
-        getInfo.controllers[info.getControllerInfomation].apis[
-          info.getApisInfomation
-        ]?.requestBody?.dtoName
-      );
-      setGetType(
-        getInfo.controllers[info.getControllerInfomation].apis[
-          info.getApisInfomation
-        ]?.requestBody?.type
-      );
-      if (
-        getInfo.controllers[info.getControllerInfomation].apis[
-          info.getApisInfomation
-        ].headers !== null
-      ) {
-        getInfo.controllers[info.getControllerInfomation].apis[
-          info.getApisInfomation
-        ]?.headers.map((it, idx) => {
-          if (it.key === "token") {
-            setTokenInfo(it?.value);
-          }
-        });
-      }
+      getInfo.controllers[info.getControllerInfomation].apis[
+        info.getApisInfomation
+      ].headers.map((it, idx) => {
+        if (it.key === "token") {
+          setTokenInfo(it.value);
+        }
+      });
     }
   }, [getInfo, info.getControllerInfomation, info.getApisInfomation]);
 
   return (
     <>
-      {getInfo?.controllers[info.getControllerInfomation]?.apis[
+      {getInfo?.controllers[info.getControllerInfomation].apis[
         info.getApisInfomation
-      ]?.headers !== null &&
-        getInfo?.controllers[info.getControllerInfomation]?.apis[
+      ]?.headers &&
+        getInfo?.controllers[info.getControllerInfomation].apis[
           info.getApisInfomation
-        ]?.headers.map((it, idx) => (
+        ]?.headers.length > 0 &&
+        getInfo?.controllers[info.getControllerInfomation].apis[
+          info.getApisInfomation
+        ].headers.map((it, idx) => (
           <div className="headerListTitleisHeader" key={idx}>
-            {it?.key && (
+            {it.key && (
               <div className="apiKeyHeaderTitle">
                 <p className="apiHeaderListPtag">{it.key}</p>
               </div>
             )}
-            {it?.key && (
+            {it.key && (
               <div className="apiKeyHeaderTitleValue">
                 <p className="apiHeaderListPtagInput">
                   {it.key !== "token" ? (
                     <input
                       className="apiHeaderListInputTag"
                       type="text"
-                      defaultValue={it?.value}
+                      defaultValue={it.value}
                       onChange={(e) => {}}
                     />
                   ) : (
@@ -116,7 +101,7 @@ const Headerheader = ({ getInfo }: type) => {
                 </p>
               </div>
             )}
-            {it?.key && (
+            {it.key && (
               <div className="apiKeyHeaderTitleCheck">
                 <p className="apiHeaderListButtonTag">SAVE</p>
               </div>

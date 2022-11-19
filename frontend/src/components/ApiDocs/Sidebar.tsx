@@ -53,99 +53,16 @@ const Sidebar = forwardRef<Ref, Props>(
     });
 
     return (
-      <div
-        id="sidebar"
-        ref={outside}
-        className={isOpen ? "openSidebar" : "closeSidebar"}
-      >
-        <div className="closeButtonWrapper">
-          <div
-            onClick={toggleSide}
-            onKeyDown={toggleSide}
-            className="closeButton"
-          >
-            X
-          </div>
-        </div>
-        <div className="houseIconWrapper">
-          <FontAwesomeIcon
-            icon={faHouse}
-            onClick={() => {
-              navigate("/");
-            }}
-          />
-        </div>
-        <ul className="sidebarUl">
-          <li
-            className="sidebarLi"
-            onClick={() => {
-              navigate("/testApi");
-            }}
-          >
-            <div className="sidebarLi1">API TEST 페이지</div>
-          </li>
-          <li className="sidebarLi" onClick={scrollUp}>
-            server 정보
-          </li>
-          <li className="sidebarLi" onClick={() => scrollMove(ref, 0)}>
-            상세 정보
-          </li>
-        </ul>
-        <ul className="sidebarUl">
-          {detail &&
-            detail?.controllers &&
-            detail.controllers.map((controller: any, controllerIdx: any) => (
-              <div key={controllerIdx}>
-                <li
-                  className="sidebarLi"
-                  onClick={() =>
-                    scrollMove(
-                      ref,
-                      (3 + controller.apis.length) * controllerIdx + 1
-                    )
-                  }
-                >
-                  &nbsp;&nbsp;controllers
-                </li>
-                <li
-                  className="sidebarLi"
-                  onClick={() =>
-                    scrollMove(
-                      ref,
-                      (3 + controller.apis.length) * controllerIdx + 2
-                    )
-                  }
-                >
-                  &nbsp;&nbsp;&nbsp;&nbsp;name
-                </li>
-                <li
-                  className="sidebarLi"
-                  onClick={() =>
-                    scrollMove(
-                      ref,
-                      (3 + controller.apis.length) * controllerIdx + 3
-                    )
-                  }
-                >
-                  &nbsp;&nbsp;&nbsp;&nbsp;commonUri
-                </li>
-                <li className="sidebarLi">&nbsp;&nbsp;&nbsp;&nbsp;Apis</li>
-                {controller.apis.map((api: any, apiIdx: any) => (
-                  <li
-                    key={apiIdx}
-                    className="sidebarLi"
-                    onClick={() =>
-                      scrollMove(
-                        ref,
-                        (3 + controller.apis.length) * controllerIdx +
-                          apiIdx +
-                          4
-                      )
-                    }
-                  >
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{api?.name} API
-                  </li>
-                ))}
+      <div id="sidebar" ref={outside}>
+        {isOpen ? (
+          <OpenSidebar>
+            <div className="closeButtonWrapper">
+              <div
+                onClick={toggleSide}
+                onKeyDown={toggleSide}
+                className="closeButton"
+              >
+                X
               </div>
             </div>
             <div className="houseIconWrapper">
@@ -173,7 +90,8 @@ const Sidebar = forwardRef<Ref, Props>(
               </li>
             </ul>
             <ul className="sidebarUl">
-              {detail &&
+              {detail?.controllers &&
+                detail.controllers.length > 0 &&
                 detail.controllers.map(
                   (controller: any, controllerIdx: any) => (
                     <div key={controllerIdx}>
@@ -213,7 +131,7 @@ const Sidebar = forwardRef<Ref, Props>(
                       <li className="sidebarLi">
                         &nbsp;&nbsp;&nbsp;&nbsp;Apis
                       </li>
-                      {controller.apis.map((api: any, apiIdx: any) => (
+                      {controller?.apis.map((api: any, apiIdx: any) => (
                         <li
                           key={apiIdx}
                           className="sidebarLi"
@@ -270,7 +188,8 @@ const Sidebar = forwardRef<Ref, Props>(
               </li>
             </ul>
             <ul className="sidebarUl">
-              {detail &&
+              {detail?.controllers &&
+                detail.controllers.length > 0 &&
                 detail.controllers.map(
                   (controller: any, controllerIdx: any) => (
                     <div key={controllerIdx}>
@@ -310,7 +229,7 @@ const Sidebar = forwardRef<Ref, Props>(
                       <li className="sidebarLi">
                         &nbsp;&nbsp;&nbsp;&nbsp;Apis
                       </li>
-                      {controller.apis.map((api: any, apiIdx: any) => (
+                      {controller?.apis.map((api: any, apiIdx: any) => (
                         <li
                           key={apiIdx}
                           className="sidebarLi"
