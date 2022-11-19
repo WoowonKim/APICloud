@@ -10,6 +10,7 @@ import io.spring.initializr.generator.language.SourceCodeWriter;
 import io.spring.initializr.generator.language.SourceStructure;
 import io.spring.initializr.generator.language.java.JavaExpressionStatement;
 import io.spring.initializr.generator.language.java.JavaLanguage;
+import io.spring.initializr.generator.language.java.JavaMethodInvocation;
 import io.spring.initializr.generator.language.java.JavaReturnStatement;
 import io.spring.initializr.generator.project.contributor.ProjectContributor;
 import lombok.RequiredArgsConstructor;
@@ -39,8 +40,31 @@ public class ControllerContributor implements ProjectContributor {
         if (controllers != null) {
             controllers.forEach(controllerConsumer(sourceCode));
         }
-
+        addWebMvcConfig(sourceCode);
         this.sourceWriter.writeTo(new SourceStructure(projectRoot.resolve("src/main/"), new JavaLanguage()), sourceCode);
+    }
+
+    private void addWebMvcConfig(CustomJavaSourceCode sourceCode) {
+        CustomJavaCompilationUnit compilationUnit = sourceCode.createCompilationUnit(doc.getServer().getPackageName() + ".config", "ApiCloudWebMvcConfig");
+        CustomJavaTypeDeclaration configType = compilationUnit.createTypeDeclaration("ApiCloudWebMvcConfig");
+        configType.modifiers(Modifier.PUBLIC);
+        configType.implementedType("org.springframework.web.servlet.config.annotation.WebMvcConfigurer");
+        configType.annotate(Annotation.name("org.springframework.context.annotation.Configuration"));
+        configType.addFieldDeclaration(CustomJavaFieldDeclaration
+                .field("MAX_AGE_SECS")
+                .modifiers(Modifier.PRIVATE | Modifier.FINAL)
+                .value(3600)
+                .returning(JavaType.builder().type("long").build()));
+        configType.addMethodDeclaration(CustomJavaMethodDeclaration
+                .method("addCorsMappings")
+                .modifiers(Modifier.PUBLIC)
+                .parameters(AnnotatableParameter.builder().type(JavaType.builder().type("org.springframework.web.servlet.config.annotation.CorsRegistry").build()).name("registry").build())
+                .body(JavaChainingMethodInvocation.builder().target("registry").method(".addMapping(\"/**\")\n" +
+                        "                .allowedOrigins(\"http://localhost:3000\",\"https://apiclouds.net\")\n" +
+                        "                .allowCredentials(true)\n" +
+                        "                .allowedHeaders(\"*\")\n" +
+                        "                .allowedMethods(\"GET\", \"POST\", \"PUT\", \"PATCH\", \"DELETE\", \"OPTIONS\")\n" +
+                        "                .maxAge(MAX_AGE_SECS)").build()));
     }
 
     private Consumer<ControllerVO> controllerConsumer(CustomJavaSourceCode sourceCode) {

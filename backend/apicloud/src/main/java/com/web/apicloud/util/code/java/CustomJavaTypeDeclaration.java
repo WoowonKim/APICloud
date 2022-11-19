@@ -25,38 +25,48 @@ import java.util.List;
 
 public class CustomJavaTypeDeclaration extends TypeDeclaration {
 
-	private int modifiers;
+    private int modifiers;
 
-	private final List<CustomJavaFieldDeclaration> fieldDeclarations = new ArrayList<>();
+    private String implementedType;
 
-	private final List<CustomJavaMethodDeclaration> methodDeclarations = new ArrayList<>();
+    private final List<CustomJavaFieldDeclaration> fieldDeclarations = new ArrayList<>();
 
-	CustomJavaTypeDeclaration(String name) {
-		super(name);
-	}
+    private final List<CustomJavaMethodDeclaration> methodDeclarations = new ArrayList<>();
 
-	public void modifiers(int modifiers) {
-		this.modifiers = modifiers;
-	}
+    CustomJavaTypeDeclaration(String name) {
+        super(name);
+    }
 
-	public int getModifiers() {
-		return this.modifiers;
-	}
+    public void implementedType(String implementedType) {
+        this.implementedType = implementedType;
+    }
 
-	public void addFieldDeclaration(CustomJavaFieldDeclaration fieldDeclaration) {
-		this.fieldDeclarations.add(fieldDeclaration);
-	}
+    public String getImplementedType() {
+        return this.implementedType;
+    }
 
-	public List<CustomJavaFieldDeclaration> getFieldDeclarations() {
-		return this.fieldDeclarations;
-	}
+    public void modifiers(int modifiers) {
+        this.modifiers = modifiers;
+    }
 
-	public void addMethodDeclaration(CustomJavaMethodDeclaration methodDeclaration) {
-		this.methodDeclarations.add(methodDeclaration);
-	}
+    public int getModifiers() {
+        return this.modifiers;
+    }
 
-	public List<CustomJavaMethodDeclaration> getMethodDeclarations() {
-		return this.methodDeclarations;
-	}
+    public void addFieldDeclaration(CustomJavaFieldDeclaration fieldDeclaration) {
+        this.fieldDeclarations.add(fieldDeclaration);
+    }
+
+    public List<CustomJavaFieldDeclaration> getFieldDeclarations() {
+        return this.fieldDeclarations;
+    }
+
+    public void addMethodDeclaration(CustomJavaMethodDeclaration methodDeclaration) {
+        this.methodDeclarations.add(methodDeclaration);
+    }
+
+    public List<CustomJavaMethodDeclaration> getMethodDeclarations() {
+        return this.methodDeclarations;
+    }
 
 }
