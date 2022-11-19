@@ -28,6 +28,7 @@ public class SynchronizeDocServiceImpl implements SynchronizeDocService {
     private static final String METHOD = "Mapping";
     private static final String RESPONSE_ENTITY = "ResponseEntity";
     private static final String REQUEST_PARAM = "RequestParam";
+    private static final String MODEL_ATTRIBUTE = "ModelAttribute";
     private static final String PATH_VARIABLE = "PathVariable";
     private static final String REQUEST_BODY = "RequestBody";
     private static final String VALUE = "value";
@@ -60,7 +61,8 @@ public class SynchronizeDocServiceImpl implements SynchronizeDocService {
         while (i < lines.size()) {
             if (parsingService.KMP(lines.get(i), REQUEST_MAPPING) != -1) {
                 int target = parsingService.KMP(lines.get(i), VALUE);
-                if (target != -1) value = parsingService.getValue(lines.get(i).substring(target + 1, lines.get(i).length()));
+                if (target != -1)
+                    value = parsingService.getValue(lines.get(i).substring(target + 1, lines.get(i).length()));
                 else value = parsingService.getValue(lines.get(i));
                 i++;
                 break;
@@ -91,7 +93,8 @@ public class SynchronizeDocServiceImpl implements SynchronizeDocService {
         System.out.println(controllerVO);
 
         DocVO detailVO = objectMapper.readValue(doc.getDetail(), DocVO.class);
-        if (detailVO.getControllers().size() <= synchronizeRequest.getControllerId()) throw new NotFoundException(NOT_FOUND_CONTROLLER);
+        if (detailVO.getControllers().size() <= synchronizeRequest.getControllerId())
+            throw new NotFoundException(NOT_FOUND_CONTROLLER);
         ControllerVO original = detailVO.getControllers().get(synchronizeRequest.getControllerId());
         return compareService.compareControllerVO(original, controllerVO);
     }
@@ -243,6 +246,23 @@ public class SynchronizeDocServiceImpl implements SynchronizeDocService {
                     if (apiDetail.getRequestBody() != null) {
                         apiDetail.getRequestBody().setRequired(parsingService.getRequired(request));
                         apiDetail.getRequestBody().setName(tokens[tokens.length - 1].substring(0, tokens[tokens.length - 1].length() - 1));
+                    }
+                } else {
+                    int modelAttribute = parsingService.KMP(request, MODEL_ATTRIBUTE);
+                    if (modelAttribute != -1) {
+                        String str = request.substring(modelAttribute + 1, request.length());
+                        String value = parsingService.getValue(str);
+                        if (value == null) value = parsingService.getName(str);
+                        String type = parsingService.getParamType(request);
+                        PropertyVO model = classParsingService.getBody(groupSecretKey, type, "query");
+                        apiDetail.getQueries().add(PropertyVO.builder()
+                                .dtoName(model.getDtoName())
+                                .collectionType(model.getCollectionType())
+                                .required(parsingService.getRequired(str))
+                                .properties(model.getProperties())
+                                .name(value)
+                                .type(model.getType())
+                                .build());
                     }
                 }
             }
