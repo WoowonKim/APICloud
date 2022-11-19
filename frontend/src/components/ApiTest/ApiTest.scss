@@ -31,6 +31,14 @@
   display: flex;
   background-color: #eaeaea;
 }
+.headerListBody {
+  margin-top: 15px;
+  margin-left: 13px;
+  margin-right: 20px;
+  padding: 5px;
+  width: 100%;
+  display: flex;
+}
 .apiHeaderFirstTitle {
   display: flex;
 }
@@ -50,7 +58,12 @@
   color: #5d5d5d;
   padding: 5px 15px 5px 7px;
 }
-
+.apiHeaderListBodyPtag {
+  text-align: start;
+  font-size: 9px;
+  font-weight: bold;
+  color: #5d5d5d;
+}
 .headerListTitleisHeader {
   display: flex;
   margin-top: 5px;
@@ -162,29 +175,8 @@
 .apiInputContainer > input:focus {
   outline: none;
 }
-// .apiInput {
-//   width: 50%;
-//   border: none;
-//   border-bottom: 1px solid #000000;
-//   border-right: 1px solid #000000;
-//   border-top: 1px solid #000000;
-//   border-top-right-radius: 15px;
-//   border-bottom-right-radius: 15px;
-//   padding: 1px 50px 1px 10px;
-//   outline: none;
-//   font-weight: 500;
-//   font-size: 14px;
-// }
+
 .apiChoice {
-  //   border: none;
-  //   font-weight: bold;
-  //   padding-right: 10px;
-  //   padding-left: 10px;
-  //   padding-top: 4px;
-  //   padding-bottom: 5px;
-  //   border-top-left-radius: 15px;
-  //   border-bottom-left-radius: 15px;
-  //   // border: 1px solid #000000;
   width: 10%;
   min-width: 110px;
   margin: 1%;
@@ -347,9 +339,6 @@
 .apiResponseResult > div {
   padding: 25px;
   padding-top: 10px;
-  // font-size: 15px;
-  // font-weight: 400;
-  // color: black;
 }
 
 .resultResponseBody {
@@ -413,4 +402,31 @@
 }
 .requestInfoBodySetting {
   width: 50%;
+}
+.bodyTextAreaDiv {
+  padding-right: 20px;
+}
+.bodyTextAreaDiv > textarea:focus {
+  outline: none;
+}
+.bodyTextArea {
+  width: 100%;
+  height: 150px;
+  border: none;
+  background-color: #eaeaea;
+  resize: none;
+  padding: 30px;
+}
+.bodyTextArea::-webkit-scrollbar {
+  width: 5px; /* 스크롤바의 너비 */
+}
+
+.bodyTextArea::-webkit-scrollbar-thumb {
+  height: 10%; /* 스크롤바의 길이 */
+  background: #c1c1c1; /* 스크롤바의 색상 */
+  border-radius: 10px;
+}
+
+.bodyTextArea::-webkit-scrollbar-track {
+  background: #eaeaea; /*스크롤바 뒷 배경 색상*/
 }

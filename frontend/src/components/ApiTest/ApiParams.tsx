@@ -89,12 +89,7 @@ const ApiParams = ({ getInfo, setParamsInfo, paramsInfo }: type) => {
                 <input
                   className="apiHeaderListInputTag"
                   type="text"
-                  defaultValue={arrTest.length > idx ? arrTest[idx][1] : ""}
-                  onChange={e => {
-                    setInputParam(e.target.value);
-                    setParamsId(it.name);
-                  }}
-                  onBlur={onSubmit}
+                  value={"URI창에 Path를 입력해주세요."}
                 />
               </p>
             </div>
