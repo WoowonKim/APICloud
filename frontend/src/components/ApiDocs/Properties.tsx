@@ -22,27 +22,29 @@ const Properties = ({ item }: Props) => {
               <div>{"{"}</div>
               <div className="titleContentWrapper2">
                 <div>&nbsp;&nbsp;&nbsp;dtoName:</div>
-                <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'{item.dtoName}'</div>
+                <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'{item?.dtoName}'</div>
               </div>
               <div className="titleContentWrapper2">
                 <div>&nbsp;&nbsp;&nbsp;name:</div>
-                <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'{item.name}'</div>
+                <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'{item?.name}'</div>
               </div>
               <div className="titleContentWrapper2">
                 <div>&nbsp;&nbsp;&nbsp;type:</div>
-                <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'{item.type}'</div>
+                <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'{item?.type}'</div>
               </div>
               <div className="titleContentWrapper2">
                 <div>&nbsp;&nbsp;&nbsp;collectionType:</div>
-                <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'{item.collectionType}'</div>
+                <div>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'{item?.collectionType}'
+                </div>
               </div>
               <div className="titleContentWrapper2">
                 <div>&nbsp;&nbsp;&nbsp;required:</div>
-                <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'{item.required}'</div>
+                <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'{item?.required}'</div>
               </div>
               <div className="titleContentWrapper2">
                 {item.type && item.type === "Object" && (
-                  <Properties item={item.properties} />
+                  <Properties item={item?.properties} />
                 )}
                 {item.type !== "Object" && (
                   <div>&nbsp;&nbsp;&nbsp;properties</div>

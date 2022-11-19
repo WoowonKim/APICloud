@@ -35,7 +35,6 @@ const ApiResList = () => {
           </span>
         </TestListNum>
       )}
-      {info.getResponseListNumber === 2}
     </div>
   );
 };

@@ -104,10 +104,7 @@ const TableInfo = ({
                       onChange={(e) => handleBasicInfo(e, "dtoName", 1, "")}
                       value={
                         state.data[selectedController].apis[selectedApi]
-                          .requestBody.dtoName !== null
-                          ? state.data[selectedController].apis[selectedApi]
-                              .requestBody.dtoName
-                          : ""
+                          .requestBody?.dtoName || ""
                       }
                       placeholder="dtoName은 필수 입력값입니다"
                     />
@@ -188,10 +185,7 @@ const TableInfo = ({
                     onChange={(e) => handleBasicInfo(e, "name", 1, "")}
                     value={
                       state.data[selectedController].apis[selectedApi]
-                        .requestBody.name !== null
-                        ? state.data[selectedController].apis[selectedApi]
-                            .requestBody.name
-                        : ""
+                        .requestBody?.name || ""
                     }
                     placeholder="name은 필수 입력값입니다"
                   />
@@ -270,10 +264,7 @@ const TableInfo = ({
                       }
                       value={
                         state.data[selectedController].apis[selectedApi]
-                          .responses[responseType].responseBody.dtoName !== null
-                          ? state.data[selectedController].apis[selectedApi]
-                              .responses[responseType].responseBody.dtoName
-                          : ""
+                          .responses[responseType].responseBody?.dtoName || ""
                       }
                       placeholder="dtoName은 필수 입력값입니다"
                     />
@@ -353,10 +344,7 @@ const TableInfo = ({
                     }
                     value={
                       state.data[selectedController].apis[selectedApi]
-                        .responses[responseType].responseBody.name !== null
-                        ? state.data[selectedController].apis[selectedApi]
-                            .responses[responseType].responseBody.name
-                        : ""
+                        .responses[responseType].responseBody?.name || ""
                     }
                     placeholder="name은 필수 입력값입니다"
                   />

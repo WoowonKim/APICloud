@@ -17,18 +17,25 @@ const ApiParams = ({ getInfo }: type) => {
 
   // PATH 경로 불러오기
   useEffect(() => {
-    if (getInfo) {
+    if (
+      getInfo &&
+      getInfo?.controllers &&
+      getInfo.controllers.length > info.getControllerInfomation &&
+      getInfo?.controllers[info.getControllerInfomation]?.apis &&
+      getInfo?.controllers[info.getControllerInfomation].apis.length >
+        info.getApisInfomation
+    ) {
       setInfoParams(
-        getInfo?.controllers[info.getControllerInfomation].apis[
+        getInfo.controllers[info.getControllerInfomation].apis[
           info.getApisInfomation
-        ].parameters
+        ]?.parameters
       );
     }
   }, [getInfo, info.getControllerInfomation, info.getApisInfomation]);
 
   useEffect(() => {
-    if (infoParams) {
-      infoParams?.map((it, idx) => {
+    if (infoParams && infoParams.length > 0) {
+      infoParams.map((it, idx) => {
         dispatch(testApiSlice.actions.getParamsID(it.name));
       });
     }
@@ -36,31 +43,33 @@ const ApiParams = ({ getInfo }: type) => {
 
   return (
     <>
-      {infoParams?.map((it, idx) => (
-        <div className="headerListTitleisHeader" key={idx}>
-          {it.name && (
-            <div className="apiKeyHeaderTitle">
-              <p className="apiHeaderListPtag">{it.name}</p>
-            </div>
-          )}
-          {it.name && (
-            <div className="apiKeyHeaderTitleValueSubmit">
-              <p className="apiHeaderListPtagInput">
-                <input
-                  className="apiHeaderListInputTag"
-                  type="text"
-                  value={"URI창에 Path를 입력해주세요."}
-                />
-              </p>
-            </div>
-          )}
-          {it.name && (
-            <div className="apiKeyHeaderTitleCheck">
-              <p className="apiHeaderListButtonTag">SAVE</p>
-            </div>
-          )}
-        </div>
-      ))}
+      {infoParams &&
+        infoParams.length > 0 &&
+        infoParams.map((it, idx) => (
+          <div className="headerListTitleisHeader" key={idx}>
+            {it?.name && (
+              <div className="apiKeyHeaderTitle">
+                <p className="apiHeaderListPtag">{it.name}</p>
+              </div>
+            )}
+            {it?.name && (
+              <div className="apiKeyHeaderTitleValueSubmit">
+                <p className="apiHeaderListPtagInput">
+                  <input
+                    className="apiHeaderListInputTag"
+                    type="text"
+                    value={"URI창에 Path를 입력해주세요."}
+                  />
+                </p>
+              </div>
+            )}
+            {it?.name && (
+              <div className="apiKeyHeaderTitleCheck">
+                <p className="apiHeaderListButtonTag">SAVE</p>
+              </div>
+            )}
+          </div>
+        ))}
     </>
   );
 };

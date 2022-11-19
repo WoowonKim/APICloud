@@ -120,7 +120,7 @@ const DtoInputModal = ({
                   handleBasicInfo(e, "dtoName", modalDepth, type);
                 }}
                 autoFocus
-                value={final?.dtoName}
+                value={final?.dtoName || ""}
               />
               {dtoExists && dtoData && dtoData.dtoName === final.dtoName && (
                 <FontAwesomeIcon

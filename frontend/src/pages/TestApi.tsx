@@ -21,9 +21,9 @@ export type reBodyType = {};
 const TestSide = styled.div`
   width: 20%;
   height: 91vh;
-  background-color: ${props => props.theme.startBgColor};
-  border-top: 1px solid ${props => props.theme.border};
-  border-right: 2px solid ${props => props.theme.border};
+  background-color: ${(props) => props.theme.startBgColor};
+  border-top: 1px solid ${(props) => props.theme.border};
+  border-right: 2px solid ${(props) => props.theme.border};
   height: 100vh;
 `;
 const TestApi = ({ isDarkMode, toggleDarkMode }: IHome) => {
@@ -37,9 +37,11 @@ const TestApi = ({ isDarkMode, toggleDarkMode }: IHome) => {
   // 해당 API정보의 전체를 불러오기.
   useEffect(() => {
     dispatch(getApiRequestInfo({ docId: getDocsId.docId })).then((res: any) => {
-      const json = res.payload.detail;
-      const obj = JSON.parse(json);
-      setGetInfo(obj);
+      if (res.meta.requestStatus === "fulfilled") {
+        const json = res.payload.detail;
+        const obj = JSON.parse(json);
+        setGetInfo(obj);
+      }
     });
   }, [getDocsId.docId]);
 

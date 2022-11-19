@@ -38,7 +38,7 @@ const ApiSide = ({ getInfo }: type) => {
       {getInfo?.controllers.map((it, index) => (
         <div key={index}>
           <SideContollerName>{it.name}</SideContollerName>
-          {it.apis.map((item, idx) => (
+          {it?.apis.map((item, idx) => (
             <SideMenuList
               key={idx}
               onClick={() => {
@@ -63,9 +63,9 @@ const ApiSide = ({ getInfo }: type) => {
                     : "#EEE0DA"
                 }
               >
-                {item.method}
+                {item?.method.toUpperCase()}
               </Item>
-              <p className="apiSideUriAddress">{item.uri}</p>
+              <p className="apiSideUriAddress">{item?.uri}</p>
             </SideMenuList>
           ))}
         </div>

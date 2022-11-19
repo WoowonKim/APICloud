@@ -43,7 +43,6 @@ const ErrorPage = ({ code }: ErrorProps) => {
       </Loading>
     ) : (
       <Bg>
-        <Header />
         <Error>
           <ErrorImg
             alt="ErrorImg403"
@@ -55,7 +54,6 @@ const ErrorPage = ({ code }: ErrorProps) => {
   } else {
     return (
       <Bg>
-        <Header />
         <Error>
           <ErrorImg
             alt="ErrorImg404"

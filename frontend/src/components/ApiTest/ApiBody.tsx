@@ -27,11 +27,18 @@ const ApiBody = ({
 
   // RequestBody 작성 할 값 불러오기 및 기존 body값 초기화
   useEffect(() => {
-    if (getInfo) {
+    if (
+      getInfo &&
+      getInfo?.controllers &&
+      getInfo.controllers.length > info.getControllerInfomation &&
+      getInfo?.controllers[info.getControllerInfomation]?.apis &&
+      getInfo?.controllers[info.getControllerInfomation].apis.length >
+        info.getApisInfomation
+    ) {
       setRequestBody(
         getInfo?.controllers[info.getControllerInfomation].apis[
           info.getApisInfomation
-        ].requestBody
+        ]?.requestBody
       );
       setTestbodyInfo({});
     }

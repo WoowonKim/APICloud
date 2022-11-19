@@ -27,6 +27,8 @@ import { useAppSelector } from "../../Store/hooks";
 import { selectUser } from "../../Store/slice/userSlice";
 import { Loading } from "../../pages/CreateApi/CreateApi";
 import { InfinitySpin } from "react-loader-spinner";
+import { useLocation } from "react-router-dom";
+import { faCopy } from "@fortawesome/free-regular-svg-icons";
 
 type groupUser = {
   name: string;
@@ -52,6 +54,8 @@ const UpdateModal = () => {
   const [authority, setAuthority] = useState<number>();
   const [searcUser, setSerchUser] = useState("");
   const [searchUserRes, setSearchUserRes] = useState<any>();
+  const [copyUrl, setCopyUrl] = useState("");
+  const [isCopy, setIsCopyUrl] = useState(false);
 
   const docsNameInput: any = useRef();
 
@@ -132,6 +136,8 @@ const UpdateModal = () => {
         }
       });
     }
+
+    setCopyUrl(`${process.env.REACT_APP_APIDOC_COPYURL}/${encryptedUrl}`);
   }, []);
 
   useEffect(() => {
@@ -165,7 +171,6 @@ const UpdateModal = () => {
           alert("본인 이메일 입니다.");
           setSearchUserRes(undefined);
         } else {
-          console.log(res.data);
           setSearchUserRes(res.data);
         }
       })
@@ -179,9 +184,7 @@ const UpdateModal = () => {
       userId: userId,
       authority: value,
     }).then((res) => {
-      console.log(res);
       let copy = [...groupUsers];
-      console.log(e.target.value);
       copy[idx].authority = value;
       setGroupUsers(copy);
     });
@@ -223,6 +226,16 @@ const UpdateModal = () => {
         copy.splice(idx, 1);
         setGroupUsers(copy);
       });
+    }
+  };
+
+  const handleCopyUrl = async () => {
+    try {
+      await navigator.clipboard.writeText(copyUrl);
+      setIsCopyUrl(true);
+    } catch (err) {
+      console.log(err);
+      setIsCopyUrl(false);
     }
   };
 
@@ -466,9 +479,22 @@ const UpdateModal = () => {
                 </List>
               </div>
               <div className="modalBtn">
-                <button className="copyBtn">
-                  <FontAwesomeIcon icon={faLink} />
-                  <span>링크복사</span>
+                <button
+                  className="copyBtn"
+                  onClick={() => handleCopyUrl()}
+                  type="button"
+                >
+                  {isCopy ? (
+                    <div className="copied">
+                      <FontAwesomeIcon icon={faCopy} />
+                      <span>복사완료</span>
+                    </div>
+                  ) : (
+                    <div className="copied">
+                      <FontAwesomeIcon icon={faLink} />
+                      <span>링크복사</span>
+                    </div>
+                  )}
                 </button>
                 <button className="makeBtn" type="submit" disabled={!canGoNext}>
                   완료

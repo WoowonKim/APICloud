@@ -30,7 +30,10 @@ const MethodTest = ({ methodApiWord }: word) => {
   const [selectedMethod, setSelectedMethod] = useState("GET");
   const handleSelect = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
     const eventTarget = e.target as HTMLElement;
-    setSelectedMethod(eventTarget.innerText);
+    setSelectedMethod(
+      eventTarget.innerText[0] +
+        eventTarget.innerText.substring(1).toLocaleLowerCase()
+    );
     setVisible(!visible);
   };
   useEffect(() => {
@@ -57,32 +60,32 @@ const MethodTest = ({ methodApiWord }: word) => {
             : "#EEE0DA"
         }
       >
-        {selectedMethod}
+        {selectedMethod.toUpperCase()}
       </SelectedItem>
 
       {visible && (
         <div className="selectBoxContainer">
           <ul className="itemList">
-            <li className="item" onClick={e => handleSelect(e)}>
-              <Item color="#fdecc8">Get</Item>
+            <li className="item" onClick={(e) => handleSelect(e)}>
+              <Item color="#fdecc8">GET</Item>
             </li>
-            <li className="item" onClick={e => handleSelect(e)}>
-              <Item color="#F5E0E9">Post</Item>
+            <li className="item" onClick={(e) => handleSelect(e)}>
+              <Item color="#F5E0E9">POST</Item>
             </li>
-            <li className="item" onClick={e => handleSelect(e)}>
-              <Item color="#F1F0EF">Put</Item>
+            <li className="item" onClick={(e) => handleSelect(e)}>
+              <Item color="#F1F0EF">PUT</Item>
             </li>
-            <li className="item" onClick={e => handleSelect(e)}>
-              <Item color="#D3E5EF">Delete</Item>
+            <li className="item" onClick={(e) => handleSelect(e)}>
+              <Item color="#D3E5EF">DELETE</Item>
             </li>
-            <li className="item" onClick={e => handleSelect(e)}>
-              <Item color="#E8DEEE">Patch</Item>
+            <li className="item" onClick={(e) => handleSelect(e)}>
+              <Item color="#E8DEEE">PATCH</Item>
             </li>
-            <li className="item" onClick={e => handleSelect(e)}>
-              <Item color="#FFE2DD">Options</Item>
+            <li className="item" onClick={(e) => handleSelect(e)}>
+              <Item color="#FFE2DD">OPTIONS</Item>
             </li>
-            <li className="item" onClick={e => handleSelect(e)}>
-              <Item color="#EEE0DA">Head</Item>
+            <li className="item" onClick={(e) => handleSelect(e)}>
+              <Item color="#EEE0DA">HEAD</Item>
             </li>
           </ul>
         </div>

@@ -1,9 +1,9 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ApisType, ControllerType, PropertiesType } from "./ApisType";
 import "./CreateApi.scss";
 import Sidebar from "../../components/CreateApi/Sidebar/Sidebar";
 import { useSyncedStore } from "@syncedstore/react";
-import { connectDoc, store } from "../../components/CreateApi/store";
+import { connect, disconnect, store } from "../../components/CreateApi/store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
@@ -25,6 +25,7 @@ import SynchronizeCode from "../../components/CreateApi/SynchronizeModal/Synchro
 import SynchroinizeData from "../../components/CreateApi/SynchronizeModal/SynchroinizeData";
 import { InfinitySpin } from "react-loader-spinner";
 import styled from "styled-components";
+import GuideModal from "../../components/CreateApi/GuideModal/GuideModal";
 
 const CreateApi = () => {
   const dispatch = useAppDispatch();
@@ -41,7 +42,7 @@ const CreateApi = () => {
   const [isSynced, setIsSynced] = useState(0);
   const [isWarningModal, setIsWarningModal] = useState(false);
   const [isLodaing, setIsLoading] = useState(true);
-  // console.log(syncData, changeData, changeCode);
+  const [isGuideModal, setIsGuideModal] = useState(false);
 
   useEffect(() => {
     if (!encryptedUrl) {
@@ -55,7 +56,7 @@ const CreateApi = () => {
         console.log(err.response.data);
         setAuthority(0);
       });
-    connectDoc(encryptedUrl);
+    connect();
   }, [encryptedUrl]);
 
   const isOpenExtractModal = useSelector(
@@ -206,19 +207,41 @@ const CreateApi = () => {
       ].responseBody.properties.push(propertiesData);
     }
   };
-  const getData = (selectedController: number, selectedApi: number) => {
-    return state.data[selectedController].apis[selectedApi].headers;
-  };
-  const data = useMemo(() => {
-    if (state.data[selectedController])
-      return getData(selectedController, selectedApi);
-    else return [];
-  }, [state.data]);
   // 사이드바의 api 정보 가져오는 함수
   const handleSidebarApi = (index: number, idx: number) => {
     setSelectedController(index);
     setSelectedApi(idx);
     setActiveTab(1);
+  };
+
+  // 데이터 확인 용 로그
+  console.log(JSON.parse(JSON.stringify(state.data)));
+
+  const handleGetApiDetail = () => {
+    dispatch(getApiDetail({ docId: encryptedUrl })).then((res: any) => {
+      if (res.meta.requestStatus === "fulfilled") {
+        const detail = JSON.parse(res.payload.detail);
+        console.log(1, JSON.parse(JSON.stringify(detail.controllers)));
+        console.log(2, JSON.parse(JSON.stringify(state.data)));
+
+        if (state.data.length > 0) {
+          while (state.data.length !== 0) {
+            console.log(3, JSON.parse(JSON.stringify(state.data)));
+            state.data.splice(0);
+            console.log(4, JSON.parse(JSON.stringify(state.data)));
+          }
+        }
+        if (detail && detail.controllers.length > 0) {
+          console.log(5, JSON.parse(JSON.stringify(state.data)));
+          for (let idx = 0; idx < detail.controllers.length; idx++) {
+            state.data.push(detail.controllers[idx]);
+            console.log(6, JSON.parse(JSON.stringify(state.data)));
+          }
+          console.log(7, JSON.parse(JSON.stringify(state.data)));
+        }
+      }
+      console.log(8, JSON.parse(JSON.stringify(state.data)));
+    });
   };
 
   const saveChangeData = () => {
@@ -236,28 +259,9 @@ const CreateApi = () => {
     });
     setIsSynced((curr) => curr++);
   };
-  // 데이터 확인 용 로그
-  console.log(JSON.parse(JSON.stringify(state.data)));
-
-  const handleGetApiDetail = () => {
-    dispatch(getApiDetail({ docId: encryptedUrl })).then((res: any) => {
-      if (res.meta.requestStatus === "fulfilled") {
-        const detail = JSON.parse(res.payload.detail);
-        if (state.data.length > 0) {
-          while (state.data.length !== 0) {
-            state.data.splice(0);
-          }
-        }
-        if (detail && detail.controllers.length > 0) {
-          for (let idx = 0; idx < detail.controllers.length; idx++) {
-            state.data.push(detail.controllers[idx]);
-          }
-        }
-      }
-    });
-  };
 
   const handleSetApiDetail = () => {
+    console.log(9, JSON.parse(JSON.stringify(state.data)));
     dispatch(
       setApiDetail({
         encryptedUrl: localStorage.getItem("docId"),
@@ -272,6 +276,7 @@ const CreateApi = () => {
       .then((res: any) => {
         if (res.meta.requestStatus === "fulfilled") {
           handleGetApiDetail();
+          console.log(10, JSON.parse(JSON.stringify(state.data)));
         }
       })
       .catch((err: any) => console.log(err));
@@ -284,6 +289,7 @@ const CreateApi = () => {
   useEffect(() => {
     return () => {
       handleSetApiDetail();
+      disconnect();
     };
   }, [encryptedUrl]);
 
@@ -305,6 +311,7 @@ const CreateApi = () => {
     e.preventDefault();
     e.returnValue = "";
     handleSetApiDetail();
+    disconnect();
   };
 
   useEffect(() => {
@@ -450,6 +457,12 @@ const CreateApi = () => {
           </Loading>
         ) : (
           <div>
+            {isGuideModal && (
+              <GuideModal
+                setIsGuideModal={setIsGuideModal}
+                isGuideModal={isGuideModal}
+              />
+            )}
             <div className="apiDocscontainer">
               <Sidebar
                 handleController={handleController}
@@ -473,6 +486,14 @@ const CreateApi = () => {
                   </div>
                   <div className="buttonContainer">
                     <div className="createApiTitleButtonGroup">
+                      <button
+                        className="createApiButton"
+                        onClick={() => {
+                          setIsGuideModal(!isGuideModal);
+                        }}
+                      >
+                        사용법
+                      </button>
                       <button
                         className="createApiButton"
                         onClick={() => {

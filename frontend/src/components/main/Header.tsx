@@ -27,7 +27,7 @@ const Header = () => {
     setUserImg(user?.imgUrl);
   }, [user]);
   const handleLogOut = () => {
-    window.localStorage.removeItem("token");
+    window.localStorage.clear();
     window.location.reload();
   };
   const handleClick = (e: React.MouseEvent<HTMLElement>) => {

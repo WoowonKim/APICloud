@@ -38,58 +38,91 @@ const Headerheader = ({ getInfo }: type) => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    getInfo?.controllers[info.getControllerInfomation].apis[
-      info.getApisInfomation
-    ].headers.map((it, idx) => {
-      if (it.key === "token") {
-        setTokenInfo(it.value);
+    if (
+      getInfo &&
+      getInfo?.controllers &&
+      getInfo.controllers.length > info.getControllerInfomation &&
+      getInfo?.controllers[info.getControllerInfomation]?.apis &&
+      getInfo?.controllers[info.getControllerInfomation].apis.length >
+        info.getApisInfomation
+    ) {
+      setGetCollection(
+        getInfo.controllers[info.getControllerInfomation].apis[
+          info.getApisInfomation
+        ]?.requestBody?.collectionType
+      );
+      setGetDtoName(
+        getInfo.controllers[info.getControllerInfomation].apis[
+          info.getApisInfomation
+        ]?.requestBody?.dtoName
+      );
+      setGetType(
+        getInfo.controllers[info.getControllerInfomation].apis[
+          info.getApisInfomation
+        ]?.requestBody?.type
+      );
+      if (
+        getInfo.controllers[info.getControllerInfomation].apis[
+          info.getApisInfomation
+        ].headers !== null
+      ) {
+        getInfo.controllers[info.getControllerInfomation].apis[
+          info.getApisInfomation
+        ]?.headers.map((it, idx) => {
+          if (it.key === "token") {
+            setTokenInfo(it?.value);
+          }
+        });
       }
-    });
+    }
   }, [getInfo, info.getControllerInfomation, info.getApisInfomation]);
 
   return (
     <>
-      {getInfo?.controllers[info.getControllerInfomation].apis[
+      {getInfo?.controllers[info.getControllerInfomation]?.apis[
         info.getApisInfomation
-      ].headers.map((it, idx) => (
-        <div className="headerListTitleisHeader" key={idx}>
-          {it.key && (
-            <div className="apiKeyHeaderTitle">
-              <p className="apiHeaderListPtag">{it.key}</p>
-            </div>
-          )}
-          {it.key && (
-            <div className="apiKeyHeaderTitleValue">
-              <p className="apiHeaderListPtagInput">
-                {it.key !== "token" ? (
-                  <input
-                    className="apiHeaderListInputTag"
-                    type="text"
-                    defaultValue={it.value}
-                    onChange={e => {}}
-                  />
-                ) : (
-                  <input
-                    className="apiHeaderListInputTag"
-                    type="text"
-                    value={tokenInfo}
-                    onChange={e => {
-                      setTokenInfo(e.target.value);
-                      it.value = tokenInfo;
-                      dispatch(testApiSlice.actions.getTokenInfo(tokenInfo));
-                    }}
-                  />
-                )}
-              </p>
-            </div>
-          )}
-          {it.key && (
-            <div className="apiKeyHeaderTitleCheck">
-              <p className="apiHeaderListButtonTag">SAVE</p>
-            </div>
-          )}
-        </div>
-      ))}
+      ]?.headers !== null &&
+        getInfo?.controllers[info.getControllerInfomation]?.apis[
+          info.getApisInfomation
+        ]?.headers.map((it, idx) => (
+          <div className="headerListTitleisHeader" key={idx}>
+            {it?.key && (
+              <div className="apiKeyHeaderTitle">
+                <p className="apiHeaderListPtag">{it.key}</p>
+              </div>
+            )}
+            {it?.key && (
+              <div className="apiKeyHeaderTitleValue">
+                <p className="apiHeaderListPtagInput">
+                  {it.key !== "token" ? (
+                    <input
+                      className="apiHeaderListInputTag"
+                      type="text"
+                      defaultValue={it?.value}
+                      onChange={(e) => {}}
+                    />
+                  ) : (
+                    <input
+                      className="apiHeaderListInputTag"
+                      type="text"
+                      value={tokenInfo}
+                      onChange={(e) => {
+                        setTokenInfo(e.target.value);
+                        it.value = tokenInfo;
+                        dispatch(testApiSlice.actions.getTokenInfo(tokenInfo));
+                      }}
+                    />
+                  )}
+                </p>
+              </div>
+            )}
+            {it?.key && (
+              <div className="apiKeyHeaderTitleCheck">
+                <p className="apiHeaderListButtonTag">SAVE</p>
+              </div>
+            )}
+          </div>
+        ))}
     </>
   );
 };

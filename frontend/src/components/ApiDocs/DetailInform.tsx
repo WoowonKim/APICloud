@@ -147,69 +147,80 @@ const DetailInform = forwardRef<Ref, Props>(
                     &nbsp;commonUri:
                   </div>
                 </div>
-                <div className="content">{controller.commonUri}</div>
+                <div className="content">{controller?.commonUri}</div>
               </div>
-              {controller.apis.map((api: any, apiIdx: any) => (
-                <div key={apiIdx} ref={addToRefs}>
-                  <div
-                    className={
-                      refList.current.length > 0 &&
-                      refList.current[
-                        (3 + controller.apis.length) * controllerIdx +
-                          apiIdx +
-                          4
-                      ]?.offsetTop !== undefined &&
-                      scrollPosition - 1 <=
+              {controller?.apis &&
+                controller.apis.length > 0 &&
+                controller.apis.map((api: any, apiIdx: any) => (
+                  <div key={apiIdx} ref={addToRefs}>
+                    <div
+                      className={
+                        refList.current.length > 0 &&
                         refList.current[
                           (3 + controller.apis.length) * controllerIdx +
                             apiIdx +
                             4
-                        ]!.offsetTop &&
-                      refList.current[
-                        (3 + controller.apis.length) * controllerIdx +
-                          apiIdx +
-                          4
-                      ]!.offsetTop <
-                        scrollPosition + 1
-                        ? "highLightedTitleContentWrapper"
-                        : "titleContentWrapper"
-                    }
-                  >
-                    &nbsp;
-                    <FontAwesomeIcon icon={faCircle} className="circleIcon" />
-                    &nbsp;apis
-                  </div>
-                  <div className="titleContentWrapper">
-                    <div className="iconTitleWrapper">
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        ]?.offsetTop !== undefined &&
+                        scrollPosition - 1 <=
+                          refList.current[
+                            (3 + controller.apis.length) * controllerIdx +
+                              apiIdx +
+                              4
+                          ]!.offsetTop &&
+                        refList.current[
+                          (3 + controller.apis.length) * controllerIdx +
+                            apiIdx +
+                            4
+                        ]!.offsetTop <
+                          scrollPosition + 1
+                          ? "highLightedTitleContentWrapper"
+                          : "titleContentWrapper"
+                      }
+                    >
+                      &nbsp;
                       <FontAwesomeIcon icon={faCircle} className="circleIcon" />
-                      &nbsp;name:
+                      &nbsp;apis
                     </div>
-                    <div className="content">{api.name}</div>
-                  </div>
-                  <div className="titleContentWrapper">
-                    <div className="iconTitleWrapper">
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                      <FontAwesomeIcon icon={faCircle} className="circleIcon" />
-                      &nbsp;uri:
+                    <div className="titleContentWrapper">
+                      <div className="iconTitleWrapper">
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <FontAwesomeIcon
+                          icon={faCircle}
+                          className="circleIcon"
+                        />
+                        &nbsp;name:
+                      </div>
+                      <div className="content">{api?.name}</div>
                     </div>
-                    <div className="content">{api.uri}</div>
-                  </div>
-                  <div className="titleContentWrapper">
-                    <div className="iconTitleWrapper">
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                      <FontAwesomeIcon icon={faCircle} className="circleIcon" />
-                      &nbsp;method:
+                    <div className="titleContentWrapper">
+                      <div className="iconTitleWrapper">
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <FontAwesomeIcon
+                          icon={faCircle}
+                          className="circleIcon"
+                        />
+                        &nbsp;uri:
+                      </div>
+                      <div className="content">{api?.uri}</div>
                     </div>
-                    <div className="content">{api.method}</div>
+                    <div className="titleContentWrapper">
+                      <div className="iconTitleWrapper">
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <FontAwesomeIcon
+                          icon={faCircle}
+                          className="circleIcon"
+                        />
+                        &nbsp;method:
+                      </div>
+                      <div className="content">{api?.method}</div>
+                    </div>
+                    <RequestBody item={api} />
+                    <Parameters item={api} />
+                    <Queries item={api} />
+                    <Headers item={api} />
+                    <Responses item={api} />
                   </div>
-                  <RequestBody item={api} />
-                  <Parameters item={api} />
-                  <Queries item={api} />
-                  <Headers item={api} />
-                  <Responses item={api} />
-                </div>
-              ))}
+                ))}
             </div>
           ))}
       </div>

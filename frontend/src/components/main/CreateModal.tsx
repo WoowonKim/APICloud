@@ -111,7 +111,6 @@ const CreateModal = () => {
     dispatch(setApiDoc(createDocRequest)).then((res: any) => {
       if (res.meta.requestStatus === "fulfilled") {
         setEncryptedUrl(res.payload.encryptedUrl);
-        console.log(res.payload.encryptedUrl);
         dispatch(
           mainApiSlice.actions.setIsOpenCreateModal({ isOpenModal: false })
         );
@@ -128,7 +127,6 @@ const CreateModal = () => {
           alert("본인 이메일 입니다.");
           setSearchUserRes(undefined);
         } else {
-          console.log(res.data);
           setSearchUserRes(res.data);
         }
       })
@@ -140,7 +138,6 @@ const CreateModal = () => {
   const handleAuthortyChange = (e: any, idx: number) => {
     let copy = [...invitedUsers];
     copy[idx].authority = e.target.value;
-    console.log(copy);
     setInvitedUsers(copy);
   };
 
@@ -413,11 +410,11 @@ const CreateModal = () => {
                 </List>
               </div>
               <div className="modalBtn">
-                <button className="copyBtn">
-                  <FontAwesomeIcon icon={faLink} />
-                  <span>링크복사</span>
-                </button>
-                <button className="makeBtn" type="submit" disabled={!canGoNext}>
+                <button
+                  className="createModalMakeBtn"
+                  type="submit"
+                  disabled={!canGoNext}
+                >
                   완료
                 </button>
               </div>

@@ -62,14 +62,14 @@ const ApiInputUri = ({
   const server = Object.values(info.getServerUrl).toString();
   const context = Object.values(info.getContextUrl).toString();
   const requestMaapingUri =
-    getInfo?.controllers[info.getControllerInfomation].commonUri;
+    getInfo?.controllers[info.getControllerInfomation]?.commonUri;
 
   //해당 uri 받아오기
   useEffect(() => {
     setMethodUri(
-      getInfo?.controllers[info.getControllerInfomation].apis[
+      getInfo?.controllers[info.getControllerInfomation]?.apis[
         info.getApisInfomation
-      ].uri
+      ]?.uri
     );
   }, [getInfo, info.getApisInfomation, info.getControllerInfomation]);
 
@@ -92,9 +92,9 @@ const ApiInputUri = ({
   useEffect(() => {
     if (getInfo) {
       setInfoQueries(
-        getInfo?.controllers[info.getControllerInfomation].apis[
+        getInfo?.controllers[info.getControllerInfomation]?.apis[
           info.getApisInfomation
-        ].queries
+        ]?.queries
       );
     }
   }, [getInfo, info.getControllerInfomation, info.getApisInfomation]);
@@ -107,9 +107,9 @@ const ApiInputUri = ({
   // 쿼리문 받아오기
   useEffect(() => {
     let testARR: string[] = [];
-    if (infoQueries) {
-      infoQueries?.map((it, idx) => {
-        if (it.name.length > 0) {
+    if (infoQueries && infoQueries.length > 0) {
+      infoQueries.map((it, idx) => {
+        if (it.name && it.name.length > 0) {
           testARR = [...testARR, it.name];
         }
         setReqArr([...reqArr, ...testARR]);
@@ -148,9 +148,9 @@ const ApiInputUri = ({
 
   // 메소드 정보 받아오기
   const requestMethod =
-    getInfo?.controllers[info.getControllerInfomation].apis[
+    getInfo?.controllers[info.getControllerInfomation]?.apis[
       info.getApisInfomation
-    ].method;
+    ]?.method;
 
   // 서버 통신
   const submitRequest = () => {
@@ -164,7 +164,7 @@ const ApiInputUri = ({
           },
           params: queriesInfo,
         })
-          .then(res => {
+          .then((res) => {
             responseAllInfo(res);
           })
           .catch(err => {
@@ -181,10 +181,10 @@ const ApiInputUri = ({
           },
           params: queriesInfo,
         })
-          .then(res => {
+          .then((res) => {
             responseAllInfo(res);
           })
-          .catch(err => {
+          .catch((err) => {
             errResponsAllInfo(err);
           });
         break;
@@ -198,10 +198,10 @@ const ApiInputUri = ({
           },
           params: queriesInfo,
         })
-          .then(res => {
+          .then((res) => {
             responseAllInfo(res);
           })
-          .catch(err => {
+          .catch((err) => {
             errResponsAllInfo(err);
           });
         break;
