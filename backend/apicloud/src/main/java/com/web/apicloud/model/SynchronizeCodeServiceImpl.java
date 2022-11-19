@@ -32,6 +32,7 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
     private static final String METHOD = "Mapping";
     private static final String RESPONSE_ENTITY = "ResponseEntity";
     private static final String REQUEST_PARAM = "RequestParam";
+    private static final String MODEL_ATTRIBUTE = "ModelAttribute";
     private static final String PATH_VARIABLE = "PathVariable";
     private static final String REQUEST_BODY = "RequestBody";
 
@@ -97,12 +98,14 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
             if (parsingService.KMP(codeList.get(0).getCode().get(i), REQUEST_MAPPING) != -1) {
                 int target = parsingService.KMP(codeList.get(0).getCode().get(i), VALUE);
                 String value = null;
-                if (target != -1) value = parsingService.getValue(codeList.get(0).getCode().get(i).substring(target + 1, codeList.get(0).getCode().get(i).length()));
+                if (target != -1)
+                    value = parsingService.getValue(codeList.get(0).getCode().get(i).substring(target + 1, codeList.get(0).getCode().get(i).length()));
                 else value = parsingService.getValue(codeList.get(0).getCode().get(i));
 
                 String commonUri = "";
                 if (detailVO.getCommonUri() != null) commonUri = detailVO.getCommonUri();
-                if (value == null) codeList.get(0).getCode().set(i, codeList.get(0).getCode().get(i) + "(value = \"" + commonUri + "\")");
+                if (value == null)
+                    codeList.get(0).getCode().set(i, codeList.get(0).getCode().get(i) + "(value = \"" + commonUri + "\")");
                 else codeList.get(0).getCode().set(i, codeList.get(0).getCode().get(i).replace(value, commonUri));
                 i++;
                 break;
@@ -287,6 +290,10 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
                 flag = true;
                 break;
             }
+            if (parsingService.KMP(entry.getValue(), MODEL_ATTRIBUTE) != -1) {
+                flag = true;
+                break;
+            }
         }
         if (flag) {
             itr = request.entrySet().iterator();
@@ -327,13 +334,18 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
                 PropertyVO query = detailApiVO.getQueries().get(p);
                 String queryStr = "";
                 if (query.getName() == null) continue;
-                queryStr += "@" + REQUEST_PARAM + "(" + VALUE + " = " + query.getName() + ", required = " + query.isRequired() + ") ";
-
+//                queryStr += "@" + REQUEST_PARAM + "(" + VALUE + " = " + query.getName() + ", required = " + query.isRequired() + ") ";
                 String type;
                 if (query.getType().equals("Object")) {
                     classUpdateService.updateObject(groupSecretKey, query, 0);
                     type = query.getDtoName();
-                } else type = query.getType();
+                    queryStr += "@" + MODEL_ATTRIBUTE;
+                } else {
+                    type = query.getType();
+                    queryStr += "@" + REQUEST_PARAM;
+                }
+                if (!query.isRequired()) queryStr += "(required = " + query.isRequired() + ")";
+                queryStr += " ";
                 if (query.getCollectionType() != null && !query.getCollectionType().equals("")) {
                     if (importList.get(0).get(IMPORT_UTIL) == null && importList.get(0).get(IMPORT_LIST) == null) {
                         importList.get(0).put(IMPORT_LIST, IMPORT);
