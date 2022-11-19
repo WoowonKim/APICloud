@@ -8,7 +8,7 @@ const Item = styled.p`
   border: none;
   border-radius: 10px;
   padding: 9px 10px 3px 10px;
-  background-color: ${(props) => props.color};
+  background-color: ${props => props.color};
 `;
 const SideMenuList = styled.div`
   padding: 5px 7px 5px 7px;
@@ -16,6 +16,7 @@ const SideMenuList = styled.div`
   font-size: 12px;
   font-weight: bold;
   justify-content: space-between;
+  cursor: pointer;
 `;
 
 const SideContollerName = styled.p`
@@ -24,7 +25,7 @@ const SideContollerName = styled.p`
   color: #5d5d5d;
   font-size: 18px;
   font-weight: 600;
-  text-color: ${(props) => props.theme.color};
+  text-color: ${props => props.theme.color};
 `;
 interface type {
   getInfo: RequestTypeInfo | undefined;
@@ -33,7 +34,7 @@ interface type {
 const ApiSide = ({ getInfo }: type) => {
   const dispatch = useAppDispatch();
   return (
-    <div className="">
+    <div>
       {getInfo?.controllers.map((it, index) => (
         <div key={index}>
           <SideContollerName>{it.name}</SideContollerName>

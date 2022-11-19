@@ -1,32 +1,21 @@
-import React, {
-  Dispatch,
-  SetStateAction,
-  SyntheticEvent,
-  useEffect,
-  useState,
-} from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import {
   PropertiesType,
   RequestTypeInfo,
 } from "../../pages/CreateApi/ApisType";
-import { reBodyType } from "../../pages/TestApi";
 import { useAppDispatch } from "../../Store/hooks";
 import testApiSlice, { selectTestApi } from "../../Store/slice/testApi";
-import {
-  HeaderContatinerList,
-  HeaderListInput,
-  HeaderListTitle,
-  HeaderListTitleCon,
-} from "./Headerheader";
 interface type {
   getInfo: RequestTypeInfo | undefined;
-  setParamsInfo: Dispatch<SetStateAction<reBodyType | undefined>>;
-  paramsInfo: reBodyType | undefined;
 }
-const ApiParams = ({ getInfo, setParamsInfo, paramsInfo }: type) => {
-  const info = useSelector(selectTestApi);
+const ApiParams = ({ getInfo }: type) => {
   const [infoParams, setInfoParams] = useState<PropertiesType[]>();
+
+  const info = useSelector(selectTestApi);
+  const dispatch = useAppDispatch();
+
+  // PATH 경로 불러오기
   useEffect(() => {
     if (
       getInfo &&
@@ -51,35 +40,6 @@ const ApiParams = ({ getInfo, setParamsInfo, paramsInfo }: type) => {
       });
     }
   }, [getInfo, info.getControllerInfomation, info.getApisInfomation]);
-
-  const dispatch = useAppDispatch();
-  const [inputParam, setInputParam] = useState("");
-  const [newParams, setNewParams] = useState({});
-  const [paramsId, setParamsId] = useState("");
-  const [arrTest, setArrTest] = useState<[any, any][]>([]);
-
-  useEffect(() => {
-    if (paramsInfo) {
-      setArrTest(Object.entries(paramsInfo));
-    }
-  }, [paramsInfo]);
-
-  useEffect(() => {
-    if (getInfo) {
-      setParamsInfo({});
-    }
-  }, [getInfo, info.getControllerInfomation, info.getApisInfomation]);
-
-  useEffect(() => {
-    let key = paramsId;
-    setNewParams({ [key]: inputParam });
-  }, [inputParam]);
-
-  const onSubmit = (e: any) => {
-    e.preventDefault();
-    setParamsInfo({ ...paramsInfo, ...newParams });
-    setInputParam("");
-  };
 
   return (
     <>

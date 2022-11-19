@@ -16,7 +16,7 @@ const ApiResponse = ({ getInfo, testbodyInfo }: type) => {
   const [bodyDataFlag, setBodyDataFlag] = useState(false);
   const [bodyData, setBodyData] = useState<[string, string][]>();
   const [arr, setArr] = useState<[string, string][]>();
-  const [typeFlag, setTypeFlag] = useState(false);
+
   // Response Body 불러와서 객체형태로 뿌려주기
   useEffect(() => {
     if (getStatusData !== undefined && typeof getStatusData !== typeof "") {

@@ -61,7 +61,11 @@ const DetailInform = forwardRef<Ref, Props>(
           detail.controllers.map((controller: any, controllerIdx: any) => (
             <div key={controllerIdx}>
               <div
-                ref={(el) => (refList.current[1] = el)}
+                ref={(el) =>
+                  (refList.current[
+                    (3 + controller.apis.length) * controllerIdx + 1
+                  ] = el)
+                }
                 className={
                   refList.current.length > 0 &&
                   refList.current[
