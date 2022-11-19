@@ -28,11 +28,18 @@ const HeaderQueries = ({ getInfo, queriesInfo, setQueriesInfo }: type) => {
   }, [queriesInfo]);
 
   useEffect(() => {
-    if (getInfo) {
+    if (
+      getInfo &&
+      getInfo?.controllers &&
+      getInfo.controllers.length > info.getControllerInfomation &&
+      getInfo?.controllers[info.getControllerInfomation]?.apis &&
+      getInfo?.controllers[info.getControllerInfomation].apis.length >
+        info.getApisInfomation
+    ) {
       setInfoQueries(
         getInfo?.controllers[info.getControllerInfomation].apis[
           info.getApisInfomation
-        ].queries
+        ]?.queries
       );
       setQueriesInfo({});
     }
@@ -51,38 +58,40 @@ const HeaderQueries = ({ getInfo, queriesInfo, setQueriesInfo }: type) => {
 
   return (
     <>
-      {infoQueries?.map((it, idx) => (
-        <div className="headerListTitleisHeader" key={idx}>
-          {it.name && (
-            <div className="apiKeyHeaderTitle">
-              <p className="apiHeaderListPtag">{it.name}</p>
-            </div>
-          )}
+      {infoQueries &&
+        infoQueries.length > 0 &&
+        infoQueries.map((it, idx) => (
+          <div className="headerListTitleisHeader" key={idx}>
+            {it?.name && (
+              <div className="apiKeyHeaderTitle">
+                <p className="apiHeaderListPtag">{it.name}</p>
+              </div>
+            )}
 
-          {it.name && (
-            <div className="apiKeyHeaderTitleValueSubmit">
-              <p className="apiHeaderListPtagInput">
-                <input
-                  className="apiHeaderListInputTag"
-                  type="text"
-                  defaultValue={arrTest.length > idx ? arrTest[idx][1] : ""}
-                  onChange={e => {
-                    setInputQueries(e.target.value);
-                    setQueriesId(it.name);
-                  }}
-                  onBlur={onSubmit}
-                />
-              </p>
-            </div>
-          )}
+            {it?.name && (
+              <div className="apiKeyHeaderTitleValueSubmit">
+                <p className="apiHeaderListPtagInput">
+                  <input
+                    className="apiHeaderListInputTag"
+                    type="text"
+                    defaultValue={arrTest.length > idx ? arrTest[idx][1] : ""}
+                    onChange={(e) => {
+                      setInputQueries(e.target.value);
+                      setQueriesId(it.name);
+                    }}
+                    onBlur={onSubmit}
+                  />
+                </p>
+              </div>
+            )}
 
-          {it.name && (
-            <div className="apiKeyHeaderTitleCheck">
-              <p className="apiHeaderListButtonTag">SAVE</p>
-            </div>
-          )}
-        </div>
-      ))}
+            {it?.name && (
+              <div className="apiKeyHeaderTitleCheck">
+                <p className="apiHeaderListButtonTag">SAVE</p>
+              </div>
+            )}
+          </div>
+        ))}
     </>
   );
 };

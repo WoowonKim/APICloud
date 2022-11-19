@@ -32,7 +32,10 @@ const MethodTest = ({ methodApiWord }: word) => {
   const [selectedMethod, setSelectedMethod] = useState("GET");
   const handleSelect = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
     const eventTarget = e.target as HTMLElement;
-    setSelectedMethod(eventTarget.innerText);
+    setSelectedMethod(
+      eventTarget.innerText[0] +
+        eventTarget.innerText.substring(1).toLocaleLowerCase()
+    );
     setVisible(!visible);
   };
   useEffect(() => {
@@ -59,32 +62,32 @@ const MethodTest = ({ methodApiWord }: word) => {
             : "#EEE0DA"
         }
       >
-        {selectedMethod}
+        {selectedMethod.toUpperCase()}
       </SelectedItem>
 
       {visible && (
         <div className="selectBoxContainer">
           <ul className="itemList">
             <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#fdecc8">Get</Item>
+              <Item color="#fdecc8">GET</Item>
             </li>
             <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#F5E0E9">Post</Item>
+              <Item color="#F5E0E9">POST</Item>
             </li>
             <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#F1F0EF">Put</Item>
+              <Item color="#F1F0EF">PUT</Item>
             </li>
             <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#D3E5EF">Delete</Item>
+              <Item color="#D3E5EF">DELETE</Item>
             </li>
             <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#E8DEEE">Patch</Item>
+              <Item color="#E8DEEE">PATCH</Item>
             </li>
             <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#FFE2DD">Options</Item>
+              <Item color="#FFE2DD">OPTIONS</Item>
             </li>
             <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#EEE0DA">Head</Item>
+              <Item color="#EEE0DA">HEAD</Item>
             </li>
           </ul>
         </div>

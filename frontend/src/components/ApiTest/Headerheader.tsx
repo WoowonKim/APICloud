@@ -42,51 +42,58 @@ const Headerheader = ({ getInfo }: type) => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (getInfo) {
+    if (
+      getInfo &&
+      getInfo?.controllers &&
+      getInfo.controllers.length > info.getControllerInfomation &&
+      getInfo?.controllers[info.getControllerInfomation]?.apis &&
+      getInfo?.controllers[info.getControllerInfomation].apis.length >
+        info.getApisInfomation
+    ) {
       setGetCollection(
-        getInfo?.controllers[info.getControllerInfomation].apis[
+        getInfo.controllers[info.getControllerInfomation].apis[
           info.getApisInfomation
-        ].requestBody.collectionType
+        ]?.requestBody?.collectionType
       );
       setGetDtoName(
-        getInfo?.controllers[info.getControllerInfomation].apis[
+        getInfo.controllers[info.getControllerInfomation].apis[
           info.getApisInfomation
-        ].requestBody.dtoName
+        ]?.requestBody?.dtoName
       );
       setGetType(
-        getInfo?.controllers[info.getControllerInfomation].apis[
+        getInfo.controllers[info.getControllerInfomation].apis[
           info.getApisInfomation
-        ].requestBody.type
+        ]?.requestBody?.type
       );
+      getInfo.controllers[info.getControllerInfomation].apis[
+        info.getApisInfomation
+      ]?.headers.map((it, idx) => {
+        if (it.key === "token") {
+          setTokenInfo(it?.value);
+        }
+      });
     }
-    getInfo?.controllers[info.getControllerInfomation].apis[
-      info.getApisInfomation
-    ].headers.map((it, idx) => {
-      if (it.key === "token") {
-        setTokenInfo(it.value);
-      }
-    });
   }, [getInfo, info.getControllerInfomation, info.getApisInfomation]);
 
   return (
     <>
-      {getInfo?.controllers[info.getControllerInfomation].apis[
+      {getInfo?.controllers[info.getControllerInfomation]?.apis[
         info.getApisInfomation
-      ].headers.map((it, idx) => (
+      ]?.headers.map((it, idx) => (
         <div className="headerListTitleisHeader" key={idx}>
-          {it.key && (
+          {it?.key && (
             <div className="apiKeyHeaderTitle">
               <p className="apiHeaderListPtag">{it.key}</p>
             </div>
           )}
-          {it.key && (
+          {it?.key && (
             <div className="apiKeyHeaderTitleValue">
               <p className="apiHeaderListPtagInput">
                 {it.key !== "token" ? (
                   <input
                     className="apiHeaderListInputTag"
                     type="text"
-                    defaultValue={it.value}
+                    defaultValue={it?.value}
                     onChange={(e) => {}}
                   />
                 ) : (
@@ -104,7 +111,7 @@ const Headerheader = ({ getInfo }: type) => {
               </p>
             </div>
           )}
-          {it.key && (
+          {it?.key && (
             <div className="apiKeyHeaderTitleCheck">
               <p className="apiHeaderListButtonTag">SAVE</p>
             </div>

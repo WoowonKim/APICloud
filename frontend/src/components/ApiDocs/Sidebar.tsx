@@ -92,6 +92,7 @@ const Sidebar = forwardRef<Ref, Props>(
         </ul>
         <ul className="sidebarUl">
           {detail &&
+            detail?.controllers &&
             detail.controllers.map((controller: any, controllerIdx: any) => (
               <div key={controllerIdx}>
                 <li
@@ -141,7 +142,7 @@ const Sidebar = forwardRef<Ref, Props>(
                       )
                     }
                   >
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{api.name} API
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{api?.name} API
                   </li>
                 ))}
               </div>
