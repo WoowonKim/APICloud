@@ -6,7 +6,7 @@
 
 ## 버전 정보
 
-ApiCloud는 원할한 개발을 위해 개발환경의 통일성을 준수합니다.
+APICloud는 원할한 개발을 위해 개발환경의 통일성을 준수합니다.
 
 아래 기술스택을 참고하여 개발환경을 구성해주세요.
 
@@ -27,7 +27,7 @@ ApiCloud는 원할한 개발을 위해 개발환경의 통일성을 준수합니
 
 ## 시작하기
 
-ApiCloud는 코드의 통일성, 가독성, 유지보수 등의 이유로 Java, TypeScript, Data, Git 에서 정해진 Convention을 사용합니다.
+APICloud는 코드의 통일성, 가독성, 유지보수 등의 이유로 Java, TypeScript, Data, Git 에서 정해진 Convention을 사용합니다.
 
 Java, TypeScript , Data의 CodeConvention은 [여기](ContributorConvention.md)에서 확인 해주세요.
 
@@ -43,9 +43,9 @@ Git과 관련된 brach, commit, merge 등의 Convention은 [여기](CodeConventi
 
 4. 작업 내용을 Fork한 Repository에 push합니다.
 
-5. ApiCloud Repository로 이동하여 Pull Request를 작성합니다.
+5. APICloud Repository로 이동하여 Pull Request를 작성합니다.
 
-6. ApiCloud 개발팀에서 내용을 확인한 후 이후 과정을 안내합니다.
+6. APICloud 개발팀에서 내용을 확인한 후 이후 과정을 안내합니다.
 
 ## Issue 보고
 
