@@ -1,27 +1,5 @@
 @import "../welcome/Welcome.scss";
 
-.openSidebar {
-  z-index: 5;
-  width: 18vw;
-  height: 100vh;
-  position: absolute;
-  left: 0px;
-  transition: 0.5s ease;
-  background-color: rgb(244, 248, 248);
-  border-radius: 5px;
-}
-
-.closeSidebar {
-  z-index: 5;
-  width: 250px;
-  height: 100vh;
-  position: absolute;
-  left: -200px;
-  transition: 0.5s ease;
-  background-color: rgba(0, 0, 0, 0.05);
-  border-radius: 5px;
-}
-
 .closeButtonWrapper {
   padding: 10px;
 }

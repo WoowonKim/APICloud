@@ -7,6 +7,8 @@ export const darkTheme: DefaultTheme = {
   startBgColor: "#514D4D",
   listBgColor: "#e4effa",
   sideBgClodr: "none",
+  docBgColor: "#414141",
+  docSidebarBgColor: "#575757"
 };
 
 export const lightTheme: DefaultTheme = {
@@ -16,4 +18,6 @@ export const lightTheme: DefaultTheme = {
   startBgColor: "#DFF6F5",
   listBgColor: "#ffffff",
   sideBgClodr: "#e4effa",
+  docBgColor: "#e7f7fe;",
+  docSidebarBgColor: "rgb(244, 248, 248);"
 };

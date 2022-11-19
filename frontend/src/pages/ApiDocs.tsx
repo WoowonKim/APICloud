@@ -10,6 +10,8 @@ import { useDispatch } from "react-redux";
 import { getApiDoc } from "../Store/slice/mainApi";
 import { getApiDetail } from "../Store/slice/apiDocsApi";
 import { DocInformationType } from "../components/main/CreateModal";
+import styled from "styled-components";
+import { faFilePdf } from "@fortawesome/free-regular-svg-icons";
 
 const ApiDocs = () => {
   const [docInform, setDocInform] = useState<DocInformationType>(); // Doc 기본 정보
@@ -89,7 +91,7 @@ const ApiDocs = () => {
         onClick={scrollUp}
       />
       {docInformArray && detail && (
-        <div className="sidebarDocWrapper">
+        <SidebarDocWrapper>
           <div className="sidebarBox">
             <div onClick={toggleSide} className="sidebarButton">
               <FontAwesomeIcon icon={faBars} size="2x" />
@@ -102,9 +104,12 @@ const ApiDocs = () => {
               ref={menuRef}
             />
           </div>
-          <div className="docBox">
+          <div className="pdfButton" onClick={(e) => converToPDF(e)}>
+            <FontAwesomeIcon icon={faFilePdf} className="pdfIcon" size="2x" />
+          </div>
+          <DocBox>
             <div className="pdfDocArea">
-              <div className="doc1">
+              <Doc1>
                 <div className="docTitleWrapper">
                   <h1 className="docTitle" ref={serverInformRef}>
                     {docInform?.docsName} 문서
@@ -112,21 +117,49 @@ const ApiDocs = () => {
                 </div>
                 <h2 className="serverInformTitle">Server 정보</h2>
                 <ServerInform docInformArray={docInformArray} />
-              </div>
-              <div className="doc2">
+              </Doc1>
+              <Doc2>
                 <DetailInform
                   detail={detail}
                   scrollPosition={scrollPosition}
                   ref={menuRef}
                 />
-              </div>
+              </Doc2>
             </div>
-            <button onClick={(e) => converToPDF(e)}>pdf로 변환</button>
-          </div>
-        </div>
+          </DocBox>
+        </SidebarDocWrapper>
       )}
     </div>
   );
 };
 
 export default ApiDocs;
+
+const SidebarDocWrapper = styled.div`
+  background-color: ${(props) => props.theme.docBgColor};
+`;
+
+const DocBox = styled.div`
+  margin: auto;
+  background-color: ${(props) => props.theme.docBgColor};
+  width: 800px;
+  padding-top: 10vh;
+`;
+
+const Doc1 = styled.div`
+  padding: 0px;
+  width: 800px;
+  background-color: white;
+  word-break: break-all;
+  color: black;
+`;
+
+const Doc2 = styled.div`
+  display: flex;
+  justify-content: center;
+  padding: 50px;
+  width: 800px;
+  background-color: white;
+  word-break: break-all;
+  color: black;
+`;
