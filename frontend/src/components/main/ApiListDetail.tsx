@@ -79,10 +79,10 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
       {apiList === 0 ? (
         <>
           {apiDocList?.map((it, idx) => (
-            <>
+            <div key={idx}>
               {it.authority === 1 ? (
                 <>
-                  <ListContent key={idx}>
+                  <ListContent>
                     <DetailContent
                       onClick={() => {
                         moveApidocs(it.encryptedUrl, false);
@@ -142,16 +142,16 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
               ) : (
                 <></>
               )}
-            </>
+            </div>
           ))}
         </>
       ) : (
         <>
           {apiDocList?.map((it, idx) => (
-            <>
+            <div key={idx}>
               {it.authority !== 1 ? (
                 <>
-                  <ListContent key={idx}>
+                  <ListContent>
                     <DetailContent
                       onClick={() => {
                         moveApidocs(it.encryptedUrl, false);
@@ -185,7 +185,7 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
               ) : (
                 <></>
               )}
-            </>
+            </div>
           ))}
         </>
       )}
