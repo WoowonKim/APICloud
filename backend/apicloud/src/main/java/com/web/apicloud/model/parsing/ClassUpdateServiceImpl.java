@@ -30,7 +30,6 @@ public class ClassUpdateServiceImpl implements ClassUpdateService {
     @Override
     public void updateObject(String groupSecretKey, PropertyVO property, int index) throws IOException {
         if (property == null) return;
-        System.out.println("updateObject ==> " + property.getDtoName());
         int i = 0;
         for (i = 1; i < SynchronizeCodeServiceImpl.codeList.size(); i++) {
             if (SynchronizeCodeServiceImpl.codeList.get(i).getName().equals(property.getDtoName())) return;
@@ -43,17 +42,16 @@ public class ClassUpdateServiceImpl implements ClassUpdateService {
         String key = StringUtils.removeStart(StringUtils.removeEnd(String.valueOf(getFileCode.get(IMPORT)), "]"), "[");
         SynchronizeCodeServiceImpl.codeList.add(CodeResponse.builder().name(property.getDtoName()).importPackage(key).code(lines).build());
         SynchronizeCodeServiceImpl.importList.add(new HashMap<>());
+
         i = SynchronizeCodeServiceImpl.codeList.size() - 1;
         if (SynchronizeCodeServiceImpl.importList.get(index).get(key) == null) {
             SynchronizeCodeServiceImpl.importList.get(index).put(key, IMPORT);
             SynchronizeCodeServiceImpl.codeList.get(index).getUpdateImport().add(IMPORT + " " + key + ";");
         }
-
         updateClass(groupSecretKey, i, property);
     }
 
     private void updateClass(String groupSecretKey, int index, PropertyVO property) throws IOException {
-        System.out.println("updateClass ==> ");
         int i = 0;
         List<String> lines = SynchronizeCodeServiceImpl.codeList.get(index).getCode();
         if (parsingService.KMP(lines.get(i), IMPORT) != -1) {
@@ -70,6 +68,7 @@ public class ClassUpdateServiceImpl implements ClassUpdateService {
                 break;
             }
         }
+
         while (i < lines.size()) {
             if (!lines.get(i).equals("")) {
                 if (getProperty(lines.get(i))) remove.add(i);
@@ -80,11 +79,9 @@ public class ClassUpdateServiceImpl implements ClassUpdateService {
         for (int j = remove.size() - 1; j >= 0; j--) {
             SynchronizeCodeServiceImpl.codeList.get(index).getCode().remove(remove.get(j).intValue());
         }
+
         List<String> body = makeBody(groupSecretKey, property, index);
         if (body != null) SynchronizeCodeServiceImpl.codeList.get(index).getCode().addAll(startIndex, body);
-//        for (int j = 0; j < SynchronizeCodeServiceImpl.codeList.get(index).getCode().size(); j++) {
-//            System.out.println(SynchronizeCodeServiceImpl.codeList.get(index).getCode().get(j));
-//        }
     }
 
     private List<String> makeBody(String groupSecretKey, PropertyVO property, int index) throws IOException {
@@ -100,17 +97,18 @@ public class ClassUpdateServiceImpl implements ClassUpdateService {
                 type = propertyDetail.getDtoName();
                 updateObject(groupSecretKey, propertyDetail, index);
             } else type = propertyDetail.getType();
-            if (propertyDetail.getCollectionType() != null) {
+
+            if (propertyDetail.getCollectionType() != null && !propertyDetail.getCollectionType().equals("")) {
                 propertyBody += "List<" + type + ">";
                 if (SynchronizeCodeServiceImpl.importList.get(index).get(IMPORT_UTIL) == null && SynchronizeCodeServiceImpl.importList.get(index).get(IMPORT_LIST) == null) {
                     SynchronizeCodeServiceImpl.importList.get(index).put(IMPORT_LIST, IMPORT);
                     SynchronizeCodeServiceImpl.codeList.get(index).getUpdateImport().add(IMPORT + " " + IMPORT_LIST + ";");
                 }
             } else propertyBody += type;
+
             propertyBody += " " + propertyDetail.getName() + ";";
             body.add(propertyBody);
         }
-        System.out.println("makeBody ==> " + body);
         return body;
     }
 

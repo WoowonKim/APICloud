@@ -1,9 +1,11 @@
-import { faCheck, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faClose, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useSyncedStore } from "@syncedstore/react";
-import { store } from "../store";
+import { MappedTypeDescription } from "@syncedstore/core/types/doc";
 import React, { useEffect, useState } from "react";
-import { PropertiesType } from "../../../pages/CreateApi/ApisType";
+import {
+  ControllerType,
+  PropertiesType,
+} from "../../../pages/CreateApi/ApisType";
 import DtoModalTable from "../DtoModalTable/DtoModalTable";
 import { handleDtoProperties } from "../validationCheck";
 import "./DtoInputModal.scss";
@@ -40,6 +42,9 @@ interface Props {
   currentDtoData: any;
   setModalDepth: React.Dispatch<React.SetStateAction<number>>;
   modalDepth: number;
+  state: MappedTypeDescription<{
+    data: ControllerType[];
+  }>;
 }
 const DtoInputModal = ({
   setIsModalVisible,
@@ -55,14 +60,13 @@ const DtoInputModal = ({
   final,
   getDepth,
   setNameList,
-  nameList,
   dtoData,
   dtoExists,
   currentDtoData,
   setModalDepth,
   modalDepth,
+  state,
 }: Props) => {
-  const state = useSyncedStore(store);
   const rootPath = state.data[selectedController].apis[selectedApi];
   const [visible, setVisible] = useState(false);
 
@@ -128,23 +132,35 @@ const DtoInputModal = ({
             </div>
           )}
           {visible && dtoExists && dtoData && (
-            <div className="tableInfoDtoContainer">
-              {dtoData.dtoName}
+            <div className="dtoModalDtoContainer">
+              <div className="dtoModalCloseGroup">
+                <p className="dtoModalDtoUseInfoTitle">{dtoData.dtoName}</p>
+                <button
+                  className="dtoModalDtoCloseButton"
+                  onClick={() => setVisible(!visible)}
+                >
+                  <FontAwesomeIcon icon={faClose} />
+                </button>
+              </div>
               {dtoData.properties.length > 0 &&
                 dtoData.properties.map((item: any, index: number) => (
-                  <div key={index} className="tableInfoDtoPropertiesContainer">
-                    <span>{item.name}</span>
+                  <div key={index} className="dtoModalDtoPropertiesContainer">
+                    <span className="dtoModalDtoUseInfoText">{item.name}</span>
                     {item.collectionType === "List" ? (
-                      <span>{`<List>${item.type}`}</span>
+                      <span className="dtoModalDtoUseInfoText">{`<List>${item.type}`}</span>
                     ) : (
-                      <span>{item.type}</span>
+                      <span className="dtoModalDtoUseInfoText">
+                        {item.type}
+                      </span>
                     )}
-                    <span>{item.required}</span>
+                    <span className="dtoModalDtoUseInfoText">
+                      {item.required}
+                    </span>
                   </div>
                 ))}
               {final && (
                 <button
-                  className="tableInfoUseCurrentDtoButton"
+                  className="dtoModalUseCurrentDtoButton"
                   onClick={() => {
                     handleDtoProperties(currentDtoData);
                   }}

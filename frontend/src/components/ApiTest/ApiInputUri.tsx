@@ -2,7 +2,10 @@ import axios from "axios";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
-import { RequestTypeInfo } from "../../pages/CreateApi/ApisType";
+import {
+  PropertiesType,
+  RequestTypeInfo,
+} from "../../pages/CreateApi/ApisType";
 import { reBodyType } from "../../pages/TestApi";
 import { useAppDispatch } from "../../Store/hooks";
 import testApiSlice, { selectTestApi } from "../../Store/slice/testApi";
@@ -12,43 +15,54 @@ const ApiInputUriSearch = styled.input`
   width: 80%;
   border: none;
   border-bottom: 2px solid #dadada;
-  // border-right: 2px solid #000000;
-  // border-top: 1px solid #000000;
   border-top-right-radius: 15px;
-  // border-bottom-right-radius: 15px;
   padding: 1px 50px 1px 10px;
   outline: none;
   font-weight: 500;
   font-size: 14px;
-  color: ${(props) => props.theme.color};
-  background-color: ${(props) => props.theme.bgColor};
+  color: ${props => props.theme.color};
+  background-color: ${props => props.theme.bgColor};
 `;
 
 export type list = {
   getInfo: RequestTypeInfo | undefined;
   testbodyInfo: reBodyType | undefined;
   setTestbodyInfo: Dispatch<SetStateAction<reBodyType | undefined>>;
-  setParamsInfo: Dispatch<SetStateAction<reBodyType | undefined>>;
-  paramsInfo: reBodyType | undefined;
   queriesInfo: reBodyType | undefined;
   setQueriesInfo: Dispatch<SetStateAction<reBodyType | undefined>>;
+  bodyObject: any;
 };
 
 const ApiInputUri = ({
   getInfo,
   testbodyInfo,
   setTestbodyInfo,
-  paramsInfo,
-  setParamsInfo,
   queriesInfo,
   setQueriesInfo,
+  bodyObject,
 }: list) => {
   const [sendFlag, setSendFlag] = useState(false);
   const [methodUri, setMethodUri] = useState<string | undefined>("");
+  const [testUri, setTestUri] = useState("");
+  const [realParams, setRealParams] = useState<string[]>([]);
+  const [reqArr, setReqArr] = useState<string[]>([]);
+  const [infoQueries, setInfoQueries] = useState<PropertiesType[]>();
+  const [reqUri, setReqUri] = useState("");
+
   const info = useSelector(selectTestApi);
   const dispatch = useAppDispatch();
 
+  //토큰값 받아오기
   let token = info.getToken.length >= 1 ? `Bearer${info.getToken}` : "";
+
+  // 물을표 입력
+  const uriFlag = testUri.includes("?");
+
+  // 서버 주소 받아오기
+  const server = Object.values(info.getServerUrl).toString();
+  const context = Object.values(info.getContextUrl).toString();
+  const requestMaapingUri =
+    getInfo?.controllers[info.getControllerInfomation].commonUri;
 
   //해당 uri 받아오기
   useEffect(() => {
@@ -59,12 +73,62 @@ const ApiInputUri = ({
     );
   }, [getInfo, info.getApisInfomation, info.getControllerInfomation]);
 
-  // 서버 주소 받아오기
-  const server = Object.values(info.getServerUrl).toString();
-  const context = Object.values(info.getContextUrl).toString();
-  const requestMaapingUri =
-    getInfo?.controllers[info.getControllerInfomation].commonUri;
-  const testUri = server + context + requestMaapingUri + methodUri;
+  // URI 창에 Path 입력하기 위한 초기화
+  useEffect(() => {
+    setTestUri(server + context + requestMaapingUri + methodUri);
+  }, [requestMaapingUri, methodUri]);
+
+  // URI 창에 Path 입력하기 위한 초기화
+  useEffect(() => {
+    const paramsText = realParams.toString().replace(",", "");
+    paramsText.length === 0
+      ? setTestUri(server + context + requestMaapingUri + methodUri)
+      : setTestUri(
+          server + context + requestMaapingUri + methodUri + paramsText
+        );
+  }, [realParams]);
+
+  // 쿼리 정보 받아오기
+  useEffect(() => {
+    if (getInfo) {
+      setInfoQueries(
+        getInfo?.controllers[info.getControllerInfomation].apis[
+          info.getApisInfomation
+        ].queries
+      );
+    }
+  }, [getInfo, info.getControllerInfomation, info.getApisInfomation]);
+
+  // 값 변할때 마다 쿼리 정보 초기화
+  useEffect(() => {
+    setReqArr([]);
+  }, [info.getApisInfomation, info.getControllerInfomation]);
+
+  // 쿼리문 받아오기
+  useEffect(() => {
+    let testARR: string[] = [];
+    if (infoQueries) {
+      infoQueries?.map((it, idx) => {
+        if (it.name.length > 0) {
+          testARR = [...testARR, it.name];
+        }
+        setReqArr([...reqArr, ...testARR]);
+      });
+    }
+  }, [infoQueries]);
+
+  // 쿼리문 문자열 변환
+  useEffect(() => {
+    setReqUri(reqArr.toString().replace(",", "=&") + "=");
+  }, [reqArr, uriFlag]);
+
+  // 변환된 문자열을 URI에 추가해주기.
+  useEffect(() => {
+    if (uriFlag) {
+      const sum = testUri + reqUri;
+      setTestUri(sum);
+    }
+  }, [uriFlag]);
 
   // 성공시 Response 반환
   const responseAllInfo = (e: any) => {
@@ -87,6 +151,8 @@ const ApiInputUri = ({
     getInfo?.controllers[info.getControllerInfomation].apis[
       info.getApisInfomation
     ].method;
+
+  // 서버 통신
   const submitRequest = () => {
     switch (requestMethod) {
       case "Get":
@@ -96,36 +162,29 @@ const ApiInputUri = ({
           headers: {
             Authorization: token,
           },
-          params: paramsInfo,
+          params: queriesInfo,
         })
-          .then((res) => {
-            console.log("RES=>", res);
+          .then(res => {
             responseAllInfo(res);
           })
-          .catch((err) => {
+          .catch(err => {
             errResponsAllInfo(err);
-            console.log("ERR => ", err);
-            console.log("Params => ", paramsInfo);
-            console.log("TestUri => ", testUri);
           });
         break;
       case "Post":
         axios({
           method: "post",
           url: testUri,
-          data: testbodyInfo,
+          data: bodyObject,
           headers: {
             Authorization: token,
           },
+          params: queriesInfo,
         })
-          .then((res) => {
-            console.log("post 성공", res);
-            console.log("postBody =>", testbodyInfo);
+          .then(res => {
             responseAllInfo(res);
           })
-          .catch((err) => {
-            console.log("ERR =>", err);
-            console.log("postBody =>", testbodyInfo);
+          .catch(err => {
             errResponsAllInfo(err);
           });
         break;
@@ -133,19 +192,16 @@ const ApiInputUri = ({
         axios({
           method: "put",
           url: testUri,
-          data: testbodyInfo,
+          data: bodyObject,
           headers: {
             Authorization: token,
           },
+          params: queriesInfo,
         })
-          .then((res) => {
-            console.log("put 성공 =>", res);
-            console.log("putBody =>", testbodyInfo);
+          .then(res => {
             responseAllInfo(res);
           })
-          .catch((err) => {
-            console.log("ERR => ", err);
-            console.log("putBody=>", testbodyInfo);
+          .catch(err => {
             errResponsAllInfo(err);
           });
         break;
@@ -156,15 +212,13 @@ const ApiInputUri = ({
           headers: {
             Authorization: token,
           },
-          params: paramsInfo,
+          params: queriesInfo,
         })
-          .then((res) => {
+          .then(res => {
             responseAllInfo(res);
-            console.log("Delete 성공=>", res);
           })
-          .catch((err) => {
+          .catch(err => {
             errResponsAllInfo(err);
-            console.log("ERR => ", err);
           });
         break;
       case "patch":
@@ -173,7 +227,7 @@ const ApiInputUri = ({
           headers: {
             Authoriztion: token,
           },
-          params: paramsInfo,
+          params: queriesInfo,
         });
         break;
       case "head":
@@ -187,11 +241,13 @@ const ApiInputUri = ({
     dispatch(testApiSlice.actions.getFlagResponse(!sendFlag));
   };
 
-  // body정보 초기화 하기
+  // send 입력시 모든값 초기화
   useEffect(() => {
     setTestbodyInfo({});
-    setParamsInfo({});
     setQueriesInfo({});
+    setTestUri(server + context + requestMaapingUri + methodUri);
+    setRealParams([]);
+    setReqUri("");
   }, [sendFlag]);
 
   return (
@@ -199,9 +255,15 @@ const ApiInputUri = ({
       <span className="apiChoice">
         <MethodTest methodApiWord={requestMethod} />
       </span>
-      <ApiInputUriSearch type="text" value={testUri} />
+      <ApiInputUriSearch
+        type="text"
+        value={testUri}
+        onChange={e => {
+          setTestUri(e.target.value);
+        }}
+      />
       <button className="apiTestBtn" onClick={submitRequest}>
-        send
+        SEND
       </button>
     </div>
   );

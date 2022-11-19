@@ -1,6 +1,6 @@
 # CodeConvention
 
-### ApiCloud에 Contribute를 하기 위한 Code Convention을 소개합니다. 아래 양식에 맞춰 진행해주세요.
+### APICloud에 Contribute를 하기 위한 Code Convention을 소개합니다. 아래 양식에 맞춰 진행해주세요.
 
 > ## Springboot
 
@@ -12,7 +12,6 @@
 
 - 모든 파일명은 Pascal Case를 사용합니다.
 
--
 - **Config**
 
   - <기능명>Config로 작성해주세요.
@@ -79,6 +78,55 @@
 - 대문자와 언더스코어를 사용합니다.
 
 > ## REACT / TypeScript
+
+### 폴더명
+
+- 컴포넌트 관련 폴더명은 Pascal Case를 사용합니다.
+- 그 외의 폴더명은 Camel Case를 사용합니다.
+- 컴포넌트의 폴더는 컴포넌트 파일과 스타일 파일로 구분하여 작성합니다.
+  - ex) Component.tsx / Component.scss
+
+### 파일명
+
+- react 컴포넌트
+  - 파일명은 Pascal Case를 사용합니다.
+  - react의 컴포넌트인 경우 파일 확장자를 .tsx로 작성합니다.
+- 스타일
+  - 파일명은 Pascal Case를 사용합니다.
+  - 스타일 코드의 경우 파일 확장자를 .scss로 작성합니다.
+- 비즈니스 로직
+  - 파일명은 Cascal Case를 사용합니다.
+  - 컴포넌트가 아닌 비즈니스 로직과 관련된 파일의 경우 파일 확장자를 .ts로 작성합니다.
+
+### 함수명
+
+- 모든 함수는 Camel Case를 사용합니다.
+- 함수의 경우 기능 동사/전치사 + 기능 주체를 결합해 작성합니다.
+
+### 변수명
+
+- 모든 변수명은 Camel Case를 사용합니다.
+- 해당 변수의 사용목적을 명확히 알 수 있도록 작성합니다.
+- 변수의 선언은 var를 지양하고 let이나 const를 사용합니다.
+
+### 스타일
+
+- 스타일 코드는 StyledComponent와 SCSS를 사용합니다.
+- 여러 컴포넌트에서 사용하는 스타일은 StyledComponent를 활용하여 작성합니다.
+- inline CSS를 작성하지 않습니다.
+- className은 파일명 + 기능 주체를 결합해 작성합니다.
+  - ex) className=”welcomeHeader”
+
+### 들여쓰기
+
+- 탭(tab) 문자를 사용하여 들여씁니다. 탭 대신 스페이스를 사용하지 않습니다
+- 1개의 탭 크기는 스페이스 2개와 같도록 에디터에서 설정합니다.
+
+### TypeScript
+
+- react의 useDispath/useSelector 대신 type을 지정해둔 useAppDispath/useAppSelector를 사용합니다.
+- 여러 컴포넌트에서 사용되는 타입의 경우 .ts 파일에서 관리합니다.
+- 적절한 타입을 정의하여 작성합니다.
 
 > ## Data
 

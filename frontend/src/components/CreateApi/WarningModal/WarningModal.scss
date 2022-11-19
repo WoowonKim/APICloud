@@ -3,9 +3,15 @@
   height: 100%;
   position: fixed;
 }
+
+.warningModalLoading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .warningModalInnerContainer {
-  width: 28rem;
-  min-height: 20rem;
+  width: 25rem;
+  min-height: 17rem;
   height: auto;
   background-color: white;
   position: absolute;
@@ -13,15 +19,15 @@
   left: 50%;
   transform: translate(-50%, -50%);
   border-radius: 1rem;
-  padding: 1rem 3rem;
+  padding: 1rem 2rem;
   box-shadow: 2px 2px 25px -12px rgba(0, 0, 0, 0.92);
   .warningModalTitle {
-    font-size: 1.5em;
+    font-size: 1.2em;
     font-weight: bold;
     margin: 20px 0;
   }
   .warningModalText {
-    font-size: 1em;
+    font-size: 0.9em;
     font-weight: bold;
     word-break: break-all;
   }
@@ -29,7 +35,7 @@
     display: flex;
     margin: 20px 0;
     justify-content: space-between;
-    min-height: 13rem;
+    min-height: 12rem;
     .warningModalValidationResultText1 {
       display: flex;
       margin: 20px 20px 20px 0;
@@ -49,7 +55,7 @@
     }
     .warningModalValidationResultText2 {
       margin: 20px 20px 20px 0;
-      font-size: 1.1em;
+      font-size: 0.9em;
     }
   }
 }
@@ -74,6 +80,7 @@
 }
 
 .warningModalExtractText {
-  font-size: 0.8em;
+  font-size: 0.6em;
   margin: 10px 0;
+  color: tomato;
 }

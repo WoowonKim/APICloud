@@ -16,7 +16,7 @@ const ApiResponse = ({ getInfo, testbodyInfo }: type) => {
   const [bodyDataFlag, setBodyDataFlag] = useState(false);
   const [bodyData, setBodyData] = useState<[string, string][]>();
   const [arr, setArr] = useState<[string, string][]>();
-  const [typeFlag, setTypeFlag] = useState(false);
+
   // Response Body 불러와서 객체형태로 뿌려주기
   useEffect(() => {
     if (getStatusData !== undefined && typeof getStatusData !== typeof "") {
@@ -62,7 +62,9 @@ const ApiResponse = ({ getInfo, testbodyInfo }: type) => {
               </div>
             ) : (
               <div>
-                <p className="errorResponseResult">{info.getResponseErroStatusMessage}...</p>
+                <p className="errorResponseResult">
+                  {info.getResponseErroStatusMessage}...
+                </p>
               </div>
             )}
           </div>
@@ -71,7 +73,9 @@ const ApiResponse = ({ getInfo, testbodyInfo }: type) => {
           <div>
             {getStatusInfo === 200 ? (
               <div>
-                {typeof getStatusData !== typeof "" && <p className="centercalcu">{"{"}</p>}
+                {typeof getStatusData !== typeof "" && (
+                  <p className="centercalcu">{"{"}</p>
+                )}
                 <div className="resltResponseHeaderContainer">
                   {typeof getStatusData !== typeof "" && (
                     <div>
@@ -89,11 +93,15 @@ const ApiResponse = ({ getInfo, testbodyInfo }: type) => {
                     </div>
                   )}
                 </div>
-                {typeof getStatusData !== typeof "" && <p className="centercalcu">{"}"}</p>}
+                {typeof getStatusData !== typeof "" && (
+                  <p className="centercalcu">{"}"}</p>
+                )}
               </div>
             ) : (
               <div>
-                <p className="errorResponseResult">{info.getResponseErroStatusMessage}...</p>
+                <p className="errorResponseResult">
+                  {info.getResponseErroStatusMessage}...
+                </p>
               </div>
             )}
           </div>

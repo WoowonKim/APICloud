@@ -30,7 +30,7 @@ const Responses = ({ item }: Props) => {
           <FontAwesomeIcon icon={faCircle} className="circleIcon" />
           &nbsp;status:
         </div>
-        <div className="content">{item.responses.fail.status}</div>
+        <div className="content">{item.responses.fail?.status}</div>
       </div>
       <div className="iconTitleWrapper">
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -42,29 +42,31 @@ const Responses = ({ item }: Props) => {
         <div className="titleContentWrapper2">
           <div>&nbsp;&nbsp;&nbsp;dtoName:</div>
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
-          {item.responses.fail.responseBody.dtoName}',
+          {item.responses.fail?.responseBody?.dtoName}',
         </div>
         <div className="titleContentWrapper2">
           <div>&nbsp;&nbsp;&nbsp;name:</div>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'{item.responses.fail.responseBody.name}
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+          {item.responses.fail?.responseBody.name}
           ',
         </div>
         <div className="titleContentWrapper2">
           <div>&nbsp;&nbsp;&nbsp;type:</div>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'{item.responses.fail.responseBody.type}
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+          {item.responses.fail?.responseBody.type}
           ',
         </div>
         <div className="titleContentWrapper2">
           <div>&nbsp;&nbsp;&nbsp;collectionType:</div>
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
-          {item.responses.fail.responseBody.collectionType}',
+          {item.responses.fail?.responseBody.collectionType}',
         </div>
         <div className="titleContentWrapper2">
           <div>&nbsp;&nbsp;&nbsp;required:</div>
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
-          {item.responses.fail.responseBody.required}',
+          {item.responses.fail?.responseBody.required}',
         </div>
-        <Properties item={item.responses.fail.responseBody.properties} />
+        <Properties item={item.responses.fail?.responseBody.properties} />
         <div>{"}"}</div>
       </div>
       <div className="titleContentWrapper">
@@ -80,7 +82,7 @@ const Responses = ({ item }: Props) => {
           <FontAwesomeIcon icon={faCircle} className="circleIcon" />
           &nbsp;status:
         </div>
-        <div className="content">{item.responses.success.status}</div>
+        <div className="content">{item.responses.success?.status}</div>
       </div>
       <div className="iconTitleWrapper">
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

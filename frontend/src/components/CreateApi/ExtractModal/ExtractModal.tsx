@@ -1,4 +1,6 @@
+import { MappedTypeDescription } from "@syncedstore/core/types/doc";
 import React, { useEffect, useState } from "react";
+import { ThreeDots } from "react-loader-spinner";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
@@ -22,6 +24,9 @@ type ExtractModalProps = {
   controllers: ControllerType[];
   setIsWarningModal: React.Dispatch<React.SetStateAction<boolean>>;
   isWarningModal: boolean;
+  state: MappedTypeDescription<{
+    data: ControllerType[];
+  }>;
 };
 
 type DetailType = {
@@ -45,6 +50,7 @@ const ExtractModal = ({
   controllers,
   setIsWarningModal,
   isWarningModal,
+  state,
 }: ExtractModalProps) => {
   const isOpenExtractModal = useSelector(
     (state: RootState) => state.apiDocsApi.isOpenExtractModal
@@ -58,6 +64,7 @@ const ExtractModal = ({
   const [notionToken, setNotionToken] = useState("");
   const [dependencies, setDependencies] = useState<DependencyType[]>([]);
   const [validationResult, setValidationResult] = useState<any>();
+  const [isNotionExtracting, setIsNotionExtracting] = useState(false);
 
   const isOpenDependencyModal = useSelector(
     (state: RootState) => state.apiDocsApi.isOpenDependencyModal
@@ -104,10 +111,16 @@ const ExtractModal = ({
   const prepareExtraction = (extract: () => void) => {
     const detail = {} as DetailType;
     detail.controllers = controllers;
+
     dispatch(
       setApiDetail({
         encryptedUrl: encryptedUrl,
-        detailRequest: { detail: JSON.stringify(detail) },
+        detailRequest: {
+          detail: JSON.stringify({
+            server: { dependencies: [] },
+            controllers: controllers,
+          }),
+        },
       })
     ).then((res: any) => {
       if (res.meta.requestStatus !== "fulfilled") {
@@ -144,6 +157,7 @@ const ExtractModal = ({
         return;
       }
       downloadFile(res.payload);
+      setIsWarningModal(!isWarningModal);
     });
   };
 
@@ -157,6 +171,11 @@ const ExtractModal = ({
         },
       })
     ).then((res: any) => {
+      setIsNotionExtracting(false);
+      if (res.meta.requestStatus !== "fulfilled") {
+        alert("추출에 실패하였습니다.");
+        return;
+      }
       window.open(res.payload.notionUrl);
     });
   };
@@ -213,7 +232,6 @@ const ExtractModal = ({
                     <button
                       onClick={() => {
                         setValidationResult(checkDataValidation(controllers));
-                        setOpenIdx(0);
                         setIsWarningModal(!isWarningModal);
                       }}
                     >
@@ -235,10 +253,12 @@ const ExtractModal = ({
                     <button
                       onClick={
                         notionToken
-                          ? () => {
-                              prepareExtraction(extractNotion);
-                              setOpenIdx(0);
-                            }
+                          ? !isNotionExtracting
+                            ? () => {
+                                setIsNotionExtracting(true);
+                                prepareExtraction(extractNotion);
+                              }
+                            : () => {}
                           : () => {
                               alert(
                                 "노션 연동이 되지 않았습니다. 연동 후 추출해주세요."
@@ -246,14 +266,25 @@ const ExtractModal = ({
                             }
                       }
                     >
-                      추출
+                      {isNotionExtracting ? (
+                        <ThreeDots
+                          height="10"
+                          width="20"
+                          radius="9"
+                          color="#277fc3"
+                          ariaLabel="three-dots-loading"
+                          visible={true}
+                        />
+                      ) : (
+                        "추출"
+                      )}
                     </button>
                   </div>
                 </div>
                 <li
                   onClick={() => {
-                    prepareExtraction(extractCsv);
                     setOpenIdx(3);
+                    prepareExtraction(extractCsv);
                   }}
                   className={openIdx === 3 ? "selected" : ""}
                 >
@@ -290,6 +321,7 @@ const ExtractModal = ({
             validationResult={validationResult}
             prepareExtraction={prepareExtraction}
             extractSpringBoot={extractSpringBoot}
+            state={state}
           />
         </div>
       )}

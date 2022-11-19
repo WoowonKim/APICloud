@@ -166,6 +166,7 @@ const Sidebar = ({
                   <div className="sidebarDtoName">{item.dtoName}</div>
                   {item.properties.map((props: any, idx: number) => (
                     <div key={idx} className="sidebarPropertiesContainer">
+                      <p>└</p>
                       <div className="sidebarPropertiesItem">{props.name}</div>
                       <div className="sidebarPropertiesItem">
                         {props.collectionType === "List" ? (
@@ -173,9 +174,6 @@ const Sidebar = ({
                         ) : (
                           <span>{props.type}</span>
                         )}
-                      </div>
-                      <div className="sidebarPropertiesItem">
-                        {props.required ? "true" : "false"}
                       </div>
                     </div>
                   ))}

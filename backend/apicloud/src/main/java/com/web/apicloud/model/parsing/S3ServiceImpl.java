@@ -79,9 +79,7 @@ public class S3ServiceImpl implements S3Service {
             s3Objects = amazonS3.listObjects(listObjectsRequest);
             for (S3ObjectSummary s3ObjectSummary : s3Objects.getObjectSummaries()) {
                 String[] tokens = s3ObjectSummary.getKey().split("/");
-                if (tokens[tokens.length - 1].equals(name)) {
-                    return getCode(s3ObjectSummary.getKey());
-                }
+                if (tokens[tokens.length - 1].equals(name)) return getCode(s3ObjectSummary.getKey());
             }
             listObjectsRequest.setMarker(s3Objects.getNextMarker());
         } while (s3Objects.isTruncated());
@@ -98,23 +96,16 @@ public class S3ServiceImpl implements S3Service {
             ois = o.getObjectContent();
             br = new BufferedReader(new InputStreamReader(ois, "UTF-8"));
             String str;
-            while ((str = br.readLine()) != null) {
-                line.add(str);
-            }
+            while ((str = br.readLine()) != null) line.add(str);
         } finally {
-            if (ois != null) {
-                ois.close();
-            }
-            if (br != null) {
-                br.close();
-            }
+            if (ois != null) ois.close();
+            if (br != null) br.close();
         }
         if (line == null || line.size() == 0) return null;
 
         Map<String, List<String>> code = new HashMap<>();
         int keyIndex = parsingService.KMP(key, "java/com");
-        if (keyIndex != -1)
-            key = StringUtils.removeEnd(key.substring(keyIndex - 2, key.length()), ".java").replaceAll("/", ".");
+        if (keyIndex != -1) key = StringUtils.removeEnd(key.substring(keyIndex - 2, key.length()), ".java").replaceAll("/", ".");
         code.put("import", Collections.singletonList(key));
         code.put("code", line);
         return code;

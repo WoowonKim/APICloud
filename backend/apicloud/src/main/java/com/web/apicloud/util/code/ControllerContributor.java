@@ -13,6 +13,7 @@ import io.spring.initializr.generator.language.java.JavaLanguage;
 import io.spring.initializr.generator.language.java.JavaReturnStatement;
 import io.spring.initializr.generator.project.contributor.ProjectContributor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Modifier;
@@ -60,7 +61,7 @@ public class ControllerContributor implements ProjectContributor {
 
     private Consumer<ApiVO> apiConsumer(CustomJavaTypeDeclaration controllerType, Map<String, PropertyVO> dtos) {
         return api -> {
-            api.getAvailableDTO(dtos);
+            api.getAvailableDto(dtos);
             CustomJavaMethodDeclaration.Builder builder = CustomJavaMethodDeclaration
                     .method(api.getName())
                     .modifiers(Modifier.PUBLIC)
@@ -69,7 +70,7 @@ public class ControllerContributor implements ProjectContributor {
 
             List<JavaArgument> arguments = new ArrayList<>();
             JavaType javaType = api.getReturnJavaType(true, makeDtoPackageName(controllerType.getName()));
-            if(!"Void".equals(javaType.getType())) {
+            if (!"Void".equals(javaType.getType())) {
                 arguments.add(new JavaClassCreation(api.getReturnJavaType(true, makeDtoPackageName(controllerType.getName())), List.of()));
             }
             arguments.add(new JavaEnum("org.springframework.http.HttpStatus", "OK"));
@@ -92,35 +93,49 @@ public class ControllerContributor implements ProjectContributor {
     private void addApiParameters(CustomJavaMethodDeclaration.Builder builder, ApiVO api, String controllerName) {
         List<AnnotatableParameter> parameters = new ArrayList<>();
         // path에서 파라미터 추가
-        makeParameters(api.getParameters(), PATH_VARIABLE, controllerName).ifPresent(parameters::addAll);
+        makePathVariableParameters(api.getParameters(), controllerName).ifPresent(parameters::addAll);
 
         // query에서 파라미터 추가
-        makeParameters(api.getQueries(), null, controllerName).ifPresent(parameters::addAll);
+        makeQueryParameters(api.getQueries(), controllerName).ifPresent(parameters::addAll);
 
         // requestBody에서 파라미터 추가
         makeParameter(api.getRequestBody(), REQUEST_BODY, controllerName).ifPresent(parameters::add);
         builder.parameters(parameters.toArray(AnnotatableParameter[]::new));
     }
 
-    private Optional<List<AnnotatableParameter>> makeParameters(List<PropertyVO> properties, String annotationName, String controllerName) {
+    private Optional<List<AnnotatableParameter>> makeQueryParameters(List<PropertyVO> queries, String controllerName) {
+        if (queries == null) {
+            return Optional.empty();
+        }
+        return Optional.of(queries.stream()
+                .filter(q -> q.getType() != null)
+                .map(q -> {
+                            if ("Object".equals(q.getType())) {
+                                return makeParameter(q, "org.springframework.web.bind.annotation.ModelAttribute", controllerName).orElse(null);
+                            } else {
+                                return makeParameter(q, "org.springframework.web.bind.annotation.RequestParam", controllerName).orElse(null);
+                            }
+                        }
+                )
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList())
+        );
+    }
+
+    private Optional<List<AnnotatableParameter>> makePathVariableParameters(List<PropertyVO> properties, String controllerName) {
         if (properties == null) {
             return Optional.empty();
         }
         return Optional.of(properties.stream()
-                .map(p -> {
-                    if (annotationName == null) {
-                        return makeParameter(p, null, controllerName).orElse(null);
-                    } else {
-                        return makeParameter(p, annotationName, controllerName).orElse(null);
-                    }
-                })
+                .map(p -> makeParameter(p, ControllerContributor.PATH_VARIABLE, controllerName).orElse(null)
+                )
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList())
         );
     }
 
     private Optional<AnnotatableParameter> makeParameter(PropertyVO property, String annotationName, String controllerName) {
-        if (property == null || !property.canMakeDto()) {
+        if (property == null || !StringUtils.hasText(property.getName()) || !property.hasType()) {
             return Optional.empty();
         }
         AnnotatableParameter parameter = new AnnotatableParameter(property.getJavaType(makeDtoPackageName(controllerName), false), property.getName());
@@ -140,7 +155,7 @@ public class ControllerContributor implements ProjectContributor {
     private void addDto(CustomJavaSourceCode sourceCode, Map<String, PropertyVO> dtos, String controllerName) {
         for (String dtoKey : dtos.keySet()) {
             PropertyVO dto = dtos.get(dtoKey);
-            if (dto == null || !dto.canMakeDto()) {
+            if (dto == null || !StringUtils.hasText(dto.getDtoName())) {
                 continue;
             }
             CustomJavaTypeDeclaration dtoType = sourceCode.createCompilationUnit(makeDtoPackageName(controllerName), dto.getDtoName()).createTypeDeclaration(dto.getDtoName());

@@ -2,7 +2,6 @@ table,
 .divTable {
   border: 1px solid lightgray;
   width: 90%;
-  position: relative;
 }
 
 .tr {
@@ -12,7 +11,7 @@ table,
 tr,
 .tr {
   width: fit-content;
-  height: 30px;
+  height: 40px;
 }
 
 th,
@@ -26,7 +25,6 @@ td,
 th,
 .th {
   padding: 2px 4px;
-  position: relative;
   font-weight: bold;
   text-align: center;
   height: 30px;
@@ -44,31 +42,18 @@ td,
   color: tomato;
 }
 
-.resizer {
-  position: absolute;
-  right: 0;
-  top: 0;
-  height: 100%;
-  width: 5px;
-  background: rgba(0, 0, 0, 0.5);
-  cursor: col-resize;
-  user-select: none;
-  touch-action: none;
+.apiTableDeleteItem {
+  border: none;
+  box-shadow: none;
+  padding: 7px;
 }
 
-.resizer.isResizing {
-  background: #3a00e5;
-  opacity: 1;
+.apiTableHeaderItem {
+  padding: 10px 0;
 }
 
-@media (hover: hover) {
-  .resizer {
-    opacity: 0;
-  }
-
-  *:hover > .resizer {
-    opacity: 1;
-  }
+.apiTableBodyItem {
+  padding: 0 10px 5px 10px;
 }
 
 .tableInput {
@@ -82,56 +67,20 @@ td,
   padding: 5px;
 }
 
-.commonUri {
-  font-size: 20px;
-  font-weight: bold;
-  padding: 2px 20px 2px 5px;
-  border: none;
-  outline: none;
-  border-bottom: 2px solid #3a00e5;
-  margin: 10px 0;
-}
-
-.tableInfoGroup {
-  margin: 10px 0 1rem 0;
-  display: flex;
-  .tableInfoInputGroup {
-    display: flex;
-    align-items: flex-end;
-    .tableInfoLabel {
-      font-size: 1em;
-      font-weight: bold;
-      margin: 1rem 1rem 0 0;
-    }
-    .tableInfoInput {
-      outline: none;
-      border: none;
-      border-bottom: 1px solid black;
-      font-size: 1.1em;
-      margin: 1rem 1rem 0 0;
-    }
-  }
-}
-
 .responseTypeGroup {
-  display: flex;
-  align-items: flex-end;
+  margin: 0 0 30px 0;
+  background-color: #53bdc9;
+  color: white;
+  border-radius: 20px;
+  width: 150px;
+  text-align: center;
+  padding: 7px;
   .responseTypeLabel {
-    font-size: 1.1em;
-    font-weight: bold;
-    margin: 0 20px 0 0;
-  }
-  .tableInfoLabel {
     font-size: 1em;
     font-weight: bold;
-    margin: 1rem 1rem 0 0;
   }
-  .tableInfoInput {
-    outline: none;
-    border: none;
-    border-bottom: 1px solid black;
-    font-size: 1.1em;
-    margin: 1rem 1rem 0 0;
+  &:hover {
+    cursor: pointer;
   }
 }
 
@@ -139,7 +88,6 @@ td,
   display: flex;
   align-items: flex-end;
   margin: 15px 10px 0 0;
-  position: relative;
   .typeInputLabel {
     font-size: 1em;
     font-weight: bold;
@@ -148,6 +96,7 @@ td,
 }
 
 .typeInfoContainer {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -158,6 +107,11 @@ td,
     padding: 3px;
     width: 15px;
     height: 15px;
+    &:hover {
+      color: #40adb9;
+      border: 1px solid #40adb9;
+      transition: all 300ms ease-in-out;
+    }
   }
 }
 
@@ -166,11 +120,13 @@ td,
   justify-content: space-between;
   align-items: flex-end;
   border-bottom: 1px solid black;
-  margin: 1rem 1rem 0 0;
   .dtoInput {
     outline: none;
     border: none;
     font-size: 1.1em;
+    &::placeholder {
+      font-size: 0.7em;
+    }
   }
   .dtoCheckIcon {
     color: tomato;
@@ -183,25 +139,51 @@ td,
 
 .tableInfoDtoContainer {
   position: absolute;
-  top: 24rem;
+  top: 2rem;
+  left: 15rem;
   background-color: white;
-  z-index: 5;
-  width: auto;
+  width: 200px;
   height: auto;
-  padding: 20px 20px;
-  margin: 10px 10px 10px 300px;
+  overflow-y: scroll;
+  padding: 10px 20px;
+  margin: 10px 10px 10px 0;
   border-radius: 10px;
-  box-shadow: 1px 1px 25px -15px rgba(0, 0, 0, 0.92);
-  .tableInfoDtoPropertiesContainer {
-    margin: 0 0 0 20px;
+  box-shadow: 1px 1px 25px -15px rgba(0, 0, 0, 0.72);
+  &::-webkit-scrollbar {
+    display: none;
   }
+  .tableInfoDtoCloseButtonGroup {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .tableInfoDtoUseInfoTitle {
+      font-size: 0.9em;
+    }
+    .tableInfoDtoCloseButton {
+      border: none;
+      outline: none;
+      background: transparent;
+      &:hover {
+        color: tomato;
+        transition: all 200ms ease-in;
+      }
+    }
+  }
+  .tableInfoDtoPropertiesContainer {
+    margin: 0 0 0 10px;
+  }
+}
+
+.tableInfoDtoUseInfoText {
+  font-size: 0.7em;
+  padding: 5px;
 }
 
 .tableInfoWarningText {
   color: tomato;
   font-size: 0.7em;
   font-weight: bold;
-  margin: 0 0 10px 10px;
+  margin: 0 0 20px 0;
 }
 
 .tableInfoUseCurrentDtoButton {
@@ -209,16 +191,106 @@ td,
   word-break: keep-all;
   border: none;
   outline: none;
-  background-color: #f7f5ff;
-  color: #3a00e5;
+  background-color: #e6f8fc;
+  color: #40adb9;
   padding: 10px 15px;
   border-radius: 15px;
   text-align: center;
-  margin: 10px 0;
+  margin: 20px 0;
   font-size: 0.8em;
-  font-family: "twayair";
   &:hover {
     opacity: 0.7;
     transition: all 300ms ease-in;
+  }
+}
+
+.apiTableCheckbox {
+  width: 15px;
+  height: 15px;
+  accent-color: #277fc3;
+  margin: 0;
+}
+
+.tableNameInputContainer {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  .tableInfoNameGroup {
+    .tableInfoLabel {
+      margin: 0.5rem 0 0.5rem 0;
+      padding: 5px 0;
+      font-size: 1em;
+      font-weight: bold;
+    }
+    .tableInfoInput {
+      outline: none;
+      border: none;
+      border-bottom: 1px solid black;
+      font-size: 1.1em;
+      margin: 1rem 1rem 0 0;
+      width: 100%;
+      &::placeholder {
+        font-size: 0.7em;
+      }
+    }
+  }
+}
+
+.tableInfoInputGroup {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  .tableInfoLabel {
+    display: flex;
+    align-items: flex-end;
+    font-size: 1em;
+    font-weight: bold;
+  }
+  .tableInfoInput {
+    outline: none;
+    border: none;
+    border-bottom: 1px solid black;
+    font-size: 1.1em;
+    margin: 1rem 1rem 0 0;
+    width: 100%;
+    &::placeholder {
+      font-size: 0.7em;
+    }
+  }
+}
+
+.tableInfoTitleContainer {
+  display: grid;
+  grid-template-columns: 5fr 3fr;
+  margin: 0 0 30px 0;
+  .tableInfoNameDtoNameGroup {
+    position: relative;
+    margin: 0 20px 0 0;
+  }
+}
+.tableInfoLabel {
+  display: flex;
+  align-items: flex-end;
+  font-size: 1em;
+  font-weight: bold;
+}
+.tableInfoTypeLabelText {
+  font-size: 1em;
+  font-weight: bold;
+}
+.typeInputContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.typeInputContainer1 {
+  align-items: center;
+  margin: 0 10px 0 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  .typeInputLabel1 {
+    font-size: 1em;
+    font-weight: bold;
+  }
+  .tableInputTypeGroup {
+    display: flex;
   }
 }

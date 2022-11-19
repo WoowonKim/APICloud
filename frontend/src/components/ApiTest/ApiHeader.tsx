@@ -13,10 +13,9 @@ interface type {
   getInfo: RequestTypeInfo | undefined;
   setTestbodyInfo: Dispatch<SetStateAction<reBodyType | undefined>>;
   testbodyInfo: reBodyType | undefined;
-  setParamsInfo: Dispatch<SetStateAction<reBodyType | undefined>>;
-  paramsInfo: reBodyType | undefined;
   queriesInfo: reBodyType | undefined;
   setQueriesInfo: Dispatch<SetStateAction<reBodyType | undefined>>;
+  setBodyObject: Dispatch<SetStateAction<any>>;
 }
 
 export const ApiDetail = styled.div`
@@ -27,10 +26,9 @@ const ApiHeader = ({
   getInfo,
   testbodyInfo,
   setTestbodyInfo,
-  paramsInfo,
-  setParamsInfo,
   queriesInfo,
   setQueriesInfo,
+  setBodyObject,
 }: type) => {
   const info = useAppSelector(selectTestApi);
   return (
@@ -41,6 +39,7 @@ const ApiHeader = ({
           getInfo={getInfo}
           testbodyInfo={testbodyInfo}
           setTestbodyInfo={setTestbodyInfo}
+          setBodyObject={setBodyObject}
         />
       )}
       {info.getHeadListNumber === 2 && (
@@ -50,13 +49,7 @@ const ApiHeader = ({
           setQueriesInfo={setQueriesInfo}
         />
       )}
-      {info.getHeadListNumber === 3 && (
-        <ApiParams
-          getInfo={getInfo}
-          paramsInfo={paramsInfo}
-          setParamsInfo={setParamsInfo}
-        />
-      )}
+      {info.getHeadListNumber === 3 && <ApiParams getInfo={getInfo} />}
     </ApiDetail>
   );
 };

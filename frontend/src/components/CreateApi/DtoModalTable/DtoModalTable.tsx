@@ -1,17 +1,10 @@
-import { RowData } from "@tanstack/react-table";
-import React from "react";
+import React, { useEffect } from "react";
 import { PropertiesType } from "../../../pages/CreateApi/ApisType";
 import "../ControllerAddModal/ControllerAddModal.scss";
 import { faInfo, faRemove } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SelectTypes from "../SelectTypes/SelectTypes";
 import { getDepth } from "../validationCheck";
-
-declare module "@tanstack/react-table" {
-  interface TableMeta<TData extends RowData> {
-    updateData: (rowIndex: number, columnId: string, value: unknown) => void;
-  }
-}
 
 // ControllerAddModal에서 받아오는 props의 type 설정
 interface Props {
@@ -28,7 +21,7 @@ const DtoModalTable = ({
   final,
   modalDepth,
 }: Props) => {
-  const headers = ["name", "type", "required", "delete"];
+  const headers = ["name", "type", "required"];
 
   const handelCellValue = (
     e: React.ChangeEvent<HTMLInputElement> | string,
@@ -56,7 +49,7 @@ const DtoModalTable = ({
   const handleTableCell = (item: any, index: number) => {
     const rows = [];
     rows.push(
-      <td key={`${index}-1`}>
+      <td key={`${index}-1`} className="apiTableBodyItem">
         <input
           type="text"
           value={item.name !== null ? item.name : ""}
@@ -66,7 +59,7 @@ const DtoModalTable = ({
       </td>
     );
     rows.push(
-      <td key={`${index}-2`}>
+      <td key={`${index}-2`} className="apiTableBodyItem">
         <div className="typeInfoContainer">
           {item.collectionType === "List" && (
             <SelectTypes
@@ -100,17 +93,23 @@ const DtoModalTable = ({
       </td>
     );
     rows.push(
-      <td key={`${index}-3`}>
+      <td key={`${index}-3`} className="apiTableBodyItem">
         <input
           type="checkbox"
-          checked={item.required !== null ? item.name : ""}
+          checked={
+            item.required !== null
+              ? item.required === true
+                ? true
+                : false
+              : false
+          }
           onChange={(e) => handelCellValue(e, "required", index)}
+          className="apiTableCheckbox"
         />
       </td>
     );
-
     rows.push(
-      <td key={`${index}-4`}>
+      <td key={`${index}-4`} className="apiTableDeleteItem">
         <FontAwesomeIcon
           icon={faRemove}
           className="removeIcon"
@@ -129,10 +128,11 @@ const DtoModalTable = ({
         <thead>
           <tr>
             {headers.map((item, index) => (
-              <th key={index} style={{ width: "200px" }}>
+              <th key={index} className="apiTableHeaderItem">
                 {item}
               </th>
             ))}
+            <th className="apiTableDeleteItem"></th>
           </tr>
         </thead>
         <tbody>

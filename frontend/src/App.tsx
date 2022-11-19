@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation, useParams } from "react-router-dom";
 import { OAuth2RedirectHandler } from "./components/welcome/OAuth2RedirectHandler";
 import ApiDocs from "./pages/ApiDocs";
 import CreateApi from "./pages/CreateApi/CreateApi";
@@ -16,6 +16,7 @@ import { selectUser } from "./Store/slice/userSlice";
 import { NotionOAuth2RedirectHandler } from "./components/CreateApi/NotionOAuth2RedirectHandler";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLightbulb } from "@fortawesome/free-solid-svg-icons";
+import Header from "./components/main/Header";
 
 const ModeChange = styled.div`
   position: absolute;
@@ -28,6 +29,8 @@ const App = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(selectUser);
+  const location = useLocation();
+
   const toggleDarkMode = () => {
     setIsDarkMode((prev) => !prev);
     dispatch(testApiSlice.actions.setGlobalDarkMode(!isDarkMode));
@@ -35,6 +38,7 @@ const App = () => {
   if (window.localStorage.getItem("token")) {
     return (
       <>
+        {currentUser && location?.pathname !== "/welcome" && <Header />}
         <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
           <GlobalStyles />
           <Routes>

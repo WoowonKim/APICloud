@@ -25,9 +25,10 @@
 }
 
 .apiDocsMaincontainer {
+  padding-bottom: 200px;
   .titleGridContainer {
     display: grid;
-    grid-template-columns: 7fr 3fr;
+    grid-template-columns: 7fr 4fr;
     padding: 50px 30px 50px 90px;
     margin-bottom: 50px;
     border-bottom: 2px solid rgb(111, 199, 209);
@@ -50,7 +51,9 @@
     }
   }
   .buttonContainer {
-    button {
+    padding: 0 20px;
+    position: relative;
+    .createApiButton {
       border: none;
       outline: none;
       background-color: #e6f8fc;
@@ -60,7 +63,6 @@
       text-align: center;
       margin: 0 5px;
       font-size: 0.8em;
-      font-family: "twayair";
       &:hover {
         opacity: 0.7;
         transition: all 300ms ease-in;
@@ -69,9 +71,14 @@
   }
 }
 
+.createApiTitleButtonGroup {
+  display: flex;
+  justify-content: flex-end;
+}
+
 .bodyGridContainer {
   display: grid;
-  grid-template-columns: 7fr 3fr;
+  grid-template-columns: 7fr 4fr;
   margin-top: 30px;
 }
 
@@ -137,7 +144,11 @@
 }
 
 .rightSideContainer {
-  max-width: 25rem;
+  width: 100%;
+  overflow-x: scroll;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .createApiTitle {
@@ -163,7 +174,7 @@
   .createApiTabItem {
     font-size: 0.9em;
     padding: 7px 10px;
-    border: 1px solid rgb(39, 127, 195);
+    border: 1px solid rgba(39, 127, 195, 0.8);
     border-radius: 10px;
     margin: 0 3px;
     &:hover {
@@ -185,6 +196,8 @@
   display: flex;
   justify-content: space-between;
   align-items: baseline;
+  padding: 7px 0;
+  margin-bottom: 5px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.5);
 }
 
@@ -238,26 +251,19 @@
 .createApiSynchronizeCodeBlock {
   display: none;
 }
+.createApiCodeBlockContainer {
+  width: 100%;
+  font-size: 0.7em;
+}
 
 .createApiSynchronizeDataContainer {
   max-height: 50vh;
   padding: 0 10px 0 0;
   overflow-y: scroll;
   overflow-x: scroll;
-}
-.createApiSynchronizeDataContainer::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
-}
-
-.createApiSynchronizeDataContainer::-webkit-scrollbar-thumb {
-  background-color: #277fc3;
-  border-radius: 10px;
-}
-
-.createApiSynchronizeDataContainer::-webkit-scrollbar-track {
-  border-radius: 10px;
-  background-color: rgba(39, 127, 195, 0.5);
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .createApiSynchronizeDataSaveButton {
@@ -266,4 +272,9 @@
   padding: 10px 20px;
   border-radius: 20px;
   margin-top: 20px;
+}
+.createApiTitleModalGroup {
+  width: 330px;
+  position: relative;
+  left: 30%;
 }

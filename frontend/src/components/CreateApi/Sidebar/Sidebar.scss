@@ -12,7 +12,7 @@
 }
 
 .sidebar {
-  background-color: #f9f9f9;
+  background-color: rgb(244, 248, 248);
   padding: 0 1rem;
   .sidebarTitleGroup {
     display: flex;
@@ -21,6 +21,7 @@
     .sidebarTitle {
       font-size: 1.1em;
       margin-right: 0.5rem;
+      font-weight: bold;
     }
     .sidebarTitleButton {
       @include buttonStyle();
@@ -43,6 +44,7 @@
     justify-content: space-between;
     .controllerItem {
       font-size: 0.8em;
+      font-weight: bold;
     }
     .sidebarMenuButton {
       @include buttonStyle();
@@ -53,7 +55,7 @@
       margin: 0;
       .sidebarMenuIcon {
         padding: 3px 3px 3px 10px;
-        font-size: 15px;
+        font-size: 12px;
       }
     }
     .sidebarMenuVisible {
@@ -91,6 +93,7 @@
     align-items: flex-start;
     padding-left: 0.5rem;
     margin-top: 0.5rem;
+    transition: all 200ms ease-in;
     .sidebarApiItem {
       margin-top: 0.5rem;
       margin-left: 1rem;
@@ -99,9 +102,8 @@
     }
   }
   .active {
-    transition: all 300ms ease-in;
     font-weight: bold;
-    font-size: 0.9em;
+    transform: scale(1.03);
   }
 }
 
@@ -109,19 +111,20 @@
   margin: 30px 0;
   .sidebarDtoInfoTitle {
     font-weight: bold;
-    font-size: 1em;
   }
   .sidebarDtoContainer {
     margin: 10px 0;
     .sidebarDtoName {
+      font-size: 0.7em;
       font-weight: bold;
     }
     .sidebarPropertiesContainer {
       display: flex;
-      justify-content: space-around;
       align-items: center;
-      margin: 5px 0 5px 15px;
+      word-break: break-all;
+      margin: 5px 0;
       .sidebarPropertiesItem {
+        font-size: 0.7em;
         margin: 0 5px;
       }
     }

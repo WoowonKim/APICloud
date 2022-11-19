@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { useAppDispatch } from "../../Store/hooks";
-import testApiSlice from "../../Store/slice/testApi";
 import "../CreateApi/SelectMethods/SelectMethods.scss";
 
 const Item = styled.div`
@@ -11,7 +9,7 @@ const Item = styled.div`
   margin-top: 5px;
   margin-right: 10px;
   font-weight: bold;
-  background-color: ${(props) => props.color};
+  background-color: ${props => props.color};
 `;
 
 const SelectedItem = styled.button`
@@ -20,7 +18,7 @@ const SelectedItem = styled.button`
   padding: 5px 10px 5px 10px;
   margin-top: 5px;
   font-weight: bold;
-  background-color: ${(props) => props.color};
+  background-color: ${props => props.color};
   width: 100%;
   cursor: pointer;
 `;
@@ -65,26 +63,26 @@ const MethodTest = ({ methodApiWord }: word) => {
       {visible && (
         <div className="selectBoxContainer">
           <ul className="itemList">
-            <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#fdecc8">GET</Item>
+            <li className="item" onClick={e => handleSelect(e)}>
+              <Item color="#fdecc8">Get</Item>
             </li>
-            <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#F5E0E9">POST</Item>
+            <li className="item" onClick={e => handleSelect(e)}>
+              <Item color="#F5E0E9">Post</Item>
             </li>
-            <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#F1F0EF">PUT</Item>
+            <li className="item" onClick={e => handleSelect(e)}>
+              <Item color="#F1F0EF">Put</Item>
             </li>
-            <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#D3E5EF">DELETE</Item>
+            <li className="item" onClick={e => handleSelect(e)}>
+              <Item color="#D3E5EF">Delete</Item>
             </li>
-            <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#E8DEEE">PATCH</Item>
+            <li className="item" onClick={e => handleSelect(e)}>
+              <Item color="#E8DEEE">Patch</Item>
             </li>
-            <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#FFE2DD">OPTIONS</Item>
+            <li className="item" onClick={e => handleSelect(e)}>
+              <Item color="#FFE2DD">Options</Item>
             </li>
-            <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#EEE0DA">HEAD</Item>
+            <li className="item" onClick={e => handleSelect(e)}>
+              <Item color="#EEE0DA">Head</Item>
             </li>
           </ul>
         </div>

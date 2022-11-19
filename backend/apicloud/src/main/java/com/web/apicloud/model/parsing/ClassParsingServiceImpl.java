@@ -18,7 +18,7 @@ public class ClassParsingServiceImpl implements ClassParsingService {
     private static final String LIST = "List";
     private static final String OBJECT = "Object";
     private static final String[] accessModifier = {"public", "protected", "private", "default", "static"};
-    private static final String[] type = {"String", "Long", "long", "Integer", "int", "float", "Float"};
+    private static final String[] type = {"String", "Long", "long", "Integer", "int", "float", "Float", "Double", "double", "Boolean", "boolean", "Character", "char", "Short", "short", "Byte", "byte", "Byte[]", "byte[]"};
 
     private static String groupSecretKey = "";
     public static ArrayList<String> useQuery = new ArrayList<>();
@@ -79,9 +79,7 @@ public class ClassParsingServiceImpl implements ClassParsingService {
         while (i < lines.size()) {
             if (!lines.get(i).equals("")) {
                 PropertyVO property = getProperty(lines.get(i), category);
-                if (property != null) {
-                    requestBody.getProperties().add(property);
-                }
+                if (property != null) requestBody.getProperties().add(property);
             }
             i++;
         }
@@ -89,17 +87,20 @@ public class ClassParsingServiceImpl implements ClassParsingService {
     }
 
     public PropertyVO getProperty(String str, String category) throws IOException {
+        if (str.charAt(str.length() - 1) != ';') return null;
         str = str.strip();
         str = str.replaceAll(";", "");
         String[] tokens = str.split(" ");
         if (tokens.length <= 1) return null;
 
         int j = 0;
+        boolean accessFlag = false;
         while (j < tokens.length) {
             boolean state = false;
             for (int k = 0; k < accessModifier.length; k++) {
                 if (tokens[j].equals(accessModifier[k])) {
                     state = true;
+                    accessFlag= true;
                     break;
                 }
             }
@@ -107,14 +108,17 @@ public class ClassParsingServiceImpl implements ClassParsingService {
             j++;
         }
 
+        if (!accessFlag) return null;
         if ((j + 1) >= tokens.length) return null;
         PropertyVO getPropertyVO = getBody(groupSecretKey, tokens[j], category);
         if (getPropertyVO == null) return null;
+
         return PropertyVO.builder()
                 .dtoName(getPropertyVO.getDtoName())
                 .name(tokens[j + 1])
                 .type(getPropertyVO.getType())
                 .collectionType(getPropertyVO.getCollectionType())
-                .properties(getPropertyVO.getProperties()).build();
+                .properties(getPropertyVO.getProperties())
+                .required(true).build();
     }
 }

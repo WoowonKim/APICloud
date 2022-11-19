@@ -1,28 +1,21 @@
-import { Action, combineReducers, configureStore, ThunkAction } from "@reduxjs/toolkit";
-import apiDocsApiSlice from "./slice/apiDocsApi";
-import mainApiSlice from "./slice/mainApi";
-import sideApiSlice from "./slice/sideApi";
-import testApiSlice from "./slice/testApi";
-import testApiTestSlice from "./slice/testApiTest";
-import userReducer from "./slice/userSlice";
-
-const reducers = combineReducers({
-  user: userReducer,
-  mainApi: mainApiSlice.reducer,
-  testApi: testApiSlice.reducer,
-  sideApi: sideApiSlice.reducer,
-  testApiTest: testApiTestSlice.reducer,
-  apiDocsApi: apiDocsApiSlice.reducer,
-});
+import { Action, configureStore, ThunkAction } from "@reduxjs/toolkit";
+import { persistStore } from "redux-persist";
+import rootReducer from "./index";
 
 export const store = configureStore({
-  reducer: reducers,
+  reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false,
     }),
 });
 
+export const persistor = persistStore(store);
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;
-export type AppThunk<ReturnType = void> = ThunkAction<ReturnType, RootState, unknown, Action<string>>;
+export type AppThunk<ReturnType = void> = ThunkAction<
+  ReturnType,
+  RootState,
+  unknown,
+  Action<string>
+>;

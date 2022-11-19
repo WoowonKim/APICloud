@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import "./SelectTypes.scss";
 
 interface Props {
-  onBlur?: (temp?: string) => void;
   setValue?: any;
   value?: string;
   handleBasicInfo?: (
@@ -23,10 +22,10 @@ interface Props {
   ) => void;
   index?: number;
   modalDepth?: number;
+  activeTab?: number;
 }
 
 const SelectTypes = ({
-  onBlur,
   setValue,
   value,
   handleBasicInfo,
@@ -36,6 +35,7 @@ const SelectTypes = ({
   handelCellValue,
   index,
   modalDepth,
+  activeTab,
 }: Props) => {
   const [visible, setVisible] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState(
@@ -57,9 +57,8 @@ const SelectTypes = ({
       handleBasicInfo(eventTarget.innerText, "type", depth, type);
     }
     // Props에 해당 값이 있을 경우 함수 호출
-    if (setValue && onBlur) {
+    if (setValue) {
       setValue(eventTarget.innerText);
-      onBlur(eventTarget.innerText);
     }
 
     if (handelCellValue && typeof index === "number") {
@@ -69,7 +68,7 @@ const SelectTypes = ({
   // String, List, Map, Byte, Character, Boolean, Integer, Long, Short, Float, Double, Object
   const typeList = isCollection
     ? ["List", "X"]
-    : modalDepth && modalDepth > 2
+    : (modalDepth && modalDepth > 2) || (activeTab && activeTab === 2)
     ? [
         "String",
         "Boolean",
@@ -106,7 +105,7 @@ const SelectTypes = ({
             {selectedMethod !== "List" ? selectedMethod : "String"}
           </div>
         )}
-        <FontAwesomeIcon icon={faChevronDown} />
+        <FontAwesomeIcon icon={faChevronDown} className="selectTypeIcon" />
       </div>
       {visible && (
         <div className="selectBoxContainer">

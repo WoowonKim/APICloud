@@ -106,6 +106,7 @@ public class DocsServiceImpl implements DocsService {
         server.setPackaging(doc.getPackaging());
         server.setJavaVersion(doc.getJavaVersion());
         server.setContextUri(doc.getContextUri());
+        server.setServerUrl(doc.getServerUrl());
     }
 
     @Override

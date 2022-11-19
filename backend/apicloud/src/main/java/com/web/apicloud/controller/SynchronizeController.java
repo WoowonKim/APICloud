@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -32,6 +31,7 @@ public class SynchronizeController {
     public ResponseEntity<ControllerDTO> getFile(@PathVariable("docId") Long docId, @RequestPart(value = "file", required = false) MultipartFile multipartFile, @RequestPart SynchronizeRequest synchronizeRequest) throws IOException {
         log.info("프로젝트 동기화 API 요청");
         ControllerDTO response = synchronizeDocService.getFile(docId, synchronizeRequest, multipartFile);
+        System.out.println(response);
         return ResponseEntity.ok()
                 .body(response);
     }

@@ -82,7 +82,11 @@ public class PropertyVO {
     }
 
     @JsonIgnore
-    public boolean canMakeDto() {
-        return StringUtils.hasText(dtoName) && StringUtils.hasText(name);
+    public boolean hasType() {
+        if(isDtoCreationRequired()) {
+            return StringUtils.hasText(dtoName);
+        } else {
+            return StringUtils.hasText(type);
+        }
     }
 }
