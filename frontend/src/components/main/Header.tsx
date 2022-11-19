@@ -12,8 +12,7 @@ import { Logout } from "@mui/icons-material";
 
 const ApiMainHeader = styled.div`
   background-color: ${(props) => props.theme.bgColor};
-  padding: 15px;
-  padding-bottom: 0px;
+  padding: 7px 15px;
   display: flex;
   justify-content: space-between;
 `;

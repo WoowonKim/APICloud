@@ -30,8 +30,8 @@
 }
 .userImg {
   cursor: pointer;
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
   border-radius: 50px;
 }
 .search {
@@ -130,7 +130,14 @@
   display: grid;
   align-items: center;
   margin-right: 10px;
-  width: 10%;
+  width: 15%;
+}
+
+.userSettingView {
+  display: grid;
+  align-items: center;
+  margin-right: 10px;
+  width: 7%;
 }
 
 .userSettingSub {

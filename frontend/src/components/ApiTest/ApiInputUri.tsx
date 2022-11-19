@@ -1,5 +1,4 @@
 import axios from "axios";
-import { ignoredYellowBox } from "console";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
@@ -21,8 +20,8 @@ const ApiInputUriSearch = styled.input`
   outline: none;
   font-weight: 500;
   font-size: 14px;
-  color: ${props => props.theme.color};
-  background-color: ${props => props.theme.bgColor};
+  color: ${(props) => props.theme.color};
+  background-color: ${(props) => props.theme.bgColor};
 `;
 
 export type list = {
@@ -172,7 +171,7 @@ const ApiInputUri = ({
           .then(res => {
             responseAllInfo(res);
           })
-          .catch(err => {
+          .catch((err) => {
             errResponsAllInfo(err);
           });
         break;
@@ -219,10 +218,10 @@ const ApiInputUri = ({
           },
           params: queriesInfo,
         })
-          .then(res => {
+          .then((res) => {
             responseAllInfo(res);
           })
-          .catch(err => {
+          .catch((err) => {
             errResponsAllInfo(err);
           });
         break;
@@ -268,7 +267,7 @@ const ApiInputUri = ({
       <ApiInputUriSearch
         type="text"
         value={testUri}
-        onChange={e => {
+        onChange={(e) => {
           setTestUri(e.target.value);
         }}
       />

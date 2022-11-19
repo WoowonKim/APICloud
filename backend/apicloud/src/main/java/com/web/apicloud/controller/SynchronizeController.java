@@ -31,6 +31,7 @@ public class SynchronizeController {
     public ResponseEntity<ControllerDTO> getFile(@PathVariable("docId") Long docId, @RequestPart(value = "file", required = false) MultipartFile multipartFile, @RequestPart SynchronizeRequest synchronizeRequest) throws IOException {
         log.info("프로젝트 동기화 API 요청");
         ControllerDTO response = synchronizeDocService.getFile(docId, synchronizeRequest, multipartFile);
+        System.out.println(response);
         return ResponseEntity.ok()
                 .body(response);
     }

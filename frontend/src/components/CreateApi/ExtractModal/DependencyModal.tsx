@@ -7,9 +7,11 @@ import React, {
   useRef,
   useState,
 } from "react";
+import { InfinitySpin } from "react-loader-spinner";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
+import { Loading } from "../../../pages/CreateApi/CreateApi";
 import apiDocsApiSlice from "../../../Store/slice/apiDocsApi";
 import { getApiCreationInfo } from "../../../Store/slice/mainApi";
 import { RootState } from "../../../Store/store";
@@ -104,7 +106,7 @@ const DependencyModal = (props: PropType) => {
                   ></input>
                 </div>
               </div>
-              {dependencyInfo.length > 0 && (
+              {dependencyInfo.length > 0 ? (
                 <div className="dependencyModal-dependencyContainer">
                   {dependencyInfo.map((info: any, i: number) => (
                     <div key={i}>
@@ -153,6 +155,10 @@ const DependencyModal = (props: PropType) => {
                     </div>
                   ))}
                 </div>
+              ) : (
+                <Loading>
+                  <InfinitySpin width="250" color="#6FC7D1" />
+                </Loading>
               )}
               <button
                 onClick={() => {

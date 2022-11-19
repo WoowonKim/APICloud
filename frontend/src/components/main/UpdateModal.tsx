@@ -25,6 +25,8 @@ import {
 import { Search } from "@mui/icons-material";
 import { useAppSelector } from "../../Store/hooks";
 import { selectUser } from "../../Store/slice/userSlice";
+import { Loading } from "../../pages/CreateApi/CreateApi";
+import { InfinitySpin } from "react-loader-spinner";
 
 type groupUser = {
   name: string;
@@ -231,7 +233,7 @@ const UpdateModal = () => {
           <div className="modalMain">
             <form className="modalForm" onSubmit={onSubmit}>
               <p>수정하기</p>
-              {isDefaultAvailable && (
+              {isDefaultAvailable ? (
                 <>
                   <div className="inputWrapper">
                     <label htmlFor="docsName">Doc 이름</label>
@@ -369,6 +371,12 @@ const UpdateModal = () => {
                     </div>
                   </div>
                 </>
+              ) : (
+                <Loading
+                  style={{ position: "relative", top: "65px", left: "415px" }}
+                >
+                  <InfinitySpin width="250" color="#6FC7D1" />
+                </Loading>
               )}
               <p>초대하기</p>
               <div className="searchUser">
