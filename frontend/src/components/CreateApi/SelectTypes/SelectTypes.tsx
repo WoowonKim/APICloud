@@ -22,6 +22,7 @@ interface Props {
   ) => void;
   index?: number;
   modalDepth?: number;
+  activeTab?: number;
 }
 
 const SelectTypes = ({
@@ -34,6 +35,7 @@ const SelectTypes = ({
   handelCellValue,
   index,
   modalDepth,
+  activeTab,
 }: Props) => {
   const [visible, setVisible] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState(
@@ -66,7 +68,7 @@ const SelectTypes = ({
   // String, List, Map, Byte, Character, Boolean, Integer, Long, Short, Float, Double, Object
   const typeList = isCollection
     ? ["List", "X"]
-    : modalDepth && modalDepth > 2
+    : (modalDepth && modalDepth > 2) || (activeTab && activeTab === 2)
     ? [
         "String",
         "Boolean",

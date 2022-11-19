@@ -28,7 +28,9 @@ const SynchroinizeData = ({ syncData, setSyncData, saveChangeData }: Props) => {
               <p className="createApiSynchronizeKeyText">{item.value.key}</p>
               <div className="createApiSynchronizeValueText">
                 {typeof item.value.value !== "object" ? (
-                  <span>{item.value.value}</span>
+                  <span>
+                    {item.value.value === false ? "false" : item.value.value}
+                  </span>
                 ) : item.value.value === null ? (
                   <span>null</span>
                 ) : (
