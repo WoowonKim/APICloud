@@ -173,23 +173,24 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
   .createApiTabItem {
-    font-size: 0.9em;
+    font-size: 0.8em;
     padding: 7px 10px;
     border: 1px solid rgba(39, 127, 195, 0.8);
     border-radius: 10px;
-    margin: 0 3px;
+    margin: 5px;
+    cursor: pointer;
     &:hover {
       opacity: 0.7;
-      transition: all 300ms ease-in;
+      transition: all 200ms ease-in-out;
     }
   }
   .selectedTabItem {
+    transform: scale(1.1);
     background-color: rgba(39, 127, 195, 0.8);
     color: white;
     border-radius: 10px;
     padding: 7px 10px;
     font-weight: bold;
-    font-size: 1em;
   }
 }
 
@@ -199,7 +200,6 @@
   align-items: baseline;
   padding: 7px 0;
   margin-bottom: 5px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.5);
 }
 
 .createApiCloseButton {
