@@ -41,7 +41,6 @@ const CreateApi = () => {
   const [isSynced, setIsSynced] = useState(0);
   const [isWarningModal, setIsWarningModal] = useState(false);
   const [isLodaing, setIsLoading] = useState(true);
-  // console.log(syncData, changeData, changeCode);
 
   useEffect(() => {
     if (!encryptedUrl) {
