@@ -22,10 +22,8 @@ const ApiBody = ({
 }: type) => {
   const info = useSelector(selectTestApi);
   const [requestBody, setRequestBody] = useState<RequestBodyType>();
-  const [inputBody, setInputBody] = useState("");
-  const [newBodyInfo, setNewBodyInfo] = useState({});
-  const [test, setTest] = useState("");
-  const [arrTest, setArrTest] = useState<[any, any][]>([]);
+  const [codeInput, setcodeInput] = useState("");
+  const [bodyString, setBodyString] = useState("");
 
   // RequestBody 작성 할 값 불러오기 및 기존 body값 초기화
   useEffect(() => {
@@ -39,30 +37,14 @@ const ApiBody = ({
     }
   }, [getInfo, info.getControllerInfomation, info.getApisInfomation]);
 
-  useEffect(() => {
-    if (testbodyInfo) {
-      setArrTest(Object.entries(testbodyInfo));
-    }
-  }, [testbodyInfo]);
-
-  // 전송할 body값 객체화
-  useEffect(() => {
-    let key = test;
-    setNewBodyInfo({ [key]: inputBody });
-  }, [inputBody]);
-
   // 저장 버튼 클릭 시 body값 갱신 및 객체화 하는 inputbody 초기화
-  const [bodyString, setBodyString] = useState("");
   const onSubmit = (e: any) => {
     e.preventDefault();
-    setTestbodyInfo({ ...testbodyInfo, ...newBodyInfo });
-    setInputBody("");
     const body = JSON.parse(bodyString);
     setBodyObject(body);
   };
 
-  const [codeInput, setcodeInput] = useState("");
-
+  // TextArea TAB 처리
   const codeInputTabHandler = (event: {
     key: string;
     preventDefault: () => void;
@@ -73,6 +55,7 @@ const ApiBody = ({
     }
   };
 
+  // TextArea TAB 처리
   const codeInputHandler = (event: {
     target: any;
     currentTarget: { value: React.SetStateAction<string> };
@@ -80,7 +63,7 @@ const ApiBody = ({
     setcodeInput(event.currentTarget.value);
     setBodyString(event.target.value);
   };
-  console.log(requestBody);
+
   return (
     <>
       {requestBody?.properties[0]?.name && (

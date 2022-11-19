@@ -20,16 +20,14 @@ const ApiInputUriSearch = styled.input`
   outline: none;
   font-weight: 500;
   font-size: 14px;
-  color: ${(props) => props.theme.color};
-  background-color: ${(props) => props.theme.bgColor};
+  color: ${props => props.theme.color};
+  background-color: ${props => props.theme.bgColor};
 `;
 
 export type list = {
   getInfo: RequestTypeInfo | undefined;
   testbodyInfo: reBodyType | undefined;
   setTestbodyInfo: Dispatch<SetStateAction<reBodyType | undefined>>;
-  setParamsInfo: Dispatch<SetStateAction<reBodyType | undefined>>;
-  paramsInfo: reBodyType | undefined;
   queriesInfo: reBodyType | undefined;
   setQueriesInfo: Dispatch<SetStateAction<reBodyType | undefined>>;
   bodyObject: any;
@@ -39,8 +37,6 @@ const ApiInputUri = ({
   getInfo,
   testbodyInfo,
   setTestbodyInfo,
-  paramsInfo,
-  setParamsInfo,
   queriesInfo,
   setQueriesInfo,
   bodyObject,
@@ -171,7 +167,7 @@ const ApiInputUri = ({
           .then(res => {
             responseAllInfo(res);
           })
-          .catch((err) => {
+          .catch(err => {
             errResponsAllInfo(err);
           });
         break;
@@ -218,10 +214,10 @@ const ApiInputUri = ({
           },
           params: queriesInfo,
         })
-          .then((res) => {
+          .then(res => {
             responseAllInfo(res);
           })
-          .catch((err) => {
+          .catch(err => {
             errResponsAllInfo(err);
           });
         break;
@@ -248,16 +244,11 @@ const ApiInputUri = ({
   // send 입력시 모든값 초기화
   useEffect(() => {
     setTestbodyInfo({});
-    setParamsInfo({});
     setQueriesInfo({});
     setTestUri(server + context + requestMaapingUri + methodUri);
     setRealParams([]);
     setReqUri("");
   }, [sendFlag]);
-  const testString = `{"id":"test","pw":"1234"}`;
-  const testObj = JSON.parse(testString);
-  console.log("객체 =>", testObj);
-  console.log("객체 키 값 =>", Object.keys(testObj));
 
   return (
     <div className="apiInputContainer">
@@ -267,7 +258,7 @@ const ApiInputUri = ({
       <ApiInputUriSearch
         type="text"
         value={testUri}
-        onChange={(e) => {
+        onChange={e => {
           setTestUri(e.target.value);
         }}
       />

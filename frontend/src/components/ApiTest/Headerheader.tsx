@@ -15,7 +15,7 @@ export const HeaderListTitleCon = styled.div`
 `;
 export const HeaderListTitle = styled.p`
   font-weight: bold;
-  color: ${(props) => props.theme.color};
+  color: ${props => props.theme.color};
   font-size: 13px;
   margin: 13px 0px 20px 5px;
 `;
@@ -26,39 +26,18 @@ export const HeaderListInput = styled.input`
   border: none;
   font-size: 13px;
   border-bottom: 1px solid black;
-  background-color: ${(props) => props.theme.bgColor};
-  color: ${(props) => props.theme.color};
+  background-color: ${props => props.theme.bgColor};
+  color: ${props => props.theme.color};
 `;
 interface type {
   getInfo: RequestTypeInfo | undefined;
 }
 const Headerheader = ({ getInfo }: type) => {
   const info = useSelector(selectTestApi);
-  const [getCollection, setGetCollection] = useState("");
-  const [getDtoName, setGetDtoName] = useState("");
-  const [getType, setGetType] = useState("");
-  const [test, setTest] = useState("");
   const [tokenInfo, setTokenInfo] = useState("");
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (getInfo) {
-      setGetCollection(
-        getInfo?.controllers[info.getControllerInfomation].apis[
-          info.getApisInfomation
-        ].requestBody.collectionType
-      );
-      setGetDtoName(
-        getInfo?.controllers[info.getControllerInfomation].apis[
-          info.getApisInfomation
-        ].requestBody.dtoName
-      );
-      setGetType(
-        getInfo?.controllers[info.getControllerInfomation].apis[
-          info.getApisInfomation
-        ].requestBody.type
-      );
-    }
     getInfo?.controllers[info.getControllerInfomation].apis[
       info.getApisInfomation
     ].headers.map((it, idx) => {
@@ -87,14 +66,14 @@ const Headerheader = ({ getInfo }: type) => {
                     className="apiHeaderListInputTag"
                     type="text"
                     defaultValue={it.value}
-                    onChange={(e) => {}}
+                    onChange={e => {}}
                   />
                 ) : (
                   <input
                     className="apiHeaderListInputTag"
                     type="text"
                     value={tokenInfo}
-                    onChange={(e) => {
+                    onChange={e => {
                       setTokenInfo(e.target.value);
                       it.value = tokenInfo;
                       dispatch(testApiSlice.actions.getTokenInfo(tokenInfo));

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Header from "../components/main/Header";
 import ApiHeader from "../components/ApiTest/ApiHeader";
 import ApiInputUri from "../components/ApiTest/ApiInputUri";
 import ApiResponse from "../components/ApiTest/ApiResponse";
@@ -29,11 +28,11 @@ const TestSide = styled.div`
 `;
 const TestApi = ({ isDarkMode, toggleDarkMode }: IHome) => {
   const [getInfo, setGetInfo] = useState<RequestTypeInfo>();
+  const [testbodyInfo, setTestbodyInfo] = useState<reBodyType>();
+  const [queriesInfo, setQueriesInfo] = useState<reBodyType>();
+  const [bodyObject, setBodyObject] = useState({});
   const dispatch = useAppDispatch();
   const getDocsId = useAppSelector(mainApi);
-  const [testbodyInfo, setTestbodyInfo] = useState<reBodyType>();
-  const [paramsInfo, setParamsInfo] = useState<reBodyType>();
-  const [queriesInfo, setQueriesInfo] = useState<reBodyType>();
 
   // 해당 API정보의 전체를 불러오기.
   useEffect(() => {
@@ -43,9 +42,6 @@ const TestApi = ({ isDarkMode, toggleDarkMode }: IHome) => {
       setGetInfo(obj);
     });
   }, [getDocsId.docId]);
-
-  const [bodyObject, setBodyObject] = useState({});
-  console.log("bodyObject =>", bodyObject);
 
   return (
     <div>
@@ -59,8 +55,6 @@ const TestApi = ({ isDarkMode, toggleDarkMode }: IHome) => {
               getInfo={getInfo}
               testbodyInfo={testbodyInfo}
               setTestbodyInfo={setTestbodyInfo}
-              paramsInfo={paramsInfo}
-              setParamsInfo={setParamsInfo}
               queriesInfo={queriesInfo}
               setQueriesInfo={setQueriesInfo}
               bodyObject={bodyObject}
@@ -74,8 +68,6 @@ const TestApi = ({ isDarkMode, toggleDarkMode }: IHome) => {
               getInfo={getInfo}
               testbodyInfo={testbodyInfo}
               setTestbodyInfo={setTestbodyInfo}
-              paramsInfo={paramsInfo}
-              setParamsInfo={setParamsInfo}
               queriesInfo={queriesInfo}
               setQueriesInfo={setQueriesInfo}
               setBodyObject={setBodyObject}

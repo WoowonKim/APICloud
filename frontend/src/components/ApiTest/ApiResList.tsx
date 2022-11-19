@@ -9,10 +9,10 @@ const ApiResList = () => {
   const onClickBtn = (e: number) => {
     dispatch(testApiSlice.actions.getResNum(e));
   };
-
   const TestListNum = styled.div`
     padding-left: 10px;
   `;
+
   return (
     <div>
       {info.getResponseListNumber === 0 && (
