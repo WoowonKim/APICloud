@@ -182,6 +182,7 @@ const ApiTable = ({
               handelCellValue={handelCellValue}
               index={index}
               isCollection={false}
+              activeTab={activeTab}
             />
             {item.type === "Object" && (
               <FontAwesomeIcon

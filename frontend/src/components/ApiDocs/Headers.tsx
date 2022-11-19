@@ -17,20 +17,21 @@ const Headers = ({ item }: Props) => {
         </div>
       </div>
       <div className="contentBox">
-        {item.headers.map((item: any, idx: any) => (
-          <div key={idx}>
-            <div>{"{"}</div>
-            <div className="titleContentWrapper2">
-              <div>&nbsp;&nbsp;&nbsp;key:</div>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'{item.key}',
+        {item.headers &&
+          item.headers.map((item: any, idx: any) => (
+            <div key={idx}>
+              <div>{"{"}</div>
+              <div className="titleContentWrapper2">
+                <div>&nbsp;&nbsp;&nbsp;key:</div>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'{item.key}',
+              </div>
+              <div className="titleContentWrapper2">
+                <div>&nbsp;&nbsp;&nbsp;value:</div>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'{item.value}',
+              </div>
+              <div>{"}"}</div>
             </div>
-            <div className="titleContentWrapper2">
-              <div>&nbsp;&nbsp;&nbsp;value:</div>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'{item.value}',
-            </div>
-            <div>{"}"}</div>
-          </div>
-        ))}
+          ))}
       </div>
     </div>
   );

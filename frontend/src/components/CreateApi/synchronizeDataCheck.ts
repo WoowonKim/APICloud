@@ -4,6 +4,7 @@ export function checkFlag(path: any, root: any) {
   if (path === null) {
     return [];
   }
+  // console.log(JSON.parse(JSON.stringify(path)));
 
   const flagList = [
     path.dtoNameFlag,
@@ -106,14 +107,8 @@ export function checkChangedData(
                 for (let prop of data.apis[apiIndex][item][idx].properties) {
                   queue.push(prop);
                 }
-                while (queue.length === 0) {
+                while (queue.length !== 0) {
                   let current = queue.shift();
-                  if (current?.properties && current.properties.length > 0) {
-                    for (let prop of data.apis[apiIndex][item][idx]
-                      .properties) {
-                      queue.push(prop);
-                    }
-                  }
                   if (current.createFlag) {
                     updateDto.push({
                       root: root + `/${item}`,
@@ -154,13 +149,8 @@ export function checkChangedData(
               for (let prop of data.apis[apiIndex][item].properties) {
                 queue.push(prop);
               }
-              while (queue.length === 0) {
+              while (queue.length !== 0) {
                 let current = queue.shift();
-                if (current?.properties && current.properties.length > 0) {
-                  for (let prop of data.apis[apiIndex][item].properties) {
-                    queue.push(prop);
-                  }
-                }
                 if (current.createFlag) {
                   updateDto.push({
                     root: root + `/${item}/properties`,
@@ -222,14 +212,8 @@ export function checkChangedData(
                   .responseBody.properties) {
                   queue.push(prop);
                 }
-                while (queue.length === 0) {
+                while (queue.length !== 0) {
                   let current = queue.shift();
-                  if (current?.properties && current.properties.length > 0) {
-                    for (let prop of data.apis[apiIndex][item][responseType]
-                      .responseBody.properties) {
-                      queue.push(prop);
-                    }
-                  }
                   if (current.createFlag) {
                     updateDto.push({
                       root:

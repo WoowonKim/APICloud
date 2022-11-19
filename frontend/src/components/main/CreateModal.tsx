@@ -196,7 +196,7 @@ const CreateModal = () => {
                         value={docsName}
                         onChange={(e) => {
                           setDocsName(e.target.value);
-                          setPackageName(groupPackage + "." + docsName);
+                          setPackageName(groupPackage + "." + e.target.value);
                         }}
                       />
                     </div>
@@ -288,7 +288,7 @@ const CreateModal = () => {
                         value={groupPackage}
                         onChange={(e) => {
                           setGroupPackage(e.target.value);
-                          setPackageName(groupPackage + "." + docsName);
+                          setPackageName(e.target.value + "." + docsName);
                         }}
                       />
                     </div>
