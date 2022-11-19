@@ -25,6 +25,7 @@ import SynchronizeCode from "../../components/CreateApi/SynchronizeModal/Synchro
 import SynchroinizeData from "../../components/CreateApi/SynchronizeModal/SynchroinizeData";
 import { InfinitySpin } from "react-loader-spinner";
 import styled from "styled-components";
+import GuideModal from "../../components/CreateApi/GuideModal/GuideModal";
 
 const CreateApi = () => {
   const dispatch = useAppDispatch();
@@ -41,6 +42,7 @@ const CreateApi = () => {
   const [isSynced, setIsSynced] = useState(0);
   const [isWarningModal, setIsWarningModal] = useState(false);
   const [isLodaing, setIsLoading] = useState(true);
+  const [isGuideModal, setIsGuideModal] = useState(false);
 
   useEffect(() => {
     if (!encryptedUrl) {
@@ -455,6 +457,12 @@ const CreateApi = () => {
           </Loading>
         ) : (
           <div>
+            {isGuideModal && (
+              <GuideModal
+                setIsGuideModal={setIsGuideModal}
+                isGuideModal={isGuideModal}
+              />
+            )}
             <div className="apiDocscontainer">
               <Sidebar
                 handleController={handleController}
@@ -478,6 +486,14 @@ const CreateApi = () => {
                   </div>
                   <div className="buttonContainer">
                     <div className="createApiTitleButtonGroup">
+                      <button
+                        className="createApiButton"
+                        onClick={() => {
+                          setIsGuideModal(!isGuideModal);
+                        }}
+                      >
+                        사용법
+                      </button>
                       <button
                         className="createApiButton"
                         onClick={() => {
