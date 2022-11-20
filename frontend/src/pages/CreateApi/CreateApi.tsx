@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./CreateApi.scss";
 import Sidebar from "../../components/CreateApi/Sidebar/Sidebar";
 import { useSyncedStore } from "@syncedstore/react";
-import { connect, disconnect, store } from "../../components/CreateApi/store";
+import { connect, store } from "../../components/CreateApi/store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
@@ -67,7 +67,7 @@ const CreateApi = () => {
       .catch((err: any) => {
         setAuthority(0);
       });
-    connect();
+    connect(encryptedUrl);
   }, [encryptedUrl]);
 
   const isOpenExtractModal = useSelector(
@@ -188,7 +188,6 @@ const CreateApi = () => {
   useEffect(() => {
     return () => {
       handleSetApiDetail();
-      disconnect();
     };
   }, [encryptedUrl]);
 
@@ -210,7 +209,6 @@ const CreateApi = () => {
     e.preventDefault();
     e.returnValue = "";
     handleSetApiDetail();
-    disconnect();
   };
 
   useEffect(() => {

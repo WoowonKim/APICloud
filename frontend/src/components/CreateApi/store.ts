@@ -9,9 +9,14 @@ export const store = syncedStore({
 
 const doc = getYjsValue(store);
 
-const encryptedUrl = window.localStorage.getItem("docId");
+// const encryptedUrl = window.localStorage.getItem("docId");
 
-export const webrtcProvider = new WebrtcProvider("apiclouds.net", doc as Doc);
+export const connect = (encryptedUrl: string) => {
+  const webrtcProvider = new WebrtcProvider(
+    encryptedUrl.slice(0, 10),
+    doc as Doc
+  );
+};
 
-export const disconnect = () => webrtcProvider.disconnect();
-export const connect = () => webrtcProvider.connect();
+// export const disconnect = () => webrtcProvider.disconnect();
+// export const connect = () => webrtcProvider.connect();
