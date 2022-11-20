@@ -2,6 +2,7 @@ import { faEllipsisVertical, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { MappedTypeDescription } from "@syncedstore/core/types/doc";
 import React, { useEffect, useState } from "react";
+import styled from "styled-components";
 import { ControllerType } from "../../../pages/CreateApi/ApisType";
 import ControllerAddModal from "../ControllerAddModal/ControllerAddModal";
 import { SelectedItem } from "../SelectMethods/SelectMethods";
@@ -60,7 +61,7 @@ const Sidebar = ({
           addedControllerIndex={addedControllerIndex}
         />
       )}
-      <div className="sidebar">
+      <CreateApiSidebar>
         <div className="sidebarTitleGroup">
           <p className="sidebarTitle">{docInfo?.docsName}</p>
           <button
@@ -187,9 +188,15 @@ const Sidebar = ({
               ))}
           </div>
         )}
-      </div>
+      </CreateApiSidebar>
     </>
   );
 };
 
 export default Sidebar;
+
+
+const CreateApiSidebar = styled.div`
+  background-color: ${(props) => props.theme.createApiSidebarBgColor};
+  padding: 0 1rem;
+`

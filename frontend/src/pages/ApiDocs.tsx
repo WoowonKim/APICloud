@@ -143,13 +143,14 @@ export default ApiDocs;
 
 const SidebarDocWrapper = styled.div`
   background-color: ${(props) => props.theme.docBgColor};
+  z-index: -1;
 `;
 
 const DocBox = styled.div`
   margin: auto;
   background-color: ${(props) => props.theme.docBgColor};
   width: 800px;
-  padding-top: 10vh;
+  padding-top: 2vh;
 `;
 
 const Doc1 = styled.div`

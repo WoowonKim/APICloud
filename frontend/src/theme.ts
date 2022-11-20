@@ -8,7 +8,9 @@ export const darkTheme: DefaultTheme = {
   listBgColor: "#e4effa",
   sideBgClodr: "none",
   docBgColor: "#414141",
-  docSidebarBgColor: "#575757"
+  docSidebarBgColor: "#575757",
+  modalBgColor: "#333333",
+  createApiSidebarBgColor: "#333333"
 };
 
 export const lightTheme: DefaultTheme = {
@@ -19,5 +21,7 @@ export const lightTheme: DefaultTheme = {
   listBgColor: "#ffffff",
   sideBgClodr: "#e4effa",
   docBgColor: "#e7f7fe;",
-  docSidebarBgColor: "rgb(244, 248, 248);"
+  docSidebarBgColor: "rgb(244, 248, 248);",
+  modalBgColor: "#FFFFFF",
+  createApiSidebarBgColor: "rgb(244, 248, 248);"
 };

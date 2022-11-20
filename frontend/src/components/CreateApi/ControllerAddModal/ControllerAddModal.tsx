@@ -2,6 +2,7 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { MappedTypeDescription } from "@syncedstore/core/types/doc";
 import React, { useEffect, useState } from "react";
+import styled from "styled-components";
 import { ControllerType } from "../../../pages/CreateApi/ApisType";
 import ModalTable from "../ModalTable/ModalTable";
 import { checkControllerApiValidation } from "../validationCheck";
@@ -94,7 +95,7 @@ const ControllerAddModal = ({
 
   return (
     <div className="sidebarModalContainer">
-      <div className="modalInnerContainer">
+      <ModalInnerContainer>
         <div className="modalTitleGroup">
           <p className="modalTitleText">Controller 추가</p>
           <div className="highlightText"></div>
@@ -247,7 +248,7 @@ const ControllerAddModal = ({
         >
           Controller 추가 완료하기
         </button>
-      </div>
+      </ModalInnerContainer>
       <div
         className="modalCloseButton"
         onClick={() => {
@@ -267,3 +268,18 @@ const ControllerAddModal = ({
 };
 
 export default ControllerAddModal;
+
+const ModalInnerContainer = styled.div`
+  width: 30rem;
+  height: 530px;
+  overflow-y: scroll;
+  background-color: ${(props) => props.theme.modalBgColor};
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 1rem;
+  padding: 0 2rem;
+  box-shadow: 0px 4px 26px -10px rgba(0, 0, 0, 0.81);
+  z-index: 4;
+`
