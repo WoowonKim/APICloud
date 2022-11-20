@@ -90,7 +90,8 @@ const Sidebar = forwardRef<Ref, Props>(
               </li>
             </ul>
             <ul className="sidebarUl">
-              {detail?.controllers &&
+              {detail &&
+                detail?.controllers &&
                 detail.controllers.length > 0 &&
                 detail.controllers.map(
                   (controller: any, controllerIdx: any) => (
@@ -188,7 +189,8 @@ const Sidebar = forwardRef<Ref, Props>(
               </li>
             </ul>
             <ul className="sidebarUl">
-              {detail?.controllers &&
+              {detail &&
+                detail?.controllers &&
                 detail.controllers.length > 0 &&
                 detail.controllers.map(
                   (controller: any, controllerIdx: any) => (

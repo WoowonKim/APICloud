@@ -58,7 +58,7 @@ const DetailInform = forwardRef<Ref, Props>(
           </div>
         </h2>
         {detail &&
-          detail.controllers.map((controller: any, controllerIdx: any) => (
+          detail?.controllers.map((controller: any, controllerIdx: any) => (
             <div key={controllerIdx}>
               <div
                 ref={(el) =>

@@ -12,6 +12,7 @@ import { getApiDetail } from "../Store/slice/apiDocsApi";
 import { DocInformationType } from "../components/main/CreateModal";
 import styled from "styled-components";
 import { faFilePdf } from "@fortawesome/free-regular-svg-icons";
+import MetaData from "../components/MetaData";
 
 const ApiDocs = () => {
   const [docInform, setDocInform] = useState<DocInformationType>(); // Doc 기본 정보
@@ -83,14 +84,19 @@ const ApiDocs = () => {
   useEffect(() => {}, [docInformArray, detail]);
 
   return (
-    <div className="apiDocContainer">
-      <FontAwesomeIcon
-        icon={faCircleUp}
-        className="circleUpIcon"
-        size="3x"
-        onClick={scrollUp}
+    <>
+      <MetaData
+        title="APICloud Api Doc"
+        description="APICloud에서 작성된 Api 명세서를 확인해보세요"
+        name="APICloud"
       />
-      {docInformArray && detail && (
+      <div className="apiDocContainer">
+        <FontAwesomeIcon
+          icon={faCircleUp}
+          className="circleUpIcon"
+          size="3x"
+          onClick={scrollUp}
+        />
         <SidebarDocWrapper>
           <div className="sidebarBox">
             <div onClick={toggleSide} className="sidebarButton">
@@ -128,8 +134,8 @@ const ApiDocs = () => {
             </div>
           </DocBox>
         </SidebarDocWrapper>
-      )}
-    </div>
+      </div>
+    </>
   );
 };
 

@@ -12,6 +12,7 @@ import styled from "styled-components";
 import HeaderList from "../components/ApiTest/HeaderList";
 import ApiHeaderTitle from "../components/ApiTest/ApiHeaderTitle";
 import ApiResList from "../components/ApiTest/ApiResList";
+import MetaData from "../components/MetaData";
 
 interface IHome {
   isDarkMode: boolean;
@@ -47,6 +48,11 @@ const TestApi = ({ isDarkMode, toggleDarkMode }: IHome) => {
 
   return (
     <div>
+      <MetaData
+        title="APICloud Api 테스트"
+        description="APICloud에서 Api 명세서 기반 테스트를 진행할 수 있습니다."
+        name="APICloud"
+      />
       <div className="testContainer">
         <TestSide>
           <ApiSide getInfo={getInfo} />
