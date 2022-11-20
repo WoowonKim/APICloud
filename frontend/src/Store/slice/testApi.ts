@@ -1,7 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { Action } from "@remix-run/router";
 import { axiosGet } from "../../util/axiosUtil";
-import { testAxiosGet } from "../../util/tesxAxiosUtil";
 import { RootState } from "../store";
 
 type bodyType = {
@@ -52,14 +50,17 @@ const initialState: initType = {
 };
 
 // API 조회 하기.
-export const getApiRequestInfo: any = createAsyncThunk("testApi/getApiRequestInfo", async (args: any, { rejectWithValue }) => {
-  try {
-    const response = await axiosGet(`apis/${args.docId}`);
-    return response.data;
-  } catch (err: any) {
-    return rejectWithValue(err.response);
+export const getApiRequestInfo: any = createAsyncThunk(
+  "testApi/getApiRequestInfo",
+  async (args: any, { rejectWithValue }) => {
+    try {
+      const response = await axiosGet(`apis/${args.docId}`);
+      return response.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response);
+    }
   }
-});
+);
 
 const testApiSlice = createSlice({
   name: "testApi",
@@ -93,7 +94,6 @@ const testApiSlice = createSlice({
       state.getToken = action.payload;
     },
     getParamsID(state, action) {
-      console.log("ID ACION", action.payload);
       state.getParamsId = action.payload;
     },
     getParam(state, action) {
@@ -106,7 +106,6 @@ const testApiSlice = createSlice({
       state.getContextUrl = action.payload;
     },
     setGlobalDarkMode(state, action) {
-      console.log("ACTION ->", action.payload);
       state = action.payload;
     },
     addController(state, action) {
@@ -120,12 +119,8 @@ const testApiSlice = createSlice({
     },
   },
   extraReducers: {
-    [getApiRequestInfo.fulfilled]: (state, action) => {
-      console.log("GetApiRequestInfo Success =>");
-    },
-    [getApiRequestInfo.rejected]: (state, action) => {
-      console.log("GetApiRequestInfoRejected => ", action.payload);
-    },
+    [getApiRequestInfo.fulfilled]: (state, action) => {},
+    [getApiRequestInfo.rejected]: (state, action) => {},
   },
 });
 

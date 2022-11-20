@@ -99,9 +99,7 @@ const SynchronizeModal = ({
               setIsSynchronizeModal(false);
             }
           })
-          .catch((err: any) => {
-            console.log(err);
-          });
+          .catch((err: any) => {});
       }
     });
   };
@@ -135,9 +133,7 @@ const SynchronizeModal = ({
               setErrorMessage(res.payload.data.message);
             }
           })
-          .catch((err: any) => {
-            console.log(err);
-          });
+          .catch((err: any) => {});
       }
     });
   };

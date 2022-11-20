@@ -101,7 +101,6 @@ const ExtractModal = ({
 
   const connectNotion = () => {
     if (encryptedUrl === undefined) {
-      console.log("잘못된 접근입니다.");
       return;
     }
     const notionUrl = process.env.REACT_APP_NOTION_OAUTH2 + encryptedUrl;

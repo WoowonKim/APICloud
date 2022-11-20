@@ -54,8 +54,6 @@ const CreateApi = () => {
     dispatch(checkAuthority({ encryptedUrl }))
       .then((res: any) => {
         setAuthority(res.payload);
-        console.log("authority", res.payload);
-
         if (res.payload === 3) {
           setIsViewer(true);
         } else {
@@ -63,7 +61,6 @@ const CreateApi = () => {
         }
       })
       .catch((err: any) => {
-        console.log(err.response.data);
         setAuthority(0);
       });
     connect();
@@ -224,33 +221,21 @@ const CreateApi = () => {
     setActiveTab(1);
   };
 
-  // 데이터 확인 용 로그
-  console.log(JSON.parse(JSON.stringify(state.data)));
-
   const handleGetApiDetail = () => {
     dispatch(getApiDetail({ docId: encryptedUrl })).then((res: any) => {
       if (res.meta.requestStatus === "fulfilled") {
         const detail = JSON.parse(res.payload.detail);
-        console.log(1, JSON.parse(JSON.stringify(detail.controllers)));
-        console.log(2, JSON.parse(JSON.stringify(state.data)));
-
         if (state.data.length > 0) {
           while (state.data.length !== 0) {
-            console.log(3, JSON.parse(JSON.stringify(state.data)));
             state.data.splice(0);
-            console.log(4, JSON.parse(JSON.stringify(state.data)));
           }
         }
         if (detail && detail.controllers.length > 0) {
-          console.log(5, JSON.parse(JSON.stringify(state.data)));
           for (let idx = 0; idx < detail.controllers.length; idx++) {
             state.data.push(detail.controllers[idx]);
-            console.log(6, JSON.parse(JSON.stringify(state.data)));
           }
-          console.log(7, JSON.parse(JSON.stringify(state.data)));
         }
       }
-      console.log(8, JSON.parse(JSON.stringify(state.data)));
     });
   };
 
@@ -271,7 +256,6 @@ const CreateApi = () => {
   };
 
   const handleSetApiDetail = () => {
-    console.log(9, JSON.parse(JSON.stringify(state.data)));
     dispatch(
       setApiDetail({
         encryptedUrl: localStorage.getItem("docId"),
@@ -286,10 +270,9 @@ const CreateApi = () => {
       .then((res: any) => {
         if (res.meta.requestStatus === "fulfilled") {
           handleGetApiDetail();
-          console.log(10, JSON.parse(JSON.stringify(state.data)));
         }
       })
-      .catch((err: any) => console.log(err));
+      .catch((err: any) => {});
   };
   useEffect(() => {
     handleGetApiDetail();
