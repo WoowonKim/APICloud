@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { ApisType, ControllerType, PropertiesType } from "./ApisType";
 import "./CreateApi.scss";
 import Sidebar from "../../components/CreateApi/Sidebar/Sidebar";
 import { useSyncedStore } from "@syncedstore/react";
@@ -26,8 +25,13 @@ import SynchroinizeData from "../../components/CreateApi/SynchronizeModal/Synchr
 import { InfinitySpin } from "react-loader-spinner";
 import styled from "styled-components";
 import GuideModal from "../../components/CreateApi/GuideModal/GuideModal";
-import { Helmet } from "react-helmet-async";
 import MetaData from "../../components/MetaData";
+import {
+  apiData,
+  controllerData,
+  propertiesData,
+  responsesData,
+} from "./ApiData";
 
 const CreateApi = () => {
   const dispatch = useAppDispatch();
@@ -69,112 +73,14 @@ const CreateApi = () => {
   const isOpenExtractModal = useSelector(
     (state: RootState) => state.apiDocsApi.isOpenExtractModal
   );
-  // api 정보를 저장할 state
-  const [apiData, setApiData] = useState<ApisType>({
-    name: "",
-    uri: "",
-    method: "Get",
-    requestBody: {
-      dtoName: "",
-      name: "",
-      type: "Object",
-      collectionType: "",
-      properties: [],
-      required: true,
-    },
-    parameters: [
-      {
-        dtoName: "",
-        name: "",
-        type: "String",
-        required: true,
-        properties: [],
-        collectionType: "",
-      },
-    ],
-    queries: [
-      {
-        dtoName: "",
-        name: "",
-        type: "String",
-        required: true,
-        properties: [],
-        collectionType: "",
-      },
-    ],
-    headers: [{ key: "", value: "" }],
-    responses: {
-      fail: {
-        status: 400,
-        responseBody: {
-          dtoName: "",
-          name: "",
-          type: "String",
-          collectionType: "",
-          properties: [],
-          required: true,
-        },
-      },
-      success: {
-        status: 200,
-        responseBody: {
-          dtoName: "",
-          name: "",
-          type: "String",
-          collectionType: "",
-          properties: [],
-          required: true,
-        },
-      },
-    },
-  });
-  // controller 정보를 저장할 state
-  const [controllerData, setControllerData] = useState<ControllerType>({
-    name: "",
-    commonUri: "",
-    apis: [],
-  });
-  const propertiesData: PropertiesType = {
-    dtoName: "",
-    name: "",
-    type: "String",
-    required: true,
-    collectionType: "",
-    properties: [],
-  };
-  const responsesData = {
-    fail: {
-      status: 400,
-      responseBody: {
-        dtoName: "",
-        name: "",
-        type: "String",
-        required: true,
-        collectionType: "",
-        properties: [],
-      },
-    },
-    success: {
-      status: 200,
-      responseBody: {
-        dtoName: "",
-        name: "",
-        type: "String",
-        required: true,
-        collectionType: "",
-        properties: [],
-      },
-    },
-  };
+
   const state = useSyncedStore(store);
-  // 테이블의 탭 전환을 위한 state
   const [activeTab, setActiveTab] = useState(1);
-  // 선택된 api,controller 저장 state
   const [selectedApi, setSelectedApi] = useState(-1);
   const [selectedController, setSelectedController] = useState(-1);
-  // 추가된 api, controller index를 저장할 state
   const [addedApiIndex, setAddedApiIndex] = useState(-1);
   const [addedControllerIndex, setAddedControllerIndex] = useState(-1);
+
   // controller 추가/삭제 함수 -> 기존 데이터에 새 데이터 추가
   const handleController = (method: string, index?: number) => {
     if (method === "add") {
