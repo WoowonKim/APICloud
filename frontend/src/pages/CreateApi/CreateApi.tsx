@@ -67,7 +67,6 @@ const CreateApi = () => {
       .catch((err: any) => {
         setAuthority(0);
       });
-    connect(encryptedUrl);
   }, [encryptedUrl]);
 
   const isOpenExtractModal = useSelector(

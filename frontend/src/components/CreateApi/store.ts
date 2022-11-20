@@ -11,12 +11,13 @@ const doc = getYjsValue(store);
 
 // const encryptedUrl = window.localStorage.getItem("docId");
 
-export const connect = (encryptedUrl: string) => {
-  const webrtcProvider = new WebrtcProvider(
-    encryptedUrl.slice(0, 10),
-    doc as Doc
-  );
-};
+const webrtcProvider = new WebrtcProvider(
+  "apicloud",
+  doc as Doc,
+  {
+    signaling: ["wss://apiclouds.net/socket"],
+  } as any
+);
 
-// export const disconnect = () => webrtcProvider.disconnect();
-// export const connect = () => webrtcProvider.connect();
+export const disconnect = () => webrtcProvider.disconnect();
+export const connect = () => webrtcProvider.connect();
