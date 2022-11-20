@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ApiDocType } from "./ApiList";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faUser } from "@fortawesome/free-solid-svg-icons";
@@ -51,7 +51,7 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
   const isGroupInfoModal = useSelector(
     (state: RootState) => state.mainApi.isGroupInfoModal
   );
-
+  const [selectedDocItem, setSelectedDocItem] = useState(-1);
   const moveApidocs: any = (docId: number, isEdit: boolean, data?: any) => {
     dispatch(mainApiSlice.actions.setDocId({ docId: docId }));
     localStorage.setItem("docId", docId.toString());
@@ -73,6 +73,10 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
   };
   const nBB = `&nbsp &nbsp`;
 
+  useEffect(() => {
+    setSelectedDocItem(-1);
+  }, []);
+
   return (
     <div className="ApiListDetail">
       {isOpenUpdateModal && <UpdateModal></UpdateModal>}
@@ -92,13 +96,14 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
                     </DetailContent>
                     <div className="userSetting">
                       <div className="userSettingSub">
-                        {isGroupInfoModal && (
+                        {selectedDocItem === idx && isGroupInfoModal && (
                           <GroupInfoModal docId={it.docId}></GroupInfoModal>
                         )}
                         <DocIcon
                           alt="groupUserIcon"
                           src={require("../../assets/groupUserIcon.png")}
                           onClick={() => {
+                            setSelectedDocItem(idx);
                             dispatch(
                               mainApiSlice.actions.setIsGroupInfoModal({
                                 isGroupInfoModal: true,
@@ -161,11 +166,14 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
                     </DetailContent>
                     <div className="userSettingView">
                       <div className="userSettingSub">
-                        <GroupInfoModal docId={it.docId}></GroupInfoModal>
+                        {selectedDocItem === idx && isGroupInfoModal && (
+                          <GroupInfoModal docId={it.docId}></GroupInfoModal>
+                        )}
                         <DocIcon
                           alt="groupUserIcon"
                           src={require("../../assets/groupUserIcon.png")}
                           onClick={() => {
+                            setSelectedDocItem(idx);
                             dispatch(
                               mainApiSlice.actions.setIsGroupInfoModal({
                                 isGroupInfoModal: true,
