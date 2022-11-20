@@ -1,6 +1,7 @@
 package com.web.apicloud.domain.vo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.web.apicloud.util.TextUtils;
 import com.web.apicloud.util.code.java.JavaType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -69,7 +70,7 @@ public class PropertyVO {
             if (packageName != null) {
                 type = packageName + ".";
             }
-            type += dtoName;
+            type += TextUtils.getValidName(dtoName);
         } else {
             type = this.type;
         }

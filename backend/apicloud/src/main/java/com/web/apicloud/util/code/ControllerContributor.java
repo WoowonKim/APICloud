@@ -4,6 +4,7 @@ import com.web.apicloud.domain.vo.ApiVO;
 import com.web.apicloud.domain.vo.ControllerVO;
 import com.web.apicloud.domain.vo.DocVO;
 import com.web.apicloud.domain.vo.PropertyVO;
+import com.web.apicloud.util.TextUtils;
 import com.web.apicloud.util.code.java.*;
 import io.spring.initializr.generator.language.Annotation;
 import io.spring.initializr.generator.language.SourceCodeWriter;
@@ -69,8 +70,9 @@ public class ControllerContributor implements ProjectContributor {
 
     private Consumer<ControllerVO> controllerConsumer(CustomJavaSourceCode sourceCode) {
         return (controller) -> {
-            CustomJavaCompilationUnit compilationUnit = sourceCode.createCompilationUnit(doc.getServer().getPackageName() + ".controller", controller.getName());
-            CustomJavaTypeDeclaration controllerType = compilationUnit.createTypeDeclaration(controller.getName());
+            String controllerName = TextUtils.getValidName(controller.getName());
+            CustomJavaCompilationUnit compilationUnit = sourceCode.createCompilationUnit(doc.getServer().getPackageName() + ".controller", controllerName);
+            CustomJavaTypeDeclaration controllerType = compilationUnit.createTypeDeclaration(controllerName);
             controllerType.modifiers(Modifier.PUBLIC);
             controllerType.annotate(Annotation.name("org.springframework.web.bind.annotation.RestController"));
             controllerType.annotate(Annotation.name("org.springframework.web.bind.annotation.RequestMapping", builder -> builder.attribute("value", String.class, controller.getCommonUri())));
@@ -79,30 +81,32 @@ public class ControllerContributor implements ProjectContributor {
             if (apis != null) {
                 apis.forEach(apiConsumer(controllerType, dtos));
             }
-            addDto(sourceCode, dtos, controllerType.getName());
+            addDto(sourceCode, dtos, controllerName);
         };
     }
 
     private Consumer<ApiVO> apiConsumer(CustomJavaTypeDeclaration controllerType, Map<String, PropertyVO> dtos) {
+        String controllerName = TextUtils.getValidName(controllerType.getName());
+        String dtoPackageName = makeDtoPackageName(controllerName);
         return api -> {
             api.getAvailableDto(dtos);
             CustomJavaMethodDeclaration.Builder builder = CustomJavaMethodDeclaration
-                    .method(api.getName())
+                    .method(TextUtils.getValidName(api.getName()))
                     .modifiers(Modifier.PUBLIC)
-                    .returning(JavaType.builder().type("ResponseEntity").genericType(api.getReturnJavaType(false, makeDtoPackageName(controllerType.getName()))).build());
-            addApiParameters(builder, api, controllerType.getName());
+                    .returning(JavaType.builder().type("ResponseEntity").genericType(api.getReturnJavaType(false, dtoPackageName)).build());
+            addApiParameters(builder, api, controllerName);
 
             List<JavaArgument> arguments = new ArrayList<>();
-            JavaType javaType = api.getReturnJavaType(true, makeDtoPackageName(controllerType.getName()));
+            JavaType javaType = api.getReturnJavaType(true, dtoPackageName);
             if (!"Void".equals(javaType.getType())) {
-                arguments.add(new JavaClassCreation(api.getReturnJavaType(true, makeDtoPackageName(controllerType.getName())), List.of()));
+                arguments.add(new JavaClassCreation(api.getReturnJavaType(true, dtoPackageName), List.of()));
             }
             arguments.add(new JavaEnum("org.springframework.http.HttpStatus", "OK"));
             CustomJavaMethodDeclaration jmd = builder.body(new JavaReturnStatement(
                     new JavaClassCreation(JavaType.builder()
                             .type("org.springframework.http.ResponseEntity")
                             .genericType(
-                                    api.getReturnJavaType(false, makeDtoPackageName(controllerType.getName()))
+                                    api.getReturnJavaType(false, dtoPackageName)
                             ).build(), arguments)
             ));
 
@@ -162,11 +166,12 @@ public class ControllerContributor implements ProjectContributor {
         if (property == null || !StringUtils.hasText(property.getName()) || !property.hasType()) {
             return Optional.empty();
         }
-        AnnotatableParameter parameter = new AnnotatableParameter(property.getJavaType(makeDtoPackageName(controllerName), false), property.getName());
+        String name = TextUtils.getValidName(property.getName());
+        AnnotatableParameter parameter = new AnnotatableParameter(property.getJavaType(makeDtoPackageName(controllerName), false), name);
         if (annotationName != null) {
             parameter.annotate(Annotation.name(annotationName, builder -> {
                 if (PATH_VARIABLE.equals(annotationName)) {
-                    builder.attribute("value", String.class, property.getName());
+                    builder.attribute("value", String.class, name);
                 }
                 if (!property.isRequired()) {
                     builder.attribute("required", Boolean.class, "false");
@@ -182,11 +187,13 @@ public class ControllerContributor implements ProjectContributor {
             if (dto == null || !StringUtils.hasText(dto.getDtoName())) {
                 continue;
             }
-            CustomJavaTypeDeclaration dtoType = sourceCode.createCompilationUnit(makeDtoPackageName(controllerName), dto.getDtoName()).createTypeDeclaration(dto.getDtoName());
+            String dtoName = TextUtils.getValidName(dto.getDtoName());
+            CustomJavaTypeDeclaration dtoType = sourceCode.createCompilationUnit(makeDtoPackageName(controllerName), dtoName).createTypeDeclaration(dtoName);
             dtoType.modifiers(Modifier.PUBLIC);
             if (dto.getProperties() != null) {
                 for (PropertyVO property : dto.getProperties()) {
-                    dtoType.addFieldDeclaration(CustomJavaFieldDeclaration.field(property.getName()).modifiers(Modifier.PRIVATE)
+                    dtoType.addFieldDeclaration(CustomJavaFieldDeclaration.field(TextUtils.getValidName(property.getName()))
+                            .modifiers(Modifier.PRIVATE)
                             .returning(property.getJavaType(makeDtoPackageName(controllerName), false)));
                     dtoType.addMethodDeclaration(makeGetter(property));
                     dtoType.addMethodDeclaration(makeSetter(property));
@@ -203,19 +210,21 @@ public class ControllerContributor implements ProjectContributor {
     }
 
     private CustomJavaMethodDeclaration makeSetter(PropertyVO property) {
+        String name = TextUtils.getValidName(property.getName());
         return CustomJavaMethodDeclaration
-                .method("set" + camelToPascal(property.getName()))
+                .method("set" + camelToPascal(name))
                 .modifiers(Modifier.PUBLIC)
                 .parameters(makeParameter(property, null, null).orElse(null))
-                .body(new JavaExpressionStatement(new PlainJavaCode("this." + property.getName() + " = " + property.getName(), null)));
+                .body(new JavaExpressionStatement(new PlainJavaCode("this." + name + " = " + name, null)));
     }
 
     private CustomJavaMethodDeclaration makeGetter(PropertyVO property) {
+        String name = TextUtils.getValidName(property.getName());
         return CustomJavaMethodDeclaration
-                .method("get" + camelToPascal(property.getName()))
+                .method("get" + camelToPascal(name))
                 .modifiers(Modifier.PUBLIC)
                 .returning(property.getJavaType(null, false))
-                .body(new JavaExpressionStatement(new PlainJavaCode("return this." + property.getName(), null)));
+                .body(new JavaExpressionStatement(new PlainJavaCode("return this." + name, null)));
     }
 
     private String camelToPascal(String name) {
