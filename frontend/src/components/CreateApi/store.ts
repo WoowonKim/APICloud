@@ -12,11 +12,8 @@ const doc = getYjsValue(store);
 const encryptedUrl = window.localStorage.getItem("docId");
 
 export const webrtcProvider = new WebrtcProvider(
-  encryptedUrl?.slice(0,10) || "",
-  doc as Doc,
-  {
-    signaling: ["wss://apiclouds.net/socket"],
-  } as any
+  encryptedUrl?.slice(0, 10) || "",
+  doc as Doc
 );
 export const disconnect = () => webrtcProvider.disconnect();
 export const connect = () => webrtcProvider.connect();
