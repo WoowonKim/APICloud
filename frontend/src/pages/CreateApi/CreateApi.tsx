@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./CreateApi.scss";
 import Sidebar from "../../components/CreateApi/Sidebar/Sidebar";
 import { useSyncedStore } from "@syncedstore/react";
-import { connect, disconnect, store } from "../../components/CreateApi/store";
+// import { connect, disconnect, store } from "../../components/CreateApi/store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
@@ -32,6 +32,10 @@ import {
   propertiesData,
   responsesData,
 } from "./ApiData";
+import syncedStore, { getYjsValue } from "@syncedstore/core";
+import { WebrtcProvider } from "y-webrtc";
+import { Doc } from "yjs";
+import { ControllerType } from "./ApisType";
 
 const CreateApi = () => {
   const dispatch = useAppDispatch();
@@ -51,10 +55,25 @@ const CreateApi = () => {
   const [isGuideModal, setIsGuideModal] = useState(false);
   const [isViewer, setIsViewer] = useState(false);
 
+  const store = syncedStore({
+    data: [] as ControllerType[],
+  });
+
+  const doc = getYjsValue(store);
+  // const disconnect = () => webrtcProvider.disconnect();
+  // const connect = () => webrtcProvider.connect();
+
   useEffect(() => {
     if (!encryptedUrl) {
       return;
     }
+    const webrtcProvider = new WebrtcProvider(
+      encryptedUrl,
+      doc as Doc,
+      {
+        signaling: ["wss://apiclouds.net/socket"],
+      } as any
+    );
     dispatch(checkAuthority({ encryptedUrl }))
       .then((res: any) => {
         setAuthority(res.payload);
@@ -67,7 +86,7 @@ const CreateApi = () => {
       .catch((err: any) => {
         setAuthority(0);
       });
-    connect();
+    // connect();
   }, [encryptedUrl]);
 
   const isOpenExtractModal = useSelector(
@@ -186,7 +205,7 @@ const CreateApi = () => {
   useEffect(() => {
     return () => {
       handleSetApiDetail();
-      disconnect();
+      // disconnect();
     };
   }, [encryptedUrl]);
 
@@ -208,7 +227,7 @@ const CreateApi = () => {
     e.preventDefault();
     e.returnValue = "";
     handleSetApiDetail();
-    disconnect();
+    // disconnect();
   };
 
   useEffect(() => {
