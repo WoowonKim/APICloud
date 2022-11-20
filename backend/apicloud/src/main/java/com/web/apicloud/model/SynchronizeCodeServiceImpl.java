@@ -334,7 +334,6 @@ public class SynchronizeCodeServiceImpl implements SynchronizeCodeService {
                 PropertyVO query = detailApiVO.getQueries().get(p);
                 String queryStr = "";
                 if (query.getName() == null) continue;
-//                queryStr += "@" + REQUEST_PARAM + "(" + VALUE + " = " + query.getName() + ", required = " + query.isRequired() + ") ";
                 String type;
                 if (query.getType().equals("Object")) {
                     classUpdateService.updateObject(groupSecretKey, query, 0);
