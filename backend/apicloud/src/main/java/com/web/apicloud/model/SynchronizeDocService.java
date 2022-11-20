@@ -1,7 +1,6 @@
 package com.web.apicloud.model;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.web.apicloud.domain.dto.DetailRequest;
 import com.web.apicloud.domain.dto.SynchronizeRequest;
 import com.web.apicloud.domain.dto.SynchronizeUpdateRequest;
 import com.web.apicloud.domain.dto.synchronize.ControllerDTO;

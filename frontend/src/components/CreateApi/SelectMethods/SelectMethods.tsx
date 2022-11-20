@@ -3,41 +3,62 @@ import styled from "styled-components";
 import "./SelectMethods.scss";
 
 const Item = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80%;
+  font-weight: bold;
   border: none;
   border-radius: 10px;
-  padding: 5px 10px;
+  padding: 8px 12px;
   margin-top: 5px;
-  font-size: 1em;
+  font-size: 0.7em;
   background-color: ${(props) => props.color};
 `;
 
 export const SelectedItem = styled.button`
+  width: 100%;
   border: none;
   border-radius: 10px;
-  padding: 5px 10px;
-  margin-top: 5px;
-  font-size: 1em;
+  padding: 8px 12px;
+  font-size: 0.7em;
+  font-weight: bold;
   background-color: ${(props) => props.color};
 `;
 
 interface Props {
-  onBlur?: (temp?: string) => void;
   setValue?: React.Dispatch<React.SetStateAction<string>>;
   value?: string;
+  handelCellValue?: (e: any, header: string, index: number) => void;
+  index?: number;
 }
 
-const SelectMethods = ({ onBlur, setValue, value }: Props) => {
+const SelectMethods = ({ setValue, value, handelCellValue, index }: Props) => {
   const [visible, setVisible] = useState(false);
-  const [selectedMethod, setSelectedMethod] = useState(value ? value : "get");
+  const [selectedMethod, setSelectedMethod] = useState(value ? value : "GET");
 
   const handleSelect = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
     const eventTarget = e.target as HTMLElement;
-    setSelectedMethod(eventTarget.innerText);
+    setSelectedMethod(
+      eventTarget.innerText[0] +
+        eventTarget.innerText.substring(1).toLocaleLowerCase()
+    );
     setVisible(!visible);
+
+    if (value && handelCellValue && typeof index === "number") {
+      handelCellValue(
+        eventTarget.innerText[0] +
+          eventTarget.innerText.substring(1).toLocaleLowerCase(),
+        "method",
+        index
+      );
+    }
     // Props에 해당 값이 있을 경우 함수 호출
-    if (setValue && onBlur) {
-      setValue(eventTarget.innerText);
-      onBlur(eventTarget.innerText);
+    if (setValue) {
+      setValue(
+        eventTarget.innerText[0] +
+          eventTarget.innerText.substring(1).toLocaleLowerCase()
+      );
     }
   };
 
@@ -45,17 +66,17 @@ const SelectMethods = ({ onBlur, setValue, value }: Props) => {
     <div className="selectBox" onClick={() => setVisible(!visible)}>
       <SelectedItem
         color={
-          selectedMethod === "get"
+          selectedMethod === "Get"
             ? "#FDECC8"
-            : selectedMethod === "post"
+            : selectedMethod === "Post"
             ? "#F5E0E9"
-            : selectedMethod === "put"
+            : selectedMethod === "Put"
             ? "#F1F0EF"
-            : selectedMethod === "delete"
+            : selectedMethod === "Delete"
             ? "#D3E5EF"
-            : selectedMethod === "patch"
+            : selectedMethod === "Patch"
             ? "#E8DEEE"
-            : selectedMethod === "options"
+            : selectedMethod === "Options"
             ? "#FFE2DD"
             : "#EEE0DA"
         }
@@ -64,27 +85,27 @@ const SelectMethods = ({ onBlur, setValue, value }: Props) => {
       </SelectedItem>
       {visible && (
         <div className="selectBoxContainer">
-          <ul className="itemList">
+          <ul className="methodItemList">
             <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#fdecc8">get</Item>
+              <Item color="#fdecc8">GET</Item>
             </li>
             <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#F5E0E9">post</Item>
+              <Item color="#F5E0E9">POST</Item>
             </li>
             <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#F1F0EF">put</Item>
+              <Item color="#F1F0EF">PUT</Item>
             </li>
             <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#D3E5EF">delete</Item>
+              <Item color="#D3E5EF">DELETE</Item>
             </li>
             <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#E8DEEE">patch</Item>
+              <Item color="#E8DEEE">PATCH</Item>
             </li>
             <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#FFE2DD">options</Item>
+              <Item color="#FFE2DD">OPTIONS</Item>
             </li>
             <li className="item" onClick={(e) => handleSelect(e)}>
-              <Item color="#EEE0DA">head</Item>
+              <Item color="#EEE0DA">HEAD</Item>
             </li>
           </ul>
         </div>

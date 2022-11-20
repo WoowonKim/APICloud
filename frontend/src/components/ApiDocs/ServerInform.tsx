@@ -1,11 +1,28 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useAppDispatch } from "../../Store/hooks";
+import testApiSlice from "../../Store/slice/testApi";
 import "./ServerInform.scss";
 
 interface Props {
-  docInformArray: [string, string | number][] | undefined
+  docInformArray: [string, string | number][] | undefined;
 }
 
-const ServerInform = ({docInformArray}: Props) => {
+const ServerInform = ({ docInformArray }: Props) => {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (docInformArray) {
+      docInformArray?.map((it, idx) => {
+        if (it[0] === "serverUrl") {
+          dispatch(testApiSlice.actions.getURL({ url: it[1] }));
+        }
+        if (it[0] === "contextUri") {
+          dispatch(testApiSlice.actions.getContext({ context: it[1] }));
+        }
+      });
+    }
+  }, [docInformArray]);
+
   return (
     <div className="apiDocTableWrapper">
       <table className="apiDocTable">

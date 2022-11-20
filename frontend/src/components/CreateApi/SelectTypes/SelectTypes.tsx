@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import "./SelectTypes.scss";
 
 interface Props {
-  onBlur?: (temp?: string) => void;
   setValue?: any;
   value?: string;
   handleBasicInfo?: (
@@ -22,10 +21,12 @@ interface Props {
     index: number
   ) => void;
   index?: number;
+  modalDepth?: number;
+  activeTab?: number;
+  isViewer: boolean;
 }
 
 const SelectTypes = ({
-  onBlur,
   setValue,
   value,
   handleBasicInfo,
@@ -34,6 +35,9 @@ const SelectTypes = ({
   isCollection,
   handelCellValue,
   index,
+  modalDepth,
+  activeTab,
+  isViewer,
 }: Props) => {
   const [visible, setVisible] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState(
@@ -44,7 +48,7 @@ const SelectTypes = ({
     if (value) {
       setSelectedMethod(value);
     }
-  }, [value, selectedMethod]);
+  }, [value, selectedMethod, modalDepth]);
 
   const handleSelect = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
     const eventTarget = e.target as HTMLElement;
@@ -55,19 +59,30 @@ const SelectTypes = ({
       handleBasicInfo(eventTarget.innerText, "type", depth, type);
     }
     // Props에 해당 값이 있을 경우 함수 호출
-    if (setValue && onBlur) {
+    if (setValue) {
       setValue(eventTarget.innerText);
-      onBlur(eventTarget.innerText);
     }
 
     if (handelCellValue && typeof index === "number") {
       handelCellValue(eventTarget.innerText, "type", index);
     }
   };
-
   // String, List, Map, Byte, Character, Boolean, Integer, Long, Short, Float, Double, Object
   const typeList = isCollection
     ? ["List", "X"]
+    : (modalDepth && modalDepth > 2) || (activeTab && activeTab === 2)
+    ? [
+        "String",
+        "Boolean",
+        "Integer",
+        "Long",
+        "List",
+        "Byte",
+        "Character",
+        "Short",
+        "Float",
+        "Double",
+      ]
     : [
         "String",
         "Boolean",
@@ -92,9 +107,9 @@ const SelectTypes = ({
             {selectedMethod !== "List" ? selectedMethod : "String"}
           </div>
         )}
-        <FontAwesomeIcon icon={faChevronDown} />
+        <FontAwesomeIcon icon={faChevronDown} className="selectTypeIcon" />
       </div>
-      {visible && (
+      {visible && !isViewer && (
         <div className="selectBoxContainer">
           <ul className="itemList">
             {typeList.map((item, index) => (

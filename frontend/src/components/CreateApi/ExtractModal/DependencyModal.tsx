@@ -1,27 +1,43 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { faX } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { InfinitySpin } from "react-loader-spinner";
 import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 import styled from "styled-components";
+import { Loading } from "../../../pages/CreateApi/CreateApi";
 import apiDocsApiSlice from "../../../Store/slice/apiDocsApi";
 import { getApiCreationInfo } from "../../../Store/slice/mainApi";
 import { RootState } from "../../../Store/store";
 import "./DependencyModal.scss";
+import { DependencyType } from "./ExtractModal";
 
 interface PropType {
-  dependencies: string[];
-  setDependencies: Dispatch<SetStateAction<string[]>>;
+  dependencies: DependencyType[];
+  setDependencies: Dispatch<SetStateAction<DependencyType[]>>;
 }
 
 const DependencyModal = (props: PropType) => {
+  const { encryptedUrl } = useParams();
   const dispatch = useDispatch();
 
   const isOpenDependencyModal = useSelector(
     (state: RootState) => state.apiDocsApi.isOpenDependencyModal
   );
 
+  const itemsRef = useRef<Array<HTMLUListElement | null>>([]);
+
   const [dependencyInfo, setDependencyInfo] = useState<any>({});
-  const [selectedDependencies, setSelectedDependencies] = useState<Set<string>>(
-    new Set<string>()
-  );
+  const [selectedDependencies, setSelectedDependencies] = useState<
+    DependencyType[]
+  >([]);
+  const [keyWord, setKeyWord] = useState("");
 
   useEffect(() => {
     dispatch(getApiCreationInfo()).then((res: any) => {
@@ -31,68 +47,124 @@ const DependencyModal = (props: PropType) => {
 
   useEffect(() => {
     if (props.dependencies) {
-      setSelectedDependencies(new Set(props.dependencies));
+      setSelectedDependencies([...props.dependencies]);
     }
   }, [props.dependencies]);
 
-  useEffect(() => {}, [props.dependencies, dependencyInfo]);
+  useEffect(() => {}, [dependencyInfo]);
+  useEffect(() => {
+    toggleHiddenList();
+  }, [selectedDependencies, keyWord]);
+
+  const toggleHiddenList = () => {
+    itemsRef.current.forEach((itemRef) => {
+      if (!itemRef?.children.length || itemRef?.children.length === 0) {
+        itemRef?.parentElement?.classList.add("hidden");
+      } else {
+        itemRef?.parentElement?.classList.remove("hidden");
+      }
+    });
+  };
 
   return (
     <ModalContainer>
       <DialogBox>
         <div className="modalContainer">
           <div className="modalMain">
-            <div>
-              <p>dependencies</p>
-              {dependencyInfo.length > 0 && (
+            <div className="dependencyModal">
+              <p className="dependencyModal-modalTitle">Dependency 선택</p>
+              <div className="dependencyModal-selectedList">
+                {selectedDependencies &&
+                  selectedDependencies.map((selected) => (
+                    <div
+                      onClick={
+                        selected.fixed
+                          ? () => {}
+                          : () => {
+                              setSelectedDependencies((old) => {
+                                const newList = old.filter(
+                                  (dependency) => dependency.id !== selected.id
+                                );
+                                return newList;
+                              });
+                            }
+                      }
+                      key={selected.id}
+                    >
+                      {selected.name}
+                      {selected.fixed || (
+                        <FontAwesomeIcon icon={faX} size="2x" />
+                      )}
+                    </div>
+                  ))}
                 <div>
-                  selected: {selectedDependencies}
-                  {dependencyInfo.map((info: any) => (
-                    <div key={info.name}>
-                      <p>{info.name}</p>
-                      <ul className="dependencyModal-dependencyList">
+                  <input
+                    type="text"
+                    value={keyWord}
+                    onChange={(e) => setKeyWord(e.target.value)}
+                    placeholder="검색어를 입력하세요."
+                  ></input>
+                </div>
+              </div>
+              {dependencyInfo.length > 0 ? (
+                <div className="dependencyModal-dependencyContainer">
+                  {dependencyInfo.map((info: any, i: number) => (
+                    <div key={i}>
+                      <p className="dependencyModal-typeTitle">{info.name}</p>
+                      <ul
+                        className="dependencyModal-dependencyList"
+                        ref={(el) => (itemsRef.current[i] = el)}
+                      >
                         {info.values
                           .filter(
                             (dependency: any) =>
-                              !props.dependencies.includes(dependency)
+                              selectedDependencies.every(
+                                (selectedDep) =>
+                                  selectedDep.id !== dependency.id
+                              ) &&
+                              (
+                                dependency.name +
+                                " " +
+                                dependency.description +
+                                " " +
+                                dependency.id
+                              )
+                                .toLowerCase()
+                                .includes(keyWord.toLowerCase())
                           )
                           .map((dependency: any) => (
                             <li
                               key={dependency.id}
-                              className={
-                                selectedDependencies.has(dependency.id)
-                                  ? "selected"
-                                  : ""
-                              }
                               onClick={() => {
-                                if (selectedDependencies.has(dependency.id)) {
-                                  setSelectedDependencies((old) => {
-                                    const newSet = new Set<string>(old);
-                                    newSet.delete(dependency.id);
-                                    return newSet;
+                                setSelectedDependencies((old) => {
+                                  const newList = [...old];
+                                  newList.push({
+                                    id: dependency.id,
+                                    name: dependency.name,
+                                    fixed: false,
                                   });
-                                } else {
-                                  setSelectedDependencies((old) => {
-                                    const newSet = new Set<string>(old);
-                                    newSet.add(dependency.id);
-                                    return newSet;
-                                  });
-                                }
+                                  return newList;
+                                });
                               }}
                             >
-                              {dependency.name}
+                              <p>{dependency.name}</p>
+                              <p>{dependency.description}</p>
                             </li>
                           ))}
                       </ul>
                     </div>
                   ))}
                 </div>
+              ) : (
+                <Loading>
+                  <InfinitySpin width="250" color="#6FC7D1" />
+                </Loading>
               )}
               <button
                 onClick={() => {
                   const dependenciesArr = Array.from(selectedDependencies);
                   localStorage.setItem(
-                    "dependencies",
+                    `${encryptedUrl}_dependencies`,
                     JSON.stringify(dependenciesArr)
                   );
                   props.setDependencies(dependenciesArr);
@@ -140,7 +212,7 @@ const ModalContainer = styled.div`
 
 const DialogBox = styled.dialog`
   width: 80%;
-  height: 80%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;

@@ -21,32 +21,51 @@ export type ApiDocType = {
   encryptedUrl: string;
 };
 
+export const ApiListTitle = styled.div`
+  padding-left: 10%;
+  cursor: pointer;
+`;
+
 export const ChoiceText = styled.span`
+  background-color: #6fc7d1;
+  border-radius: 10px;
   font-weight: bold;
   font-size: 13px;
-  color: ${(props) => props.theme.color};
-  border-bottom: 2px solid ${(props) => props.theme.color};
-  padding: 3px 3px 3px 3px;
+  color: #fff;
+  padding: 10px;
+  box-shadow: 0 17px 15px -18px rgba(180, 180, 180, 1);
+  margin: 5px;
 `;
 
 export const NoChoiceText = styled.span`
-  font-size: 11px;
-  color: ${(props) => props.theme.color};
-  border-bottom: 2px solid ${(props) => props.theme.color};
-  margin: 10px 10px 10px 10px;
+  background-color: #f5f9ff;
+  color: #6fc7d1;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 12px;
+  padding: 10px;
+  box-shadow: 0 17px 15px -18px rgba(180, 180, 180, 1);
+  margin: 5px;
 `;
 
 const ApiListContent = styled.div`
   margin-top: 10px;
-  padding: 10px;
-  background-color: ${(props) => props.theme.startBgColor};
-  margin-bottom: 30px;
+  padding-top: 1px;
+  padding-left: 10%;
+  padding-right: 10%;
+  // background-color: ${(props) => props.theme.startBgColor};
+  // margin-bottom: 30px;
 `;
+
 const ApiList = () => {
   const [apiList, setApiList] = useState(0);
   const [apiDocList, setApiDocList] = useState<ApiDocType[] | []>([]);
-  const isDocCreated = useSelector((state: RootState) => state.mainApi.isDocCreated);
-  const isDocUpdated = useSelector((state: RootState) => state.mainApi.isDocUpdated);
+  const isDocCreated = useSelector(
+    (state: RootState) => state.mainApi.isDocCreated
+  );
+  const isDocUpdated = useSelector(
+    (state: RootState) => state.mainApi.isDocUpdated
+  );
 
   const dispatch = useDispatch();
 
@@ -75,7 +94,7 @@ const ApiList = () => {
 
   return (
     <div className="ApiList">
-      <div className="ApiListTitle">
+      <ApiListTitle>
         {apiList === 0 ? (
           <>
             <ChoiceText
@@ -111,9 +130,13 @@ const ApiList = () => {
             </ChoiceText>
           </>
         )}
-      </div>
+      </ApiListTitle>
       <ApiListContent>
-        <ApiListDetail apiList={apiList} apiDocList={apiDocList} dispatchGetDocList={dispatchGetDocList} />
+        <ApiListDetail
+          apiList={apiList}
+          apiDocList={apiDocList}
+          dispatchGetDocList={dispatchGetDocList}
+        />
       </ApiListContent>
     </div>
   );

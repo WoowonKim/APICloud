@@ -13,15 +13,138 @@
 }
 .testInfo {
   width: 100%;
+  margin-top: 7px;
 }
 .testSetting {
   width: 100%;
-  display: flex;
+  height: 200px;
 }
 .testBodyInfo {
   width: 50%;
 }
+.headerList {
+  margin-top: 15px;
+  margin-left: 13px;
+  margin-right: 20px;
+  padding: 5px;
+  width: 100%;
+  display: flex;
+  background-color: #eaeaea;
+}
+.headerListBody {
+  margin-top: 15px;
+  margin-left: 13px;
+  margin-right: 20px;
+  padding: 5px;
+  width: 100%;
+  display: flex;
+}
+.apiHeaderFirstTitle {
+  display: flex;
+}
+.apiKeyHeaderTitle {
+  width: 30%;
+}
+.apiKeyHeaderTitleValue {
+  width: 50%;
+}
+.apiKeyHeaderTitleCheck {
+  width: 20%;
+}
+.apiHeaderListSpan {
+  text-align: start;
+  font-size: 16px;
+  font-weight: bold;
+  color: #5d5d5d;
+  padding: 5px 15px 5px 7px;
+}
+.apiHeaderListBodyPtag {
+  text-align: start;
+  font-size: 9px;
+  font-weight: bold;
+  color: #5d5d5d;
+}
+.headerListTitleisHeader {
+  display: flex;
+  margin-top: 5px;
+  margin-right: 5px;
+  border-radius: 20%;
+}
+.apiHeaderListPtag {
+  text-align: start;
+  font-size: 13px;
+  border: 1px solid #eaeaea;
+  font-weight: bold;
+  padding: 10px 10px;
+}
 
+.apiKeyHeaderTitleValueSubmit {
+  width: 50%;
+}
+.apiHeaderListPtagInput {
+  text-align: start;
+  font-size: 13px;
+  border: 1px solid #eaeaea;
+  padding: 6px 10px;
+  margin-left: 5px;
+}
+.apiHeaderListPtagInput > input:focus {
+  outline: none;
+}
+.formApiHeader {
+  display: flex;
+  width: 70%;
+}
+.apiHeaderListInputTag {
+  border: none;
+  width: 80%;
+  padding: 5px 15px 2px 7px;
+}
+
+.apiHeaderListButtonTag {
+  text-align: center;
+  font-size: 13px;
+  font-weight: bold;
+  border: none;
+  background-color: #6fc7d1;
+  margin-left: 5px;
+  padding: 10px 10px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.testListNum {
+  font-weight: bold;
+  font-size: 15px;
+  padding: 3px 13px 5px 13px;
+  cursor: pointer;
+  color: #277fc3;
+  background-color: #c4deff;
+  border-radius: 5%;
+}
+.testListNumsmall {
+  font-size: 13px;
+  padding: 10px 20px 15px 20px;
+  cursor: pointer;
+  font-weight: bold;
+  color: #b2ccff;
+}
+.objectResponseResult {
+  display: flex;
+}
+.titleResponseResult {
+  padding-left: 20px;
+  font-weight: bold;
+  padding-bottom: 5px;
+}
+.errorResponseResult {
+  font-weight: bold;
+  font-size: 25px;
+  text-align: center;
+  margin-top: 30px;
+  margin-bottom: 20px;
+  color: #353535;
+}
 // ApiSide
 .apiSide {
   display: flex;
@@ -45,46 +168,26 @@
   cursor: pointer;
 }
 .apiInputContainer {
-  margin-top: 5px;
+  margin-top: 20px;
   display: flex;
   justify-content: center;
 }
 .apiInputContainer > input:focus {
   outline: none;
 }
-.apiInput {
-  width: 50%;
-  border: none;
-  border-bottom: 1px solid #000000;
-  border-right: 1px solid #000000;
-  border-top: 1px solid #000000;
-  border-top-right-radius: 15px;
-  border-bottom-right-radius: 15px;
-  padding: 1px 50px 1px 10px;
-  outline: none;
-  font-weight: 500;
-  font-size: 14px;
-}
+
 .apiChoice {
-  border: none;
-  width: 8%;
-  font-size: 13px;
-  font-weight: bold;
-  padding-right: 10px;
-  padding-left: 10px;
-  padding-top: 4px;
-  padding-bottom: 5px;
-  border-top-left-radius: 15px;
-  border-bottom-left-radius: 15px;
-  border: 1px solid #000000;
+  width: 10%;
+  min-width: 110px;
+  margin: 1%;
 }
 .apiTestBtn {
   width: 85px;
   height: 45px;
   margin-left: 7px;
-  border-radius: 15px;
+  border-radius: 10px;
   border: none;
-  background-color: #3a00e5;
+  background-color: #6fc7d1;
   font-weight: bold;
   color: white;
   cursor: pointer;
@@ -109,12 +212,6 @@
   font-size: 11px;
   color: #727070;
   cursor: pointer;
-}
-.headerList {
-  margin-top: 5px;
-  width: 100%;
-  height: 200px;
-  display: flex;
 }
 
 .bodyInputTitle {
@@ -172,13 +269,15 @@
   outline: none;
 }
 
-// ApiRespose
+// ApiResponse
 .apiHeaderMainTitle {
-  padding-bottom: 3px;
-  margin: 0px;
-  width: 100px;
+  margin: 10px;
+  padding: 10px 0px 10px 10px;
+  width: 100%;
   font-size: 20px;
-  border-bottom: 2px solid #000000;
+  font-weight: bold;
+  color: #353535;
+  border-bottom: 3px solid #eaeaea;
 }
 .apiResponseContainer {
   padding: 5px;
@@ -186,16 +285,22 @@
 
 .apiResponseContainer > span {
   padding-right: 5px;
-
   cursor: pointer;
 }
 .apiResponseResult {
-  margin-top: 11px;
-  background-color: #ffffff;
-  border: none;
-  width: 100%;
-  height: 230px;
+  margin-top: 5px;
+  background-color: #eaeaea;
   overflow-y: scroll;
+  padding: 0px 10px;
+  margin: 10px 25px;
+}
+.resultResponseHeaderContent {
+  padding: 0px 10px;
+  font-weight: bold;
+  font-size: 15px;
+}
+.centercalcu {
+  padding: 10px 0px;
 }
 .apiResponseResult::-webkit-scrollbar {
   width: 5px; /* 스크롤바의 너비 */
@@ -216,9 +321,11 @@
   justify-content: end;
 }
 .apiResponseResultCommonState > p {
-  font-size: 12px;
-  padding: 0px 5px;
+  font-size: 15px;
+  padding: 5px 5px;
   font-weight: bold;
+  background-color: #faf4c0;
+  border-radius: 10px;
 }
 .apiResponseResultStatus {
   font-size: 12px;
@@ -232,9 +339,6 @@
 .apiResponseResult > div {
   padding: 25px;
   padding-top: 10px;
-  font-size: 15px;
-  font-weight: 400;
-  color: black;
 }
 
 .resultResponseBody {
@@ -252,7 +356,9 @@
 }
 .resltResponseHeaderContainer {
   margin: 10px;
+  margin-top: 20px;
   display: flex;
+  // background-color: #3a00e5;
 }
 .resultResponseTitleContainer {
   width: 150px;
@@ -296,4 +402,31 @@
 }
 .requestInfoBodySetting {
   width: 50%;
+}
+.bodyTextAreaDiv {
+  padding-right: 20px;
+}
+.bodyTextAreaDiv > textarea:focus {
+  outline: none;
+}
+.bodyTextArea {
+  width: 100%;
+  height: 150px;
+  border: none;
+  background-color: #eaeaea;
+  resize: none;
+  padding: 30px;
+}
+.bodyTextArea::-webkit-scrollbar {
+  width: 5px; /* 스크롤바의 너비 */
+}
+
+.bodyTextArea::-webkit-scrollbar-thumb {
+  height: 10%; /* 스크롤바의 길이 */
+  background: #c1c1c1; /* 스크롤바의 색상 */
+  border-radius: 10px;
+}
+
+.bodyTextArea::-webkit-scrollbar-track {
+  background: #eaeaea; /*스크롤바 뒷 배경 색상*/
 }

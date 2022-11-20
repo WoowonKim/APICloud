@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Header from "../components/main/Header";
-import ApiBody from "../components/ApiTest/ApiBody";
 import ApiHeader from "../components/ApiTest/ApiHeader";
 import ApiInputUri from "../components/ApiTest/ApiInputUri";
 import ApiResponse from "../components/ApiTest/ApiResponse";
@@ -11,52 +9,83 @@ import { mainApi } from "../Store/slice/mainApi";
 import { getApiRequestInfo } from "../Store/slice/testApi";
 import { RequestTypeInfo } from "./CreateApi/ApisType";
 import styled from "styled-components";
+import HeaderList from "../components/ApiTest/HeaderList";
+import ApiHeaderTitle from "../components/ApiTest/ApiHeaderTitle";
+import ApiResList from "../components/ApiTest/ApiResList";
+import MetaData from "../components/MetaData";
 
 interface IHome {
   isDarkMode: boolean;
   toggleDarkMode: () => void;
 }
-
+export type reBodyType = {};
 const TestSide = styled.div`
   width: 20%;
   height: 91vh;
-  background-color: ${props => props.theme.sideBgClodr};
-  border-top: 1px solid ${props => props.theme.border};
-  border-right: 2px solid ${props => props.theme.border};
+  background-color: ${(props) => props.theme.startBgColor};
+  border-top: 1px solid ${(props) => props.theme.border};
+  border-right: 2px solid ${(props) => props.theme.border};
+  height: 100vh;
 `;
 const TestApi = ({ isDarkMode, toggleDarkMode }: IHome) => {
   const [getInfo, setGetInfo] = useState<RequestTypeInfo>();
+  const [testbodyInfo, setTestbodyInfo] = useState<reBodyType>();
+  const [queriesInfo, setQueriesInfo] = useState<reBodyType>();
+  const [bodyObject, setBodyObject] = useState({});
   const dispatch = useAppDispatch();
   const getDocsId = useAppSelector(mainApi);
 
   // 해당 API정보의 전체를 불러오기.
   useEffect(() => {
     dispatch(getApiRequestInfo({ docId: getDocsId.docId })).then((res: any) => {
-      const json = res.payload.detail;
-      const obj = JSON.parse(json);
-      setGetInfo(obj);
+      if (res.meta.requestStatus === "fulfilled") {
+        const json = res.payload.detail;
+        const obj = JSON.parse(json);
+        setGetInfo(obj);
+      }
     });
   }, [getDocsId.docId]);
 
   return (
     <div>
-      <Header />
+      <MetaData
+        title="APICloud Api 테스트"
+        description="APICloud에서 Api 명세서 기반 테스트를 진행할 수 있습니다."
+        name="APICloud"
+      />
       <div className="testContainer">
         <TestSide>
           <ApiSide getInfo={getInfo} />
         </TestSide>
         <div className="testMain">
           <div className="testInfomation">
-            <ApiInputUri getInfo={getInfo} />
+            <ApiInputUri
+              getInfo={getInfo}
+              testbodyInfo={testbodyInfo}
+              setTestbodyInfo={setTestbodyInfo}
+              queriesInfo={queriesInfo}
+              setQueriesInfo={setQueriesInfo}
+              bodyObject={bodyObject}
+            />
           </div>
           <p className="apiHeaderMainTitle">Request</p>
           <div className="testSetting">
-            <div className="testInfo">
-              <ApiHeader getInfo={getInfo} />
-            </div>
+            <HeaderList />
+            <ApiHeaderTitle />
+            <ApiHeader
+              getInfo={getInfo}
+              testbodyInfo={testbodyInfo}
+              setTestbodyInfo={setTestbodyInfo}
+              queriesInfo={queriesInfo}
+              setQueriesInfo={setQueriesInfo}
+              setBodyObject={setBodyObject}
+            />
           </div>
           <p className="apiHeaderMainTitle">Response</p>
-          <ApiResponse getInfo={getInfo} />
+          <div className="testSetting">
+            <ApiResList />
+            <ApiResponse getInfo={getInfo} testbodyInfo={testbodyInfo} />
+          </div>
         </div>
       </div>
     </div>

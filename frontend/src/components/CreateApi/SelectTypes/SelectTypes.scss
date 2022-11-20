@@ -1,12 +1,10 @@
 .selectBox {
   width: 100px;
   cursor: pointer;
-  margin-top: 5px;
-  z-index: 3;
+  margin-top: 10px;
 }
 
 .itemList {
-  z-index: 3;
   list-style-type: none;
   display: inline-block;
   right: 0;
@@ -14,23 +12,33 @@
   width: 100%;
   margin: 0;
   transition: 0.3s ease-in;
+  background-color: white;
+  height: 200px;
+  overflow-y: scroll;
   .item {
     transition: 0.1s;
     display: flex;
     align-items: center;
-    padding: 0 0 5px 10px;
+    padding: 7px 10px;
     &:hover {
-      background-color: #dadada;
+      background-color: #6fc7d1;
+      transition: 300ms ease-in-out;
+      color: white;
     }
   }
 }
 
+.itemList::-webkit-scrollbar {
+  display: none;
+}
+
 .selectBoxContainer {
-  box-shadow: 0px 4px 26px -10px rgba(0, 0, 0, 0.81);
+  box-shadow: 0px 4px 26px -10px rgba(0, 0, 0, 0.6);
   margin: 10px 0 0 0;
   padding: 0;
   border-radius: 10px;
   position: relative;
+  top: 10px;
   background-color: white;
 }
 
@@ -39,6 +47,16 @@
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #dadada;
-  padding: 0 0 3px 0;
+  padding: 0 2px 5px 2px;
   width: 100px;
+}
+
+.selectTypeIcon {
+  width: 12px;
+  height: 12px;
+  &:hover {
+    opacity: 0.8;
+    color: #6fc7d1;
+    transition: all 300ms ease-in;
+  }
 }

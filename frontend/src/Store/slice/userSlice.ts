@@ -19,6 +19,8 @@ export const fetchUser = createAsyncThunk("user/fetchUser", async () => {
     const response = await axiosGet("users/me");
     return response.data;
   } catch (err) {
+    window.localStorage.clear();
+    window.location.reload();
     return err;
   }
 });

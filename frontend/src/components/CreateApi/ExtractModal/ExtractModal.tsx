@@ -1,4 +1,6 @@
+import { MappedTypeDescription } from "@syncedstore/core/types/doc";
 import React, { useEffect, useState } from "react";
+import { ThreeDots } from "react-loader-spinner";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
@@ -13,11 +15,18 @@ import apiDocsApiSlice, {
   setApiDetail,
 } from "../../../Store/slice/apiDocsApi";
 import { RootState } from "../../../Store/store";
+import { checkDataValidation } from "../validationCheck";
+import WarningModal from "../WarningModal/WarningModal";
 import DependencyModal from "./DependencyModal";
 import "./ExtractModal.scss";
 
 type ExtractModalProps = {
   controllers: ControllerType[];
+  setIsWarningModal: React.Dispatch<React.SetStateAction<boolean>>;
+  isWarningModal: boolean;
+  state: MappedTypeDescription<{
+    data: ControllerType[];
+  }>;
 };
 
 type DetailType = {
@@ -25,9 +34,24 @@ type DetailType = {
   controllers: ControllerType[];
 };
 
-const ExtractModal = ({ controllers }: ExtractModalProps) => {
-  const NOTION_URL =
-    "https://great-haircut-17f.notion.site/APICloud-notion-template-24e0ac07d6e241f692aaaac2912b6732";
+export type DependencyType = {
+  id: string;
+  name: string;
+  fixed: boolean;
+};
+
+const web = {
+  id: "web",
+  name: "Spring Web",
+  fixed: true,
+} as DependencyType;
+
+const ExtractModal = ({
+  controllers,
+  setIsWarningModal,
+  isWarningModal,
+  state,
+}: ExtractModalProps) => {
   const isOpenExtractModal = useSelector(
     (state: RootState) => state.apiDocsApi.isOpenExtractModal
   );
@@ -38,27 +62,64 @@ const ExtractModal = ({ controllers }: ExtractModalProps) => {
   const [openIdx, setOpenIdx] = useState(0);
   const [notionDBId, setNotionDBId] = useState("");
   const [notionToken, setNotionToken] = useState("");
-  const [dependencies, setDependencies] = useState<string[]>([]);
+  const [dependencies, setDependencies] = useState<DependencyType[]>([]);
+  const [validationResult, setValidationResult] = useState<any>();
+  const [isNotionExtracting, setIsNotionExtracting] = useState(false);
 
   const isOpenDependencyModal = useSelector(
     (state: RootState) => state.apiDocsApi.isOpenDependencyModal
   );
 
   useEffect(() => {
-    const stringDependencies = localStorage.getItem("dependencies");
+    const stringDependencies = localStorage.getItem(
+      `${encryptedUrl}_dependencies`
+    );
+    const localDependencies: DependencyType[] = [];
     if (stringDependencies !== null) {
-      const localDependencies = JSON.parse(stringDependencies);
-      setDependencies(localDependencies);
+      JSON.parse(stringDependencies).forEach((dependency: DependencyType) => {
+        localDependencies.push(dependency);
+      });
     }
+    if (localDependencies.every((dep: DependencyType) => dep.id !== web.id)) {
+      localDependencies.push(web);
+    }
+    setDependencies(localDependencies);
   }, []);
+
+  useEffect(() => {
+    const localNotionToken = localStorage.getItem(`${encryptedUrl}_notion`);
+    if (localNotionToken !== null) {
+      setNotionToken(localNotionToken);
+    }
+    const localNotionPageId = localStorage.getItem(
+      `${encryptedUrl}_notionPageId`
+    );
+    if (localNotionPageId !== null) {
+      setNotionDBId(localNotionPageId);
+    }
+  }, [localStorage]);
+
+  const connectNotion = () => {
+    if (encryptedUrl === undefined) {
+      return;
+    }
+    const notionUrl = process.env.REACT_APP_NOTION_OAUTH2 + encryptedUrl;
+    window.location.replace(notionUrl);
+  };
 
   const prepareExtraction = (extract: () => void) => {
     const detail = {} as DetailType;
     detail.controllers = controllers;
+
     dispatch(
       setApiDetail({
         encryptedUrl: encryptedUrl,
-        detailRequest: { detail: JSON.stringify(detail) },
+        detailRequest: {
+          detail: JSON.stringify({
+            server: { dependencies: [] },
+            controllers: controllers,
+          }),
+        },
       })
     ).then((res: any) => {
       if (res.meta.requestStatus !== "fulfilled") {
@@ -80,10 +141,14 @@ const ExtractModal = ({ controllers }: ExtractModalProps) => {
   };
 
   const extractSpringBoot = () => {
+    const listDependencies = Array.from(
+      dependencies,
+      (v: DependencyType) => v.id
+    );
     dispatch(
       getSpringBoot({
         encryptedUrl: encryptedUrl,
-        springExtractRequest: { dependencies: dependencies },
+        springExtractRequest: { dependencies: listDependencies },
       })
     ).then((res: any) => {
       if (res.meta.requestStatus !== "fulfilled") {
@@ -91,6 +156,7 @@ const ExtractModal = ({ controllers }: ExtractModalProps) => {
         return;
       }
       downloadFile(res.payload);
+      setIsWarningModal(!isWarningModal);
     });
   };
 
@@ -104,6 +170,11 @@ const ExtractModal = ({ controllers }: ExtractModalProps) => {
         },
       })
     ).then((res: any) => {
+      setIsNotionExtracting(false);
+      if (res.meta.requestStatus !== "fulfilled") {
+        alert("추출에 실패하였습니다.");
+        return;
+      }
       window.open(res.payload.notionUrl);
     });
   };
@@ -145,7 +216,6 @@ const ExtractModal = ({ controllers }: ExtractModalProps) => {
                   <div>Spring boot</div>
                 </li>
                 <div className={openIdx === 1 ? "open" : ""}>
-                  <div>{dependencies}</div>
                   <div>
                     <button
                       onClick={() => {
@@ -160,8 +230,8 @@ const ExtractModal = ({ controllers }: ExtractModalProps) => {
                     </button>
                     <button
                       onClick={() => {
-                        prepareExtraction(extractSpringBoot);
-                        setOpenIdx(0);
+                        setValidationResult(checkDataValidation(controllers));
+                        setIsWarningModal(!isWarningModal);
                       }}
                     >
                       추출
@@ -176,46 +246,44 @@ const ExtractModal = ({ controllers }: ExtractModalProps) => {
                 </li>
                 <div className={openIdx === 2 ? "open" : ""}>
                   <div>
-                    <div>
-                      1. template 복제
-                      <button onClick={() => window.open(NOTION_URL)}>
-                        template 복제
-                      </button>
-                    </div>
-                    <div>
-                      {/* TODO: 페이지 링크를 받아서 데이터베이스 찾아주기 */}
-                      {/* TODO: local storage에 저장 */}
-                      2. 데이터베이스 id
-                      <input
-                        type="text"
-                        value={notionDBId}
-                        onChange={(e) => setNotionDBId(e.target.value)}
-                      ></input>
-                    </div>
-                    <div>
-                      {/* TODO: secret key oauth로 받기 */}
-                      3. token
-                      <input
-                        type="text"
-                        value={notionToken}
-                        onChange={(e) => setNotionToken(e.target.value)}
-                      ></input>
-                    </div>
+                    <button type="button" onClick={() => connectNotion()}>
+                      연동
+                    </button>
+                    <button
+                      onClick={
+                        notionToken
+                          ? !isNotionExtracting
+                            ? () => {
+                                setIsNotionExtracting(true);
+                                prepareExtraction(extractNotion);
+                              }
+                            : () => {}
+                          : () => {
+                              alert(
+                                "노션 연동이 되지 않았습니다. 연동 후 추출해주세요."
+                              );
+                            }
+                      }
+                    >
+                      {isNotionExtracting ? (
+                        <ThreeDots
+                          height="10"
+                          width="20"
+                          radius="9"
+                          color="#277fc3"
+                          ariaLabel="three-dots-loading"
+                          visible={true}
+                        />
+                      ) : (
+                        "추출"
+                      )}
+                    </button>
                   </div>
-                  <button>도움말</button>
-                  <button
-                    onClick={() => {
-                      prepareExtraction(extractNotion);
-                      setOpenIdx(0);
-                    }}
-                  >
-                    추출
-                  </button>
                 </div>
                 <li
                   onClick={() => {
-                    prepareExtraction(extractCsv);
                     setOpenIdx(3);
+                    prepareExtraction(extractCsv);
                   }}
                   className={openIdx === 3 ? "selected" : ""}
                 >
@@ -245,20 +313,31 @@ const ExtractModal = ({ controllers }: ExtractModalProps) => {
           setDependencies={setDependencies}
         ></DependencyModal>
       )}
+      {isWarningModal && (
+        <div className="synchronizeModalWarningModal">
+          <WarningModal
+            setIsWarningModal={setIsWarningModal}
+            validationResult={validationResult}
+            prepareExtraction={prepareExtraction}
+            extractSpringBoot={extractSpringBoot}
+            state={state}
+          />
+        </div>
+      )}
     </>
   );
 };
 
 export default ExtractModal;
 
-const ModalContainer = styled.div`
+export const ModalContainer = styled.div`
   width: 100%;
   position: relative;
   top: 1rem;
   right: 0px;
 `;
 
-const DialogBox = styled.dialog`
+export const DialogBox = styled.dialog`
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -271,7 +350,7 @@ const DialogBox = styled.dialog`
   z-index: 10000;
 `;
 
-const Backdrop = styled.div`
+export const Backdrop = styled.div`
   width: 100%;
   height: 100%;
   position: fixed;

@@ -18,6 +18,7 @@
 
 package com.web.apicloud.util.code;
 
+import com.web.apicloud.domain.vo.ServerVO;
 import io.spring.initializr.generator.project.contributor.ProjectContributor;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
@@ -33,15 +34,15 @@ public class ApplicationPropertiesContextUriContributor implements ProjectContri
 
     private final String relativePath;
 
-    private final String contextUri;
+    private final ServerVO server;
 
-    public ApplicationPropertiesContextUriContributor(String contextUri) {
-        this("src/main/resources/application.properties", contextUri);
+    public ApplicationPropertiesContextUriContributor(ServerVO server) {
+        this("src/main/resources/application.properties", server);
     }
 
-    public ApplicationPropertiesContextUriContributor(String relativePath, String contextUri) {
+    public ApplicationPropertiesContextUriContributor(String relativePath, ServerVO server) {
         this.relativePath = relativePath;
-        this.contextUri = contextUri;
+        this.server = server;
     }
 
     @Override
@@ -51,10 +52,18 @@ public class ApplicationPropertiesContextUriContributor implements ProjectContri
             Files.createDirectories(output.getParent());
             Files.createFile(output);
         }
-        if(contextUri != null) {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(output.toFile()));
-            bw.write("server.servlet.context-path=" + contextUri);
-            bw.close();
+        BufferedWriter bw = new BufferedWriter(new FileWriter(output.toFile()));
+        String contextUri = server.getContextUri();
+        if (contextUri != null) {
+            bw.write("server.servlet.context-path=" + contextUri + "\n");
         }
+        String serverUrl = server.getServerUrl();
+        if (serverUrl.contains(":")) {
+            int idx = serverUrl.lastIndexOf(":") + 1;
+            if(idx < serverUrl.length()) {
+                bw.write("server.port=" + serverUrl.substring(idx) + "\n");
+            }
+        }
+        bw.close();
     }
 }

@@ -18,11 +18,13 @@
 
 package com.web.apicloud.util.code.java;
 
+import com.web.apicloud.util.TextUtils;
 import com.web.apicloud.util.code.AnnotatableParameter;
 import io.spring.initializr.generator.io.IndentingWriter;
 import io.spring.initializr.generator.io.IndentingWriterFactory;
 import io.spring.initializr.generator.language.*;
 import io.spring.initializr.generator.language.java.*;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Modifier;
@@ -107,6 +109,9 @@ public class CustomJavaSourceCodeWriter implements SourceCodeWriter<CustomJavaSo
                 writer.print("class " + type.getName());
                 if (type.getExtends() != null) {
                     writer.print(" extends " + getUnqualifiedName(type.getExtends()));
+                }
+                if (StringUtils.hasText(type.getImplementedType())) {
+                    writer.print(" implements " + getUnqualifiedName(type.getImplementedType()));
                 }
                 writer.println(" {");
                 writer.println();
@@ -235,6 +240,9 @@ public class CustomJavaSourceCodeWriter implements SourceCodeWriter<CustomJavaSo
                 } else if (statement instanceof JavaReturnStatement) {
                     writer.print("return ");
                     writeExpression(writer, ((JavaReturnStatement) statement).getExpression());
+                } else if (statement instanceof JavaChainingMethodInvocation) {
+                    JavaChainingMethodInvocation javaChainingMethodInvocation = ((JavaChainingMethodInvocation) statement);
+                    writer.print(javaChainingMethodInvocation.getTarget() + javaChainingMethodInvocation.getMethod());
                 }
                 writer.println(";");
             }
@@ -300,6 +308,9 @@ public class CustomJavaSourceCodeWriter implements SourceCodeWriter<CustomJavaSo
             if (requiresImport(typeDeclaration.getExtends())) {
                 imports.add(typeDeclaration.getExtends());
             }
+            if (requiresImport(typeDeclaration.getImplementedType())) {
+                imports.add(typeDeclaration.getImplementedType());
+            }
             imports.addAll(getRequiredImports(typeDeclaration.getAnnotations(), this::determineImports));
             imports.addAll(typeDeclaration.getFieldDeclarations().stream()
                     .map(CustomJavaFieldDeclaration::getReturnType)
@@ -323,7 +334,7 @@ public class CustomJavaSourceCodeWriter implements SourceCodeWriter<CustomJavaSo
                         } else if (javaExpression instanceof JavaClassCreation) {
                             addImportsOfClassCreation(imports, (JavaClassCreation) javaExpression, compilationUnit.getPackageName());
                         }
-                    } else {
+                    } else if (!(statement instanceof JavaChainingMethodInvocation)) {
                         JavaExpression javaExpression = ((JavaExpressionStatement) statement).getExpression();
                         if (javaExpression instanceof PlainJavaCode) {
                             Set<String> importsFromCode = ((PlainJavaCode) javaExpression).getImports();

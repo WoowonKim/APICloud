@@ -8,6 +8,10 @@ declare module "styled-components" {
     startBgColor: string;
     listBgColor: string;
     sideBgClodr: string;
+    docBgColor: string;
+    docSidebarBgColor: string;
+    modalBgColor: string;
+    createApiSidebarBgColor: string;
   }
 }
 export default createGlobalStyle`

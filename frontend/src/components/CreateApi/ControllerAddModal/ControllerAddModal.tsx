@@ -2,6 +2,7 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { MappedTypeDescription } from "@syncedstore/core/types/doc";
 import React, { useEffect, useState } from "react";
+import styled from "styled-components";
 import { ControllerType } from "../../../pages/CreateApi/ApisType";
 import ModalTable from "../ModalTable/ModalTable";
 import { checkControllerApiValidation } from "../validationCheck";
@@ -56,7 +57,9 @@ const ControllerAddModal = ({
       let checkController = checkControllerApiValidation(
         state.data,
         [controllerName, value],
-        "controller"
+        "controller",
+        editControllerIndex > -1 ? true : false,
+        editControllerIndex
       );
       setControllerValidation(checkController);
     } else {
@@ -64,7 +67,9 @@ const ControllerAddModal = ({
       let checkController = checkControllerApiValidation(
         state.data,
         [value, controllerUri],
-        "controller"
+        "controller",
+        editControllerIndex > -1 ? true : false,
+        editControllerIndex
       );
       setControllerValidation(checkController);
     }
@@ -90,7 +95,7 @@ const ControllerAddModal = ({
 
   return (
     <div className="sidebarModalContainer">
-      <div className="modalInnerContainer">
+      <ModalInnerContainer>
         <div className="modalTitleGroup">
           <p className="modalTitleText">Controller 추가</p>
           <div className="highlightText"></div>
@@ -160,8 +165,10 @@ const ControllerAddModal = ({
               setIsControllerAdd(true);
             }}
             disabled={
-              !isControllerAddPossible &&
-              (controllerValidation[0] === 1 || controllerValidation[1] === 1)
+              controllerValidation[0] === 1 ||
+              controllerValidation[1] === 1 ||
+              !controllerName.trim() ||
+              !controllerUri.trim()
             }
           >
             {isControllerAdd ? "Controller 수정" : "Controller 추가"}
@@ -206,7 +213,7 @@ const ControllerAddModal = ({
             />
           </div>
         </div>
-        {!isApiAddPossible && (
+        {!isApiAddPossible && isControllerAdd && (
           <p className="controllerInfoText">Api 정보를 모두 입력해주세요</p>
         )}
         {apiValidation[0] === 1 && (
@@ -229,7 +236,9 @@ const ControllerAddModal = ({
                   : addedControllerIndex
               ].apis,
               [],
-              "api"
+              "api",
+              editControllerIndex > -1 ? true : false,
+              editControllerIndex
             );
             setApiValidation(checkApi);
             if (checkApi[0] === -1 && checkApi[1] === -1) {
@@ -239,7 +248,7 @@ const ControllerAddModal = ({
         >
           Controller 추가 완료하기
         </button>
-      </div>
+      </ModalInnerContainer>
       <div
         className="modalCloseButton"
         onClick={() => {
@@ -259,3 +268,18 @@ const ControllerAddModal = ({
 };
 
 export default ControllerAddModal;
+
+const ModalInnerContainer = styled.div`
+  width: 30rem;
+  height: 530px;
+  overflow-y: scroll;
+  background-color: ${(props) => props.theme.modalBgColor};
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 1rem;
+  padding: 0 2rem;
+  box-shadow: 0px 4px 26px -10px rgba(0, 0, 0, 0.81);
+  z-index: 4;
+`

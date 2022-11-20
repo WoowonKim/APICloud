@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { useAppDispatch } from "../../Store/hooks";
-import testApiSlice from "../../Store/slice/testApi";
 import "../CreateApi/SelectMethods/SelectMethods.scss";
 
 const Item = styled.div`
   border: none;
   border-radius: 10px;
-  padding: 5px 10px;
+  padding: 7px 10px;
   margin-top: 5px;
+  margin-right: 10px;
   font-weight: bold;
-  background-color: ${(props) => props.color};
+  background-color: ${props => props.color};
 `;
 
 const SelectedItem = styled.button`
@@ -19,7 +18,7 @@ const SelectedItem = styled.button`
   padding: 5px 10px 5px 10px;
   margin-top: 5px;
   font-weight: bold;
-  background-color: ${(props) => props.color};
+  background-color: ${props => props.color};
   width: 100%;
   cursor: pointer;
 `;
@@ -31,7 +30,10 @@ const MethodTest = ({ methodApiWord }: word) => {
   const [selectedMethod, setSelectedMethod] = useState("GET");
   const handleSelect = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
     const eventTarget = e.target as HTMLElement;
-    setSelectedMethod(eventTarget.innerText);
+    setSelectedMethod(
+      eventTarget.innerText[0] +
+        eventTarget.innerText.substring(1).toLocaleLowerCase()
+    );
     setVisible(!visible);
   };
   useEffect(() => {
@@ -43,22 +45,22 @@ const MethodTest = ({ methodApiWord }: word) => {
     <div className="selectBoxTESTApi" onClick={() => setVisible(!visible)}>
       <SelectedItem
         color={
-          selectedMethod === "get"
+          selectedMethod === "Get"
             ? "#FDECC8"
-            : selectedMethod === "post"
+            : selectedMethod === "Post"
             ? "#F5E0E9"
-            : selectedMethod === "put"
+            : selectedMethod === "Put"
             ? "#F1F0EF"
-            : selectedMethod === "delete"
+            : selectedMethod === "Delete"
             ? "#D3E5EF"
-            : selectedMethod === "patch"
+            : selectedMethod === "Patch"
             ? "#E8DEEE"
-            : selectedMethod === "options"
+            : selectedMethod === "Options"
             ? "#FFE2DD"
             : "#EEE0DA"
         }
       >
-        {selectedMethod}
+        {selectedMethod.toUpperCase()}
       </SelectedItem>
 
       {visible && (

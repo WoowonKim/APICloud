@@ -1,3 +1,5 @@
+import { faHouse } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, {
   Dispatch,
   forwardRef,
@@ -6,6 +8,7 @@ import React, {
   useRef,
 } from "react";
 import { useNavigate } from "react-router-dom";
+import styled from "styled-components";
 import "./Sidebar.scss";
 
 interface Props {
@@ -50,55 +53,232 @@ const Sidebar = forwardRef<Ref, Props>(
     });
 
     return (
-      <div
-        id="sidebar"
-        ref={outside}
-        className={isOpen ? "openSidebar" : "closeSidebar"}
-      >
-        <div className="closeButtonWrapper">
-          <div
-            onClick={toggleSide}
-            onKeyDown={toggleSide}
-            className="closeButton"
-          >
-            X
-          </div>
-        </div>
-        <ul className="sidebarUl">
-          <li
-            className="sidebarLi"
-            onClick={() => {
-              navigate("/testApi");
-            }}
-          >
-            API TEST 페이지
-          </li>
-          <li className="sidebarLi" onClick={scrollUp}>
-            server 정보
-          </li>
-          <li className="sidebarLi" onClick={() => scrollMove(ref, 0)}>
-            server
-          </li>
-          <li className="sidebarLi" onClick={() => scrollMove(ref, 1)}>
-            controllers
-          </li>
-        </ul>
-        <ul className="sidebarUl">
-          <li className="sidebarLi">Apis</li>
-          {detail &&
-            detail.controllers[0].apis.map((item: any, idx: any) => (
-              <li
-                key={idx}
-                className="sidebarLi"
-                onClick={() => scrollMove(ref, idx + 2)}
+      <div id="sidebar" ref={outside}>
+        {isOpen ? (
+          <OpenSidebar>
+            <div className="closeButtonWrapper">
+              <div
+                onClick={toggleSide}
+                onKeyDown={toggleSide}
+                className="closeButton"
               >
-                {item.name}
+                X
+              </div>
+            </div>
+            <div className="houseIconWrapper">
+              <FontAwesomeIcon
+                icon={faHouse}
+                onClick={() => {
+                  navigate("/");
+                }}
+              />
+            </div>
+            <ul className="sidebarUl">
+              <li
+                className="sidebarLi"
+                onClick={() => {
+                  navigate("/testApi");
+                }}
+              >
+                <div className="sidebarLi1">API TEST 페이지</div>
               </li>
-            ))}
-        </ul>
+              <li className="sidebarLi" onClick={scrollUp}>
+                server 정보
+              </li>
+              <li className="sidebarLi" onClick={() => scrollMove(ref, 0)}>
+                상세 정보
+              </li>
+            </ul>
+            <ul className="sidebarUl">
+              {detail &&
+                detail?.controllers &&
+                detail.controllers.length > 0 &&
+                detail.controllers.map(
+                  (controller: any, controllerIdx: any) => (
+                    <div key={controllerIdx}>
+                      <li
+                        className="sidebarLi"
+                        onClick={() =>
+                          scrollMove(
+                            ref,
+                            (3 + controller.apis.length) * controllerIdx + 1
+                          )
+                        }
+                      >
+                        &nbsp;&nbsp;controllers {controllerIdx + 1}
+                      </li>
+                      <li
+                        className="sidebarLi"
+                        onClick={() =>
+                          scrollMove(
+                            ref,
+                            (3 + controller.apis.length) * controllerIdx + 2
+                          )
+                        }
+                      >
+                        &nbsp;&nbsp;&nbsp;&nbsp;name
+                      </li>
+                      <li
+                        className="sidebarLi"
+                        onClick={() =>
+                          scrollMove(
+                            ref,
+                            (3 + controller.apis.length) * controllerIdx + 3
+                          )
+                        }
+                      >
+                        &nbsp;&nbsp;&nbsp;&nbsp;commonUri
+                      </li>
+                      <li className="sidebarLi">
+                        &nbsp;&nbsp;&nbsp;&nbsp;Apis
+                      </li>
+                      {controller?.apis.map((api: any, apiIdx: any) => (
+                        <li
+                          key={apiIdx}
+                          className="sidebarLi"
+                          onClick={() =>
+                            scrollMove(
+                              ref,
+                              (3 + controller.apis.length) * controllerIdx +
+                                apiIdx +
+                                4
+                            )
+                          }
+                        >
+                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{api.name} API
+                        </li>
+                      ))}
+                    </div>
+                  )
+                )}
+            </ul>
+          </OpenSidebar>
+        ) : (
+          <CloseSidebar>
+            <div className="closeButtonWrapper">
+              <div
+                onClick={toggleSide}
+                onKeyDown={toggleSide}
+                className="closeButton"
+              >
+                X
+              </div>
+            </div>
+            <div className="houseIconWrapper">
+              <FontAwesomeIcon
+                icon={faHouse}
+                onClick={() => {
+                  navigate("/");
+                }}
+              />
+            </div>
+            <ul className="sidebarUl">
+              <li
+                className="sidebarLi"
+                onClick={() => {
+                  navigate("/testApi");
+                }}
+              >
+                <div className="sidebarLi1">API TEST 페이지</div>
+              </li>
+              <li className="sidebarLi" onClick={scrollUp}>
+                server 정보
+              </li>
+              <li className="sidebarLi" onClick={() => scrollMove(ref, 0)}>
+                상세 정보
+              </li>
+            </ul>
+            <ul className="sidebarUl">
+              {detail &&
+                detail?.controllers &&
+                detail.controllers.length > 0 &&
+                detail.controllers.map(
+                  (controller: any, controllerIdx: any) => (
+                    <div key={controllerIdx}>
+                      <li
+                        className="sidebarLi"
+                        onClick={() =>
+                          scrollMove(
+                            ref,
+                            (3 + controller.apis.length) * controllerIdx + 1
+                          )
+                        }
+                      >
+                        &nbsp;&nbsp;controllers {controllerIdx + 1}
+                      </li>
+                      <li
+                        className="sidebarLi"
+                        onClick={() =>
+                          scrollMove(
+                            ref,
+                            (3 + controller.apis.length) * controllerIdx + 2
+                          )
+                        }
+                      >
+                        &nbsp;&nbsp;&nbsp;&nbsp;name
+                      </li>
+                      <li
+                        className="sidebarLi"
+                        onClick={() =>
+                          scrollMove(
+                            ref,
+                            (3 + controller.apis.length) * controllerIdx + 3
+                          )
+                        }
+                      >
+                        &nbsp;&nbsp;&nbsp;&nbsp;commonUri
+                      </li>
+                      <li className="sidebarLi">
+                        &nbsp;&nbsp;&nbsp;&nbsp;Apis
+                      </li>
+                      {controller?.apis.map((api: any, apiIdx: any) => (
+                        <li
+                          key={apiIdx}
+                          className="sidebarLi"
+                          onClick={() =>
+                            scrollMove(
+                              ref,
+                              (3 + controller.apis.length) * controllerIdx +
+                                apiIdx +
+                                4
+                            )
+                          }
+                        >
+                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{api.name} API
+                        </li>
+                      ))}
+                    </div>
+                  )
+                )}
+            </ul>
+          </CloseSidebar>
+        )}
       </div>
     );
   }
 );
 
 export default Sidebar;
+
+const OpenSidebar = styled.div`
+  z-index: 5;
+  width: 18vw;
+  height: 87vh;
+  position: absolute;
+  left: 0px;
+  transition: 0.5s ease;
+  background-color: ${(props) => props.theme.docSidebarBgColor};
+  border-radius: 5px;
+  overflow: auto;
+`;
+
+const CloseSidebar = styled.div`
+  z-index: 5;
+  width: 250px;
+  height: 100vh;
+  position: absolute;
+  left: -200px;
+  transition: 0.5s ease;
+  background-color: ${(props) => props.theme.docSidebarBgColor};
+  border-radius: 5px;
+`;

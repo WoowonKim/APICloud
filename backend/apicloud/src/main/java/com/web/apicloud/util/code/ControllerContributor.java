@@ -4,12 +4,14 @@ import com.web.apicloud.domain.vo.ApiVO;
 import com.web.apicloud.domain.vo.ControllerVO;
 import com.web.apicloud.domain.vo.DocVO;
 import com.web.apicloud.domain.vo.PropertyVO;
+import com.web.apicloud.util.TextUtils;
 import com.web.apicloud.util.code.java.*;
 import io.spring.initializr.generator.language.Annotation;
 import io.spring.initializr.generator.language.SourceCodeWriter;
 import io.spring.initializr.generator.language.SourceStructure;
 import io.spring.initializr.generator.language.java.JavaExpressionStatement;
 import io.spring.initializr.generator.language.java.JavaLanguage;
+import io.spring.initializr.generator.language.java.JavaMethodInvocation;
 import io.spring.initializr.generator.language.java.JavaReturnStatement;
 import io.spring.initializr.generator.project.contributor.ProjectContributor;
 import lombok.RequiredArgsConstructor;
@@ -39,14 +41,38 @@ public class ControllerContributor implements ProjectContributor {
         if (controllers != null) {
             controllers.forEach(controllerConsumer(sourceCode));
         }
-
+        addWebMvcConfig(sourceCode);
         this.sourceWriter.writeTo(new SourceStructure(projectRoot.resolve("src/main/"), new JavaLanguage()), sourceCode);
+    }
+
+    private void addWebMvcConfig(CustomJavaSourceCode sourceCode) {
+        CustomJavaCompilationUnit compilationUnit = sourceCode.createCompilationUnit(doc.getServer().getPackageName() + ".config", "ApiCloudWebMvcConfig");
+        CustomJavaTypeDeclaration configType = compilationUnit.createTypeDeclaration("ApiCloudWebMvcConfig");
+        configType.modifiers(Modifier.PUBLIC);
+        configType.implementedType("org.springframework.web.servlet.config.annotation.WebMvcConfigurer");
+        configType.annotate(Annotation.name("org.springframework.context.annotation.Configuration"));
+        configType.addFieldDeclaration(CustomJavaFieldDeclaration
+                .field("MAX_AGE_SECS")
+                .modifiers(Modifier.PRIVATE | Modifier.FINAL)
+                .value(3600)
+                .returning(JavaType.builder().type("long").build()));
+        configType.addMethodDeclaration(CustomJavaMethodDeclaration
+                .method("addCorsMappings")
+                .modifiers(Modifier.PUBLIC)
+                .parameters(AnnotatableParameter.builder().type(JavaType.builder().type("org.springframework.web.servlet.config.annotation.CorsRegistry").build()).name("registry").build())
+                .body(JavaChainingMethodInvocation.builder().target("registry").method(".addMapping(\"/**\")\n" +
+                        "                .allowedOrigins(\"http://localhost:3000\",\"https://apiclouds.net\")\n" +
+                        "                .allowCredentials(true)\n" +
+                        "                .allowedHeaders(\"*\")\n" +
+                        "                .allowedMethods(\"GET\", \"POST\", \"PUT\", \"PATCH\", \"DELETE\", \"OPTIONS\")\n" +
+                        "                .maxAge(MAX_AGE_SECS)").build()));
     }
 
     private Consumer<ControllerVO> controllerConsumer(CustomJavaSourceCode sourceCode) {
         return (controller) -> {
-            CustomJavaCompilationUnit compilationUnit = sourceCode.createCompilationUnit(doc.getServer().getPackageName() + ".controller", controller.getName());
-            CustomJavaTypeDeclaration controllerType = compilationUnit.createTypeDeclaration(controller.getName());
+            String controllerName = TextUtils.getValidName(controller.getName());
+            CustomJavaCompilationUnit compilationUnit = sourceCode.createCompilationUnit(doc.getServer().getPackageName() + ".controller", controllerName);
+            CustomJavaTypeDeclaration controllerType = compilationUnit.createTypeDeclaration(controllerName);
             controllerType.modifiers(Modifier.PUBLIC);
             controllerType.annotate(Annotation.name("org.springframework.web.bind.annotation.RestController"));
             controllerType.annotate(Annotation.name("org.springframework.web.bind.annotation.RequestMapping", builder -> builder.attribute("value", String.class, controller.getCommonUri())));
@@ -55,22 +81,33 @@ public class ControllerContributor implements ProjectContributor {
             if (apis != null) {
                 apis.forEach(apiConsumer(controllerType, dtos));
             }
-            addDto(sourceCode, dtos, controllerType.getName());
+            addDto(sourceCode, dtos, controllerName);
         };
     }
 
     private Consumer<ApiVO> apiConsumer(CustomJavaTypeDeclaration controllerType, Map<String, PropertyVO> dtos) {
+        String controllerName = TextUtils.getValidName(controllerType.getName());
+        String dtoPackageName = makeDtoPackageName(controllerName);
         return api -> {
-            api.getAvailableDTO(dtos);
+            api.getAvailableDto(dtos);
             CustomJavaMethodDeclaration.Builder builder = CustomJavaMethodDeclaration
-                    .method(api.getName())
+                    .method(TextUtils.getValidName(api.getName()))
                     .modifiers(Modifier.PUBLIC)
-                    .returning(JavaType.builder().type("ResponseEntity").genericType(api.getReturnJavaType(false, makeDtoPackageName(controllerType.getName()))).build());
-            addApiParameters(builder, api, controllerType.getName());
+                    .returning(JavaType.builder().type("ResponseEntity").genericType(api.getReturnJavaType(false, dtoPackageName)).build());
+            addApiParameters(builder, api, controllerName);
+
+            List<JavaArgument> arguments = new ArrayList<>();
+            JavaType javaType = api.getReturnJavaType(true, dtoPackageName);
+            if (!"Void".equals(javaType.getType())) {
+                arguments.add(new JavaClassCreation(api.getReturnJavaType(true, dtoPackageName), List.of()));
+            }
+            arguments.add(new JavaEnum("org.springframework.http.HttpStatus", "OK"));
             CustomJavaMethodDeclaration jmd = builder.body(new JavaReturnStatement(
-                    new JavaClassCreation(JavaType.builder().type("org.springframework.http.ResponseEntity").genericType(api.getReturnJavaType(false, makeDtoPackageName(controllerType.getName()))).build(),
-                            List.of(new JavaClassCreation(api.getReturnJavaType(true, makeDtoPackageName(controllerType.getName())), List.of()),
-                                    new JavaEnum("org.springframework.http.HttpStatus", "OK")))
+                    new JavaClassCreation(JavaType.builder()
+                            .type("org.springframework.http.ResponseEntity")
+                            .genericType(
+                                    api.getReturnJavaType(false, dtoPackageName)
+                            ).build(), arguments)
             ));
 
             String methodMappingName = "org.springframework.web.bind.annotation."
@@ -84,42 +121,57 @@ public class ControllerContributor implements ProjectContributor {
     private void addApiParameters(CustomJavaMethodDeclaration.Builder builder, ApiVO api, String controllerName) {
         List<AnnotatableParameter> parameters = new ArrayList<>();
         // path에서 파라미터 추가
-        makeParameters(api.getParameters(), PATH_VARIABLE, controllerName).ifPresent(parameters::addAll);
+        makePathVariableParameters(api.getParameters(), controllerName).ifPresent(parameters::addAll);
 
         // query에서 파라미터 추가
-        makeParameters(api.getQueries(), null, controllerName).ifPresent(parameters::addAll);
+        makeQueryParameters(api.getQueries(), controllerName).ifPresent(parameters::addAll);
 
         // requestBody에서 파라미터 추가
         makeParameter(api.getRequestBody(), REQUEST_BODY, controllerName).ifPresent(parameters::add);
         builder.parameters(parameters.toArray(AnnotatableParameter[]::new));
     }
 
-    private Optional<List<AnnotatableParameter>> makeParameters(List<PropertyVO> properties, String annotationName, String controllerName) {
+    private Optional<List<AnnotatableParameter>> makeQueryParameters(List<PropertyVO> queries, String controllerName) {
+        if (queries == null) {
+            return Optional.empty();
+        }
+        return Optional.of(queries.stream()
+                .filter(q -> q.getType() != null)
+                .map(q -> {
+                            if ("Object".equals(q.getType())) {
+                                return makeParameter(q, "org.springframework.web.bind.annotation.ModelAttribute", controllerName).orElse(null);
+                            } else {
+                                return makeParameter(q, "org.springframework.web.bind.annotation.RequestParam", controllerName).orElse(null);
+                            }
+                        }
+                )
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList())
+        );
+    }
+
+    private Optional<List<AnnotatableParameter>> makePathVariableParameters(List<PropertyVO> properties, String controllerName) {
         if (properties == null) {
             return Optional.empty();
         }
         return Optional.of(properties.stream()
-                .map(p -> {
-                    if (annotationName == null) {
-                        return makeParameter(p, null, controllerName).orElse(null);
-                    } else {
-                        return makeParameter(p, annotationName, controllerName).orElse(null);
-                    }
-                })
+                .map(p -> makeParameter(p, ControllerContributor.PATH_VARIABLE, controllerName).orElse(null)
+                )
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList())
         );
     }
 
     private Optional<AnnotatableParameter> makeParameter(PropertyVO property, String annotationName, String controllerName) {
-        if (property == null || !StringUtils.hasText(property.getName())) {
+        if (property == null || !StringUtils.hasText(property.getName()) || !property.hasType()) {
             return Optional.empty();
         }
-        AnnotatableParameter parameter = new AnnotatableParameter(property.getJavaType(makeDtoPackageName(controllerName), false), property.getName());
+        String name = TextUtils.getValidName(property.getName());
+        AnnotatableParameter parameter = new AnnotatableParameter(property.getJavaType(makeDtoPackageName(controllerName), false), name);
         if (annotationName != null) {
             parameter.annotate(Annotation.name(annotationName, builder -> {
                 if (PATH_VARIABLE.equals(annotationName)) {
-                    builder.attribute("value", String.class, property.getName());
+                    builder.attribute("value", String.class, name);
                 }
                 if (!property.isRequired()) {
                     builder.attribute("required", Boolean.class, "false");
@@ -132,11 +184,16 @@ public class ControllerContributor implements ProjectContributor {
     private void addDto(CustomJavaSourceCode sourceCode, Map<String, PropertyVO> dtos, String controllerName) {
         for (String dtoKey : dtos.keySet()) {
             PropertyVO dto = dtos.get(dtoKey);
-            CustomJavaTypeDeclaration dtoType = sourceCode.createCompilationUnit(makeDtoPackageName(controllerName), dto.getDtoName()).createTypeDeclaration(dto.getDtoName());
+            if (dto == null || !StringUtils.hasText(dto.getDtoName())) {
+                continue;
+            }
+            String dtoName = TextUtils.getValidName(dto.getDtoName());
+            CustomJavaTypeDeclaration dtoType = sourceCode.createCompilationUnit(makeDtoPackageName(controllerName), dtoName).createTypeDeclaration(dtoName);
             dtoType.modifiers(Modifier.PUBLIC);
             if (dto.getProperties() != null) {
                 for (PropertyVO property : dto.getProperties()) {
-                    dtoType.addFieldDeclaration(CustomJavaFieldDeclaration.field(property.getName()).modifiers(Modifier.PRIVATE)
+                    dtoType.addFieldDeclaration(CustomJavaFieldDeclaration.field(TextUtils.getValidName(property.getName()))
+                            .modifiers(Modifier.PRIVATE)
                             .returning(property.getJavaType(makeDtoPackageName(controllerName), false)));
                     dtoType.addMethodDeclaration(makeGetter(property));
                     dtoType.addMethodDeclaration(makeSetter(property));
@@ -153,19 +210,21 @@ public class ControllerContributor implements ProjectContributor {
     }
 
     private CustomJavaMethodDeclaration makeSetter(PropertyVO property) {
+        String name = TextUtils.getValidName(property.getName());
         return CustomJavaMethodDeclaration
-                .method("set" + camelToPascal(property.getName()))
+                .method("set" + camelToPascal(name))
                 .modifiers(Modifier.PUBLIC)
                 .parameters(makeParameter(property, null, null).orElse(null))
-                .body(new JavaExpressionStatement(new PlainJavaCode("this." + property.getName() + " = " + property.getName(), null)));
+                .body(new JavaExpressionStatement(new PlainJavaCode("this." + name + " = " + name, null)));
     }
 
     private CustomJavaMethodDeclaration makeGetter(PropertyVO property) {
+        String name = TextUtils.getValidName(property.getName());
         return CustomJavaMethodDeclaration
-                .method("get" + camelToPascal(property.getName()))
+                .method("get" + camelToPascal(name))
                 .modifiers(Modifier.PUBLIC)
                 .returning(property.getJavaType(null, false))
-                .body(new JavaExpressionStatement(new PlainJavaCode("return this." + property.getName(), null)));
+                .body(new JavaExpressionStatement(new PlainJavaCode("return this." + name, null)));
     }
 
     private String camelToPascal(String name) {

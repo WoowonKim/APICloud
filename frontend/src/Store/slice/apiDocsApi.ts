@@ -1,5 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
+
 import {
   axiosGet,
   axiosGetFile,
@@ -11,6 +12,8 @@ import {
 const initialState = {
   isOpenExtractModal: false,
   isOpenDependencyModal: false,
+  isPending: false,
+  isSyncPending: false,
 };
 
 // 특정 API DOC Detail 조회하기
@@ -88,8 +91,94 @@ export const setApiDetail: any = createAsyncThunk(
   }
 );
 
+// 사용자의 프로젝트 파일에서 변경된 값 조회
+export const getSynchronizeFile: any = createAsyncThunk(
+  "apiDocsApi/getSynchronizeFile",
+  async (args: any, { rejectWithValue }) => {
+    try {
+      const response = await axiosPost(
+        `synchronize/${args.docId}`,
+        args.formData
+      );
+      return response.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response);
+    }
+  }
+);
+
+// 사용자의 프로젝트 파일에서 변경된 값으로 db update
+export const updateSynchronizeData: any = createAsyncThunk(
+  "apiDocsApi/updateSynchronizeData",
+  async (args: any, { rejectWithValue }) => {
+    try {
+      const response = await axiosPut(`synchronize/${args.docId}`, {
+        controllerId: args.controllerId,
+        controllerDTO: args.controllerDTO,
+      });
+      return response.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response);
+    }
+  }
+);
+
+// api 명세를 파일로 변환
+export const getSynchronizeApiDoc: any = createAsyncThunk(
+  "apiDocsApi/getSynchronizeApiDoc",
+  async (args: any, { rejectWithValue }) => {
+    try {
+      const response = await axiosPost(
+        `synchronize/doc/${args.docId}`,
+        args.detailRequest
+      );
+      return response.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response);
+    }
+  }
+);
+
+// notion 연동
+export const connectNotion: any = createAsyncThunk(
+  "apiDocsApi/connectNotion",
+  async (args: any, { rejectWithValue }) => {
+    try {
+      const response = await axiosGet(`docs/notion/oauth/${args.code}`);
+      return response.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response);
+    }
+  }
+);
+
+// 문서 권한 확인
+export const checkAuthority: any = createAsyncThunk(
+  "apiDocsApi/checkAuthority",
+  async (args: any, { rejectWithValue }) => {
+    try {
+      const response = await axiosGet(`/docs/authority/${args.encryptedUrl}`);
+      return response.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response);
+    }
+  }
+);
+
+export const getGroupUsers: any = createAsyncThunk(
+  "apiDocsApi/getGroupUsers",
+  async (args: any, { rejectWithValue }) => {
+    try {
+      const response = await axiosGet(`group/${args.docId}`);
+      return response.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response);
+    }
+  }
+);
+
 const apiDocsApiSlice = createSlice({
-  name: "mainApi",
+  name: "apiDocsApi",
   initialState,
   reducers: {
     setIsOpenExtractModal(state, action) {
@@ -100,41 +189,42 @@ const apiDocsApiSlice = createSlice({
     },
   },
   extraReducers: {
-    [getApiDetail.fulfilled]: (state, action) => {
-      if (action.meta.requestStatus === "fulfilled") {
-      }
+    [getApiDetail.fulfilled]: (state, action) => {},
+    [getApiDetail.rejected]: (state, action) => {},
+    [getCsv.fulfilled]: (state, action) => {},
+    [getCsv.rejected]: (state, action) => {},
+    [getSpringBoot.fulfilled]: (state, action) => {},
+    [getSpringBoot.rejected]: (state, action) => {},
+    [getNotion.fulfilled]: (state, action) => {},
+    [getNotion.rejected]: (state, action) => {},
+    [setApiDetail.fulfilled]: (state, action) => {},
+    [setApiDetail.rejected]: (state, action) => {},
+    [getSynchronizeFile.pending]: (state, action) => {
+      state.isSyncPending = true;
     },
-    [getApiDetail.rejected]: (state, action) => {
-      console.log("getApiDetail rejected", action.payload);
+    [getSynchronizeFile.fulfilled]: (state, action) => {
+      state.isSyncPending = false;
     },
-    [getCsv.fulfilled]: (state, action) => {
-      if (action.meta.requestStatus === "fulfilled") {
-      }
+    [getSynchronizeFile.rejected]: (state, action) => {
+      state.isSyncPending = false;
     },
-    [getCsv.rejected]: (state, action) => {
-      console.log("getCsv rejected", action.payload);
+    [updateSynchronizeData.fulfilled]: (state, action) => {},
+    [updateSynchronizeData.rejected]: (state, action) => {},
+    [getSynchronizeApiDoc.fulfilled]: (state, action) => {},
+    [getSynchronizeApiDoc.rejected]: (state, action) => {},
+    [connectNotion.fulfilled]: (state, action) => {},
+    [connectNotion.rejected]: (state, action) => {},
+    [checkAuthority.pending]: (state, action) => {
+      state.isPending = true;
     },
-    [getSpringBoot.fulfilled]: (state, action) => {
-      if (action.meta.requestStatus === "fulfilled") {
-      }
+    [checkAuthority.fulfilled]: (state, action) => {
+      state.isPending = false;
     },
-    [getSpringBoot.rejected]: (state, action) => {
-      console.log("getSpringBoot rejected", action.payload);
+    [checkAuthority.rejected]: (state, action) => {
+      state.isPending = false;
     },
-    [getNotion.fulfilled]: (state, action) => {
-      if (action.meta.requestStatus === "fulfilled") {
-      }
-    },
-    [getNotion.rejected]: (state, action) => {
-      console.log("getNotion rejected", action.payload);
-    },
-    [setApiDetail.fulfilled]: (state, action) => {
-      if (action.meta.requestStatus === "fulfilled") {
-      }
-    },
-    [setApiDetail.rejected]: (state, action) => {
-      console.log("setApiDetail rejected", action.payload);
-    },
+    [getGroupUsers.fulfilled]: (state, action) => {},
+    [getGroupUsers.rejected]: (state, action) => {},
   },
 });
 

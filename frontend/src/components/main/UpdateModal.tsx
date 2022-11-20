@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleUser } from "@fortawesome/free-solid-svg-icons";
 import { faLink } from "@fortawesome/free-solid-svg-icons";
-import { userDummy } from "./ListDummy";
 import { useDispatch, useSelector } from "react-redux";
 import mainApiSlice, {
   getApiCreationInfo,
@@ -12,8 +11,34 @@ import mainApiSlice, {
 } from "../../Store/slice/mainApi";
 import { RootState } from "../../Store/store";
 import "./CreateModal.scss";
+import { getGroupUsers } from "../../Store/slice/apiDocsApi";
+import { axiosGet, axiosPost, axiosPut, axiosDel } from "../../util/axiosUtil";
+import {
+  Avatar,
+  IconButton,
+  List,
+  ListItem,
+  MenuItem,
+  Select,
+  Tooltip,
+} from "@mui/material";
+import { Search } from "@mui/icons-material";
+import { useAppSelector } from "../../Store/hooks";
+import { selectUser } from "../../Store/slice/userSlice";
+import { Loading } from "../../pages/CreateApi/CreateApi";
+import { InfinitySpin } from "react-loader-spinner";
+import { useLocation } from "react-router-dom";
+import { faCopy } from "@fortawesome/free-regular-svg-icons";
 
+type groupUser = {
+  name: string;
+  authority: number;
+  email: string;
+  userId: number;
+  imgUrl: string;
+};
 const UpdateModal = () => {
+  const currentUser = useAppSelector(selectUser);
   const [docsName, setDocsName] = useState("");
   const [serverUrl, setServerUrl] = useState("");
   const [contextUri, setContextUri] = useState("");
@@ -25,12 +50,21 @@ const UpdateModal = () => {
   const [packaging, setPackaging] = useState("");
   const [isDefaultAvailable, setIsCreationInfoAvailable] = useState(false);
   const [creationInfo, setCreationInfo] = useState({} as any);
+  const [groupUsers, setGroupUsers] = useState<groupUser[]>([]);
+  const [authority, setAuthority] = useState<number>();
+  const [searcUser, setSerchUser] = useState("");
+  const [searchUserRes, setSearchUserRes] = useState<any>();
+  const [copyUrl, setCopyUrl] = useState("");
+  const [isCopy, setIsCopyUrl] = useState(false);
 
   const docsNameInput: any = useRef();
 
   const docId = useSelector((state: RootState) => state.mainApi.docId);
   const isOpenUpdateModal = useSelector(
     (state: RootState) => state.mainApi.isOpenUpdateModal
+  );
+  const encryptedUrl = useSelector(
+    (state: RootState) => state.mainApi.encryptedUrl
   );
 
   const dispatch = useDispatch();
@@ -83,7 +117,7 @@ const UpdateModal = () => {
 
   useEffect(() => {
     if (docId > 0) {
-      dispatch(getApiDoc({ docId: docId })).then((res: any) => {
+      dispatch(getApiDoc({ docId: encryptedUrl })).then((res: any) => {
         if (res.meta.requestStatus === "fulfilled") {
           setDocsName(res.payload.docsName);
           setServerUrl(res.payload.serverUrl);
@@ -102,8 +136,18 @@ const UpdateModal = () => {
         }
       });
     }
+
+    setCopyUrl(`${process.env.REACT_APP_APIDOC_COPYURL}/${encryptedUrl}`);
   }, []);
 
+  useEffect(() => {
+    dispatch(getGroupUsers({ docId: docId })).then((res: any) => {
+      setGroupUsers(res.payload);
+    });
+    axiosGet("/docs/authority/" + encryptedUrl).then((res: any) => {
+      setAuthority(res.data);
+    });
+  }, []);
   const addCurrentVersion = (info: any, currentVersion: string) => {
     let isExists = false;
     for (let bootVersion of info.bootVersion.values) {
@@ -119,6 +163,79 @@ const UpdateModal = () => {
       });
     }
   };
+  const search = async (email: any) => {
+    await axiosGet("/users?email=" + email)
+      .then((res) => {
+        if (res.data.id === currentUser.id) {
+          alert("본인 이메일 입니다.");
+          setSearchUserRes(undefined);
+        } else {
+          setSearchUserRes(res.data);
+        }
+      })
+      .catch(() => {
+        setSearchUserRes(null);
+      });
+  };
+  const handleAuthortyChange = (e: any, userId: number, idx: number) => {
+    const value = e.target.value;
+    axiosPut("/group/" + docId, {
+      userId: userId,
+      authority: value,
+    }).then((res) => {
+      let copy = [...groupUsers];
+      copy[idx].authority = value;
+      setGroupUsers(copy);
+    });
+  };
+  const handleUserAdd = () => {
+    let copy = [...groupUsers];
+    const isIncluded = copy.find((ele) => {
+      if (ele.userId === searchUserRes.id) {
+        return true;
+      }
+    });
+    if (isIncluded) {
+      alert("이미 추가된 유저입니다.");
+      return;
+    } else {
+      axiosPost("/group/" + docId, {
+        userId: searchUserRes.id,
+        authority: 3,
+      }).then((res) => {
+        copy.push({
+          userId: searchUserRes.id,
+          name: searchUserRes.name,
+          email: searchUserRes.email,
+          imgUrl: searchUserRes.imgUrl,
+          authority: 3,
+        });
+        setGroupUsers(copy);
+      });
+    }
+  };
+
+  const deleteUser = async (userId: number) => {
+    let copy = [...groupUsers];
+    const idx = copy.findIndex(function (ele) {
+      return ele.userId === userId;
+    });
+    if (idx > -1) {
+      axiosDel("/group/" + docId + "/" + userId).then((res) => {
+        copy.splice(idx, 1);
+        setGroupUsers(copy);
+      });
+    }
+  };
+
+  const handleCopyUrl = async () => {
+    try {
+      await navigator.clipboard.writeText(copyUrl);
+      setIsCopyUrl(true);
+    } catch (err) {
+      setIsCopyUrl(false);
+    }
+  };
 
   return (
     <ModalContainer>
@@ -127,7 +244,7 @@ const UpdateModal = () => {
           <div className="modalMain">
             <form className="modalForm" onSubmit={onSubmit}>
               <p>수정하기</p>
-              {isDefaultAvailable && (
+              {isDefaultAvailable ? (
                 <>
                   <div className="inputWrapper">
                     <label htmlFor="docsName">Doc 이름</label>
@@ -265,34 +382,117 @@ const UpdateModal = () => {
                     </div>
                   </div>
                 </>
+              ) : (
+                <Loading
+                  style={{ position: "relative", top: "65px", left: "415px" }}
+                >
+                  <InfinitySpin width="250" color="#6FC7D1" />
+                </Loading>
               )}
               <p>초대하기</p>
-              <input
-                className="groupMember"
-                type="text"
-                placeholder="추가할 사용자의 이메일을 작성해주세요"
-              />
-              <p>그룹목록</p>
-              <p>API 편집 권한이 있는 사용자</p>
-              <div className="apiUser">
-                {userDummy.map((it, idx) => (
-                  <div className="apiUserList" key={idx}>
-                    <FontAwesomeIcon
-                      className="apiUserIcon"
-                      icon={faCircleUser}
-                    />
-                    <div className="apiUserTitle">
-                      <p>{it.name}</p>
-                      <p>{it.id}</p>
-                    </div>
-                    <p className="apiAuthority">{it.authority}</p>
+              <div className="searchUser">
+                <input
+                  className="groupMember"
+                  type="text"
+                  placeholder="추가할 사용자의 이메일을 작성해주세요"
+                  onChange={(e) => {
+                    setSerchUser(e.target.value);
+                  }}
+                />
+                <IconButton
+                  type="button"
+                  sx={{ p: "10px" }}
+                  onClick={() => {
+                    search(searcUser);
+                  }}
+                >
+                  <Search />
+                </IconButton>
+              </div>
+              {searchUserRes && (
+                <div className="searcedUser">
+                  <div onClick={handleUserAdd}>
+                    <Tooltip title={"Click! to add"}>
+                      <Avatar
+                        alt={searchUserRes.name}
+                        src={searchUserRes.imgUrl}
+                        sx={{ margin: "auto" }}
+                      ></Avatar>
+                    </Tooltip>
                   </div>
-                ))}
+                  <span>{searchUserRes.name}</span>
+                </div>
+              )}
+              {searchUserRes === null && (
+                <p className="searcedUser">존재하지 않는 사용자 입니다.</p>
+              )}
+              <p>그룹목록</p>
+              <p>API 접근 권한이 있는 사용자</p>
+              <div className="apiUser">
+                <List
+                  dense
+                  sx={{
+                    width: "100%",
+                  }}
+                >
+                  {groupUsers.map((it, idx) => (
+                    <ListItem key={idx}>
+                      <Avatar
+                        alt={it.name}
+                        src={it.imgUrl}
+                        sx={{ mr: 1 }}
+                      ></Avatar>
+                      <p>
+                        {it.name}
+                        <br></br>
+                        {it.email}
+                      </p>
+                      {it.authority != 1 && (
+                        <>
+                          <Select
+                            value={it.authority}
+                            onChange={(e) => {
+                              handleAuthortyChange(e, it.userId, idx);
+                            }}
+                            sx={{ ml: "auto" }}
+                            MenuProps={{
+                              disableScrollLock: true,
+                            }}
+                          >
+                            <MenuItem value={2}>editor</MenuItem>
+                            <MenuItem value={3}>viewer</MenuItem>
+                          </Select>
+                          <UserDeleteButton
+                            type="button"
+                            onClick={() => {
+                              deleteUser(it.userId);
+                            }}
+                          >
+                            삭제
+                          </UserDeleteButton>
+                        </>
+                      )}
+                    </ListItem>
+                  ))}
+                </List>
               </div>
               <div className="modalBtn">
-                <button className="copyBtn">
-                  <FontAwesomeIcon icon={faLink} />
-                  <span>링크복사</span>
+                <button
+                  className="copyBtn"
+                  onClick={() => handleCopyUrl()}
+                  type="button"
+                >
+                  {isCopy ? (
+                    <div className="copied">
+                      <FontAwesomeIcon icon={faCopy} />
+                      <span>복사완료</span>
+                    </div>
+                  ) : (
+                    <div className="copied">
+                      <FontAwesomeIcon icon={faLink} />
+                      <span>링크복사</span>
+                    </div>
+                  )}
                 </button>
                 <button className="makeBtn" type="submit" disabled={!canGoNext}>
                   완료
@@ -320,10 +520,9 @@ const UpdateModal = () => {
 const ModalContainer = styled.div`
   width: 100%;
   height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
+  position: fixed;
+  top: 0;
+  left: 0;
 `;
 
 const DialogBox = styled.dialog`
@@ -338,8 +537,7 @@ const DialogBox = styled.dialog`
   box-sizing: border-box;
   background-color: white;
   z-index: 10000;
-  margin-bottom: 530px;
-  margin-right: 550px;
+  margin: 20px auto;
 `;
 
 const Backdrop = styled.div`
@@ -348,6 +546,12 @@ const Backdrop = styled.div`
   position: fixed;
   top: 0;
   z-index: 9999;
+`;
+
+const UserDeleteButton = styled.button`
+  border: none;
+  margin-left: 10px;
+  background-color: transparent;
 `;
 
 export default UpdateModal;

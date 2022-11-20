@@ -1,11 +1,12 @@
 package com.web.apicloud.domain.vo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.web.apicloud.util.TextUtils;
 import com.web.apicloud.util.code.java.JavaType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +16,6 @@ import java.util.Map;
 @AllArgsConstructor
 //@NoArgsConstructor
 @Data
-@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class PropertyVO {
     static final String DTO_CREATE_TYPE = "Object";
 
@@ -70,7 +70,7 @@ public class PropertyVO {
             if (packageName != null) {
                 type = packageName + ".";
             }
-            type += dtoName;
+            type += TextUtils.getValidName(dtoName);
         } else {
             type = this.type;
         }
@@ -80,5 +80,14 @@ public class PropertyVO {
     @JsonIgnore
     public boolean isDtoCreationRequired() {
         return DTO_CREATE_TYPE.equals(type);
+    }
+
+    @JsonIgnore
+    public boolean hasType() {
+        if(isDtoCreationRequired()) {
+            return StringUtils.hasText(dtoName);
+        } else {
+            return StringUtils.hasText(type);
+        }
     }
 }

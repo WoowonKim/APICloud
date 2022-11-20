@@ -1,3 +1,11 @@
+@font-face {
+  font-family: "NanumSquareNeo-Variable";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_11-01@1.0/NanumSquareNeo-Variable.woff2")
+    format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+
 // Header
 .ApiMainHeader {
   background-color: white;
@@ -22,8 +30,8 @@
 }
 .userImg {
   cursor: pointer;
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
   border-radius: 50px;
 }
 .search {
@@ -69,51 +77,20 @@
 
 // Start
 
-.startMain {
-  background-color: #e4effa;
-  display: flex;
-  justify-content: space-around;
-}
-.startImg {
-  margin-top: 10px;
-  width: 300px;
-  height: 300px;
-}
 .startText {
   margin-top: 120px;
+  font-family: "NanumSquareNeo-Variable";
 }
 .startText > span {
-  font-weight: bold;
-  font-size: 27px;
-}
-.startText > button {
-  width: 43%;
-  height: 23%;
-  margin-left: 20%;
-  margin-top: 15px;
-  border: none;
-  border-radius: 10px;
-  background-color: #bdd7ee;
-  font-weight: bold;
-  font-size: 20px;
-  cursor: pointer;
+  // font-weight: bold;
+  font-size: 35px;
 }
 
 //ApiList
-.ApiList {
-  margin-left: 9%;
-  margin-right: 9%;
-  margin-top: 20px;
-}
-
-.ApiListTitle > span {
-  margin-left: 10px;
-  font-weight: bold;
-  cursor: pointer;
-}
 .ClickList {
   font-size: 18px;
   color: #000000;
+
   border-bottom: 2px solid #000000;
 }
 .noClicklist {
@@ -129,8 +106,7 @@
 
 // ApiListDetail
 .ApiListDetail {
-  width: 100%;
-  height: 250px;
+  height: 100vh;
   overflow-y: scroll;
 }
 
@@ -147,28 +123,23 @@
 .scrolApiListDetaillBar::-webkit-scrollbar-track {
   background: #ffffff; /*스크롤바 뒷 배경 색상*/
 }
-.listContent {
-  display: flex;
-  justify-content: space-between;
-  background-color: white;
-  margin: 5px;
-  border-radius: 10px;
-  padding-left: 23px;
-  padding-right: 10px;
-}
-.listContent > p {
-  font-weight: bold;
-}
-.content {
-  font-weight: bold;
-  cursor: pointer;
-}
+// .listContent > p {
+//   font-weight: bold;
+// }
 .userSetting {
   display: grid;
   align-items: center;
   margin-right: 10px;
-  width: 10%;
+  width: 15%;
 }
+
+.userSettingView {
+  display: grid;
+  align-items: center;
+  margin-right: 10px;
+  width: 7%;
+}
+
 .userSettingSub {
   display: flex;
   justify-content: space-between;
@@ -176,13 +147,6 @@
 .userSettingSubTwo {
   display: flex;
   justify-content: space-around;
-}
-.member {
-  margin-left: 2px;
-}
-.DeatilIcon {
-  margin-top: 4px;
-  cursor: pointer;
 }
 
 //Modal
@@ -276,23 +240,37 @@
   left: 642px;
   top: 820px;
   border: none;
-  color: #3a00e5;
+  color: #6fc7d1;
   font-weight: bold;
-  background: #f7f5ff;
+  background: #f5f9ff;
   border-radius: 15px;
   cursor: pointer;
 }
-.copyBtn > span {
+
+.copied > span {
   margin-left: 5px;
 }
 
 .makeBtn {
   border-radius: 15px;
   border: none;
-  background-color: #3a00e5;
+  background-color: #6fc7d1;
   font-weight: bold;
   color: white;
   width: 167px;
+  height: 51px;
+  left: 642px;
+  top: 820px;
+  cursor: pointer;
+}
+
+.createModalMakeBtn {
+  border-radius: 15px;
+  border: none;
+  background-color: #6fc7d1;
+  font-weight: bold;
+  color: white;
+  width: 100%;
   height: 51px;
   left: 642px;
   top: 820px;

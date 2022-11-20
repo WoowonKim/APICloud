@@ -3,13 +3,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useRef, useState } from "react";
 import Sidebar from "../components/ApiDocs/Sidebar";
 import "../components/ApiDocs/ApiDocs.scss";
-import ApiDocPaper from "../components/ApiDocs/ServerInform";
+import ServerInform from "../components/ApiDocs/ServerInform";
 import MakeToPDF from "../components/ApiDocs/MakeToPDF";
-import ApiDocPaper2 from "../components/ApiDocs/DetailInform";
+import DetailInform from "../components/ApiDocs/DetailInform";
 import { useDispatch } from "react-redux";
 import { getApiDoc } from "../Store/slice/mainApi";
 import { getApiDetail } from "../Store/slice/apiDocsApi";
 import { DocInformationType } from "../components/main/CreateModal";
+import styled from "styled-components";
+import { faFilePdf } from "@fortawesome/free-regular-svg-icons";
+import MetaData from "../components/MetaData";
 
 const ApiDocs = () => {
   const [docInform, setDocInform] = useState<DocInformationType>(); // Doc 기본 정보
@@ -28,11 +31,9 @@ const ApiDocs = () => {
   };
 
   // PDF로 변환하기
-  const pdf = MakeToPDF();
-
-  const onClick = async (e: any) => {
+  const converToPDF = async (e: any) => {
     e.preventDefault();
-    await pdf.viewWithPdf();
+    await MakeToPDF();
   };
 
   // DOC 기본 정보 가져오기
@@ -71,9 +72,6 @@ const ApiDocs = () => {
     dispatchGetApiDetail();
     dispatchGetApiDoc();
     window.addEventListener("scroll", updateScroll);
-    return () => {
-      localStorage.removeItem("docId");
-    };
   }, []);
 
   useEffect(() => {
@@ -83,49 +81,92 @@ const ApiDocs = () => {
     }
   }, [docInform]);
 
+  useEffect(() => {}, [docInformArray, detail]);
+
   return (
-    <div className="apiDocContainer">
-      <FontAwesomeIcon
-        icon={faCircleUp}
-        className="circleUpIcon"
-        size="3x"
-        onClick={scrollUp}
+    <>
+      <MetaData
+        title="APICloud Api Doc"
+        description="APICloud에서 작성된 Api 명세서를 확인해보세요"
+        name="APICloud"
       />
-      <div className="sidebarDocWrapper">
-        <div className="sidebarBox">
-          <div onClick={toggleSide} className="sidebarButton">
-            <FontAwesomeIcon icon={faBars} size="2x" />
-          </div>
-          <Sidebar
-            isOpen={isOpen}
-            setIsOpen={setIsOpen}
-            detail={detail}
-            scrollUp={scrollUp}
-            ref={menuRef}
-          />
-        </div>
-        <div className="docBox">
-          <div className="doc1">
-            <div className="docTitleWrapper">
-              <h1 className="docTitle" ref={serverInformRef}>
-                {docInform?.docsName} 문서
-              </h1>
+      <div className="apiDocContainer">
+        <FontAwesomeIcon
+          icon={faCircleUp}
+          className="circleUpIcon"
+          size="3x"
+          onClick={scrollUp}
+        />
+        <SidebarDocWrapper>
+          <div className="sidebarBox">
+            <div onClick={toggleSide} className="sidebarButton">
+              <FontAwesomeIcon icon={faBars} size="2x" />
             </div>
-            <h2 className='serverInformTitle'>Server 정보</h2>
-            <ApiDocPaper docInformArray={docInformArray} />
-          </div>
-          <div className="doc2">
-            <ApiDocPaper2
+            <Sidebar
+              isOpen={isOpen}
+              setIsOpen={setIsOpen}
               detail={detail}
-              scrollPosition={scrollPosition}
+              scrollUp={scrollUp}
               ref={menuRef}
             />
           </div>
-          <button onClick={onClick}>pdf로 변환</button>
-        </div>
+          <div className="pdfButton" onClick={(e) => converToPDF(e)}>
+            <FontAwesomeIcon icon={faFilePdf} className="pdfIcon" size="2x" />
+          </div>
+          <DocBox>
+            <div className="pdfDocArea">
+              <Doc1>
+                <div className="docTitleWrapper">
+                  <h1 className="docTitle" ref={serverInformRef}>
+                    {docInform?.docsName} 문서
+                  </h1>
+                </div>
+                <h2 className="serverInformTitle">Server 정보</h2>
+                <ServerInform docInformArray={docInformArray} />
+              </Doc1>
+              <Doc2>
+                <DetailInform
+                  detail={detail}
+                  scrollPosition={scrollPosition}
+                  ref={menuRef}
+                />
+              </Doc2>
+            </div>
+          </DocBox>
+        </SidebarDocWrapper>
       </div>
-    </div>
+    </>
   );
 };
 
 export default ApiDocs;
+
+const SidebarDocWrapper = styled.div`
+  background-color: ${(props) => props.theme.docBgColor};
+  z-index: -1;
+`;
+
+const DocBox = styled.div`
+  margin: auto;
+  background-color: ${(props) => props.theme.docBgColor};
+  width: 800px;
+  padding-top: 2vh;
+`;
+
+const Doc1 = styled.div`
+  padding: 0px;
+  width: 800px;
+  background-color: white;
+  word-break: break-all;
+  color: black;
+`;
+
+const Doc2 = styled.div`
+  display: flex;
+  justify-content: center;
+  padding: 50px;
+  width: 800px;
+  background-color: white;
+  word-break: break-all;
+  color: black;
+`;

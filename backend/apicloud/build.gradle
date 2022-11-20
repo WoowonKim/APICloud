@@ -28,6 +28,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.4.2'
 	implementation 'org.jraf:klibnotion:1.11.0'
 

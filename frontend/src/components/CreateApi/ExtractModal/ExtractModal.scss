@@ -5,36 +5,54 @@
 
   max-width: 250px;
   width: 100%;
-}
 
-.extractModal-extractList > li,
-.extractModal-extractList > div {
-  padding: 10px 0px 10px 5px;
-  border-bottom: 1px solid #efefef;
-  font-size: 12px;
-}
+  & button {
+    border: none;
+    outline: none;
+    background-color: #e6f8fc;
+    color: #40adb9;
+    padding: 10px 15px;
+    border-radius: 15px;
+    text-align: center;
+    margin: 5px 5px 0;
+    font-size: 0.8em;
+    &:hover {
+      opacity: 0.7;
+      transition: all 300ms ease-in;
+      cursor: pointer;
+    }
+  }
+  & > li,
+  & > div {
+    padding: 10px 0px 10px 5px;
+    border-bottom: 1px solid #efefef;
+    font-size: 12px;
+  }
 
-.extractModal-extractList li:hover {
-  background-color: #3a00e533;
-  transition: 200ms ease-in-out;
-  cursor: pointer;
-}
+  & li:hover {
+    background-color: #6fc7d1;
+    color: white;
+    transition: 200ms ease-in-out;
+    cursor: pointer;
+  }
+  & li:active {
+    background-color: #277fc3;
+    color: white;
+    cursor: pointer;
+  }
 
-.extractModal-extractList li:active {
-  background-color: #3a00e555;
-  cursor: pointer;
-}
+  & > div {
+    display: none;
+  }
 
-.extractModal-extractList > div {
-  display: none;
-}
+  & > div.open {
+    display: block;
+    transition: 200ms;
+  }
 
-.extractModal-extractList > div.open {
-  display: block;
-  transition: 200ms;
-}
-
-.extractModal-extractList > li.selected {
-  background-color: #3a00e533;
-  transition: 200ms ease-in-out;
+  & > li.selected {
+    background-color: #6fc7d1;
+    color: white;
+    transition: 200ms ease-in-out;
+  }
 }

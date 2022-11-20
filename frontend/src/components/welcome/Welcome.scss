@@ -27,7 +27,7 @@
 
 @mixin sectionDetail {
   .introduction {
-    margin-left: 200px;
+    margin-left: 13vw;
     padding-top: 40vh;
   }
   .title {
@@ -43,16 +43,27 @@
   }
 }
 
+@mixin cloudsMove {
+  display: flex;
+  width: 300px;
+  height: 100px;
+  position: absolute;
+  z-index: 1;
+}
+
 body {
   margin: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .section1 {
-  height: 120vh;
-  width: 100vw;
+  @include section();
   background-image: url("../../assets/day_cloudy_sky.jpg");
-  background-repeat: no-repeat;
-  background-size: cover;
+  .welcomeClouds {
+    width: 100%;
+    height: 300px;
+  }
   .title {
     @include titleStyle();
     display: flex;
@@ -63,62 +74,208 @@ body {
     font-size: 100px;
     opacity: 0.7;
   }
-  .subTitleWrapper {
+  .welcomeSubTitleWrapper {
+    margin-top: 150px;
     text-align: center;
     font-family: "CarterOne";
     font-size: 30px;
     opacity: 0.7;
   }
-  .startButtonWrapper {
-    margin-top: 100px;
-    text-align: center;
-  }
-  .startButton {
-    @include titleStyle();
-    display: inline-block;
-    padding: 10px;
-    width: 200px;
-    border-radius: 30px;
-    background-color: rgba(255, 255, 255, 0.3);
-    box-shadow: 1px 1px 5px gray;
-    font-weight: bold;
-  }
-}
 
-.bridge {
-  height: 40vh;
-  width: 100vw;
+  @keyframes welcomeClouds-ani {
+    from {
+      transform: translate(-300px, 100px);
+    }
+    to {
+      transform: translate(110vw, 100px);
+    }
+  }
+  .welcomeClouds {
+    @include cloudsMove();
+    animation: welcomeClouds-ani 14s linear infinite;
+  }
+  .welcomeClouds1 {
+    @include cloudsMove();
+    margin-top: 200px;
+    animation: welcomeClouds-ani 7s linear infinite reverse;
+  }
+  .welcomeClouds2 {
+    @include cloudsMove();
+    margin-top: 400px;
+    animation: welcomeClouds-ani 10s infinite;
+  }
+  .arrowDownIconWrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 10vh;
+  }
+  .arrowDownIconWrapper > .arrowDownIcon {
+    text-transform: uppercase;
+    animation: glow 2s ease-in-out infinite;
+  }
+  
+  @keyframes glow {
+    0%, 100% {
+      color: #FFF;
+    }
+    
+    30%, 70% {
+      color: #111;
+      text-shadow: none;
+    }
+  }
+  .arrowDownIconWrapper > .arrowDownIcon {
+    animation-delay: 0.25s;
+  }
 }
 
 .section2 {
-  height: 120vh;
-  width: 100vw;
+  @include section();
+  @include sectionDetail();
   background-image: url("../../assets/sunset_cloudy_sky.jpg");
-  background-repeat: no-repeat;
-  background-size: cover;
-  .introduction {
-    margin-left: 200px;
-    padding-top: 40vh;
+}
+
+@keyframes introduction-ani {
+  from {
+    transform: translate(-200px, 40vh);
   }
-  .title {
-    margin-bottom: 50px;
-    font-family: "twayair";
-    color: white;
-    font-size: 30px;
-  }
-  .subTitle {
-    font-family: "twayair";
-    font-size: 20px;
-    opacity: 0.7;
+  to {
+    transform: translate(200px, 40vh);
   }
 }
 
+@keyframes introductionGIF-ani {
+  from {
+    transform: translate(20vw, 1vh);
+  }
+  to {
+    transform: translate(1vw, 1vh);
+  }
+}
+
+.section2 > .section2GIF {
+  width: 35vw;
+  margin-left: 52vw;
+  margin-top: -40vh;
+  border-radius: 30px;
+  z-index: 2;
+}
+
+.section2 > .section2GIFMove {
+  width: 35vw;
+  margin-left: 51vw;
+  margin-top: 5vh;
+  border-radius: 30px;
+  z-index: 1;
+  animation: introductionGIF-ani 1s linear;
+  animation-fill-mode: forwards;
+}
+
+.section2 > .section2GIF2 {
+  width: 23vw;
+  height: 250px;
+  margin-left: 67vw;
+  margin-top: -20vh;
+  border-radius: 30px;
+  z-index: 3;
+}
+
+.section2 > .section2GIF2Move {
+  width: 23vw;
+  height: 250px;
+  margin-left: 67vw;
+  margin-top: -20vh;
+  border-radius: 30px;
+  z-index: 3;
+  animation: introductionGIF-ani 1s linear;
+  animation-fill-mode: forwards;
+}
+
+.section2 > .introduction2Move {
+  animation: introduction-ani 1s linear;
+  animation-fill-mode: forwards;
+}
+
+
 .section3 {
-  height: 120vh;
-  width: 100vw;
-  background-image: url("../../assets/night_cloudy_sky.jpg");
-  background-repeat: no-repeat;
-  background-size: cover;
+  @include section();
+  @include sectionDetail();
+  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("../../assets/night_cloudy_sky.jpg");
+  .subTitle {
+    color: white;
+  }
+  .introduction3Move {
+    animation: introduction-ani 1s linear;
+    animation-fill-mode: forwards;
+  }
+  .startButtonsWrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 150px;
+    .startButtonWrapper {
+      margin-top: 40vh;
+      text-align: center;
+      margin-right: 20px;
+      margin-left: 20px;
+      .welcomeStartButton {
+        @include titleStyle();
+        display: inline-block;
+        padding: 15px;
+        width: 200px;
+        border-radius: 30px;
+        background-color: rgba(255, 255, 255, 0.3);
+        box-shadow: 1px 1px 5px gray;
+        font-weight: bold;
+        .loginImage {
+          width: 20px;
+          height: 20px;
+          margin-right: 10px;
+        }
+      }
+    }
+  }
+}
+
+.section3 > .section3GIF {
+  width: 35vw;
+  margin-left: 52vw;
+  margin-top: -100vh;
+  margin-bottom: 400px;
+  border-radius: 30px;
+  z-index: 4;
+}
+
+.section3 > .section3GIFMove {
+  width: 35vw;
+  margin-left: 51vw;
+  margin-top: -60vh;
+  margin-bottom: 40vh;
+  border-radius: 30px;
+  z-index: 4;
+  animation: introductionGIF-ani 1s linear;
+  animation-fill-mode: forwards;
+}
+
+.section3 > .section3GIF2 {
+  width: 23vw;
+  height: 250px;
+  margin-left: 67vw;
+  margin-top: -80vh;
+  margin-bottom: 35vh;
+  border-radius: 30px;
+  z-index: 5;
+}
+
+.section3 > .section3GIF2Move {
+  width: 23vw;
+  height: 250px;
+  margin-left: 67vw;
+  margin-top: -80vh;
+  margin-bottom: 20vh;
+  border-radius: 30px;
+  z-index: 5;
+  animation: introductionGIF-ani 1s linear;
+  animation-fill-mode: forwards;
 }
 
 .outer {
@@ -131,60 +288,186 @@ body {
   display: none;
 }
 
-.section1 {
-  @include section();
-  background-image: url("../../assets/day_cloudy_sky.jpg");
-  .title {
-    @include titleStyle();
-    display: flex;
-    justify-content: center;
-    margin-top: 0;
-    margin-bottom: 30px;
-    padding-top: 150px;
-    font-size: 100px;
-    opacity: 0.7;
-  }
-  .subTitleWrapper {
-    text-align: center;
-    font-family: "CarterOne";
-    font-size: 30px;
-    opacity: 0.7;
-  }
-  .startButtonWrapper {
-    margin-top: 100px;
-    text-align: center;
-  }
-  .startButton {
-    @include titleStyle();
-    font-family: "twayair";
-    display: inline-block;
-    padding: 10px;
-    width: 200px;
-    height: 3vh;
-    border-radius: 30px;
-    background-color: rgba(255, 255, 255, 0.3);
-    box-shadow: 1px 1px 5px gray;
-    font-weight: bold;
-  }
-}
-
-.section2 {
-  @include section();
-  @include sectionDetail();
-  background-image: url("../../assets/sunset_cloudy_sky.jpg");
-}
-
-.section3 {
-  @include section();
-  @include sectionDetail();
-  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("../../assets/night_cloudy_sky.jpg");
-  .subTitle {
-    color: white;
-  }
-}
-
 .divider {
   width: 100vw;
   height: 5px;
   background-color: gray;
+}
+
+.text-container > .row {
+  margin-bottom: 30px;
+}
+
+.text-container > .row > span {
+  text-transform: uppercase;
+  animation: glow 12s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0%, 100% {
+    color: #FFF;
+    text-shadow: 0 0 10px #0652DD, 0 0 50px #0652DD, 0 0 100px #0652DD;
+  }
+  
+  10%, 90% {
+    color: #111;
+    text-shadow: none;
+  }
+}
+
+.text-container > .row > span:nth-child(2) {
+	animation-delay: 0.25s;
+}
+.text-container > .row > span:nth-child(3) {
+	animation-delay: 0.5s;
+}
+.text-container > .row > span:nth-child(4) {
+	animation-delay: 0.75s;
+}
+.text-container > .row > span:nth-child(5) {
+	animation-delay: 1s;
+}
+.text-container > .row > span:nth-child(6) {
+	animation-delay: 1.25s;
+}
+.text-container > .row > span:nth-child(7) {
+	animation-delay: 1.5s;
+}
+.text-container > .row > span:nth-child(8) {
+	animation-delay: 1.75s;
+}
+.text-container > .row > span:nth-child(9) {
+	animation-delay: 2.0s;
+}
+.text-container > .row > span:nth-child(10) {
+	animation-delay: 2.25s;
+}
+.text-container > .row > span:nth-child(11) {
+	animation-delay: 2.5s;
+}
+.text-container > .row > span:nth-child(12) {
+	animation-delay: 2.75s;
+}
+.text-container > .row > span:nth-child(13) {
+	animation-delay: 3.0s;
+}
+.text-container > .row > span:nth-child(14) {
+	animation-delay: 3.25s;
+}
+.text-container > .row > span:nth-child(15) {
+	animation-delay: 3.5s;
+}
+.text-container > .row > span:nth-child(16) {
+	animation-delay: 3.75s;
+}
+.text-container > .row > span:nth-child(17) {
+	animation-delay: 4.0s;
+}
+.text-container > .row > span:nth-child(18) {
+	animation-delay: 4.25s;
+}
+.text-container > .row > span:nth-child(19) {
+	animation-delay: 4.5s;
+}
+.text-container > .row > span:nth-child(20) {
+	animation-delay: 4.75s;
+}
+.text-container > .row > span:nth-child(21) {
+	animation-delay: 5.0s;
+}
+.text-container > .row > span:nth-child(22) {
+	animation-delay: 5.25s;
+}
+.text-container > .row > span:nth-child(23) {
+	animation-delay: 5.5s;
+}
+.text-container > .row > span:nth-child(24) {
+	animation-delay: 5.75s;
+}
+.text-container > .row > span:nth-child(25) {
+	animation-delay: 6.0s;
+}
+.text-container > .row > span:nth-child(26) {
+	animation-delay: 6.25s;
+}
+.text-container > .row > span:nth-child(27) {
+	animation-delay: 6.5s;
+}
+.text-container > .row > span:nth-child(28) {
+	animation-delay: 6.75s;
+}
+.text-container > .row > span:nth-child(29) {
+	animation-delay: 7.0s;
+}
+.text-container > .row > span:nth-child(30) {
+	animation-delay: 7.25s;
+}
+.text-container > .row > span:nth-child(31) {
+	animation-delay: 7.5s;
+}
+.text-container > .row > span:nth-child(32) {
+	animation-delay: 7.75s;
+}
+.text-container > .row > span:nth-child(33) {
+	animation-delay: 8.0s;
+}
+.text-container > .row > span:nth-child(34) {
+	animation-delay: 8.25s;
+}
+.text-container > .row > span:nth-child(35) {
+	animation-delay: 8.5s;
+}
+.text-container > .row > span:nth-child(36) {
+	animation-delay: 8.75s;
+}
+.text-container > .row > span:nth-child(37) {
+	animation-delay: 9.0s;
+}
+.text-container > .row > span:nth-child(38) {
+	animation-delay: 9.25s;
+}
+.text-container > .row > span:nth-child(39) {
+	animation-delay: 9.5s;
+}
+.text-container > .row > span:nth-child(40) {
+	animation-delay: 9.75s;
+}
+.text-container > .row > span:nth-child(41) {
+	animation-delay: 10.0s;
+}
+.text-container > .row > span:nth-child(42) {
+	animation-delay: 10.25s;
+}
+.text-container > .row > span:nth-child(43) {
+	animation-delay: 10.5s;
+}
+.text-container > .row > span:nth-child(44) {
+	animation-delay: 10.75s;
+}
+.text-container > .row > span:nth-child(45) {
+	animation-delay: 11.0s;
+}
+.text-container > .row > span:nth-child(46) {
+	animation-delay: 11.25s;
+}
+.text-container > .row > span:nth-child(47) {
+	animation-delay: 11.5s;
+}
+.text-container > .row > span:nth-child(48) {
+	animation-delay: 11.75s;
+}
+.text-container > .row > span:nth-child(49) {
+	animation-delay: 12.0s;
+}
+.text-container > .row > span:nth-child(50) {
+	animation-delay: 12.25s;
+}
+.text-container > .row > span:nth-child(51) {
+	animation-delay: 12.5s;
+}
+.text-container > .row > span:nth-child(52) {
+	animation-delay: 12.75s;
+}
+.text-container > .row > span:nth-child(53) {
+	animation-delay: 13.0s;
 }

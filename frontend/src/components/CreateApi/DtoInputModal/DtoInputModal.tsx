@@ -1,8 +1,6 @@
-import { faCheck, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faClose, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { MappedTypeDescription } from "@syncedstore/core/types/doc";
-import { useSyncedStore } from "@syncedstore/react";
-import { store } from "../store";
 import React, { useEffect, useState } from "react";
 import {
   ControllerType,
@@ -42,6 +40,12 @@ interface Props {
   dtoData: any;
   dtoExists: boolean;
   currentDtoData: any;
+  setModalDepth: React.Dispatch<React.SetStateAction<number>>;
+  modalDepth: number;
+  state: MappedTypeDescription<{
+    data: ControllerType[];
+  }>;
+  isViewer: boolean;
 }
 const DtoInputModal = ({
   setIsModalVisible,
@@ -57,14 +61,15 @@ const DtoInputModal = ({
   final,
   getDepth,
   setNameList,
-  nameList,
   dtoData,
   dtoExists,
   currentDtoData,
+  setModalDepth,
+  modalDepth,
+  state,
+  isViewer,
 }: Props) => {
-  const state = useSyncedStore(store);
   const rootPath = state.data[selectedController].apis[selectedApi];
-  const [modalDepth, setModalDepth] = useState(2);
   const [visible, setVisible] = useState(false);
 
   const index =
@@ -95,6 +100,10 @@ const DtoInputModal = ({
     } else if (activeTab === 4 || activeTab === 5) {
       copy = copy.properties[propertiesIndex];
     }
+
+    if (copy.properties === null) {
+      copy.properties = [];
+    }
     setFinal(copy);
   }, [modalDepth, path, final]);
 
@@ -102,12 +111,6 @@ const DtoInputModal = ({
     <div className="dtoInputModal">
       <div className="dtoModalContainer">
         <div className="dtoModalTitleContainer">
-          <div>
-            {nameList.length > 0 &&
-              nameList.map(
-                (name, index) => !!name && <span key={index}>{name}/</span>
-              )}
-          </div>
           {final && (
             <div className="dtoModalInputGroup">
               <input
@@ -119,7 +122,8 @@ const DtoInputModal = ({
                   handleBasicInfo(e, "dtoName", modalDepth, type);
                 }}
                 autoFocus
-                value={final?.dtoName}
+                value={final?.dtoName || ""}
+                readOnly={isViewer}
               />
               {dtoExists && dtoData && dtoData.dtoName === final.dtoName && (
                 <FontAwesomeIcon
@@ -131,23 +135,35 @@ const DtoInputModal = ({
             </div>
           )}
           {visible && dtoExists && dtoData && (
-            <div className="tableInfoDtoContainer">
-              {dtoData.dtoName}
+            <div className="dtoModalDtoContainer">
+              <div className="dtoModalCloseGroup">
+                <p className="dtoModalDtoUseInfoTitle">{dtoData.dtoName}</p>
+                <button
+                  className="dtoModalDtoCloseButton"
+                  onClick={() => setVisible(!visible)}
+                >
+                  <FontAwesomeIcon icon={faClose} />
+                </button>
+              </div>
               {dtoData.properties.length > 0 &&
                 dtoData.properties.map((item: any, index: number) => (
-                  <div key={index} className="tableInfoDtoPropertiesContainer">
-                    <span>{item.name}</span>
+                  <div key={index} className="dtoModalDtoPropertiesContainer">
+                    <span className="dtoModalDtoUseInfoText">{item.name}</span>
                     {item.collectionType === "List" ? (
-                      <span>{`<List>${item.type}`}</span>
+                      <span className="dtoModalDtoUseInfoText">{`<List>${item.type}`}</span>
                     ) : (
-                      <span>{item.type}</span>
+                      <span className="dtoModalDtoUseInfoText">
+                        {item.type}
+                      </span>
                     )}
-                    <span>{item.required}</span>
+                    <span className="dtoModalDtoUseInfoText">
+                      {item.required}
+                    </span>
                   </div>
                 ))}
               {final && (
                 <button
-                  className="tableInfoUseCurrentDtoButton"
+                  className="dtoModalUseCurrentDtoButton"
                   onClick={() => {
                     handleDtoProperties(currentDtoData);
                   }}
@@ -172,27 +188,28 @@ const DtoInputModal = ({
                   final
                 )
               }
+              disabled={isViewer}
             >
               <FontAwesomeIcon icon={faPlus} className="plusIcon" />
             </button>
             <DtoModalTable
-              data={JSON.parse(JSON.stringify(final.properties))}
-              propertiesIndex={propertiesIndex}
-              activeTab={activeTab}
               setPropertiesIndexList={setPropertiesIndexList}
               propertiesIndexList={propertiesIndexList}
-              getDepth={getDepth}
               setModalDepth={setModalDepth}
-              modalDepth={modalDepth}
-              path={path}
               final={final}
+              modalDepth={modalDepth}
+              isViewer={isViewer}
             />
           </div>
         )}
       </div>
       <button
         className="dtoInputModalCloseButton"
-        onClick={() => setIsModalVisible(false)}
+        onClick={() => {
+          setModalDepth(2);
+          setIsModalVisible(false);
+          setPropertiesIndexList([-1, -1, -1, -1]);
+        }}
       ></button>
     </div>
   );

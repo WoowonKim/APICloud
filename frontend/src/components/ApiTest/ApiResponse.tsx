@@ -1,121 +1,111 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RequestTypeInfo } from "../../pages/CreateApi/ApisType";
-import { useAppDispatch, useAppSelector } from "../../Store/hooks";
-import { mainApi } from "../../Store/slice/mainApi";
-import { getApiRequestInfo, selectTestApi } from "../../Store/slice/testApi";
+import { reBodyType } from "../../pages/TestApi";
+import { selectTestApi } from "../../Store/slice/testApi";
 
-const dummy = {
-  status: 200,
-  message: "ok",
-  header: {
-    contentType: "application/json",
-    contentLength: "calculated when request is sent",
-    Host: "calculated when request is sent",
-    Accept: "*/*",
-    AcceptEncoding: "gzip, deflate, br",
-    Connection: "keep-alive",
-  },
-  result: {
-    id: "zero",
-    email: "zero",
-    password: "1q2w3e",
-    token: 1234,
-  },
-};
 interface type {
   getInfo: RequestTypeInfo | undefined;
+  testbodyInfo: reBodyType | undefined;
 }
-const ApiResponse = ({ getInfo }: type) => {
+const ApiResponse = ({ getInfo, testbodyInfo }: type) => {
   const info = useSelector(selectTestApi);
-  const [getSuccess, setGetSuccess] = useState(0);
-  const [responseStatus, setResponseStatus] = useState(0);
+
+  const [getStatusInfo, setGetStatusInfo] = useState<number>();
+  const [getStatusData, setGetStatusData] = useState<any>();
+  const [bodyDataFlag, setBodyDataFlag] = useState(false);
+  const [bodyData, setBodyData] = useState<[string, string][]>();
+  const [arr, setArr] = useState<[string, string][]>();
+
+  // Response Body 불러와서 객체형태로 뿌려주기
   useEffect(() => {
-    if (getInfo) {
-      setResponseStatus(info.getRequest);
-      info.getRequest === 0
-        ? setGetSuccess(getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].responses.success.status)
-        : setGetSuccess(getInfo?.controllers[info.getControllerInfomation].apis[info.getApisInfomation].responses.fail.status);
+    if (getStatusData !== undefined && typeof getStatusData !== typeof "") {
+      setBodyData(Object.entries(getStatusData));
     }
-  }, [getInfo, info.getControllerInfomation, info.getApisInfomation, info.getRequest]);
-  const [responseFlag, setResponseFlag] = useState<number | null>(1);
-  const flag = (e: React.SetStateAction<number | null>) => {
-    setResponseFlag(e);
-  };
-  const testObj = Object.entries(dummy.result);
-  const testHeaderObj = Object.entries(dummy.header);
-  const start = "{";
-  const end = "}";
+  }, [info.getFlag, bodyDataFlag]);
+
+  // Response 정보 갖고 오기.
+  useEffect(() => {
+    setGetStatusInfo(info.getResponseStatus);
+    setGetStatusData(info.getResponseData);
+    setBodyDataFlag(!bodyDataFlag);
+  }, [info]);
+
+  useEffect(() => {
+    setArr(Object.entries(info.getResponseSuccessHeader));
+  }, [getInfo]);
+
   return (
-    <div className="apiResponseContainer">
-      <span
-        onClick={() => {
-          flag(0);
-        }}
-        className={responseFlag === 0 ? "headerClickList" : "headerNoClicklist"}
-      >
-        Header
-      </span>
-      <span
-        onClick={() => {
-          flag(1);
-        }}
-        className={responseFlag === 1 ? "headerClickList" : "headerNoClicklist"}
-      >
-        Body
-      </span>
-      <span
-        onClick={() => {
-          flag(2);
-        }}
-        className={responseFlag === 2 ? "headerClickList" : "headerNoClicklist"}
-      >
-        Cookie
-      </span>
+    <div>
       <div className="apiResponseResultCommonState">
-        <p>Status : {getSuccess}</p>
+        <p>Status : {getStatusInfo}</p>
       </div>
       <div className="apiResponseResult">
-        {responseFlag === 0 &&
-          (responseStatus === 0 ? (
-            <div>
-              {testHeaderObj.map((it, idx) => (
-                <div className="resltResponseHeaderContainer" key={idx}>
-                  <div className="resultResponseTitleContainer">
-                    <span className="resultResponseHeaderTitle">{it[0]} : </span>
-                  </div>
+        {info.getResponseListNumber === 0 && (
+          <div>
+            {getStatusInfo === 200 ? (
+              <div>
+                <div className="resltResponseHeaderContainer">
                   <div>
-                    <span className="resultResponseHeaderContent"> {it[1]}</span>
+                    <p className="centercalcu">{"{"}</p>
+                    <div>
+                      {arr?.map((it, idx) => (
+                        <div className="objectResponseResult">
+                          <p className="titleResponseResult">"{it[0]}" :</p>
+                          <p className="titleResponseResult">"{it[1]}",</p>
+                        </div>
+                      ))}
+                    </div>
+                    <p className="centercalcu">{"}"}</p>{" "}
                   </div>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div>
-              <p> 400Error...</p>
-            </div>
-          ))}
-        {responseFlag === 1 &&
-          (responseStatus === 0 ? (
-            <div>
-              <p>{start}</p>
-              {testObj.map((it, idx) => (
-                <div className="resultResponseContainer" key={idx}>
-                  <span className="resultResponseBody">"{it[0]}" : </span>
-                  {typeof it[1] === "number" ? (
-                    <span className="resultResponseBodySubNum"> {it[1]}</span>
-                  ) : (
-                    <span className="resultResponseBodySub"> "{it[1]}"</span>
+              </div>
+            ) : (
+              <div>
+                <p className="errorResponseResult">
+                  {info.getResponseErroStatusMessage}...
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+        {info.getResponseListNumber === 1 && (
+          <div>
+            {getStatusInfo === 200 ? (
+              <div>
+                {typeof getStatusData !== typeof "" && (
+                  <p className="centercalcu">{"{"}</p>
+                )}
+                <div className="resltResponseHeaderContainer">
+                  {typeof getStatusData !== typeof "" && (
+                    <div>
+                      {bodyData?.map((it, idx) => (
+                        <div className="objectResponseResult">
+                          <p className="titleResponseResult">"{it[0]} : "</p>
+                          <p className="titleResponseResult">"{it[1]}",</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {typeof getStatusData === typeof "" && (
+                    <div>
+                      <p>{getStatusData}</p>
+                    </div>
                   )}
                 </div>
-              ))}
-              <p>{end}</p>
-            </div>
-          ) : (
-            <div>
-              <p>400Error...</p>
-            </div>
-          ))}
+                {typeof getStatusData !== typeof "" && (
+                  <p className="centercalcu">{"}"}</p>
+                )}
+              </div>
+            ) : (
+              <div>
+                <p className="errorResponseResult">
+                  {info.getResponseErroStatusMessage}...
+                </p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,11 +1,13 @@
 import { faInfo, faRemove } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useSyncedStore } from "@syncedstore/react";
-import React, { useState } from "react";
-import { PropertiesType } from "../../../pages/CreateApi/ApisType";
+import { MappedTypeDescription } from "@syncedstore/core/types/doc";
+import React, { useEffect, useState } from "react";
+import {
+  ControllerType,
+  PropertiesType,
+} from "../../../pages/CreateApi/ApisType";
 import DtoInputModal from "../DtoInputModal/DtoInputModal";
 import SelectTypes from "../SelectTypes/SelectTypes";
-import { store } from "../store";
 import TableInfo from "../Table/TableInfo";
 import { checkDtoNameValidation, getDepth } from "../validationCheck";
 
@@ -14,6 +16,10 @@ interface Props {
   selectedController: number;
   selectedApi: number;
   responseType: string;
+  state: MappedTypeDescription<{
+    data: ControllerType[];
+  }>;
+  isViewer: boolean;
 }
 
 const ApiTable = ({
@@ -21,18 +27,17 @@ const ApiTable = ({
   selectedController,
   selectedApi,
   responseType,
+  state,
+  isViewer,
 }: Props) => {
-  const state = useSyncedStore(store);
   const headers =
-    activeTab === 1
-      ? ["key", "value", "delete"]
-      : ["name", "type", "required", "delete"];
+    activeTab === 1 ? ["key", "value"] : ["name", "type", "required"];
 
   const rootPath =
     activeTab === 5 && (responseType === "fail" || responseType === "success")
-      ? state.data[selectedController].apis[selectedApi].responses?.[
+      ? state.data[selectedController].apis[selectedApi]?.responses?.[
           responseType
-        ]?.responseBody.properties
+        ]?.responseBody?.properties
       : activeTab === 4
       ? state.data[selectedController].apis[selectedApi].requestBody?.properties
       : activeTab === 3
@@ -51,6 +56,8 @@ const ApiTable = ({
   const [dtoData, setDtoData] = useState();
   const [currentDtoData, setCurrentDtoData] = useState();
   const [dtoExists, setDtoExists] = useState(false);
+  const [modalDepth, setModalDepth] = useState(2);
+
   const handelCellValue = (
     e: React.ChangeEvent<HTMLInputElement> | string,
     header: string,
@@ -131,38 +138,41 @@ const ApiTable = ({
     const rows = [];
     if (activeTab === 1) {
       rows.push(
-        <td>
+        <td key={`${index}-1`} className="apiTableBodyItem">
           <input
             type="text"
-            value={item.key}
+            value={item.key !== null ? item.key : ""}
             onChange={(e) => handelCellValue(e, "key", index)}
             className="tableInput"
+            readOnly={isViewer}
           />
         </td>
       );
       rows.push(
-        <td>
+        <td key={`${index}-2`} className="apiTableBodyItem">
           <input
             type="text"
-            value={item.value}
+            value={item.value !== null ? item.value : ""}
             onChange={(e) => handelCellValue(e, "value", index)}
             className="tableInput"
+            readOnly={isViewer}
           />
         </td>
       );
     } else {
       rows.push(
-        <td>
+        <td key={`${index}-3`} className="apiTableBodyItem">
           <input
             type="text"
-            value={item.name}
+            value={item.name !== null ? item.name : ""}
             onChange={(e) => handelCellValue(e, "name", index)}
             className="tableInput"
+            readOnly={isViewer}
           />
         </td>
       );
       rows.push(
-        <td>
+        <td key={`${index}-4`} className="apiTableBodyItem">
           <div className="typeInfoContainer">
             {item.collectionType === "List" && (
               <SelectTypes
@@ -170,6 +180,7 @@ const ApiTable = ({
                 handelCellValue={handelCellValue}
                 index={index}
                 isCollection={true}
+                isViewer={isViewer}
               />
             )}
             <SelectTypes
@@ -177,6 +188,8 @@ const ApiTable = ({
               handelCellValue={handelCellValue}
               index={index}
               isCollection={false}
+              activeTab={activeTab}
+              isViewer={isViewer}
             />
             {item.type === "Object" && (
               <FontAwesomeIcon
@@ -196,22 +209,31 @@ const ApiTable = ({
         </td>
       );
       rows.push(
-        <td>
+        <td key={`${index}-5`} className="apiTableBodyItem">
           <input
             type="checkbox"
-            checked={item.required}
-            onChange={(e) => handelCellValue(e, "required", index)}
+            className="apiTableCheckbox"
+            checked={item.required !== null ? item.required : ""}
+            onChange={(e) => {
+              if (isViewer) {
+                return false;
+              }
+              handelCellValue(e, "required", index);
+            }}
+            readOnly={isViewer}
           />
         </td>
       );
     }
     rows.push(
-      <td>
-        <FontAwesomeIcon
-          icon={faRemove}
-          className="removeIcon"
+      <td key={`${index}-6`} className="apiTableDeleteItem">
+        <button
           onClick={() => getDepth(index, item, false, false, true, rootPath)}
-        />
+          disabled={isViewer}
+          className="apiTableDeleteButton"
+        >
+          <FontAwesomeIcon icon={faRemove} className="removeIcon" />
+        </button>
       </td>
     );
     return rows;
@@ -293,6 +315,46 @@ const ApiTable = ({
     }
   };
 
+  useEffect(() => {
+    setModalDepth(2);
+  }, []);
+
+  useEffect(() => {
+    if (activeTab === 4 || activeTab === 5) {
+      const value =
+        activeTab === 5 &&
+        (responseType === "fail" || responseType === "success")
+          ? state.data[selectedController].apis[selectedApi].responses[
+              responseType
+            ]?.responseBody?.dtoName
+          : state.data[selectedController].apis[selectedApi].requestBody
+              ?.dtoName;
+
+      const dtoPath =
+        activeTab === 5 &&
+        (responseType === "fail" || responseType === "success")
+          ? state.data[selectedController].apis[selectedApi].responses[
+              responseType
+            ]?.responseBody
+          : state.data[selectedController].apis[selectedApi].requestBody;
+
+      const checkDto = checkDtoNameValidation(
+        value,
+        state.data[selectedController].apis,
+        state.data[selectedController].apis.length,
+        dtoPath,
+        false
+      );
+
+      if (checkDto && typeof checkDto !== "boolean" && checkDto[1]) {
+        setDtoData(checkDto[1]);
+        setDtoExists(true);
+        setCurrentDtoData(checkDto[0]);
+      } else {
+        setDtoExists(false);
+      }
+    }
+  }, [activeTab, dtoExists]);
   return (
     <div>
       {isModalVisible && (
@@ -314,6 +376,10 @@ const ApiTable = ({
           currentDtoData={currentDtoData}
           setFinal={setFinal}
           final={final}
+          setModalDepth={setModalDepth}
+          modalDepth={modalDepth}
+          state={state}
+          isViewer={isViewer}
         />
       )}
       <TableInfo
@@ -324,15 +390,27 @@ const ApiTable = ({
         responseType={responseType}
         dtoData={dtoData}
         dtoExists={dtoExists}
+        state={state}
+        isViewer={isViewer}
       />
       <table>
         <thead>
           <tr>
             {headers.map((item, index) => (
-              <th key={index} style={{ width: "200px" }}>
+              <th
+                key={index}
+                style={{
+                  width:
+                    item === "delete" || item === "required"
+                      ? "100px"
+                      : "250px",
+                }}
+                className="apiTableHeaderItem"
+              >
                 {item}
               </th>
             ))}
+            <th className="apiTableDeleteItem"></th>
           </tr>
         </thead>
         <tbody>

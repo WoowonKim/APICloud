@@ -4,7 +4,6 @@
   text-align: center;
   font-weight: bold;
   margin-right: 10px;
-  font-family: "twayair";
   &:hover {
     opacity: 0.7;
     transition: all 300ms ease-in;
@@ -12,54 +11,35 @@
 }
 
 .sidebarModalContainer {
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   position: fixed;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 3;
+  z-index: 2;
 }
 
-.modalInnerContainer {
-  width: 35rem;
-  min-height: 33rem;
-  height: auto;
-  background-color: white;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  border-radius: 1rem;
-  padding: 1rem 3rem;
+.modalInnerContainer::-webkit-scrollbar {
+  display: none;
 }
 
 .modalTitleGroup {
-  margin-bottom: 6rem;
+  margin-bottom: 4rem;
 }
 
 .modalTitleText {
-  font-size: 2em;
+  font-size: 1.4em;
   font-weight: bold;
-  margin: 2rem 0;
+  margin: 1.5rem 0;
   position: absolute;
-  z-index: 1;
-}
-
-.highlightText {
-  background-color: rgba(207, 244, 255, 0.69);
-  height: 1.5em;
-  width: 14em;
-  position: absolute;
-  top: 4.2em;
-  left: 3.5em;
+  z-index: 5;
 }
 
 .controllerInfoItem {
-  margin: 2rem 0;
+  margin: 1rem 0;
 }
 
 .controllerLabel {
   font-weight: bold;
-  font-size: 1em;
+  font-size: 0.9em;
   margin-right: 0.5rem;
 }
 
@@ -70,22 +50,21 @@
   background-color: white;
   width: 100%;
   margin-top: 1rem;
-  font-family: "twayair";
-  font-size: 1.1em;
+  font-size: 1em;
 }
 
 .apiInfoGroup {
-  margin-top: 1rem;
+  margin-top: 20px;
 }
 
 .apiTitleGroup {
   display: flex;
   align-items: center;
-  margin-top: 2rem;
+  margin: 1rem 0 0 0;
 }
 
 .apiTitleText {
-  font-size: 1.1em;
+  font-size: 1em;
   font-weight: bold;
   margin: 0 1rem 0 0;
 }
@@ -94,9 +73,9 @@
   @include button();
   background-color: rgb(207, 244, 255);
   border-radius: 100%;
-  font-size: 1em;
-  width: 28px;
-  height: 28px;
+  font-size: 0.8em;
+  width: 23px;
+  height: 23px;
   padding: 0;
 }
 
@@ -108,7 +87,7 @@
   color: tomato;
   font-size: 0.7em;
   padding-left: 0.5rem;
-  margin-top: 5px;
+  margin: 5px 0;
 }
 
 .modalCloseButton {
@@ -122,7 +101,6 @@
   border-radius: 5rem;
   padding: 0.5rem 0;
   font-size: 1em;
-  font-family: "twayair";
   width: 100%;
 }
 
@@ -132,7 +110,6 @@
   border-radius: 5rem;
   padding: 0.5rem 0;
   font-size: 1em;
-  font-family: "twayair";
   width: 100%;
   margin: 1.5rem 0;
   display: flex;
@@ -155,4 +132,5 @@
   border: none;
   padding: 2px;
   width: 100%;
+  background-color: transparent;
 }

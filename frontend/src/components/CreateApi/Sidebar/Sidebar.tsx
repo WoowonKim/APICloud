@@ -2,6 +2,7 @@ import { faEllipsisVertical, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { MappedTypeDescription } from "@syncedstore/core/types/doc";
 import React, { useEffect, useState } from "react";
+import styled from "styled-components";
 import { ControllerType } from "../../../pages/CreateApi/ApisType";
 import ControllerAddModal from "../ControllerAddModal/ControllerAddModal";
 import { SelectedItem } from "../SelectMethods/SelectMethods";
@@ -19,6 +20,8 @@ interface Props {
   selectedController: number;
   addedApiIndex: number;
   addedControllerIndex: number;
+  docInfo: any;
+  isViewer: boolean;
 }
 
 const Sidebar = ({
@@ -29,6 +32,8 @@ const Sidebar = ({
   selectedApi,
   selectedController,
   addedControllerIndex,
+  docInfo,
+  isViewer,
 }: Props) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editControllerIndex, setEditControllerIndex] = useState(-1);
@@ -39,6 +44,11 @@ const Sidebar = ({
     setEditControllerIndex(-1);
     setDtoInfoVisible(false);
   }, []);
+
+  useEffect(() => {
+    setIsModalVisible(false);
+  }, []);
+
   return (
     <>
       {isModalVisible && (
@@ -51,15 +61,17 @@ const Sidebar = ({
           addedControllerIndex={addedControllerIndex}
         />
       )}
-      <div className="sidebar">
+      <CreateApiSidebar>
         <div className="sidebarTitleGroup">
-          <p className="sidebarTitle">ApiCloud Api 명세서</p>
+          <p className="sidebarTitle">{docInfo?.docsName}</p>
           <button
             className="sidebarTitleButton"
             onClick={() => {
+              setEditControllerIndex(-1);
               handleController("add");
               setIsModalVisible(!isModalVisible);
             }}
+            disabled={isViewer}
           >
             <FontAwesomeIcon icon={faPlus} className="apiPlusButtonIcon" />
           </button>
@@ -77,41 +89,43 @@ const Sidebar = ({
                       className="sidebarMenuIcon"
                     />
                   </button>
-                  <div className="sidebarMenuVisible">
-                    <button
-                      onClick={() => {
-                        setEditControllerIndex(index);
-                        setIsModalVisible((curr) => !curr);
-                      }}
-                      className="sidebarControllerEdit"
-                    >
-                      수정하기
-                    </button>
-                    <button
-                      onClick={() => {
-                        handleController("delete", index);
-                      }}
-                      className="sidebarControllerEdit"
-                    >
-                      삭제하기
-                    </button>
-                    <button
-                      className="sidebarControllerEdit"
-                      onClick={() => {
-                        const checkDto = checkDtoNameValidation(
-                          "dto",
-                          state.data[index].apis,
-                          state.data[index].apis.length,
-                          "",
-                          true
-                        );
-                        setAllDtoDatas(checkDto);
-                        setDtoInfoVisible(!dtoInfoVisible);
-                      }}
-                    >
-                      {dtoInfoVisible ? "Dto 정보 닫기" : "Dto 정보 보기"}
-                    </button>
-                  </div>
+                  {!isViewer && (
+                    <div className="sidebarMenuVisible">
+                      <button
+                        onClick={() => {
+                          setEditControllerIndex(index);
+                          setIsModalVisible((curr) => !curr);
+                        }}
+                        className="sidebarControllerEdit"
+                      >
+                        수정하기
+                      </button>
+                      <button
+                        onClick={() => {
+                          handleController("delete", index);
+                        }}
+                        className="sidebarControllerEdit"
+                      >
+                        삭제하기
+                      </button>
+                      <button
+                        className="sidebarControllerEdit"
+                        onClick={() => {
+                          const checkDto = checkDtoNameValidation(
+                            "dto",
+                            state.data[index].apis,
+                            state.data[index].apis.length,
+                            "",
+                            true
+                          );
+                          setAllDtoDatas(checkDto);
+                          setDtoInfoVisible(!dtoInfoVisible);
+                        }}
+                      >
+                        {dtoInfoVisible ? "Dto 정보 닫기" : "Dto 정보 보기"}
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
               {item.apis &&
@@ -128,17 +142,17 @@ const Sidebar = ({
                   >
                     <SelectedItem
                       color={
-                        api.method === "get"
+                        api.method === "Get"
                           ? "#FDECC8"
-                          : api.method === "post"
+                          : api.method === "Post"
                           ? "#F5E0E9"
-                          : api.method === "put"
+                          : api.method === "Put"
                           ? "#F1F0EF"
-                          : api.method === "delete"
+                          : api.method === "Delete"
                           ? "#D3E5EF"
-                          : api.method === "patch"
+                          : api.method === "Patch"
                           ? "#E8DEEE"
-                          : api.method === "options"
+                          : api.method === "Options"
                           ? "#FFE2DD"
                           : "#EEE0DA"
                       }
@@ -159,6 +173,7 @@ const Sidebar = ({
                   <div className="sidebarDtoName">{item.dtoName}</div>
                   {item.properties.map((props: any, idx: number) => (
                     <div key={idx} className="sidebarPropertiesContainer">
+                      <p>└</p>
                       <div className="sidebarPropertiesItem">{props.name}</div>
                       <div className="sidebarPropertiesItem">
                         {props.collectionType === "List" ? (
@@ -167,18 +182,21 @@ const Sidebar = ({
                           <span>{props.type}</span>
                         )}
                       </div>
-                      <div className="sidebarPropertiesItem">
-                        {props.required ? "true" : "false"}
-                      </div>
                     </div>
                   ))}
                 </div>
               ))}
           </div>
         )}
-      </div>
+      </CreateApiSidebar>
     </>
   );
 };
 
 export default Sidebar;
+
+
+const CreateApiSidebar = styled.div`
+  background-color: ${(props) => props.theme.createApiSidebarBgColor};
+  padding: 0 1rem;
+`

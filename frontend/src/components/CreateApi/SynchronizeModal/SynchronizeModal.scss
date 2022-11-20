@@ -1,0 +1,130 @@
+@mixin buttonStyle {
+  border: none;
+  outline: none;
+  background-color: red;
+  color: #3a00e5;
+  text-align: center;
+  font-weight: bold;
+  margin-right: 10px;
+  border-radius: 100%;
+  &:hover {
+    opacity: 0.7;
+    transition: all 300ms ease-in;
+  }
+}
+
+.synchronizeModalTitleGroup {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  .synchronizeModalTitle {
+    font-size: 1em;
+  }
+}
+.synchronizeModalList {
+  height: 100px;
+  width: 100%;
+  padding: 10px;
+  overflow-y: scroll;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.synchronizeModalListItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #dadada;
+  .synchronizeModalControllerName {
+    word-break: break-all;
+    margin: 0 10px 0 0;
+    font-size: 0.9em;
+  }
+  .synchronizeModalButtonGroup {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .synchronizeModalIcon {
+      margin: 0 5px;
+      &:hover {
+        cursor: pointer;
+        opacity: 0.7;
+        transition: all 300ms ease-in;
+      }
+    }
+  }
+}
+
+.synchronizeModalButtonGroup {
+  margin: 10px 20px;
+}
+.synchronizeModalButton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 10px;
+  padding: 5px 10px;
+  width: fit-content;
+  font-size: 0.6em;
+  margin: 2px;
+  &:hover {
+    opacity: 0.7;
+    transition: all 300ms ease-in;
+  }
+}
+.green {
+  color: #6fc7d1;
+  border: 1px solid rgb(111, 199, 209);
+}
+
+.blue {
+  color: #277fc3;
+  border: 1px solid rgb(39, 127, 195);
+}
+
+.synchronizeModalFileInputLabel {
+  width: 200px;
+  height: 30px;
+  border-radius: 10px;
+  border: 1px solid #277fc3;
+  display: flex;
+  overflow: hidden;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  font-size: small;
+  padding: 10px;
+  margin: 10px 0;
+}
+.synchronizeModalFileInput {
+  display: none;
+}
+.synchronizeModalFile {
+  border-bottom: 1px solid black;
+  padding: 5px;
+  margin-top: 20px;
+  font-size: 0.8em;
+}
+
+.synchronizeModalFileSyncButton {
+  background-color: #277fc3;
+  color: white;
+  width: 100%;
+  height: 30px;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  padding: 5px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.synchronizeModalWarningModal {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+}

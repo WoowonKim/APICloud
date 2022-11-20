@@ -11,27 +11,26 @@
   }
 }
 
-.sidebar {
-  background-color: #f9f9f9;
-  padding: 0 1rem;
-  .sidebarTitleGroup {
-    display: flex;
-    align-items: center;
-    margin-top: 1rem;
-    .sidebarTitle {
-      font-size: 1.3em;
-      margin-right: 0.5rem;
-    }
-    .sidebarTitleButton {
-      @include buttonStyle();
-      background-color: rgb(207, 244, 255);
-      border-radius: 100%;
-      width: 25px;
-      height: 25px;
-      padding: 0;
-    }
+.sidebarTitleGroup {
+  display: flex;
+  align-items: center;
+  margin-top: 1rem;
+  .sidebarTitle {
+    font-size: 1.1em;
+    margin-right: 0.5rem;
+    font-weight: bold;
+  }
+  .sidebarTitleButton {
+    @include buttonStyle();
+    background-color: #e6f8fc;
+    color: #40adb9;
+    border-radius: 100%;
+    width: 25px;
+    height: 25px;
+    padding: 0;
   }
 }
+
 
 .sidebarContentContainer {
   cursor: pointer;
@@ -41,7 +40,8 @@
     align-items: center;
     justify-content: space-between;
     .controllerItem {
-      font-size: 1em;
+      font-size: 0.8em;
+      font-weight: bold;
     }
     .sidebarMenuButton {
       @include buttonStyle();
@@ -52,7 +52,7 @@
       margin: 0;
       .sidebarMenuIcon {
         padding: 3px 3px 3px 10px;
-        font-size: 15px;
+        font-size: 12px;
       }
     }
     .sidebarMenuVisible {
@@ -64,9 +64,10 @@
       position: absolute;
       .sidebarControllerEdit {
         @include buttonStyle();
-        font-size: 1em;
+        font-size: 0.8em;
         padding: 10px;
         background-color: #fafafa;
+        width: 100%;
       }
     }
     .sidebarMenuVisible:hover {
@@ -75,30 +76,31 @@
       position: absolute;
       .sidebarControllerEdit {
         @include buttonStyle();
-        font-size: 1em;
+        font-size: 0.8em;
         padding: 10px;
         background-color: #fafafa;
+        width: 100%;
       }
     }
   }
   .apiListGroup {
     display: grid;
     min-width: 120px;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
     align-items: flex-start;
     padding-left: 0.5rem;
     margin-top: 0.5rem;
+    transition: all 200ms ease-in;
     .sidebarApiItem {
       margin-top: 0.5rem;
       margin-left: 1rem;
-      font-size: 0.8em;
+      font-size: 0.6em;
       word-break: break-all;
     }
   }
   .active {
-    transition: all 300ms ease-in;
     font-weight: bold;
-    font-size: 1.1em;
+    transform: scale(1.03);
   }
 }
 
@@ -106,19 +108,20 @@
   margin: 30px 0;
   .sidebarDtoInfoTitle {
     font-weight: bold;
-    font-size: 1.2em;
   }
   .sidebarDtoContainer {
     margin: 10px 0;
     .sidebarDtoName {
+      font-size: 0.7em;
       font-weight: bold;
     }
     .sidebarPropertiesContainer {
       display: flex;
-      justify-content: space-around;
       align-items: center;
-      margin: 5px 0 5px 15px;
+      word-break: break-all;
+      margin: 5px 0;
       .sidebarPropertiesItem {
+        font-size: 0.7em;
         margin: 0 5px;
       }
     }

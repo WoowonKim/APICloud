@@ -1,63 +1,56 @@
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { RequestTypeInfo } from "../../pages/CreateApi/ApisType";
-import { NoChoiceText, ChoiceText } from "../main/ApiList";
+import { reBodyType } from "../../pages/TestApi";
+import { useAppSelector } from "../../Store/hooks";
+import { selectTestApi } from "../../Store/slice/testApi";
 import ApiBody from "./ApiBody";
+import ApiParams from "./ApiParams";
 import Headerheader from "./Headerheader";
-import HeaderToken from "./HeaderToken";
+import HeaderQueries from "./HeaderQueries";
+import styled from "styled-components";
 
 interface type {
   getInfo: RequestTypeInfo | undefined;
+  setTestbodyInfo: Dispatch<SetStateAction<reBodyType | undefined>>;
+  testbodyInfo: reBodyType | undefined;
+  queriesInfo: reBodyType | undefined;
+  setQueriesInfo: Dispatch<SetStateAction<reBodyType | undefined>>;
+  setBodyObject: Dispatch<SetStateAction<any>>;
 }
 
-const ApiHeader = ({ getInfo }: type) => {
-  const [headerTokenFlag, setHeaderTokenFlag] = useState<number | null>(0);
+export const ApiDetail = styled.div`
+  margin-left: 14px;
+`;
+
+const ApiHeader = ({
+  getInfo,
+  testbodyInfo,
+  setTestbodyInfo,
+  queriesInfo,
+  setQueriesInfo,
+  setBodyObject,
+}: type) => {
+  const info = useAppSelector(selectTestApi);
   return (
-    <div className="requestInfosetting">
-      <div className="requestInfoHeaderSetting">
-        {headerTokenFlag === 0 && (
-          <>
-            <ChoiceText
-              onClick={() => {
-                setHeaderTokenFlag(0);
-              }}
-            >
-              Header
-            </ChoiceText>
-            <NoChoiceText
-              onClick={() => {
-                setHeaderTokenFlag(1);
-              }}
-            >
-              Token
-            </NoChoiceText>
-            <Headerheader getInfo={getInfo} />
-          </>
-        )}
-        {headerTokenFlag === 1 && (
-          <>
-            <NoChoiceText
-              onClick={() => {
-                setHeaderTokenFlag(0);
-              }}
-            >
-              Header
-            </NoChoiceText>
-            <ChoiceText
-              onClick={() => {
-                setHeaderTokenFlag(1);
-              }}
-            >
-              Token
-            </ChoiceText>
-            <HeaderToken />
-          </>
-        )}
-      </div>
-      <div className="requestInfoBodySetting">
-        <ChoiceText>Body</ChoiceText>
-        <ApiBody getInfo={getInfo}></ApiBody>
-      </div>
-    </div>
+    <ApiDetail>
+      {info.getHeadListNumber === 0 && <Headerheader getInfo={getInfo} />}
+      {info.getHeadListNumber === 1 && (
+        <ApiBody
+          getInfo={getInfo}
+          testbodyInfo={testbodyInfo}
+          setTestbodyInfo={setTestbodyInfo}
+          setBodyObject={setBodyObject}
+        />
+      )}
+      {info.getHeadListNumber === 2 && (
+        <HeaderQueries
+          getInfo={getInfo}
+          queriesInfo={queriesInfo}
+          setQueriesInfo={setQueriesInfo}
+        />
+      )}
+      {info.getHeadListNumber === 3 && <ApiParams getInfo={getInfo} />}
+    </ApiDetail>
   );
 };
 
