@@ -90,7 +90,6 @@ public class SynchronizeDocServiceImpl implements SynchronizeDocService {
                 .commonUri(value)
                 .apis(apis)
                 .build();
-        System.out.println(controllerVO);
 
         DocVO detailVO = objectMapper.readValue(doc.getDetail(), DocVO.class);
         if (detailVO.getControllers().size() <= synchronizeRequest.getControllerId())
