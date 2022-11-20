@@ -12,7 +12,7 @@ const doc = getYjsValue(store);
 const encryptedUrl = window.localStorage.getItem("docId");
 
 export const webrtcProvider = new WebrtcProvider(
-  encryptedUrl || "",
+  encryptedUrl?.slice(0,10) || "",
   doc as Doc,
   {
     signaling: ["wss://apiclouds.net/socket"],
