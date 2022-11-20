@@ -23,6 +23,7 @@ interface Props {
   index?: number;
   modalDepth?: number;
   activeTab?: number;
+  isViewer: boolean;
 }
 
 const SelectTypes = ({
@@ -36,6 +37,7 @@ const SelectTypes = ({
   index,
   modalDepth,
   activeTab,
+  isViewer,
 }: Props) => {
   const [visible, setVisible] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState(
@@ -107,7 +109,7 @@ const SelectTypes = ({
         )}
         <FontAwesomeIcon icon={faChevronDown} className="selectTypeIcon" />
       </div>
-      {visible && (
+      {visible && !isViewer && (
         <div className="selectBoxContainer">
           <ul className="itemList">
             {typeList.map((item, index) => (

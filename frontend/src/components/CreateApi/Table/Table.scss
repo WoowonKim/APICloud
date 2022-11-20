@@ -48,6 +48,12 @@ td,
   padding: 7px;
 }
 
+.apiTableDeleteButton {
+  border: none;
+  outline: none;
+  background-color: transparent;
+}
+
 .apiTableHeaderItem {
   padding: 10px 0;
 }
@@ -293,4 +299,10 @@ td,
   .tableInputTypeGroup {
     display: flex;
   }
+}
+
+.apiTableDeleteButton {
+  border: none;
+  outline: none;
+  background-color: transparent;
 }
