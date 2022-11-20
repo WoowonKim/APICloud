@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { PropertiesType } from "../../../pages/CreateApi/ApisType";
 import "../ControllerAddModal/ControllerAddModal.scss";
 import { faInfo, faRemove } from "@fortawesome/free-solid-svg-icons";
