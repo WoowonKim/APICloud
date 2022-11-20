@@ -12,6 +12,7 @@ import { getApiDetail } from "../Store/slice/apiDocsApi";
 import { DocInformationType } from "../components/main/CreateModal";
 import styled from "styled-components";
 import { faFilePdf } from "@fortawesome/free-regular-svg-icons";
+import MetaData from "../components/MetaData";
 
 const ApiDocs = () => {
   const [docInform, setDocInform] = useState<DocInformationType>(); // Doc 기본 정보
@@ -83,51 +84,58 @@ const ApiDocs = () => {
   useEffect(() => {}, [docInformArray, detail]);
 
   return (
-    <div className="apiDocContainer">
-      <FontAwesomeIcon
-        icon={faCircleUp}
-        className="circleUpIcon"
-        size="3x"
-        onClick={scrollUp}
+    <>
+      <MetaData
+        title="APICloud Api Doc"
+        description="APICloud에서 작성된 Api 명세서를 확인해보세요"
+        name="APICloud"
       />
-      <SidebarDocWrapper>
-        <div className="sidebarBox">
-          <div onClick={toggleSide} className="sidebarButton">
-            <FontAwesomeIcon icon={faBars} size="2x" />
+      <div className="apiDocContainer">
+        <FontAwesomeIcon
+          icon={faCircleUp}
+          className="circleUpIcon"
+          size="3x"
+          onClick={scrollUp}
+        />
+        <SidebarDocWrapper>
+          <div className="sidebarBox">
+            <div onClick={toggleSide} className="sidebarButton">
+              <FontAwesomeIcon icon={faBars} size="2x" />
+            </div>
+            <Sidebar
+              isOpen={isOpen}
+              setIsOpen={setIsOpen}
+              detail={detail}
+              scrollUp={scrollUp}
+              ref={menuRef}
+            />
           </div>
-          <Sidebar
-            isOpen={isOpen}
-            setIsOpen={setIsOpen}
-            detail={detail}
-            scrollUp={scrollUp}
-            ref={menuRef}
-          />
-        </div>
-        <div className="pdfButton" onClick={(e) => converToPDF(e)}>
-          <FontAwesomeIcon icon={faFilePdf} className="pdfIcon" size="2x" />
-        </div>
-        <DocBox>
-          <div className="pdfDocArea">
-            <Doc1>
-              <div className="docTitleWrapper">
-                <h1 className="docTitle" ref={serverInformRef}>
-                  {docInform?.docsName} 문서
-                </h1>
-              </div>
-              <h2 className="serverInformTitle">Server 정보</h2>
-              <ServerInform docInformArray={docInformArray} />
-            </Doc1>
-            <Doc2>
-              <DetailInform
-                detail={detail}
-                scrollPosition={scrollPosition}
-                ref={menuRef}
-              />
-            </Doc2>
+          <div className="pdfButton" onClick={(e) => converToPDF(e)}>
+            <FontAwesomeIcon icon={faFilePdf} className="pdfIcon" size="2x" />
           </div>
-        </DocBox>
-      </SidebarDocWrapper>
-    </div>
+          <DocBox>
+            <div className="pdfDocArea">
+              <Doc1>
+                <div className="docTitleWrapper">
+                  <h1 className="docTitle" ref={serverInformRef}>
+                    {docInform?.docsName} 문서
+                  </h1>
+                </div>
+                <h2 className="serverInformTitle">Server 정보</h2>
+                <ServerInform docInformArray={docInformArray} />
+              </Doc1>
+              <Doc2>
+                <DetailInform
+                  detail={detail}
+                  scrollPosition={scrollPosition}
+                  ref={menuRef}
+                />
+              </Doc2>
+            </div>
+          </DocBox>
+        </SidebarDocWrapper>
+      </div>
+    </>
   );
 };
 

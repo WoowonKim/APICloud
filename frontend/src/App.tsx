@@ -17,6 +17,7 @@ import { NotionOAuth2RedirectHandler } from "./components/CreateApi/NotionOAuth2
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLightbulb } from "@fortawesome/free-solid-svg-icons";
 import Header from "./components/main/Header";
+import MetaData from "./components/MetaData";
 
 const ModeChange = styled.div`
   position: absolute;
@@ -38,6 +39,7 @@ const App = () => {
   if (window.localStorage.getItem("token")) {
     return (
       <>
+        <MetaData title="APICloud" description="APICloud" name="APICloud" />
         {currentUser && location?.pathname !== "/welcome" && <Header />}
         <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
           <GlobalStyles />
