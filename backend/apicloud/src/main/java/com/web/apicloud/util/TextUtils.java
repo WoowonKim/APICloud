@@ -65,20 +65,26 @@ public class TextUtils {
         if (!StringUtils.hasText(docsName)) {
             return "demo";
         }
-        String validDocsName = docsName
-                .toLowerCase()
-                .replaceAll("[\\s-!@#$%^&*()=+~`,./<>?;:'\"]+", "_");
-        if (validDocsName.matches("^[0-9]") || isJavaKeyword(validDocsName)) {
-            validDocsName = "_" + validDocsName;
+        return getValidName(docsName).toLowerCase();
+    }
+
+    public static String getValidName(String name) {
+        if (!StringUtils.hasText(name)) {
+            return "demo";
         }
-        return validDocsName;
+        String validName = name
+                .replaceAll("[\\s-!@#$%^&*()=+~`,./<>?;:'\"\\\\]+", "_");
+        if (Character.isDigit(name.charAt(0)) || isJavaKeyword(validName)) {
+            validName = "_" + validName;
+        }
+        return validName;
     }
 
     public static String getValidUri(String contextUri) {
         if (contextUri.charAt(0) != '/') {
-            return "/" + contextUri;
+            contextUri = "/" + contextUri;
         }
-        return contextUri;
+        return contextUri.charAt(0) + getValidName(contextUri.substring(1));
     }
 
     public static String getValidGroupPackage(String groupPackage) {
