@@ -7,8 +7,8 @@ interface Props {
 
 const WelcomeHeader = ({ scrollIndex }: Props) => {
   return (
-    <header className="header">
-      <div className="container">
+    <header className="welcomeHeader">
+      <div className="welcomeContainer">
         <div className="logoWrapper">
           <div className="logo">API Cloud</div>
           <img
