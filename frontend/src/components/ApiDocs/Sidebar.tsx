@@ -263,7 +263,7 @@ export default Sidebar;
 const OpenSidebar = styled.div`
   z-index: 5;
   width: 18vw;
-  height: 91vh;
+  height: 87vh;
   position: absolute;
   left: 0px;
   transition: 0.5s ease;

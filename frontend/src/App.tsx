@@ -31,6 +31,7 @@ const App = () => {
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(selectUser);
   const location = useLocation();
+  const darkMode = window.localStorage.getItem("darkMode");
 
   const toggleDarkMode = () => {
     setIsDarkMode((prev) => !prev);
@@ -72,10 +73,18 @@ const App = () => {
               toggleDarkMode();
             }}
           >
-            {isDarkMode ? (
-              <FontAwesomeIcon icon={faLightbulb} size="2x" />
+            {darkMode === "1" && isDarkMode ? (
+              <FontAwesomeIcon
+                icon={faLightbulb}
+                className="lightbulbIcon"
+                onClick={() => window.localStorage.setItem("darkMode", "0")}
+              />
             ) : (
-              <FontAwesomeIcon icon={faLightbulb} size="2x" />
+              <FontAwesomeIcon
+                icon={faLightbulb}
+                className="lightbulbIcon"
+                onClick={() => window.localStorage.setItem("darkMode", "1")}
+              />
             )}
           </ModeChange>
         </ThemeProvider>

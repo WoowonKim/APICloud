@@ -10,6 +10,8 @@ declare module "styled-components" {
     sideBgClodr: string;
     docBgColor: string;
     docSidebarBgColor: string;
+    modalBgColor: string;
+    createApiSidebarBgColor: string;
   }
 }
 export default createGlobalStyle`
