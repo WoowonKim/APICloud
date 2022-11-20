@@ -375,11 +375,13 @@ export function checkDataValidation(data: ControllerType[]) {
                 } else if (!queryValueValidation) {
                   requiredValueInvalidCount++;
                 }
-                let queryTypeValidation = checkTypeValidation(
-                  current[item][queryIdx]
-                );
-                if (!queryTypeValidation) {
-                  typeInvalidCount++;
+                if (current[item][queryIdx]?.required === true) {
+                  let queryTypeValidation = checkTypeValidation(
+                    current[item][queryIdx]
+                  );
+                  if (!queryTypeValidation) {
+                    typeInvalidCount++;
+                  }
                 }
                 if (
                   current[item].length > 0 &&
@@ -408,11 +410,13 @@ export function checkDataValidation(data: ControllerType[]) {
               if (current[item]?.name && current[item].name.trim()) {
                 checkNameList.push(current[item]?.name);
               }
-              let requestBodyTypeValidation = checkTypeValidation(
-                current[item]
-              );
-              if (!requestBodyTypeValidation) {
-                typeInvalidCount++;
+              if (current[item]?.required === true) {
+                let requestBodyTypeValidation = checkTypeValidation(
+                  current[item]
+                );
+                if (!requestBodyTypeValidation) {
+                  typeInvalidCount++;
+                }
               }
               if (
                 JSON.stringify(current[item]) !== "{}" &&
@@ -460,11 +464,13 @@ export function checkDataValidation(data: ControllerType[]) {
                       current[item][status].responseBody?.name
                     );
                   }
-                  let responsesTypeCheck = checkTypeValidation(
-                    current[item][status].responseBody
-                  );
-                  if (!responsesTypeCheck) {
-                    typeInvalidCount++;
+                  if (current[item][status]?.responseBody?.required === true) {
+                    let responsesTypeCheck = checkTypeValidation(
+                      current[item][status].responseBody
+                    );
+                    if (!responsesTypeCheck) {
+                      typeInvalidCount++;
+                    }
                   }
                   if (
                     JSON.stringify(current[item][status].responseBody) !==
@@ -514,9 +520,11 @@ export function checkDataValidation(data: ControllerType[]) {
               "dtoName" in current &&
               item === "dtoName"
             ) {
-              let propertyTypeValidation = checkTypeValidation(current);
-              if (!propertyTypeValidation) {
-                typeInvalidCount++;
+              if (current?.required === true) {
+                let propertyTypeValidation = checkTypeValidation(current);
+                if (!propertyTypeValidation) {
+                  typeInvalidCount++;
+                }
               }
               if (current.properties.length > 0) {
                 propertiesNameInvalidCount += checkNameValidation(

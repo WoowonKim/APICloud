@@ -90,45 +90,43 @@ const ApiDocs = () => {
         size="3x"
         onClick={scrollUp}
       />
-      {docInformArray && detail && (
-        <SidebarDocWrapper>
-          <div className="sidebarBox">
-            <div onClick={toggleSide} className="sidebarButton">
-              <FontAwesomeIcon icon={faBars} size="2x" />
-            </div>
-            <Sidebar
-              isOpen={isOpen}
-              setIsOpen={setIsOpen}
-              detail={detail}
-              scrollUp={scrollUp}
-              ref={menuRef}
-            />
+      <SidebarDocWrapper>
+        <div className="sidebarBox">
+          <div onClick={toggleSide} className="sidebarButton">
+            <FontAwesomeIcon icon={faBars} size="2x" />
           </div>
-          <div className="pdfButton" onClick={(e) => converToPDF(e)}>
-            <FontAwesomeIcon icon={faFilePdf} className="pdfIcon" size="2x" />
+          <Sidebar
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+            detail={detail}
+            scrollUp={scrollUp}
+            ref={menuRef}
+          />
+        </div>
+        <div className="pdfButton" onClick={(e) => converToPDF(e)}>
+          <FontAwesomeIcon icon={faFilePdf} className="pdfIcon" size="2x" />
+        </div>
+        <DocBox>
+          <div className="pdfDocArea">
+            <Doc1>
+              <div className="docTitleWrapper">
+                <h1 className="docTitle" ref={serverInformRef}>
+                  {docInform?.docsName} 문서
+                </h1>
+              </div>
+              <h2 className="serverInformTitle">Server 정보</h2>
+              <ServerInform docInformArray={docInformArray} />
+            </Doc1>
+            <Doc2>
+              <DetailInform
+                detail={detail}
+                scrollPosition={scrollPosition}
+                ref={menuRef}
+              />
+            </Doc2>
           </div>
-          <DocBox>
-            <div className="pdfDocArea">
-              <Doc1>
-                <div className="docTitleWrapper">
-                  <h1 className="docTitle" ref={serverInformRef}>
-                    {docInform?.docsName} 문서
-                  </h1>
-                </div>
-                <h2 className="serverInformTitle">Server 정보</h2>
-                <ServerInform docInformArray={docInformArray} />
-              </Doc1>
-              <Doc2>
-                <DetailInform
-                  detail={detail}
-                  scrollPosition={scrollPosition}
-                  ref={menuRef}
-                />
-              </Doc2>
-            </div>
-          </DocBox>
-        </SidebarDocWrapper>
-      )}
+        </DocBox>
+      </SidebarDocWrapper>
     </div>
   );
 };
