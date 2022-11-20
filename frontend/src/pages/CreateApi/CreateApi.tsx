@@ -43,6 +43,7 @@ const CreateApi = () => {
   const [isWarningModal, setIsWarningModal] = useState(false);
   const [isLodaing, setIsLoading] = useState(true);
   const [isGuideModal, setIsGuideModal] = useState(false);
+  const [isViewer, setIsViewer] = useState(false);
 
   useEffect(() => {
     if (!encryptedUrl) {
@@ -50,7 +51,14 @@ const CreateApi = () => {
     }
     dispatch(checkAuthority({ encryptedUrl }))
       .then((res: any) => {
-        setAuthority(res.data);
+        setAuthority(res.payload);
+        console.log("authority", res.payload);
+
+        if (res.payload === 3) {
+          setIsViewer(true);
+        } else {
+          setIsViewer(false);
+        }
       })
       .catch((err: any) => {
         console.log(err.response.data);
@@ -474,6 +482,7 @@ const CreateApi = () => {
                 addedApiIndex={addedApiIndex}
                 addedControllerIndex={addedControllerIndex}
                 docInfo={docInfo}
+                isViewer={isViewer}
               />
               <div className="apiDocsMaincontainer">
                 <div className="titleGridContainer">
@@ -499,6 +508,7 @@ const CreateApi = () => {
                         onClick={() => {
                           setIsSynchronizeModal(!isSynchronizeModal);
                         }}
+                        disabled={isViewer}
                       >
                         동기화
                       </button>
@@ -636,6 +646,7 @@ const CreateApi = () => {
                               selectedApi={selectedApi}
                               responseType={"success"}
                               state={state}
+                              isViewer={isViewer}
                             />
                           </div>
                         )}
@@ -662,6 +673,7 @@ const CreateApi = () => {
                               selectedApi={selectedApi}
                               responseType={"fail"}
                               state={state}
+                              isViewer={isViewer}
                             />
                           </div>
                         )}

@@ -45,6 +45,7 @@ interface Props {
   state: MappedTypeDescription<{
     data: ControllerType[];
   }>;
+  isViewer: boolean;
 }
 const DtoInputModal = ({
   setIsModalVisible,
@@ -66,6 +67,7 @@ const DtoInputModal = ({
   setModalDepth,
   modalDepth,
   state,
+  isViewer,
 }: Props) => {
   const rootPath = state.data[selectedController].apis[selectedApi];
   const [visible, setVisible] = useState(false);
@@ -121,6 +123,7 @@ const DtoInputModal = ({
                 }}
                 autoFocus
                 value={final?.dtoName || ""}
+                readOnly={isViewer}
               />
               {dtoExists && dtoData && dtoData.dtoName === final.dtoName && (
                 <FontAwesomeIcon
@@ -185,6 +188,7 @@ const DtoInputModal = ({
                   final
                 )
               }
+              disabled={isViewer}
             >
               <FontAwesomeIcon icon={faPlus} className="plusIcon" />
             </button>
@@ -194,6 +198,7 @@ const DtoInputModal = ({
               setModalDepth={setModalDepth}
               final={final}
               modalDepth={modalDepth}
+              isViewer={isViewer}
             />
           </div>
         )}

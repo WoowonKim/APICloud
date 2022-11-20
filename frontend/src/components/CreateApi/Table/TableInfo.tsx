@@ -23,6 +23,7 @@ interface Props {
   state: MappedTypeDescription<{
     data: ControllerType[];
   }>;
+  isViewer: boolean;
 }
 
 const TableInfo = ({
@@ -34,6 +35,7 @@ const TableInfo = ({
   dtoData,
   dtoExists,
   state,
+  isViewer,
 }: Props) => {
   const [visible, setVisible] = useState(false);
 
@@ -107,6 +109,7 @@ const TableInfo = ({
                           .requestBody?.dtoName || ""
                       }
                       placeholder="dtoName은 필수 입력값입니다"
+                      readOnly={isViewer}
                     />
                     {dtoExists &&
                       dtoData &&
@@ -188,6 +191,7 @@ const TableInfo = ({
                         .requestBody?.name || ""
                     }
                     placeholder="name은 필수 입력값입니다"
+                    readOnly={isViewer}
                   />
                 </div>
               </div>
@@ -213,13 +217,19 @@ const TableInfo = ({
                   className="apiTableCheckbox"
                   type="checkbox"
                   id={`required${activeTab}`}
-                  onChange={(e) => handleBasicInfo(e, "required", 1, "")}
+                  onChange={(e) => {
+                    if (isViewer) {
+                      return false;
+                    }
+                    handleBasicInfo(e, "required", 1, "");
+                  }}
                   checked={
                     state.data[selectedController].apis[selectedApi].requestBody
                       .required
                       ? true
                       : false
                   }
+                  readOnly={isViewer}
                 />
               </div>
             </div>
@@ -267,6 +277,7 @@ const TableInfo = ({
                           .responses[responseType].responseBody?.dtoName || ""
                       }
                       placeholder="dtoName은 필수 입력값입니다"
+                      readOnly={isViewer}
                     />
                     {dtoExists &&
                       dtoData &&
@@ -347,6 +358,7 @@ const TableInfo = ({
                         .responses[responseType].responseBody?.name || ""
                     }
                     placeholder="name은 필수 입력값입니다"
+                    readOnly={isViewer}
                   />
                 </div>
               </div>
@@ -364,6 +376,7 @@ const TableInfo = ({
                       responseType={responseType}
                       depth={1}
                       isCollection={true}
+                      isViewer={isViewer}
                     />
                   )}
                   <SelectTypes
@@ -374,6 +387,7 @@ const TableInfo = ({
                       state.data[selectedController].apis[selectedApi]
                         .responses[responseType].responseBody.type
                     }
+                    isViewer={isViewer}
                   />
                 </div>
               </div>
@@ -384,9 +398,12 @@ const TableInfo = ({
                 <input
                   type="checkbox"
                   id="successRequired"
-                  onChange={(e) =>
-                    handleBasicInfo(e, "required", 1, responseType)
-                  }
+                  onChange={(e) => {
+                    if (isViewer) {
+                      return false;
+                    }
+                    handleBasicInfo(e, "required", 1, responseType);
+                  }}
                   className="apiTableCheckbox"
                   checked={
                     state.data[selectedController].apis[selectedApi].responses[

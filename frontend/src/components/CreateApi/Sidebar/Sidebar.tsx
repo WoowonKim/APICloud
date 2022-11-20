@@ -20,6 +20,7 @@ interface Props {
   addedApiIndex: number;
   addedControllerIndex: number;
   docInfo: any;
+  isViewer: boolean;
 }
 
 const Sidebar = ({
@@ -31,6 +32,7 @@ const Sidebar = ({
   selectedController,
   addedControllerIndex,
   docInfo,
+  isViewer,
 }: Props) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editControllerIndex, setEditControllerIndex] = useState(-1);
@@ -45,6 +47,7 @@ const Sidebar = ({
   useEffect(() => {
     setIsModalVisible(false);
   }, []);
+
   return (
     <>
       {isModalVisible && (
@@ -67,6 +70,7 @@ const Sidebar = ({
               handleController("add");
               setIsModalVisible(!isModalVisible);
             }}
+            disabled={isViewer}
           >
             <FontAwesomeIcon icon={faPlus} className="apiPlusButtonIcon" />
           </button>
@@ -84,41 +88,43 @@ const Sidebar = ({
                       className="sidebarMenuIcon"
                     />
                   </button>
-                  <div className="sidebarMenuVisible">
-                    <button
-                      onClick={() => {
-                        setEditControllerIndex(index);
-                        setIsModalVisible((curr) => !curr);
-                      }}
-                      className="sidebarControllerEdit"
-                    >
-                      수정하기
-                    </button>
-                    <button
-                      onClick={() => {
-                        handleController("delete", index);
-                      }}
-                      className="sidebarControllerEdit"
-                    >
-                      삭제하기
-                    </button>
-                    <button
-                      className="sidebarControllerEdit"
-                      onClick={() => {
-                        const checkDto = checkDtoNameValidation(
-                          "dto",
-                          state.data[index].apis,
-                          state.data[index].apis.length,
-                          "",
-                          true
-                        );
-                        setAllDtoDatas(checkDto);
-                        setDtoInfoVisible(!dtoInfoVisible);
-                      }}
-                    >
-                      {dtoInfoVisible ? "Dto 정보 닫기" : "Dto 정보 보기"}
-                    </button>
-                  </div>
+                  {!isViewer && (
+                    <div className="sidebarMenuVisible">
+                      <button
+                        onClick={() => {
+                          setEditControllerIndex(index);
+                          setIsModalVisible((curr) => !curr);
+                        }}
+                        className="sidebarControllerEdit"
+                      >
+                        수정하기
+                      </button>
+                      <button
+                        onClick={() => {
+                          handleController("delete", index);
+                        }}
+                        className="sidebarControllerEdit"
+                      >
+                        삭제하기
+                      </button>
+                      <button
+                        className="sidebarControllerEdit"
+                        onClick={() => {
+                          const checkDto = checkDtoNameValidation(
+                            "dto",
+                            state.data[index].apis,
+                            state.data[index].apis.length,
+                            "",
+                            true
+                          );
+                          setAllDtoDatas(checkDto);
+                          setDtoInfoVisible(!dtoInfoVisible);
+                        }}
+                      >
+                        {dtoInfoVisible ? "Dto 정보 닫기" : "Dto 정보 보기"}
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
               {item.apis &&

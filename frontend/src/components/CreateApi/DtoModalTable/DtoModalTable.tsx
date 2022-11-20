@@ -13,6 +13,7 @@ interface Props {
   setModalDepth: React.Dispatch<React.SetStateAction<number>>;
   final: PropertiesType | undefined;
   modalDepth: number;
+  isViewer: boolean;
 }
 const DtoModalTable = ({
   setPropertiesIndexList,
@@ -20,6 +21,7 @@ const DtoModalTable = ({
   setModalDepth,
   final,
   modalDepth,
+  isViewer,
 }: Props) => {
   const headers = ["name", "type", "required"];
 
@@ -55,6 +57,7 @@ const DtoModalTable = ({
           value={item.name !== null ? item.name : ""}
           onChange={(e) => handelCellValue(e, "name", index)}
           className="tableInput"
+          readOnly={isViewer}
         />
       </td>
     );
@@ -67,6 +70,7 @@ const DtoModalTable = ({
               handelCellValue={handelCellValue}
               index={index}
               isCollection={true}
+              isViewer={isViewer}
             />
           )}
           <SelectTypes
@@ -75,6 +79,7 @@ const DtoModalTable = ({
             index={index}
             isCollection={false}
             modalDepth={modalDepth}
+            isViewer={isViewer}
           />
           {item.type === "Object" && (
             <FontAwesomeIcon
@@ -103,20 +108,28 @@ const DtoModalTable = ({
                 : false
               : false
           }
-          onChange={(e) => handelCellValue(e, "required", index)}
+          onChange={(e) => {
+            if (isViewer) {
+              return false;
+            }
+            handelCellValue(e, "required", index);
+          }}
           className="apiTableCheckbox"
+          readOnly={isViewer}
         />
       </td>
     );
     rows.push(
       <td key={`${index}-4`} className="apiTableDeleteItem">
-        <FontAwesomeIcon
-          icon={faRemove}
-          className="removeIcon"
+        <button
+          className="apiTableDeleteButton"
           onClick={() =>
             getDepth(index, item, false, false, true, final?.properties)
           }
-        />
+          disabled={isViewer}
+        >
+          <FontAwesomeIcon icon={faRemove} className="removeIcon" />
+        </button>
       </td>
     );
     return rows;
