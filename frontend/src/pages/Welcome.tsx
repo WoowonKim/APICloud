@@ -214,6 +214,16 @@ const Welcome = () => {
             <p>반복되는 귀찮은 초기 작업을 API Cloud로 작업해보세요.</p>
           </div>
         </div>
+        <img
+          alt="createApiGIF"
+          src={require("../assets/createApi.gif")}
+          className={scrollIndex === 2 ? "section2GIFMove" : "section2GIF"}
+        />
+        <img
+          alt="createApiGIF"
+          src={require("../assets/mainGIF.gif")}
+          className={scrollIndex === 2 ? "section2GIF2Move" : "section2GIF2"}
+        />
       </section>
       <div className="divider"></div>
       <section className="section3">
@@ -255,6 +265,16 @@ const Welcome = () => {
             </div>
           </div>
         </div>
+        <img
+          alt="createApiGIF"
+          src={require("../assets/section3GIF1.gif")}
+          className={scrollIndex === 3 ? "section3GIFMove" : "section3GIF"}
+        />
+        <img
+          alt="createApiGIF"
+          src={require("../assets/section3GIF2.gif")}
+          className={scrollIndex === 3 ? "section3GIF2Move" : "section3GIF2"}
+        />
       </section>
     </div>
   );

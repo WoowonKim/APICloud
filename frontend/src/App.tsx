@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Route, Routes, useLocation, useParams } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import { OAuth2RedirectHandler } from "./components/welcome/OAuth2RedirectHandler";
 import ApiDocs from "./pages/ApiDocs";
 import CreateApi from "./pages/CreateApi/CreateApi";

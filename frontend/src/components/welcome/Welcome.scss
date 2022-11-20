@@ -27,7 +27,7 @@
 
 @mixin sectionDetail {
   .introduction {
-    margin-left: 200px;
+    margin-left: 13vw;
     padding-top: 40vh;
   }
   .title {
@@ -107,7 +107,7 @@ body {
   .arrowDownIconWrapper {
     display: flex;
     justify-content: center;
-    margin-top: 16vh;
+    margin-top: 10vh;
   }
   .arrowDownIconWrapper > .arrowDownIcon {
     text-transform: uppercase;
@@ -144,10 +144,58 @@ body {
   }
 }
 
+@keyframes introductionGIF-ani {
+  from {
+    transform: translate(20vw, 1vh);
+  }
+  to {
+    transform: translate(1vw, 1vh);
+  }
+}
+
+.section2 > .section2GIF {
+  width: 35vw;
+  margin-left: 52vw;
+  margin-top: -40vh;
+  border-radius: 30px;
+  z-index: 2;
+}
+
+.section2 > .section2GIFMove {
+  width: 35vw;
+  margin-left: 51vw;
+  margin-top: 5vh;
+  border-radius: 30px;
+  z-index: 1;
+  animation: introductionGIF-ani 1s linear;
+  animation-fill-mode: forwards;
+}
+
+.section2 > .section2GIF2 {
+  width: 23vw;
+  height: 250px;
+  margin-left: 67vw;
+  margin-top: -20vh;
+  border-radius: 30px;
+  z-index: 3;
+}
+
+.section2 > .section2GIF2Move {
+  width: 23vw;
+  height: 250px;
+  margin-left: 67vw;
+  margin-top: -20vh;
+  border-radius: 30px;
+  z-index: 3;
+  animation: introductionGIF-ani 1s linear;
+  animation-fill-mode: forwards;
+}
+
 .section2 > .introduction2Move {
   animation: introduction-ani 1s linear;
   animation-fill-mode: forwards;
 }
+
 
 .section3 {
   @include section();
@@ -188,6 +236,48 @@ body {
   }
 }
 
+.section3 > .section3GIF {
+  width: 35vw;
+  margin-left: 52vw;
+  margin-top: -100vh;
+  margin-bottom: 400px;
+  border-radius: 30px;
+  z-index: 4;
+}
+
+.section3 > .section3GIFMove {
+  width: 35vw;
+  margin-left: 51vw;
+  margin-top: -60vh;
+  margin-bottom: 40vh;
+  border-radius: 30px;
+  z-index: 4;
+  animation: introductionGIF-ani 1s linear;
+  animation-fill-mode: forwards;
+}
+
+.section3 > .section3GIF2 {
+  width: 23vw;
+  height: 250px;
+  margin-left: 67vw;
+  margin-top: -80vh;
+  margin-bottom: 35vh;
+  border-radius: 30px;
+  z-index: 5;
+}
+
+.section3 > .section3GIF2Move {
+  width: 23vw;
+  height: 250px;
+  margin-left: 67vw;
+  margin-top: -80vh;
+  margin-bottom: 20vh;
+  border-radius: 30px;
+  z-index: 5;
+  animation: introductionGIF-ani 1s linear;
+  animation-fill-mode: forwards;
+}
+
 .outer {
   height: 100vh;
   overflow-y: auto;
@@ -203,7 +293,6 @@ body {
   height: 5px;
   background-color: gray;
 }
-
 
 .text-container > .row {
   margin-bottom: 30px;
