@@ -139,41 +139,15 @@ const mainApiSlice = createSlice({
       if (action.meta.requestStatus === "fulfilled") {
       }
     },
-    [setApiDoc.rejected]: (state, action) => {
-      console.log("setApiDoc rejected", action.payload);
-    },
-    [getApiDocList.fulfilled]: (state, action) => {
-      if (action.meta.requestStatus === "fulfilled") {
-        console.log(action.payload);
-      }
-    },
-    [getApiDocList.rejected]: (state, action) => {
-      console.log("getApiDocList rejected", action.payload);
-    },
-    [updateApiDoc.fulfilled]: (state, action) => {
-      if (action.meta.requestStatus === "fulfilled") {
-        console.log("updateApiDoc fulfilled", action.payload);
-      }
-    },
-    [updateApiDoc.rejected]: (state, action) => {
-      console.log("updateApiDoc rejected", action.payload);
-    },
-    [getApiCreationInfo.fulfilled]: (state, action) => {
-      if (action.meta.requestStatus === "fulfilled") {
-        console.log("getApiCreationInfo fulfilled", action.payload);
-      }
-    },
-    [getApiCreationInfo.rejected]: (state, action) => {
-      console.log("getApiCreationInfo rejected", action.payload);
-    },
-    [getGroupUserList.fulfilled]: (state, action) => {
-      if (action.meta.requestStatus === "fulfilled") {
-        console.log("getGroupUserList fulfilled", action.payload);
-      }
-    },
-    [getGroupUserList.rejected]: (state, action) => {
-      console.log("getGroupUserList rejected", action.payload);
-    },
+    [setApiDoc.rejected]: (state, action) => {},
+    [getApiDocList.fulfilled]: (state, action) => {},
+    [getApiDocList.rejected]: (state, action) => {},
+    [updateApiDoc.fulfilled]: (state, action) => {},
+    [updateApiDoc.rejected]: (state, action) => {},
+    [getApiCreationInfo.fulfilled]: (state, action) => {},
+    [getApiCreationInfo.rejected]: (state, action) => {},
+    [getGroupUserList.fulfilled]: (state, action) => {},
+    [getGroupUserList.rejected]: (state, action) => {},
   },
 });
 

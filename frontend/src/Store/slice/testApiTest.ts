@@ -75,7 +75,6 @@ const testApiTestSlice = createSlice({
   reducers: {
     setUserAddress(state, action) {
       state.controllers[0].apis[0].uri = action.payload.uri;
-      console.log("PayLoad", action.payload);
     },
   },
   extraReducers: {},

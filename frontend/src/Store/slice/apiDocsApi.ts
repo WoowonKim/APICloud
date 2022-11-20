@@ -189,41 +189,16 @@ const apiDocsApiSlice = createSlice({
     },
   },
   extraReducers: {
-    [getApiDetail.fulfilled]: (state, action) => {
-      if (action.meta.requestStatus === "fulfilled") {
-      }
-    },
-    [getApiDetail.rejected]: (state, action) => {
-      console.log("getApiDetail rejected", action.payload);
-    },
-    [getCsv.fulfilled]: (state, action) => {
-      if (action.meta.requestStatus === "fulfilled") {
-      }
-    },
-    [getCsv.rejected]: (state, action) => {
-      console.log("getCsv rejected", action.payload);
-    },
-    [getSpringBoot.fulfilled]: (state, action) => {
-      if (action.meta.requestStatus === "fulfilled") {
-      }
-    },
-    [getSpringBoot.rejected]: (state, action) => {
-      console.log("getSpringBoot rejected", action.payload);
-    },
-    [getNotion.fulfilled]: (state, action) => {
-      if (action.meta.requestStatus === "fulfilled") {
-      }
-    },
-    [getNotion.rejected]: (state, action) => {
-      console.log("getNotion rejected", action.payload);
-    },
-    [setApiDetail.fulfilled]: (state, action) => {
-      if (action.meta.requestStatus === "fulfilled") {
-      }
-    },
-    [setApiDetail.rejected]: (state, action) => {
-      console.log("setApiDetail rejected", action.payload);
-    },
+    [getApiDetail.fulfilled]: (state, action) => {},
+    [getApiDetail.rejected]: (state, action) => {},
+    [getCsv.fulfilled]: (state, action) => {},
+    [getCsv.rejected]: (state, action) => {},
+    [getSpringBoot.fulfilled]: (state, action) => {},
+    [getSpringBoot.rejected]: (state, action) => {},
+    [getNotion.fulfilled]: (state, action) => {},
+    [getNotion.rejected]: (state, action) => {},
+    [setApiDetail.fulfilled]: (state, action) => {},
+    [setApiDetail.rejected]: (state, action) => {},
     [getSynchronizeFile.pending]: (state, action) => {
       state.isSyncPending = true;
     },
@@ -232,29 +207,13 @@ const apiDocsApiSlice = createSlice({
     },
     [getSynchronizeFile.rejected]: (state, action) => {
       state.isSyncPending = false;
-      console.log("getSynchronizeFile rejected", action.payload);
     },
-    [updateSynchronizeData.fulfilled]: (state, action) => {
-      if (action.meta.requestStatus === "fulfilled") {
-      }
-    },
-    [updateSynchronizeData.rejected]: (state, action) => {
-      console.log("updateSynchronizeData rejected", action.payload);
-    },
-    [getSynchronizeApiDoc.fulfilled]: (state, action) => {
-      if (action.meta.requestStatus === "fulfilled") {
-      }
-    },
-    [getSynchronizeApiDoc.rejected]: (state, action) => {
-      console.log("getSynchronizeApiDoc rejected", action.payload);
-    },
-    [connectNotion.fulfilled]: (state, action) => {
-      if (action.meta.requestStatus === "fulfilled") {
-      }
-    },
-    [connectNotion.rejected]: (state, action) => {
-      console.log("connectNotion rejected", action.payload);
-    },
+    [updateSynchronizeData.fulfilled]: (state, action) => {},
+    [updateSynchronizeData.rejected]: (state, action) => {},
+    [getSynchronizeApiDoc.fulfilled]: (state, action) => {},
+    [getSynchronizeApiDoc.rejected]: (state, action) => {},
+    [connectNotion.fulfilled]: (state, action) => {},
+    [connectNotion.rejected]: (state, action) => {},
     [checkAuthority.pending]: (state, action) => {
       state.isPending = true;
     },
@@ -263,7 +222,6 @@ const apiDocsApiSlice = createSlice({
     },
     [checkAuthority.rejected]: (state, action) => {
       state.isPending = false;
-      console.log("connectNotion rejected", action.payload);
     },
     [getGroupUsers.fulfilled]: (state, action) => {},
     [getGroupUsers.rejected]: (state, action) => {},

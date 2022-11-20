@@ -167,7 +167,6 @@ const UpdateModal = () => {
     await axiosGet("/users?email=" + email)
       .then((res) => {
         if (res.data.id === currentUser.id) {
-          console.log("나다");
           alert("본인 이메일 입니다.");
           setSearchUserRes(undefined);
         } else {
@@ -234,7 +233,6 @@ const UpdateModal = () => {
       await navigator.clipboard.writeText(copyUrl);
       setIsCopyUrl(true);
     } catch (err) {
-      console.log(err);
       setIsCopyUrl(false);
     }
   };

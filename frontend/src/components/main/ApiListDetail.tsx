@@ -131,7 +131,6 @@ const ApiListDetail = ({ apiList, apiDocList, dispatchGetDocList }: Props) => {
                             dispatch(
                               mainApiSlice.actions.setDocId({ docId: it.docId })
                             );
-                            console.log("ApiListDetail DocId => ", it.docId);
                           }}
                           src={require("../../assets/docUpdateIcon.png")}
                         />
