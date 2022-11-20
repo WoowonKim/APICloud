@@ -48,12 +48,7 @@ const Header = () => {
       />
       {/* 사용자 프로필 */}
       <div className="user">
-        <img
-          className="userImg"
-          src={userImg}
-          referrerPolicy="no-referrer"
-          onClick={handleClick}
-        />
+        <img className="userImg" src={userImg} referrerPolicy="no-referrer" onClick={handleClick} />
         <Menu
           anchorEl={anchorEl}
           open={open}

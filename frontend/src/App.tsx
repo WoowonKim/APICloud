@@ -46,47 +46,25 @@ const App = () => {
           <GlobalStyles />
           <Routes>
             <Route path="/" element={<Main />} />
-            <Route
-              path="/oauth2/redirect/"
-              element={<OAuth2RedirectHandler />}
-            ></Route>
-            <Route
-              path="/oauth2/notion"
-              element={<NotionOAuth2RedirectHandler />}
-            ></Route>
+            <Route path="/oauth2/redirect/" element={<OAuth2RedirectHandler />}></Route>
+            <Route path="/oauth2/notion" element={<NotionOAuth2RedirectHandler />}></Route>
             <Route path="/welcome" element={<Welcome />} />
             <Route path="/createApi/:encryptedUrl" element={<CreateApi />} />
             <Route path="/apiDocs/:encryptedUrl" element={<ApiDocs />} />
-            <Route
-              path="/testApi"
-              element={
-                <TestApi
-                  isDarkMode={isDarkMode}
-                  toggleDarkMode={toggleDarkMode}
-                />
-              }
-            />
+            <Route path="/testApi" element={<TestApi isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />} />
             <Route path="/*" element={<ErrorPage code="404" />} />
           </Routes>
-          <ModeChange
+          {/* <ModeChange
             onClick={() => {
               toggleDarkMode();
             }}
           >
             {darkMode === "1" && isDarkMode ? (
-              <FontAwesomeIcon
-                icon={faLightbulb}
-                className="lightbulbIcon"
-                onClick={() => window.localStorage.setItem("darkMode", "0")}
-              />
+              <FontAwesomeIcon icon={faLightbulb} className="lightbulbIcon" onClick={() => window.localStorage.setItem("darkMode", "0")} />
             ) : (
-              <FontAwesomeIcon
-                icon={faLightbulb}
-                className="lightbulbIcon"
-                onClick={() => window.localStorage.setItem("darkMode", "1")}
-              />
+              <FontAwesomeIcon icon={faLightbulb} className="lightbulbIcon" onClick={() => window.localStorage.setItem("darkMode", "1")} />
             )}
-          </ModeChange>
+          </ModeChange> */}
         </ThemeProvider>
       </>
     );
@@ -94,10 +72,7 @@ const App = () => {
     return (
       <Routes>
         <Route path="/" element={<Welcome />} />
-        <Route
-          path="/oauth2/redirect/"
-          element={<OAuth2RedirectHandler />}
-        ></Route>
+        <Route path="/oauth2/redirect/" element={<OAuth2RedirectHandler />}></Route>
         <Route path="/*" element={<ErrorPage code="404" />} />
       </Routes>
     );
